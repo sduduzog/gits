@@ -16,6 +16,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        inter: ['"Inter Variable"', "sans-serif"],
+      },
       colors: {
         brand: "#ee0290",
       },

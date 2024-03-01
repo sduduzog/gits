@@ -65,7 +65,7 @@ defmodule Gits.MixProject do
       {:ash_authentication, "~> 3.12"},
       {:ash_authentication_phoenix, "~> 1.9"},
       {:ash_postgres, "~> 1.5"},
-      {:doggo, "~> 0.5.0"}
+      {:dotenv, "~> 3.1", only: [:dev, :test]}
     ]
   end
 
