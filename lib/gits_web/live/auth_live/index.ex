@@ -5,7 +5,8 @@ defmodule GitsWeb.AuthLive.Index do
   alias AshPhoenix.Form
 
   def mount(_, _, socket) do
-    {:ok, socket}
+    remote_ip = get_connect_info(socket, :peer_data).address
+    {:ok, assign(socket, :remote_ip, remote_ip)}
   end
 
   def handle_params(params, _uri, socket) do
@@ -14,6 +15,7 @@ defmodule GitsWeb.AuthLive.Index do
 
   defp apply_action(socket, :register, _params) do
     socket
+    |> assign(page_title: "Sign Up")
     |> assign(:form_id, "sign-up-form")
     |> assign(:cta, "Sign up")
     |> assign(:alternative_path, ~p"/sign-in")
@@ -28,6 +30,7 @@ defmodule GitsWeb.AuthLive.Index do
   defp apply_action(socket, :sign_in, _params) do
     socket
     |> assign(:form_id, "sign-in-form")
+    |> assign(page_title: "Sign In")
     |> assign(:cta, "Sign in")
     |> assign(:alternative_path, ~p"/register")
     |> assign(:alternative, "Need an account?")
@@ -41,11 +44,14 @@ defmodule GitsWeb.AuthLive.Index do
   def render(assigns) do
     ~H"""
     <div class="mx-auto max-w-lg space-y-6">
+      <span class="pt-6 lg:pt-20 block text-center font-black italic font-poppins text-2xl text-gray-900/50">
+        <.link navigate={~p"/"}>GiTS</.link>
+      </span>
       <h1 class="mt-6 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
         <%= @cta %>
       </h1>
 
-      <div class="p-12 bg-white rounded-lg shadow">
+      <div class="md:p-12 p-6 bg-white md:rounded-lg shadow">
         <.live_component
           module={GitsWeb.AuthLive.AuthForm}
           id={@form_id}
@@ -53,11 +59,12 @@ defmodule GitsWeb.AuthLive.Index do
           is_register?={@live_action == :register}
           action={@action}
           cta={@cta}
+          remote_ip={@remote_ip}
         />
       </div>
 
-      <p class="">
-        <.link patch={@alternative_path}><%= @alternative %></.link>
+      <p class="px-6 md:px-12">
+        <.link navigate={@alternative_path}><%= @alternative %></.link>
       </p>
     </div>
     """

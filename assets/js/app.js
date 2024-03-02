@@ -22,6 +22,7 @@ import { Socket } from "phoenix";
 import { LiveSocket } from "phoenix_live_view";
 import topbar from "../vendor/topbar";
 import "flowbite/dist/flowbite.phoenix";
+import { TurnstileHook } from "phoenix_turnstile";
 
 let csrfToken = document
   .querySelector("meta[name='csrf-token']")
@@ -29,6 +30,9 @@ let csrfToken = document
 let liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
   params: { _csrf_token: csrfToken },
+  hooks: {
+    Turnstile: TurnstileHook,
+  },
 });
 
 // Show progress bar on live navigation and form submits

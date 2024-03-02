@@ -26,6 +26,7 @@ defmodule Gits.Accounts.User do
         identity_field :email
         sign_in_tokens_enabled? true
         confirmation_required? false
+        register_action_accept([:display_name])
       end
     end
 
