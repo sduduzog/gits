@@ -1,12 +1,14 @@
 defmodule Gits.Accounts.User do
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
-    extensions: [AshAuthentication, AshGraphql.Resource]
+    extensions: [AshAuthentication]
 
   attributes do
     uuid_primary_key :id
     attribute :email, :ci_string, allow_nil?: false
     attribute :hashed_password, :string, allow_nil?: false, sensitive?: true
+    attribute :display_name, :string, allow_nil?: false
+    attribute :avatar, :string, allow_nil?: true
   end
 
   authentication do
@@ -35,10 +37,6 @@ defmodule Gits.Accounts.User do
     end
   end
 
-  relationships do
-    has_one :profile, Gits.Accounts.Profile
-  end
-
   postgres do
     table "users"
     repo Gits.Repo
@@ -52,13 +50,5 @@ defmodule Gits.Accounts.User do
 
   actions do
     defaults [:read]
-  end
-
-  graphql do
-    type :user
-
-    queries do
-      list :users, :read
-    end
   end
 end

@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "@fontsource-variable/inter": "^5.0.16",
     "flowbite": "^2.3.0"
   }
 }

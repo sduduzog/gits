@@ -10,14 +10,13 @@ module.exports = {
     "./js/**/*.js",
     "../lib/gits_web.ex",
     "../lib/gits_web/**/*.*ex",
-    "../deps/ash_authentication_phoenix/**/*.*ex",
     "./node_modules/flowbite/**/*.js",
-    "deps/doggo/lib/doggo.ex",
   ],
   theme: {
     extend: {
       fontFamily: {
-        inter: ['"Inter Variable"', "sans-serif"],
+        inter: ["Inter", "sans-serif"],
+        poppins: ["Poppins", "sans-serif"],
       },
       colors: {
         brand: "#ee0290",

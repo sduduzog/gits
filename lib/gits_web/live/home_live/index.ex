@@ -11,10 +11,13 @@ defmodule GitsWeb.HomeLive.Index do
     <div class="mt-4 gap-4 flex max-w-screen-2xl p-2 overflow-x-auto mx-auto lg:overflow-visible lg:flex-wrap lg:gap-9 xl:gap-14">
       <div
         :for={event <- @events}
-        class="bg-blue-200 rounded-2xl overflow-hidden w-64 aspect-[4/5] shrink-0 relative shrink-0"
+        class="bg-blue-200 rounded-2xl overflow-hidden w-64 aspect-[4/5] relative shrink-0"
         id={"#{event.id}"}
       >
-        <img src="https://placekitten.com/500/500" class="w-full h-full object-cover" />
+        <img
+          src="https://placekitten.com/500/500"
+          class="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
+        />
         <div class="absolute top-3 right-3 bg-white grid leading-4 py-2 px-3 rounded-lg">
           <span class="font-bold text-gray-800 tabular-nums">29</span>
           <span class="text-xs text-gray-600">Mar</span>
@@ -33,7 +36,7 @@ defmodule GitsWeb.HomeLive.Index do
     </div>
     <div class="py-36 bg-white px-4 mt-12">
       <div class="mx-auto max-w-screen-2xl space-y-6">
-        <h2 class="font-black text-3xl">
+        <h2 class="font-bold text-3xl">
           Need to sell tickets for your next event?
           <br />Get started by creating an organiztion with us
         </h2>

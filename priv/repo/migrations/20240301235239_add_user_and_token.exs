@@ -9,9 +9,12 @@ defmodule Gits.Repo.Migrations.AddUserAndToken do
 
   def up do
     create table(:users, primary_key: false) do
+      add :confirmed_at, :utc_datetime_usec
       add :id, :uuid, null: false, default: fragment("uuid_generate_v4()"), primary_key: true
       add :email, :citext, null: false
       add :hashed_password, :text, null: false
+      add :display_name, :text, null: false
+      add :avatar, :text
     end
 
     create unique_index(:users, [:email], name: "users_unique_email_index")

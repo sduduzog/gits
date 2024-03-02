@@ -1,6 +1,16 @@
 {
   "attributes": [
     {
+      "default": "nil",
+      "size": null,
+      "type": "utc_datetime_usec",
+      "source": "confirmed_at",
+      "references": null,
+      "allow_nil?": true,
+      "generated?": false,
+      "primary_key?": false
+    },
+    {
       "default": "fragment(\"uuid_generate_v4()\")",
       "size": null,
       "type": "uuid",
@@ -29,10 +39,30 @@
       "allow_nil?": false,
       "generated?": false,
       "primary_key?": false
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "text",
+      "source": "display_name",
+      "references": null,
+      "allow_nil?": false,
+      "generated?": false,
+      "primary_key?": false
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "text",
+      "source": "avatar",
+      "references": null,
+      "allow_nil?": true,
+      "generated?": false,
+      "primary_key?": false
     }
   ],
   "table": "users",
-  "hash": "C028F45BEC9F1C469AB5E96A338839AD870BB8307FABF8B39F06D0AD84163218",
+  "hash": "ED551C2B21820F8A2CE53E74777CCFBC3B16E468F5DEA4FE3F283248A7F43C82",
   "repo": "Elixir.Gits.Repo",
   "identities": [
     {
@@ -48,8 +78,8 @@
   "schema": null,
   "multitenancy": {
     "global": null,
-    "attribute": null,
-    "strategy": null
+    "strategy": null,
+    "attribute": null
   },
   "base_filter": null,
   "check_constraints": [],
