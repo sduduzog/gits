@@ -28,7 +28,6 @@ defmodule GitsWeb.Router do
       live "/", HomeLive.Index
       live "/search", SearchLive.Index
       live "/events/:id", EventLive, :event_info
-      live "/events/:id/get-tickets", EventLive, :get_tickets
     end
 
     ash_authentication_live_session :authentication_required,

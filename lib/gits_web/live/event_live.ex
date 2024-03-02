@@ -2,12 +2,28 @@ defmodule GitsWeb.EventLive do
   use GitsWeb, :live_view
 
   def mount(params, _, socket) do
-    {:ok, assign(socket, :event_id, params["id"])}
+    socket =
+      socket
+      |> assign(:event_id, params["id"])
+      |> assign(:count, 1)
+      |> assign(:tickets, [%{name: "General"}])
+
+    {:ok, socket}
+  end
+
+  def handle_params(_, _, socket) do
+    {:noreply, socket}
+  end
+
+  def handle_event("inc", _, socket) do
+    {:noreply, assign(socket, :count, socket.assigns.count + 1)}
+  end
+
+  def handle_event("dec", _, socket) do
+    {:noreply, assign(socket, :count, socket.assigns.count - 1)}
   end
 
   def render(assigns) do
-    IO.inspect(assigns)
-
     ~H"""
     <div class="bg-white min-h-svh">
       <div class="p-2 max-w-screen-2xl mx-auto">
@@ -51,6 +67,7 @@ defmodule GitsWeb.EventLive do
               <span class="text-lg font-semibold"> R 250</span>
             </div>
             <button
+              phx-click={GitsWeb.CoreComponents.show_modal("get-tickets-modal")}
               type="button"
               class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
             >
@@ -58,17 +75,33 @@ defmodule GitsWeb.EventLive do
             </button>
           </div>
         </div>
-        <.modal
-          on_cancel={JS.navigate(~p"/events/#{@event_id}")}
-          show={@live_action == :get_tickets}
-          id="get-tickets-modal"
-        >
-        </.modal>
-        <%= if @live_action == :get_tickets do %>
-          <div class="p-4 bg-gray-200">
-            Get tickets
+        <.modal id="get-tickets-modal" show={true}>
+          <div class="grid gap-4">
+            <h2 class="text-lg font-semibold">Get tickets</h2>
+            <div class="grid gap-4">
+              <div :for={ticket <- @tickets} class="flex">
+                <div class="flex w-28 justify-between items-center bg-gray-100 rounded-lg">
+                  <button class="p-1.5 flex rounded-l-lg">
+                    <.icon name="hero-minus-mini" />
+                  </button>
+                  <span class="tabular-nums">99</span>
+                  <button class="p-1.5 flex rounded-r-lg">
+                    <.icon name="hero-plus-mini" />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex justify-end">
+              <button
+                type="button"
+                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+              >
+                Continue
+              </button>
+            </div>
           </div>
-        <% end %>
+        </.modal>
       </div>
     </div>
     """
