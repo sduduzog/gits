@@ -6,7 +6,8 @@ defmodule GitsWeb.EventLive do
       socket
       |> assign(:event_id, params["id"])
       |> assign(:count, 1)
-      |> assign(:tickets, [%{name: "General"}])
+      |> assign(:tickets, [%{name: "General", price: 50}, %{name: "VIP", price: 250}])
+      |> assign(:confirm, true)
 
     {:ok, socket}
   end
@@ -23,14 +24,14 @@ defmodule GitsWeb.EventLive do
     {:noreply, assign(socket, :count, socket.assigns.count - 1)}
   end
 
+  def handle_event("confirm", _, socket) do
+    {:noreply, assign(socket, :confirm, true)}
+  end
+
   def render(assigns) do
     ~H"""
     <div class="bg-white min-h-svh">
-      <div class="p-2 max-w-screen-2xl mx-auto">
-        <button class="p-2">
-          <.icon name="hero-arrow-left" />
-        </button>
-      </div>
+      <.live_component module={GitsWeb.ComponentsLive.Header} id="1" current_user={@current_user} />
       <div class="max-w-screen-2xl mx-auto shrink-0 sm:flex">
         <div class="p-4">
           <div class="aspect-[3/2] sm:w-80 lg:w-auto lg:h-80 bg-gray-200 rounded-2xl"></div>
@@ -76,25 +77,61 @@ defmodule GitsWeb.EventLive do
           </div>
         </div>
         <.modal id="get-tickets-modal" show={true}>
-          <div class="grid gap-4">
+          <div :if={@confirm} class="grid gap-4">
+            <h2 class="text-lg font-semibold">Your summary</h2>
+            <div class="grid gap-4 md:grid-cols-2">
+              <div class="border p-4 rounded-xl grid gap-4">
+                <div :for={ticket <- @tickets} class="flex justify-between items-center">
+                  <span class="text-gray-500 text-sm font-medium">1&times; <%= ticket.name %></span>
+                  <span class="font-medium text-gray-700">R <%= ticket.price %></span>
+                </div>
+                <hr />
+                <div class="flex justify-between items-center">
+                  <span class="text-gray-600 font-medium">Total</span>
+                  <span class="text-lg font-semibold">R 300</span>
+                </div>
+              </div>
+              <div></div>
+            </div>
+            <div class="flex justify-end gap-2 items-center">
+              <!-- <span class="text-gray-500">R 350</span> -->
+              <button
+                type="button"
+                phx-click={JS.navigate(~p"/events/#{@event_id}/payment")}
+                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+              >
+                Pay
+              </button>
+            </div>
+          </div>
+          <div :if={!@confirm} class="grid gap-4">
             <h2 class="text-lg font-semibold">Get tickets</h2>
-            <div class="grid gap-4">
-              <div :for={ticket <- @tickets} class="flex">
-                <div class="flex w-28 justify-between items-center bg-gray-100 rounded-lg">
-                  <button class="p-1.5 flex rounded-l-lg">
+            <div class="grid gap-6 md:grid-cols-2">
+              <div
+                :for={ticket <- @tickets}
+                class="flex sm:border rounded-xl sm:p-2 justify-end items-center gap-2"
+              >
+                <span class="grow"><%= ticket.name %></span>
+                <span class="font-semibold">R <%= ticket.price %></span>
+                <div class="flex items-center bg-gray-100 rounded-lg">
+                  <button class="p-2 flex rounded-l-lg">
                     <.icon name="hero-minus-mini" />
                   </button>
-                  <span class="tabular-nums">99</span>
-                  <button class="p-1.5 flex rounded-r-lg">
+                  <span class="tabular-nums w-7 text-center">
+                    <%= (ticket.price / 10) |> round %>
+                  </span>
+                  <button class="p-2 flex rounded-r-lg">
                     <.icon name="hero-plus-mini" />
                   </button>
                 </div>
               </div>
             </div>
 
-            <div class="flex justify-end">
+            <div class="flex justify-end gap-2 items-center">
+              <span class="text-gray-500">R 350</span>
               <button
                 type="button"
+                phx-click="confirm"
                 class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
               >
                 Continue

@@ -28,6 +28,7 @@ defmodule GitsWeb.Router do
       live "/", HomeLive.Index
       live "/search", SearchLive.Index
       live "/events/:id", EventLive, :event_info
+      live "/events/:id/payment", EventLive.Payment
     end
 
     ash_authentication_live_session :authentication_required,
