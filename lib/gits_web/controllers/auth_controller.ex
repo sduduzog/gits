@@ -1,24 +1,6 @@
 defmodule GitsWeb.AuthController do
   use GitsWeb, :controller
   use AshAuthentication.Phoenix.Controller
-  use PhoenixHTMLHelpers
-  alias AshPhoenix.Form
-
-  def sign_in(conn, _params) do
-    conn
-    |> assign(
-      :form,
-      Form.for_create(Gits.Accounts.User, :register_with_password,
-        api: Gits.Accounts,
-        as: "user"
-      )
-    )
-    |> render(:sign_in, layout: {GitsWeb.Layouts, "auth.html"})
-  end
-
-  def register(conn, _params) do
-    render(conn, :register, layout: {GitsWeb.Layouts, "auth.html"})
-  end
 
   def success(conn, _activity, user, _token) do
     return_to = get_session(conn, :return_to) || ~p"/"

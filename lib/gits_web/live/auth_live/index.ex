@@ -37,7 +37,7 @@ defmodule GitsWeb.AuthLive.Index do
     |> assign(:action, ~p"/auth/user/password/sign_in")
     |> assign(
       :form,
-      Form.for_action(User, :sign_in_with_password, api: Accounts, as: "user")
+      Form.for_action(User, :sign_in_with_password, api: Accounts, as: "user") |> to_form()
     )
   end
 

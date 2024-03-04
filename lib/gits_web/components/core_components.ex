@@ -384,7 +384,7 @@ defmodule GitsWeb.CoreComponents do
         ]}
         {@rest}
       />
-      <.error :for={msg <- @errors}><%= msg %></.error>
+      <.error :for={msg <- @errors}><%= @label <> " " <> msg %></.error>
     </div>
     """
   end

@@ -2,7 +2,7 @@ defmodule GitsWeb.LiveUserAuth do
   import Phoenix.Component
   use GitsWeb, :verified_routes
 
-  def on_mount(:live_user_optional, _params, _sesion, socket) do
+  def on_mount(:live_user_optional, _params, _session, socket) do
     if socket.assigns[:current_user] do
       {:cont, socket}
     else

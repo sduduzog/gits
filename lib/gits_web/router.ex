@@ -20,11 +20,11 @@ defmodule GitsWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+    get "/sign-in", PageController, :sign_in
+    get "/register", PageController, :register
     get "/settings", PageController, :settings
     get "/tickets", PageController, :tickets
     get "/search", PageController, :search
-
-    get "/sign-in", AuthController, :sign_in
 
     ash_authentication_live_session :authentication_optional,
       on_mount: {GitsWeb.LiveUserAuth, :live_user_optional} do
@@ -35,11 +35,6 @@ defmodule GitsWeb.Router do
     ash_authentication_live_session :authentication_required,
       on_mount: {GitsWeb.LiveUserAuth, :live_user_required} do
       live "/get-started", WizardLive.Index
-    end
-
-    ash_authentication_live_session :authentication_no_user,
-      on_mount: {GitsWeb.LiveUserAuth, :live_no_user} do
-      live "/register", AuthLive.Index, :register
     end
 
     sign_out_route AuthController

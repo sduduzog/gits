@@ -1,0 +1,29 @@
+<.simple_form
+  :let={f}
+  for={@form}
+  phx-change="validate"
+  phx-submit="submit"
+  phx-trigger-action={@trigger_action}
+  action={@action}
+  method="POST"
+>
+  <h1 class="font-poppins font-semibold text-3xl text-gray-900"><%= @title %></h1>
+  <div :if={@is_register?} class="mb-5">
+    <.input type="text" label="Display name" field={f[:display_name]} />
+  </div>
+
+  <.input type="email" label="Email" field={f[:email]} />
+
+  <.input type="password" label="Password" field={f[:password]} />
+
+  <div class="flex gap-6 items-center">
+    <.button>Sign in</.button>
+    <%= if @is_register? do %>
+      <.link navigate="/sign-in">Already have an account?</.link>
+    <% else %>
+      <.link navigate="/register">Don't have an account?</.link>
+    <% end %>
+  </div>
+
+  <Turnstile.widget theme="light" appearance="interaction-only" />
+</.simple_form>
