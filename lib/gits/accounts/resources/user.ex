@@ -1,7 +1,8 @@
 defmodule Gits.Accounts.User do
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
-    extensions: [AshAuthentication]
+    extensions: [AshAuthentication],
+    notifiers: [Gits.Accounts.User.Notifiers.UserCreated]
 
   attributes do
     uuid_primary_key :id
@@ -41,6 +42,16 @@ defmodule Gits.Accounts.User do
   postgres do
     table "users"
     repo Gits.Repo
+  end
+
+  relationships do
+    has_many :roles, Gits.Accounts.Role
+
+    many_to_many :accounts, Gits.Accounts.Account do
+      through Gits.Accounts.Role
+      source_attribute_on_join_resource :user_id
+      destination_attribute_on_join_resource :account_id
+    end
   end
 
   identities do

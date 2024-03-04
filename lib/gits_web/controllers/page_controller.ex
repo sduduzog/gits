@@ -8,6 +8,10 @@ defmodule GitsWeb.PageController do
   end
 
   def sign_in(conn, params) do
+    with %Gits.Accounts.User{} <- conn.assigns.current_user do
+      redirect(conn, to: ~p"/")
+    end
+    
     conn
     |> put_session(:return_to, params["return_to"])
     |> put_layout(false)
@@ -15,6 +19,10 @@ defmodule GitsWeb.PageController do
   end
 
   def register(conn, params) do
+    with %Gits.Accounts.User{} <- conn.assigns.current_user do
+      redirect(conn, to: ~p"/")
+    end
+    
     conn
     |> put_session(:return_to, params["return_to"])
     |> put_layout(false)

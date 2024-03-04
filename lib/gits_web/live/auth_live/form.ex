@@ -49,7 +49,6 @@ defmodule GitsWeb.AuthLive.Form do
 
   def handle_event("submit", %{"user" => params} = values, socket) do
     form = socket.assigns.form |> Form.validate(params)
-    IO.inspect(form)
 
     case Turnstile.verify(values, socket.assigns.remote_ip) do
       {:ok, _} ->
