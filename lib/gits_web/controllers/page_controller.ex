@@ -6,7 +6,14 @@ defmodule GitsWeb.PageController do
   end
 
   def settings(conn, _params) do
-    render(conn, :settings)
+    with %Gits.Accounts.User{} <- conn.assigns.current_user do
+      render(conn, :settings)
+    end
+
+    return_to = conn |> current_path()
+
+    conn
+    |> redirect(to: ~p"/sign-in?return_to=#{return_to}")
   end
 
   def tickets(conn, _params) do

@@ -16,19 +16,18 @@ defmodule GitsWeb.Router do
     plug :accepts, ["json"]
   end
 
-  pipeline :graphql do
-    plug AshGraphql.Plug
-  end
-
   scope "/", GitsWeb do
     pipe_through :browser
 
+    get "/", PageController, :home
+    get "/settings", PageController, :settings
+    get "/tickets", PageController, :tickets
+    get "/search", PageController, :search
+
+    get "/sign-in", AuthController, :sign_in
+
     ash_authentication_live_session :authentication_optional,
       on_mount: {GitsWeb.LiveUserAuth, :live_user_optional} do
-      get "/", PageController, :home
-      get "/settings", PageController, :settings
-      get "/tickets", PageController, :tickets
-      get "/search", PageController, :search
       live "/events/:id", EventLive, :event_info
       live "/events/:id/payment", EventLive.Payment
     end
@@ -40,21 +39,12 @@ defmodule GitsWeb.Router do
 
     ash_authentication_live_session :authentication_no_user,
       on_mount: {GitsWeb.LiveUserAuth, :live_no_user} do
-      live "/sign-in", AuthLive.Index, :sign_in
       live "/register", AuthLive.Index, :register
     end
 
     sign_out_route AuthController
     auth_routes_for Gits.Accounts.User, to: AuthController
     reset_route []
-  end
-
-  scope "/api" do
-    pipe_through [:graphql]
-
-    forward "/graphql", Absinthe.Plug, schema: Gits.Schema
-
-    forward "/playground", Absinthe.Plug.GraphiQL, schema: Gits.Schema, interface: :playground
   end
 
   # Other scopes may use custom stacks.
