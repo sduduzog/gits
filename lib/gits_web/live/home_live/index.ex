@@ -16,7 +16,7 @@ defmodule GitsWeb.HomeLive.Index do
       <.link
         :for={event <- @events}
         navigate={~p"/events/#{event.id}"}
-        class="bg-blue-200 rounded-2xl overflow-hidden w-64 aspect-[4/5] relative shrink-0"
+        class="rounded-2xl overflow-hidden w-64 aspect-[4/5] relative shrink-0"
         id={"#{event.id}"}
       >
         <img

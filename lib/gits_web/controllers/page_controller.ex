@@ -2,8 +2,18 @@ defmodule GitsWeb.PageController do
   use GitsWeb, :controller
 
   def home(conn, _params) do
-    # The home page is often custom made,
-    # so skip the default app layout.
-    render(conn, :home, layout: false)
+    render(conn, :home)
+  end
+
+  def settings(conn, _params) do
+    render(conn, :settings)
+  end
+
+  def tickets(conn, _params) do
+    render(conn, :tickets)
+  end
+
+  def search(conn, _params) do
+    render(conn, :search)
   end
 end

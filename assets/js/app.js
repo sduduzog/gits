@@ -24,6 +24,10 @@ import topbar from "../vendor/topbar";
 import "flowbite/dist/flowbite.phoenix";
 import { TurnstileHook } from "phoenix_turnstile";
 
+import { register as swiperRegister } from "swiper/element/bundle";
+
+swiperRegister();
+
 let csrfToken = document
   .querySelector("meta[name='csrf-token']")
   .getAttribute("content");

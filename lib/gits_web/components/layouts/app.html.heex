@@ -1,2 +1,95 @@
-<.flash_group flash={@flash} />
-<%= @inner_content %>
+<header class="p-4 md:px-8 flex items-center">
+  <div>
+    <a href="/" class="font-poppins italic font-black text-2xl">GiTS</a>
+  </div>
+  <div role="none" class="grow"></div>
+  <div>
+    <button
+      id="dropdownUserAvatarButton"
+      data-dropdown-toggle="dropdownAvatar"
+      data-dropdown-offset-skidding="-60"
+      class="flex text-sm bg-gray-200 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
+      type="button"
+    >
+      <span class="sr-only">Open user menu</span>
+      <%= if @current_user do %>
+        <img class="w-8 h-8 rounded-full" src="https://placekitten.com/200/200" alt="user photo" />
+      <% else %>
+        <.icon name="hero-user" class="p-0.5 m-1 text-gray-600" />
+      <% end %>
+    </button>
+    <div
+      id="dropdownAvatar"
+      class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600"
+    >
+      <%= if @current_user do %>
+        <div class="px-4 py-3 text-sm text-gray-900 dark:text-white">
+          <div>Bonnie Green</div>
+          <div class="font-medium truncate">name@flowbite.com</div>
+        </div>
+      <% else %>
+        <a
+          href={~p"/sign-in"}
+          class="block text-gray-700 dark:text-gray-200 text-sm px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+        >
+          Sign In
+        </a>
+      <% end %>
+      <ul
+        :if={@current_user}
+        class="py-2 text-sm text-gray-700 dark:text-gray-200"
+        aria-labelledby="dropdownUserAvatarButton"
+      >
+        <li>
+          <a
+            href={~p"/settings"}
+            class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+          >
+            Settings
+          </a>
+        </li>
+        <li>
+          <a
+            href="#"
+            class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+          >
+            Payments
+          </a>
+        </li>
+        <li>
+          <a
+            href="#"
+            class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+          >
+            Tickets
+          </a>
+        </li>
+      </ul>
+      <ul
+        class="py-2 text-sm text-gray-700 dark:text-gray-200"
+        aria-labelledby="dropdownUserAvatarButton"
+      >
+        <li>
+          <a
+            href="#"
+            class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+          >
+            Create an event
+          </a>
+        </li>
+      </ul>
+      <div :if={@current_user} class="py-2">
+        <a
+          href={~p"/sign-out"}
+          class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+        >
+          Sign out
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+<main class="p-4 max-w-screen-xl mx-auto md:p-8">
+  <.flash_group flash={@flash} />
+  <%= @inner_content %>
+</main>

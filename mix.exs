@@ -66,6 +66,8 @@ defmodule Gits.MixProject do
       {:ash_authentication_phoenix, "~> 1.9"},
       {:ash_postgres, "~> 1.5"},
       {:phoenix_turnstile, "~> 1.1"},
+      {:barlix, "~> 0.6"},
+      {:eqrcode, "~> 0.1.10"},
       {:dotenv, "~> 3.1", only: [:dev, :test]}
     ]
   end

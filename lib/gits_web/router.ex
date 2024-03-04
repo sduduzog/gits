@@ -25,8 +25,10 @@ defmodule GitsWeb.Router do
 
     ash_authentication_live_session :authentication_optional,
       on_mount: {GitsWeb.LiveUserAuth, :live_user_optional} do
-      live "/", HomeLive.Index
-      live "/search", SearchLive.Index
+      get "/", PageController, :home
+      get "/settings", PageController, :settings
+      get "/tickets", PageController, :tickets
+      get "/search", PageController, :search
       live "/events/:id", EventLive, :event_info
       live "/events/:id/payment", EventLive.Payment
     end
