@@ -1,8 +1,7 @@
 defmodule Gits.Accounts.User do
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
-    extensions: [AshAuthentication],
-    notifiers: [Gits.Accounts.User.Notifiers.UserCreated]
+    extensions: [AshAuthentication]
 
   attributes do
     uuid_primary_key :id
@@ -10,6 +9,10 @@ defmodule Gits.Accounts.User do
     attribute :hashed_password, :string, allow_nil?: false, sensitive?: true
     attribute :display_name, :string, allow_nil?: false
     attribute :avatar, :string, allow_nil?: true
+  end
+
+  changes do
+    change {Gits.Accounts.User.Changes.CreateAccount, where: [action_is(:register_with_password)]}
   end
 
   authentication do
@@ -42,16 +45,6 @@ defmodule Gits.Accounts.User do
   postgres do
     table "users"
     repo Gits.Repo
-  end
-
-  relationships do
-    has_many :roles, Gits.Accounts.Role
-
-    many_to_many :accounts, Gits.Accounts.Account do
-      through Gits.Accounts.Role
-      source_attribute_on_join_resource :user_id
-      destination_attribute_on_join_resource :account_id
-    end
   end
 
   identities do

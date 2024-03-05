@@ -1,4 +1,4 @@
-defmodule Gits.Repo.Migrations.AddUserAndToken do
+defmodule Gits.Repo.Migrations.Init do
   @moduledoc """
   Updates resources based on their most recent snapshots.
 
@@ -28,9 +28,46 @@ defmodule Gits.Repo.Migrations.AddUserAndToken do
       add :subject, :text, null: false
       add :jti, :text, null: false, primary_key: true
     end
+
+    create table(:accounts, primary_key: false) do
+      add :id, :bigserial, null: false, primary_key: true
+      add :type, :text, null: false, default: "user"
+    end
+
+    create table(:account_roles, primary_key: false) do
+      add :type, :text, null: false, default: "owner"
+
+      add :user_id,
+          references(:users,
+            column: :id,
+            name: "account_roles_user_id_fkey",
+            type: :uuid,
+            prefix: "public"
+          ),
+          primary_key: true,
+          null: false
+
+      add :account_id,
+          references(:accounts,
+            column: :id,
+            name: "account_roles_account_id_fkey",
+            type: :bigint,
+            prefix: "public"
+          ),
+          primary_key: true,
+          null: false
+    end
   end
 
   def down do
+    drop constraint(:account_roles, "account_roles_user_id_fkey")
+
+    drop constraint(:account_roles, "account_roles_account_id_fkey")
+
+    drop table(:account_roles)
+
+    drop table(:accounts)
+
     drop table(:tokens)
 
     drop_if_exists unique_index(:users, [:email], name: "users_unique_email_index")

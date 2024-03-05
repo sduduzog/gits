@@ -3,7 +3,7 @@ defmodule Gits.Accounts.Account do
     data_layer: AshPostgres.DataLayer
 
   attributes do
-    uuid_primary_key :id
+    integer_primary_key :id
 
     attribute :type, :atom do
       constraints one_of: [:user]
@@ -14,12 +14,24 @@ defmodule Gits.Accounts.Account do
     end
   end
 
+  actions do
+    defaults [:create]
+
+    update :foo do
+      argument :user_id, :map do
+        allow_nil? false
+      end
+
+      change manage_relationship(:user_id, :roles, type: :create)
+    end
+  end
+
   postgres do
     table "accounts"
     repo Gits.Repo
   end
 
   relationships do
-    belongs_to :user, Gits.Accounts.User
+    has_many :roles, Gits.Accounts.Role
   end
 end

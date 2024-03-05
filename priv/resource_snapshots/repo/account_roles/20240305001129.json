@@ -22,8 +22,8 @@
         "schema": "public",
         "multitenancy": {
           "global": null,
-          "strategy": null,
-          "attribute": null
+          "attribute": null,
+          "strategy": null
         },
         "destination_attribute": "id",
         "on_delete": null,
@@ -41,7 +41,7 @@
     {
       "default": "nil",
       "size": null,
-      "type": "uuid",
+      "type": "bigint",
       "source": "account_id",
       "references": {
         "name": "account_roles_account_id_fkey",
@@ -50,8 +50,8 @@
         "schema": "public",
         "multitenancy": {
           "global": null,
-          "strategy": null,
-          "attribute": null
+          "attribute": null,
+          "strategy": null
         },
         "destination_attribute": "id",
         "on_delete": null,
@@ -68,7 +68,7 @@
     }
   ],
   "table": "account_roles",
-  "hash": "36923A04A6910AD2D67F653ECD975C01B748F3FEDC83CE059CD2668C7BAF587D",
+  "hash": "7D3D18C3433E13907566FE1F27E168E6AA10CB0B9EF32AAF71CE9C3A4DF7C6FA",
   "repo": "Elixir.Gits.Repo",
   "identities": [],
   "schema": null,
@@ -76,10 +76,10 @@
   "custom_indexes": [],
   "multitenancy": {
     "global": null,
-    "strategy": null,
-    "attribute": null
+    "attribute": null,
+    "strategy": null
   },
   "base_filter": null,
   "custom_statements": [],
-  "has_create_action": false
+  "has_create_action": true
 }

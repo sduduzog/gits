@@ -12,6 +12,10 @@ defmodule Gits.Accounts.Role do
     end
   end
 
+  actions do
+    defaults [:create]
+  end
+
   postgres do
     table "account_roles"
     repo Gits.Repo
@@ -19,6 +23,10 @@ defmodule Gits.Accounts.Role do
 
   relationships do
     belongs_to :user, Gits.Accounts.User, primary_key?: true, allow_nil?: false
-    belongs_to :account, Gits.Accounts.Account, primary_key?: true, allow_nil?: false
+
+    belongs_to :account, Gits.Accounts.Account,
+      primary_key?: true,
+      allow_nil?: false,
+      attribute_type: :integer
   end
 end
