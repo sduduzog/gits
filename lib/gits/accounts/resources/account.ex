@@ -16,14 +16,6 @@ defmodule Gits.Accounts.Account do
 
   actions do
     defaults [:create]
-
-    update :foo do
-      argument :user_id, :map do
-        allow_nil? false
-      end
-
-      change manage_relationship(:user_id, :roles, type: :create)
-    end
   end
 
   postgres do

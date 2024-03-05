@@ -12,7 +12,8 @@ defmodule GitsWeb.AuthController do
     |> redirect(to: return_to)
   end
 
-  def failure(conn, _activity, _reason) do
+  def failure(conn, _activity, reason) do
+    IO.inspect(reason)
     conn |> put_status(401) |> render("failure.html")
   end
 

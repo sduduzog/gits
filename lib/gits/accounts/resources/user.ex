@@ -11,6 +11,14 @@ defmodule Gits.Accounts.User do
     attribute :avatar, :string, allow_nil?: true
   end
 
+  relationships do
+    many_to_many :accounts, Gits.Accounts.Account do
+      through Gits.Accounts.Role
+      source_attribute_on_join_resource :user_id
+      destination_attribute_on_join_resource :account_id
+    end
+  end
+
   changes do
     change {Gits.Accounts.User.Changes.CreateAccount, where: [action_is(:register_with_password)]}
   end
