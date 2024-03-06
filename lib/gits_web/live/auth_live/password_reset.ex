@@ -19,7 +19,6 @@ defmodule GitsWeb.AuthLive.PasswordReset do
         :form,
         Form.for_action(User, :password_reset_with_password, api: Accounts, as: "user")
       )
-      |> IO.inspect()
 
     {:ok, socket, layout: {GitsWeb.Layouts, :auth}}
   end

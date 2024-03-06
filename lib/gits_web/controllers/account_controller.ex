@@ -8,8 +8,11 @@ defmodule GitsWeb.AccountController do
     Accounts.load!(user, :accounts)
     |> Map.get(:accounts)
     |> case do
-      [head | []] -> redirect(conn, to: ~p"/accounts/#{head.id}/" <> route)
-      _ -> render(conn, :index, layout: {GitsWeb.Layouts, :account})
+      [head | []] ->
+        redirect(conn, to: ~p"/accounts/#{head.id}/" <> route)
+
+      _ ->
+        render(conn, :index, layout: false)
     end
   end
 
@@ -29,6 +32,6 @@ defmodule GitsWeb.AccountController do
 
   def account_settings(conn, _) do
     conn
-    |> render(:settings, layout: false)
+    |> render(:settings, layout: {GitsWeb.Layouts, :account})
   end
 end

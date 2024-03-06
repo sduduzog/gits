@@ -34,8 +34,7 @@ defmodule GitsWeb.AuthController do
     |> Phoenix.LiveView.Controller.live_render(GitsWeb.AuthLive.ForgotPassword)
   end
 
-  def success(conn, activity, user, _token) do
-    IO.inspect(activity)
+  def success(conn, _activity, user, _token) do
     return_to = get_session(conn, :return_to) || ~p"/"
 
     conn
@@ -45,8 +44,7 @@ defmodule GitsWeb.AuthController do
     |> redirect(to: return_to)
   end
 
-  def failure(conn, _activity, reason) do
-    IO.inspect(reason)
+  def failure(conn, _activity, _reason) do
     conn |> put_status(401) |> render("failure.html")
   end
 
