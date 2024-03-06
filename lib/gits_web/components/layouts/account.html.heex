@@ -17,18 +17,22 @@
     tabindex="-1"
   >
     <.sidebar_list>
-      <.sidebar_list_item label="Dashboard" icon="hero-cog-6-tooth-mini" to={~p"/accounts/30"} />
+      <.sidebar_list_item
+        label="Dashboard"
+        icon="hero-rectangle-group"
+        to={~p"/accounts/#{@conn.params["account_id"]}"}
+      />
       <.sidebar_list_item
         label="Account Settings"
         icon="hero-cog-6-tooth-mini"
-        to={~p"/accounts/30/settings"}
+        to={~p"/accounts/#{@conn.params["account_id"]}/settings"}
       />
     </.sidebar_list>
+    <.profile_group />
   </div>
 
   <div class="grow p-4 lg:p-8">
     <div class="mx-auto max-w-6xl space-y-8">
-      <%= @testing %>
       <%= @inner_content %>
     </div>
   </div>

@@ -2,6 +2,8 @@ defmodule GitsWeb.AccountController do
   use GitsWeb, :controller
   alias Gits.Accounts
 
+  plug GitsWeb.AuthGuard
+
   def index(%{assigns: %{current_user: user}} = conn, %{"to" => route}) do
     Accounts.load!(user, :accounts)
     |> Map.get(:accounts)
@@ -22,7 +24,6 @@ defmodule GitsWeb.AccountController do
 
   def show(conn, _) do
     conn
-    |> assign(:testing, "foo")
     |> render(:show, layout: {GitsWeb.Layouts, :account})
   end
 

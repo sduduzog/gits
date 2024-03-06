@@ -20,11 +20,13 @@ defmodule GitsWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
-    get "/sign-in", PageController, :sign_in
-    get "/register", PageController, :register
     get "/settings", PageController, :settings
     get "/tickets", PageController, :tickets
     get "/search", PageController, :search
+
+    get "/sign-in", AuthController, :sign_in
+    get "/register", AuthController, :register
+    get "/forgot-password", AuthController, :forgot_password
 
     get "/accounts", AccountController, :index
     get "/accounts/:account_id", AccountController, :show
@@ -41,9 +43,10 @@ defmodule GitsWeb.Router do
       live "/get-started", WizardLive.Index
     end
 
+    live "/password-reset/:token", AuthLive.PasswordReset
+
     sign_out_route AuthController
     auth_routes_for Gits.Accounts.User, to: AuthController
-    reset_route []
   end
 
   # Other scopes may use custom stacks.

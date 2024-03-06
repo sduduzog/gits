@@ -39,6 +39,10 @@ defmodule Gits.Accounts.User do
         sign_in_tokens_enabled? true
         confirmation_required? false
         register_action_accept([:display_name])
+
+        resettable do
+          sender Gits.Accounts.User.Senders.SendPasswordResetEmail
+        end
       end
     end
 

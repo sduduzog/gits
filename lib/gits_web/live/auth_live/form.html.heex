@@ -19,10 +19,14 @@
   <div class="flex gap-6 items-center">
     <.button>Sign in</.button>
     <%= if @is_register? do %>
-      <.link navigate="/sign-in">Already have an account?</.link>
+      <.link navigate={~p"/sign-in"}>Already have an account?</.link>
     <% else %>
-      <.link navigate="/register">Don't have an account?</.link>
+      <.link navigate={~p"/forgot-password"}>Forgot password?</.link>
     <% end %>
+  </div>
+
+  <div :if={!@is_register?}>
+    <.link navigate={~p"/register"}>Don't have an account?</.link>
   </div>
 
   <Turnstile.widget theme="light" appearance="interaction-only" />
