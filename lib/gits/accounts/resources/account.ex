@@ -15,7 +15,7 @@ defmodule Gits.Accounts.Account do
   end
 
   actions do
-    defaults [:create]
+    defaults [:create, :read]
   end
 
   postgres do

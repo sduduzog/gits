@@ -4,7 +4,7 @@
   <div class="grow">
     <h2 class="font-poppins font-semibold text-xl text-gray-900">Account Settings</h2>
   </div>
-  <.button class="flex gap-2 items-center">
+  <.button class="flex gap-2 items-center" phx-click={JS.navigate(~p"/accounts?to=settings")}>
     Account Settings <.icon name="hero-arrow-right-mini" />
   </.button>
 </div>

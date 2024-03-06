@@ -1,0 +1,49 @@
+<div class="p-4 lg:hidden flex items-center gap-3">
+  <button
+    class="p-1 rounded-xl"
+    type="button"
+    data-drawer-target="drawer-navigation"
+    data-drawer-show="drawer-navigation"
+    aria-controls="drawer-navigation"
+  >
+    <.icon name="hero-bars-3" />
+  </button>
+  <a href="/" class="font-black font-poppins italic text-3xl">G</a>
+</div>
+<div class="lg:h-screen lg:flex">
+  <div
+    id="drawer-navigation"
+    class="fixed top-0 left-0 z-40 w-64 h-screen p-4 overflow-y-auto transition-transform -translate-x-full bg-white dark:bg-gray-800 lg:static lg:transform-none flex flex-col gap-2"
+    tabindex="-1"
+  >
+    <.sidebar_list>
+      <.sidebar_list_item label="Dashboard" icon="hero-cog-6-tooth-mini" to={~p"/accounts/30"} />
+      <.sidebar_list_item
+        label="Account Settings"
+        icon="hero-cog-6-tooth-mini"
+        to={~p"/accounts/30/settings"}
+      />
+    </.sidebar_list>
+  </div>
+
+  <div class="grow p-4 lg:p-8">
+    <div class="mx-auto max-w-6xl space-y-8">
+      <h1 class="font-poppins font-semibold text-3xl text-gray-900">Account Settings</h1>
+
+      <div class="border rounded-2xl p-4 flex flex-wrap gap-2">
+        <h2 class="font-poppins text-2xl"><%= @current_user.display_name %></h2>
+      </div>
+      <div :if={false} class="border rounded-2xl p-4 flex flex-wrap gap-2">
+        <div class="grow">
+          <h2 class="font-poppins font-semibold text-xl text-gray-900">Account Settings</h2>
+        </div>
+        <.button
+          class="flex gap-2 items-center"
+          phx-click={JS.navigate(~p"/accounts?to=settings")}
+        >
+          Account Settings <.icon name="hero-arrow-right-mini" />
+        </.button>
+      </div>
+    </div>
+  </div>
+</div>

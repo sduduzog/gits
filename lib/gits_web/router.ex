@@ -26,6 +26,10 @@ defmodule GitsWeb.Router do
     get "/tickets", PageController, :tickets
     get "/search", PageController, :search
 
+    get "/accounts", AccountController, :index
+    get "/accounts/:account_id", AccountController, :show
+    get "/accounts/:account_id/settings", AccountController, :account_settings
+
     ash_authentication_live_session :authentication_optional,
       on_mount: {GitsWeb.LiveUserAuth, :live_user_optional} do
       live "/events/:id", EventLive, :event_info

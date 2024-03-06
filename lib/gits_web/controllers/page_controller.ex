@@ -11,7 +11,7 @@ defmodule GitsWeb.PageController do
     with %Gits.Accounts.User{} <- conn.assigns.current_user do
       redirect(conn, to: ~p"/")
     end
-    
+
     conn
     |> put_session(:return_to, params["return_to"])
     |> put_layout(false)
@@ -22,7 +22,7 @@ defmodule GitsWeb.PageController do
     with %Gits.Accounts.User{} <- conn.assigns.current_user do
       redirect(conn, to: ~p"/")
     end
-    
+
     conn
     |> put_session(:return_to, params["return_to"])
     |> put_layout(false)
