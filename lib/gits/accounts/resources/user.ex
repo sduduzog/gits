@@ -20,7 +20,8 @@ defmodule Gits.Accounts.User do
   end
 
   changes do
-    change {Gits.Accounts.User.Changes.CreateAccount, where: [action_is(:register_with_password)]}
+    change {Gits.Accounts.User.Changes.CreateAccount, []},
+      where: [action_is(:register_with_password)]
   end
 
   authentication do
