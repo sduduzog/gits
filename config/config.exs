@@ -8,7 +8,7 @@
 import Config
 
 config :gits,
-  ash_apis: [Gits.Accounts],
+  ash_apis: [Gits.Accounts, Gits.Events],
   ecto_repos: [Gits.Repo]
 
 config :ash, :utc_datetime_type, :datetime

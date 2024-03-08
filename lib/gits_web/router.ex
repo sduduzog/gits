@@ -28,9 +28,14 @@ defmodule GitsWeb.Router do
     get "/register", AuthController, :register
     get "/forgot-password", AuthController, :forgot_password
 
-    get "/accounts", AccountController, :index
     get "/accounts/:account_id", AccountController, :show
     get "/accounts/:account_id/settings", AccountController, :account_settings
+
+    resources "/accounts", AccountController, only: [:index] do
+      resources "/events", EventController do
+        resources "/ticktes", TicketController
+      end
+    end
 
     ash_authentication_live_session :authentication_optional,
       on_mount: {GitsWeb.LiveUserAuth, :live_user_optional} do

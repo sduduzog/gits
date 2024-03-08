@@ -16,12 +16,16 @@
     class="fixed top-0 left-0 z-40 w-64 h-screen p-4 overflow-y-auto transition-transform -translate-x-full bg-white dark:bg-gray-800 lg:static lg:transform-none flex flex-col gap-2"
     tabindex="-1"
   >
+    <div class="px-2 flex items-center gap-3">
+      <a href="/" class="font-black pl-2 font-poppins italic text-3xl">G</a>
+    </div>
     <.sidebar_list>
       <.sidebar_list_item
         label="Dashboard"
-        icon="hero-rectangle-group"
+        icon="hero-rectangle-group-mini"
         to={~p"/accounts/#{@conn.params["account_id"]}"}
       />
+
       <.sidebar_list_item
         label="Account Settings"
         icon="hero-cog-6-tooth-mini"
@@ -31,7 +35,7 @@
     <.profile_group />
   </div>
 
-  <div class="grow p-4 lg:p-8">
+  <div class="grow p-4 lg:p-8 overflow-auto">
     <div class="mx-auto max-w-6xl space-y-8">
       <%= @inner_content %>
     </div>

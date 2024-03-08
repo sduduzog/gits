@@ -27,6 +27,9 @@ defmodule GitsWeb.AccountController do
 
   def show(conn, _) do
     conn
+    |> assign(:events, [
+      %{id: 1, name: "Ultimate Cheese Event", privacy: "Unlisted", price: "R 4500"}
+    ])
     |> render(:show, layout: {GitsWeb.Layouts, :account})
   end
 
