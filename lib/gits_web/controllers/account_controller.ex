@@ -1,6 +1,7 @@
 defmodule GitsWeb.AccountController do
   use GitsWeb, :controller
   alias Gits.Accounts
+  alias Gits.Events.Event
 
   plug GitsWeb.AuthGuard
 
@@ -26,10 +27,12 @@ defmodule GitsWeb.AccountController do
   end
 
   def show(conn, _) do
+    events =
+      Event
+      |> Gits.Events.read!()
+
     conn
-    |> assign(:events, [
-      %{id: 1, name: "Ultimate Cheese Event", privacy: "Unlisted", price: "R 4500"}
-    ])
+    |> assign(:events, events)
     |> render(:show, layout: {GitsWeb.Layouts, :account})
   end
 
