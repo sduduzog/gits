@@ -29,6 +29,8 @@ defmodule GitsWeb.AccountController do
   def show(conn, _) do
     events =
       Event
+      |> Ash.Query.for_read(:read)
+      |> Ash.Query.sort(id: :desc)
       |> Gits.Events.read!()
 
     conn

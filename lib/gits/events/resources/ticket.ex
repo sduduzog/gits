@@ -1,4 +1,4 @@
-defmodule Gits.Events.Event do
+defmodule Gits.Events.Ticket do
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer
 
@@ -17,7 +17,7 @@ defmodule Gits.Events.Event do
   end
 
   postgres do
-    table "events"
+    table "tickets"
     repo Gits.Repo
   end
 end

@@ -1,6 +1,5 @@
+<h1 class="font-poppins font-semibold text-3xl text-gray-900">Create new event</h1>
 <.simple_form :let={f} for={@form} action={~p"/accounts/36/events"} method="POST">
-  <h1 class="font-poppins font-semibold text-3xl text-gray-900">Create new event</h1>
-
   <.input type="text" label="Name" field={f[:name]} />
 
   <div class="flex gap-6 items-center">

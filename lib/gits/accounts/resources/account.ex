@@ -12,6 +12,10 @@ defmodule Gits.Accounts.Account do
 
       allow_nil? false
     end
+
+    create_timestamp :created_at, private?: false
+
+    update_timestamp :updated_at, private?: false
   end
 
   actions do

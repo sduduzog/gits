@@ -33,7 +33,7 @@ defmodule GitsWeb.Router do
 
     resources "/accounts", AccountController, only: [:index] do
       resources "/events", EventController do
-        resources "/ticktes", TicketController
+        resources "/tickets", TicketController
       end
     end
 
