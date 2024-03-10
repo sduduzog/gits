@@ -23,12 +23,15 @@
       <.sidebar_list_item
         label="Dashboard"
         icon="hero-rectangle-group-mini"
+        request_path={@conn.request_path}
+        root={true}
         to={~p"/accounts/#{@conn.params["account_id"]}"}
       />
 
       <.sidebar_list_item
         label="Account Settings"
         icon="hero-cog-6-tooth-mini"
+        request_path={@conn.request_path}
         to={~p"/accounts/#{@conn.params["account_id"]}/settings"}
       />
     </.sidebar_list>

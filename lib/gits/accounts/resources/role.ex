@@ -34,8 +34,7 @@ defmodule Gits.Accounts.Role do
     belongs_to :account, Gits.Accounts.Account,
       attribute_writable?: true,
       primary_key?: true,
-      allow_nil?: false,
-      attribute_type: :integer
+      allow_nil?: false
   end
 
   actions do

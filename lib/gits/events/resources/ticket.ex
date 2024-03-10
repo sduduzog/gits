@@ -7,13 +7,19 @@ defmodule Gits.Events.Ticket do
 
     attribute :name, :string, allow_nil?: false
 
+    attribute :price, :integer, allow_nil?: false
+
     create_timestamp :created_at, private?: false
 
     update_timestamp :updated_at, private?: false
   end
 
+  relationships do
+    belongs_to :event, Gits.Events.Event, attribute_writable?: true
+  end
+
   actions do
-    defaults [:read, :create]
+    defaults [:read, :create, :update]
   end
 
   postgres do

@@ -23,13 +23,8 @@ defmodule GitsWeb.EventController do
   end
 
   def show(conn, %{"id" => event_id}) do
-    Event
-    |> Ash.Query.for_read(:read)
-    |> Ash.Query.filter(id == ^event_id)
-    |> Gits.Events.read_one!()
-    |> IO.inspect()
-
     conn
+    |> assign(:event, event_id)
     |> render(:show, layout: {GitsWeb.Layouts, :event})
   end
 

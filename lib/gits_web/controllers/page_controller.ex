@@ -1,8 +1,26 @@
 defmodule GitsWeb.PageController do
   use GitsWeb, :controller
 
+  alias Gits.Events.Event
+
   def home(conn, _params) do
-    render(conn, :home)
+    events =
+      Event
+      |> Gits.Events.read!()
+
+    conn
+    |> assign(:events, events)
+    |> render(:home)
+  end
+
+  def event(conn, _) do
+    event =
+      Event
+      |> Gits.Events.read_one!()
+
+    conn
+    |> assign(:event, event)
+    |> render(:event)
   end
 
   def settings(conn, _params) do

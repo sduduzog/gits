@@ -1,4 +1,4 @@
-defmodule Gits.Events.Event do
+defmodule Gits.Events.CartPayment do
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer
 
@@ -13,13 +13,9 @@ defmodule Gits.Events.Event do
   end
 
   relationships do
-    belongs_to :account, Gits.Accounts.Account do
-      api Gits.Accounts
+    belongs_to :cart, Gits.Events.Cart do
+      attribute_type :integer
     end
-
-    has_many :tickets, Gits.Events.Ticket
-
-    has_many :carts, Gits.Events.Cart
   end
 
   actions do
@@ -27,7 +23,7 @@ defmodule Gits.Events.Event do
   end
 
   postgres do
-    table "events"
+    table "cart_payments"
     repo Gits.Repo
   end
 end

@@ -20,6 +20,7 @@ defmodule GitsWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+    get "/events/:id", PageController, :event
     get "/settings", PageController, :settings
     get "/tickets", PageController, :tickets
     get "/search", PageController, :search
@@ -39,7 +40,6 @@ defmodule GitsWeb.Router do
 
     ash_authentication_live_session :authentication_optional,
       on_mount: {GitsWeb.LiveUserAuth, :live_user_optional} do
-      live "/events/:id", EventLive, :event_info
       live "/events/:id/payment", EventLive.Payment
     end
 

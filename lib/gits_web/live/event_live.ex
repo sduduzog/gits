@@ -32,11 +32,10 @@ defmodule GitsWeb.EventLive do
   def render(assigns) do
     ~H"""
     <div class="bg-white min-h-svh">
-      <.live_component module={GitsWeb.ComponentsLive.Header} id="1" current_user={@current_user} />
       <div class="max-w-screen-xl mx-auto shrink-0 sm:flex">
         <div class="p-4">
           <div class="aspect-[3/2] sm:w-80 lg:w-auto lg:h-80 bg-gray-200 rounded-2xl overflow-hidden">
-            <img src="https://placekitten.com/500/500" class="w-full h-full object-cover" />
+            <img src="/images/placeholder.png" class="w-full h-full object-cover" />
           </div>
         </div>
         <div class="grow grid p-4 gap-6 lg:gap-9">

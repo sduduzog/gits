@@ -3,7 +3,7 @@ defmodule Gits.Accounts.Account do
     data_layer: AshPostgres.DataLayer
 
   attributes do
-    integer_primary_key :id
+    uuid_primary_key :id
 
     attribute :type, :atom do
       constraints one_of: [:user]
@@ -16,6 +16,12 @@ defmodule Gits.Accounts.Account do
     create_timestamp :created_at, private?: false
 
     update_timestamp :updated_at, private?: false
+  end
+
+  relationships do
+    has_many :events, Gits.Events.Event do
+      api Gits.Events
+    end
   end
 
   actions do

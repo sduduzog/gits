@@ -19,30 +19,30 @@
     <div class="px-2 flex items-center gap-3">
       <a href="/" class="font-black pl-2 font-poppins italic text-3xl">G</a>
     </div>
-    <div class="p-2 grid">
+    <div class="p-2 grid gap-4">
       <button
         class=" flex items-center text-sm gap-2 p-2 rounded-xl border"
-        phx-click={JS.navigate(~p"/accounts/#{@conn.params["account_id"]}")}
+        phx-click={JS.navigate(~p"/accounts/#{@account_id}")}
       >
         <.icon name="hero-arrow-left-mini" />
         <span>Back to Dashboard</span>
       </button>
+      <button
+        class=" flex items-center text-sm gap-2 p-2 rounded-xl border"
+        phx-click={JS.navigate(~p"/accounts/#{@account_id}/events/#{@event_id}")}
+      >
+        <.icon name="hero-arrow-left-mini" />
+        <span>Back to Event</span>
+      </button>
     </div>
 
     <.sidebar_list>
-      <span class="text-sm px-4 text-gray-600">Event</span>
+      <span class="text-sm px-4 text-gray-600">Ticket</span>
       <%= if @conn.params["event_id"] || @conn.params["id"] do %>
-        <.sidebar_list_item
-          label="Dashboard"
-          icon="hero-rectangle-group-mini"
-          request_path={@conn.request_path}
-          root={true}
-          to={~p"/accounts/#{@account_id}/events/#{@event_id}"}
-        />
-
         <.sidebar_list_item
           label="Tickets"
           icon="hero-ticket-mini"
+          root={true}
           request_path={@conn.request_path}
           to={~p"/accounts/#{@account_id}/events/#{@event_id}/tickets"}
         />

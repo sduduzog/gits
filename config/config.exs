@@ -13,6 +13,10 @@ config :gits,
 
 config :ash, :utc_datetime_type, :datetime
 
+config :ash, :compatible_foreign_key_types, [
+  {Ash.Type.Integer, Ash.Type.UUID}
+]
+
 config :ash_graphql, :default_managed_relationship_type_name_template, :action_name
 config :ash_graphql, :allow_non_null_mutation_arguments?, true
 
@@ -48,7 +52,7 @@ config :esbuild,
 
 # Configure tailwind (the version is required)
 config :tailwind,
-  version: "3.4.0",
+  version: "3.4.1",
   gits: [
     args: ~w(
       --config=tailwind.config.js

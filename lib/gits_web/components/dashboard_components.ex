@@ -15,11 +15,29 @@ defmodule GitsWeb.DashboardComponents do
   attr :label, :string, required: true
   attr :icon, :string, required: true
   attr :to, :string, required: true
+  attr :request_path, :string, required: true
+  attr :root, :boolean, default: false
 
   def sidebar_list_item(assigns) do
+    current =
+      if assigns.root,
+        do: assigns.request_path == assigns.to,
+        else: assigns.request_path |> String.starts_with?(assigns.to)
+
+    assigns =
+      assigns
+      |> assign(:current, current)
+
     ~H"""
     <li>
-      <a href={@to} class="p-4 rounded-lg flex gap-3 hover:bg-gray-100">
+      <a
+        href={@to}
+        class={[
+          "p-4 rounded-lg flex gap-3 hover:bg-gray-50",
+          "foo",
+          if(@current, do: "bg-gray-100")
+        ]}
+      >
         <.icon name={@icon} class="text-gray-600" />
         <span class="text-sm font-medium"><%= @label %></span>
       </a>
