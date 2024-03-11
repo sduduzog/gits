@@ -68,6 +68,7 @@ defmodule Gits.MixProject do
       {:phoenix_turnstile, "~> 1.1"},
       {:eqrcode, "~> 0.1.10"},
       {:slugify, "~> 1.3"},
+      {:exq, "~> 0.19.0"},
       {:dotenv, "~> 3.1", only: [:dev, :test]}
     ]
   end
