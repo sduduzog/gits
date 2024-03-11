@@ -7,8 +7,13 @@ defmodule GitsWeb.AuthController do
       redirect(conn, to: ~p"/")
     end
 
+    conn =
+      case params["return_to"] do
+        return_to when not is_nil(return_to) -> put_session(conn, :return_to, return_to)
+        _ -> conn
+      end
+
     conn
-    |> put_session(:return_to, params["return_to"])
     |> put_layout(false)
     |> Phoenix.LiveView.Controller.live_render(GitsWeb.AuthLive.Form,
       session: Map.merge(params, %{"action" => "sign_in"})
@@ -20,8 +25,13 @@ defmodule GitsWeb.AuthController do
       redirect(conn, to: ~p"/")
     end
 
+    conn =
+      case params["return_to"] do
+        return_to when not is_nil(return_to) -> put_session(conn, :return_to, return_to)
+        _ -> conn
+      end
+
     conn
-    |> put_session(:return_to, params["return_to"])
     |> put_layout(false)
     |> Phoenix.LiveView.Controller.live_render(GitsWeb.AuthLive.Form,
       session: Map.merge(params, %{"action" => "register"})

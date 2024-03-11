@@ -17,6 +17,8 @@ defmodule Gits.Accounts.User do
       source_attribute_on_join_resource :user_id
       destination_attribute_on_join_resource :account_id
     end
+
+    has_many :ticket_instances, Gits.Events.TicketInstance, api: Gits.Events
   end
 
   changes do

@@ -1,0 +1,16 @@
+<div class="grid gap-4 sm:grid-cols-[18rem_auto] lg:grid-cols-[30rem_auto] lg:gap-12">
+  <div :if={false} class="h-80 aspect-[3/2] overflow-hidden rounded-2xl">
+    <img src="/images/placeholder.png" alt="" class="w-full h-full object-cover" />
+  </div>
+  <div class="aspect-[3/2] overflow-hidden rounded-2xl">
+    <img src="/images/placeholder.png" alt="" class="w-full h-full object-cover" />
+  </div>
+  <div class="flex flex-col">
+    <h1 class="font-semibold text-2xl lg:text-3xl"><%= @event.name %></h1>
+    <div role="none" class="grow"></div>
+    <div class="flex gap-4">
+      <%= Phoenix.Component.render_slot(@inner_block) %>
+    </div>
+  </div>
+</div>
+

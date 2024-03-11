@@ -1,13 +1,9 @@
-defmodule Gits.Events.Ticket do
+defmodule Gits.Events.TicketInstance do
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer
 
   attributes do
-    uuid_primary_key :id
-
-    attribute :name, :string, allow_nil?: false
-
-    attribute :price, :integer, allow_nil?: false
+    integer_primary_key :id
 
     create_timestamp :created_at, private?: false
 
@@ -15,8 +11,11 @@ defmodule Gits.Events.Ticket do
   end
 
   relationships do
-    belongs_to :event, Gits.Events.Event, attribute_writable?: true
-    has_many :ticket_instances, Gits.Events.TicketInstance
+    belongs_to :ticket, Gits.Events.Ticket, attribute_writable?: true
+
+    belongs_to :user, Gits.Accounts.User,
+      attribute_writable?: true,
+      api: Gits.Accounts
   end
 
   actions do
@@ -24,7 +23,7 @@ defmodule Gits.Events.Ticket do
   end
 
   postgres do
-    table "tickets"
+    table "ticket_instances"
     repo Gits.Repo
   end
 end
