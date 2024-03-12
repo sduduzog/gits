@@ -15,9 +15,10 @@ defmodule GitsWeb.PageController do
     |> render(:home)
   end
 
-  def event(conn, _) do
+  def event(conn, params) do
     event =
       Event
+      |> Ash.Query.filter(id: params["id"])
       |> Gits.Events.read_one!()
 
     conn

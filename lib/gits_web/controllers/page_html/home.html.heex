@@ -9,9 +9,13 @@
       src="/images/placeholder.png"
       class="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
     />
-    <div class="absolute top-3 right-3 bg-white grid leading-4 py-2 px-3 rounded-lg">
-      <span class="font-bold text-gray-800 tabular-nums">29</span>
-      <span class="text-xs text-gray-600">Mar</span>
+    <div class="absolute top-3 right-3 bg-white flex flex-col py-2 px-3 rounded-lg items-center">
+      <span class="font-semibold text-lg text-gray-800 tabular-nums leading-4">
+        <%= event.starts_at |> Timex.format!("%d", :strftime) %>
+      </span>
+      <span class="text-xs text-gray-600 leading-4">
+        <%= event.starts_at |> Timex.format!("%b", :strftime) %>
+      </span>
     </div>
 
     <div class="absolute bottom-3 inset-x-3 bg-white rounded-lg p-2 space-y-2">
