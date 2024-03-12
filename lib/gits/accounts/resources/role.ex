@@ -1,6 +1,5 @@
 defmodule Gits.Accounts.Role do
-  use Ash.Resource,
-    data_layer: AshPostgres.DataLayer
+  use Ash.Resource, data_layer: AshPostgres.DataLayer, extensions: [AshArchival.Resource]
 
   attributes do
     attribute :type, :atom do

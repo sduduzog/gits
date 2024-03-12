@@ -24,8 +24,8 @@
     >
       <%= if @current_user do %>
         <div class="px-4 py-3 text-sm text-gray-900 dark:text-white">
-          <div>Bonnie Green</div>
-          <div class="font-medium truncate">name@flowbite.com</div>
+          <div><%= @current_user.display_name %></div>
+          <div class="font-medium truncate"><%= @current_user.email %></div>
         </div>
       <% else %>
         <a

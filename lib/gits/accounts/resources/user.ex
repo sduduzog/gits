@@ -1,7 +1,7 @@
 defmodule Gits.Accounts.User do
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
-    extensions: [AshAuthentication]
+    extensions: [AshAuthentication, AshArchival.Resource]
 
   attributes do
     uuid_primary_key :id
