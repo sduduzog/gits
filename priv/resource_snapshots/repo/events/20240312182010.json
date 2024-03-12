@@ -33,10 +33,10 @@
     {
       "default": "nil",
       "size": null,
-      "type": "utc_datetime",
+      "type": "naive_datetime",
       "source": "starts_at",
       "references": null,
-      "allow_nil?": true,
+      "allow_nil?": false,
       "generated?": false,
       "primary_key?": false
     },
@@ -72,8 +72,8 @@
         "on_delete": null,
         "multitenancy": {
           "global": null,
-          "strategy": null,
-          "attribute": null
+          "attribute": null,
+          "strategy": null
         },
         "primary_key?": true,
         "destination_attribute": "id",
@@ -90,15 +90,15 @@
     }
   ],
   "table": "events",
-  "hash": "0950132A58BE27BE0E5E49CA2A762E89F4431B7FB0F7DC98F8B0C2AC307ED317",
+  "hash": "DE85E62920EAD8F3976813E2AB00D7B9E0733AC9E766A0C5861848921D9A4755",
   "repo": "Elixir.Gits.Repo",
   "identities": [],
   "schema": null,
   "base_filter": "archived_at IS NULL",
   "multitenancy": {
     "global": null,
-    "strategy": null,
-    "attribute": null
+    "attribute": null,
+    "strategy": null
   },
   "check_constraints": [],
   "custom_indexes": [],

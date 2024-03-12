@@ -6,7 +6,7 @@ defmodule Gits.Events.Event do
 
     attribute :name, :string, allow_nil?: false
 
-    attribute :starts_at, :utc_datetime, allow_nil?: false
+    attribute :starts_at, :naive_datetime, allow_nil?: false
 
     create_timestamp :created_at, private?: false
 

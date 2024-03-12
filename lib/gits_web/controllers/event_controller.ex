@@ -55,6 +55,7 @@ defmodule GitsWeb.EventController do
 
   def edit(conn, params) do
     conn
+    |> assign(:stat, "waiting")
     |> assign(
       :form,
       Form.for_update(
@@ -86,19 +87,31 @@ defmodule GitsWeb.EventController do
   end
 
   def update(conn, params) do
-    conn
-    |> assign(
-      :form,
-      Form.for_update(
-        Event
-        |> Ash.Query.filter(id: params["id"])
-        |> Gits.Events.read_one!(),
-        :update,
-        api: Events,
-        as: "event"
-      )
-      |> IO.inspect()
+    Form.for_update(
+      Event
+      |> Ash.Query.filter(id: params["id"])
+      |> Gits.Events.read_one!(),
+      :update,
+      api: Events,
+      as: "event"
     )
-    |> render(:edit, layout: {GitsWeb.Layouts, :event})
+    |> Form.validate(params["event"])
+    |> case do
+      form when form.valid? ->
+        with {:ok, event} <- Form.submit(form) do
+          conn
+          |> redirect(to: ~p"/accounts/#{params["account_id"]}/events/#{event.id}/settings")
+        else
+          _ ->
+            conn
+            |> assign(:form, form)
+            |> render(:edit, layout: {GitsWeb.Layouts, :event})
+        end
+
+      form ->
+        conn
+        |> assign(:form, form)
+        |> render(:edit, layout: {GitsWeb.Layouts, :event})
+    end
   end
 end

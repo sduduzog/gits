@@ -91,7 +91,7 @@ defmodule GitsWeb.TicketController do
 
     conn
     |> assign(:ticket, ticket)
-    |> assign(:form, Form.for_update(ticket, :update, api: Events, as: "ticket") |> IO.inspect())
+    |> assign(:form, Form.for_update(ticket, :update, api: Events, as: "ticket"))
     |> render(:edit, layout: {GitsWeb.Layouts, :ticket})
   end
 

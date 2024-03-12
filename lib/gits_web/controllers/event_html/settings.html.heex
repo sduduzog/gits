@@ -19,9 +19,9 @@
       </dd>
     </div>
     <div class="py-6 sm:grid sm:grid-cols-3 sm:gap-4">
-      <dt class="text-sm font-medium text-gray-900">Price</dt>
+      <dt class="text-sm font-medium text-gray-900">Start date</dt>
       <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-        R <%= @event.name %>
+        <%= @event.starts_at |> Timex.format!("%e %b %Y, %R %p", :strftime) %>
       </dd>
     </div>
   </dl>

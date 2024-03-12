@@ -11,30 +11,10 @@
       "primary_key?": false
     },
     {
-      "default": "fragment(\"uuid_generate_v4()\")",
-      "size": null,
-      "type": "uuid",
-      "source": "id",
-      "references": null,
-      "allow_nil?": false,
-      "generated?": false,
-      "primary_key?": true
-    },
-    {
-      "default": "nil",
+      "default": "\"owner\"",
       "size": null,
       "type": "text",
-      "source": "name",
-      "references": null,
-      "allow_nil?": false,
-      "generated?": false,
-      "primary_key?": false
-    },
-    {
-      "default": "nil",
-      "size": null,
-      "type": "utc_datetime",
-      "source": "starts_at",
+      "source": "type",
       "references": null,
       "allow_nil?": false,
       "generated?": false,
@@ -64,9 +44,37 @@
       "default": "nil",
       "size": null,
       "type": "uuid",
+      "source": "user_id",
+      "references": {
+        "name": "account_roles_user_id_fkey",
+        "table": "users",
+        "schema": "public",
+        "on_delete": null,
+        "multitenancy": {
+          "global": null,
+          "attribute": null,
+          "strategy": null
+        },
+        "primary_key?": true,
+        "destination_attribute": "id",
+        "deferrable": false,
+        "match_type": null,
+        "match_with": null,
+        "on_update": null,
+        "destination_attribute_default": null,
+        "destination_attribute_generated": null
+      },
+      "allow_nil?": false,
+      "generated?": false,
+      "primary_key?": true
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "uuid",
       "source": "account_id",
       "references": {
-        "name": "events_account_id_fkey",
+        "name": "account_roles_account_id_fkey",
         "table": "accounts",
         "schema": "public",
         "on_delete": null,
@@ -84,13 +92,13 @@
         "destination_attribute_default": null,
         "destination_attribute_generated": null
       },
-      "allow_nil?": true,
+      "allow_nil?": false,
       "generated?": false,
-      "primary_key?": false
+      "primary_key?": true
     }
   ],
-  "table": "events",
-  "hash": "381FC7F76EC74A7295BC9C232188FCFA8C006D6215D981FC7F9D725BB99B7057",
+  "table": "account_roles",
+  "hash": "DAED0EFAAE4847C94776EF9CF2683B82C70714C0C48AB385BB08C94E5B40BE90",
   "repo": "Elixir.Gits.Repo",
   "identities": [],
   "schema": null,

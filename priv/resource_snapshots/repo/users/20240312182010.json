@@ -4,6 +4,16 @@
       "default": "nil",
       "size": null,
       "type": "utc_datetime_usec",
+      "source": "confirmed_at",
+      "references": null,
+      "allow_nil?": true,
+      "generated?": false,
+      "primary_key?": false
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "utc_datetime_usec",
       "source": "archived_at",
       "references": null,
       "allow_nil?": true,
@@ -21,46 +31,66 @@
       "primary_key?": true
     },
     {
-      "default": "\"user\"",
+      "default": "nil",
+      "size": null,
+      "type": "citext",
+      "source": "email",
+      "references": null,
+      "allow_nil?": false,
+      "generated?": false,
+      "primary_key?": false
+    },
+    {
+      "default": "nil",
       "size": null,
       "type": "text",
-      "source": "type",
+      "source": "hashed_password",
       "references": null,
       "allow_nil?": false,
       "generated?": false,
       "primary_key?": false
     },
     {
-      "default": "fragment(\"now()\")",
+      "default": "nil",
       "size": null,
-      "type": "utc_datetime_usec",
-      "source": "created_at",
+      "type": "text",
+      "source": "display_name",
       "references": null,
       "allow_nil?": false,
       "generated?": false,
       "primary_key?": false
     },
     {
-      "default": "fragment(\"now()\")",
+      "default": "nil",
       "size": null,
-      "type": "utc_datetime_usec",
-      "source": "updated_at",
+      "type": "text",
+      "source": "avatar",
       "references": null,
-      "allow_nil?": false,
+      "allow_nil?": true,
       "generated?": false,
       "primary_key?": false
     }
   ],
-  "table": "accounts",
-  "hash": "74F9F4312DBC56FF6B5979C30FF4D2A4C5D31AAC3668C00B46E1164D702550B5",
+  "table": "users",
+  "hash": "555AD4E3591BFA0CE464D48F35F7EEE5C757A9EC084040DA7664D2E432DB3C40",
   "repo": "Elixir.Gits.Repo",
-  "identities": [],
+  "identities": [
+    {
+      "name": "unique_email",
+      "keys": [
+        "email"
+      ],
+      "base_filter": "archived_at IS NULL",
+      "all_tenants?": false,
+      "index_name": "users_unique_email_index"
+    }
+  ],
   "schema": null,
   "base_filter": "archived_at IS NULL",
   "multitenancy": {
     "global": null,
-    "strategy": null,
-    "attribute": null
+    "attribute": null,
+    "strategy": null
   },
   "check_constraints": [],
   "custom_indexes": [],

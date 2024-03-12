@@ -1,4 +1,4 @@
-defmodule Gits.Repo.Migrations.Initial do
+defmodule Gits.Repo.Migrations.InitialMigrations do
   @moduledoc """
   Updates resources based on their most recent snapshots.
 
@@ -10,6 +10,7 @@ defmodule Gits.Repo.Migrations.Initial do
   def up do
     create table(:users, primary_key: false) do
       add :confirmed_at, :utc_datetime_usec
+      add :archived_at, :utc_datetime_usec
       add :id, :uuid, null: false, default: fragment("uuid_generate_v4()"), primary_key: true
       add :email, :citext, null: false
       add :hashed_password, :text, null: false
@@ -17,7 +18,10 @@ defmodule Gits.Repo.Migrations.Initial do
       add :avatar, :text
     end
 
-    create unique_index(:users, [:email], name: "users_unique_email_index")
+    create unique_index(:users, [:email],
+             where: "archived_at IS NULL",
+             name: "users_unique_email_index"
+           )
 
     create table(:tokens, primary_key: false) do
       add :updated_at, :utc_datetime_usec, null: false, default: fragment("now()")
@@ -30,14 +34,40 @@ defmodule Gits.Repo.Migrations.Initial do
     end
 
     create table(:tickets, primary_key: false) do
+      add :archived_at, :utc_datetime_usec
       add :id, :uuid, null: false, default: fragment("uuid_generate_v4()"), primary_key: true
       add :name, :text, null: false
+      add :price, :bigint, null: false
       add :created_at, :utc_datetime_usec, null: false, default: fragment("now()")
       add :updated_at, :utc_datetime_usec, null: false, default: fragment("now()")
       add :event_id, :uuid
     end
 
+    create table(:ticket_instances, primary_key: false) do
+      add :archived_at, :utc_datetime_usec
+      add :id, :bigserial, null: false, primary_key: true
+      add :created_at, :utc_datetime_usec, null: false, default: fragment("now()")
+      add :updated_at, :utc_datetime_usec, null: false, default: fragment("now()")
+
+      add :ticket_id,
+          references(:tickets,
+            column: :id,
+            name: "ticket_instances_ticket_id_fkey",
+            type: :uuid,
+            prefix: "public"
+          )
+
+      add :user_id,
+          references(:users,
+            column: :id,
+            name: "ticket_instances_user_id_fkey",
+            type: :uuid,
+            prefix: "public"
+          )
+    end
+
     create table(:events, primary_key: false) do
+      add :archived_at, :utc_datetime_usec
       add :id, :uuid, null: false, default: fragment("uuid_generate_v4()"), primary_key: true
     end
 
@@ -53,42 +83,14 @@ defmodule Gits.Repo.Migrations.Initial do
 
     alter table(:events) do
       add :name, :text, null: false
+      add :starts_at, :naive_datetime, null: false
       add :created_at, :utc_datetime_usec, null: false, default: fragment("now()")
       add :updated_at, :utc_datetime_usec, null: false, default: fragment("now()")
       add :account_id, :uuid
     end
 
-    create table(:carts, primary_key: false) do
-      add :id, :bigserial, null: false, primary_key: true
-      add :name, :text, null: false
-      add :created_at, :utc_datetime_usec, null: false, default: fragment("now()")
-      add :updated_at, :utc_datetime_usec, null: false, default: fragment("now()")
-
-      add :event_id,
-          references(:events,
-            column: :id,
-            name: "carts_event_id_fkey",
-            type: :uuid,
-            prefix: "public"
-          )
-    end
-
-    create table(:cart_payments, primary_key: false) do
-      add :id, :uuid, null: false, default: fragment("uuid_generate_v4()"), primary_key: true
-      add :name, :text, null: false
-      add :created_at, :utc_datetime_usec, null: false, default: fragment("now()")
-      add :updated_at, :utc_datetime_usec, null: false, default: fragment("now()")
-
-      add :cart_id,
-          references(:carts,
-            column: :id,
-            name: "cart_payments_cart_id_fkey",
-            type: :bigint,
-            prefix: "public"
-          )
-    end
-
     create table(:accounts, primary_key: false) do
+      add :archived_at, :utc_datetime_usec
       add :id, :uuid, null: false, default: fragment("uuid_generate_v4()"), primary_key: true
     end
 
@@ -109,6 +111,7 @@ defmodule Gits.Repo.Migrations.Initial do
     end
 
     create table(:account_roles, primary_key: false) do
+      add :archived_at, :utc_datetime_usec
       add :type, :text, null: false, default: "owner"
       add :created_at, :utc_datetime_usec, null: false, default: fragment("now()")
       add :updated_at, :utc_datetime_usec, null: false, default: fragment("now()")
@@ -156,18 +159,11 @@ defmodule Gits.Repo.Migrations.Initial do
 
     drop table(:accounts)
 
-    drop constraint(:cart_payments, "cart_payments_cart_id_fkey")
-
-    drop table(:cart_payments)
-
-    drop constraint(:carts, "carts_event_id_fkey")
-
-    drop table(:carts)
-
     alter table(:events) do
       remove :account_id
       remove :updated_at
       remove :created_at
+      remove :starts_at
       remove :name
     end
 
@@ -178,6 +174,12 @@ defmodule Gits.Repo.Migrations.Initial do
     end
 
     drop table(:events)
+
+    drop constraint(:ticket_instances, "ticket_instances_ticket_id_fkey")
+
+    drop constraint(:ticket_instances, "ticket_instances_user_id_fkey")
+
+    drop table(:ticket_instances)
 
     drop table(:tickets)
 
