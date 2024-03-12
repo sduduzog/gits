@@ -1,6 +1,8 @@
 defmodule GitsWeb.PageController do
   use GitsWeb, :controller
 
+  require Ash.Query
+  alias Gits.Events.TicketInstance
   alias Gits.Events.Event
 
   def home(conn, _params) do
@@ -29,7 +31,22 @@ defmodule GitsWeb.PageController do
   end
 
   def tickets(conn, _params) do
-    render(conn, :tickets)
+    ticket_instances =
+      TicketInstance
+      |> Ash.Query.filter(user_id: conn.assigns.current_user.id)
+      |> Ash.Query.sort(ticket_id: :asc)
+      |> Gits.Events.read!()
+      |> Gits.Events.load!(ticket: [:event])
+      |> IO.inspect()
+
+    events =
+      Event
+      |> Gits.Events.read!()
+
+    conn
+    |> assign(:ticket_instances, ticket_instances)
+    |> assign(:events, events)
+    |> render(:tickets)
   end
 
   def search(conn, _params) do

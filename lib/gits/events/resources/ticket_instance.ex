@@ -18,7 +18,7 @@ defmodule Gits.Events.TicketInstance do
   end
 
   actions do
-    defaults [:read, :create, :update]
+    defaults [:read, :create, :update, :destroy]
   end
 
   postgres do

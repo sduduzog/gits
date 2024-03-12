@@ -8,11 +8,16 @@ defmodule GitsWeb.EventController do
   plug :assign_params
 
   def assign_params(conn, _) do
-    with [_, account_id, _, event_id] <- conn.path_info do
-      conn
-      |> assign(:account_id, account_id)
-      |> assign(:event_id, event_id)
-    else
+    case conn.path_info do
+      [_, account_id, _, event_id | _] ->
+        conn
+        |> assign(:account_id, account_id)
+        |> assign(:event_id, event_id)
+
+      [_, account_id, _] ->
+        conn
+        |> assign(:account_id, account_id)
+
       _ ->
         conn
     end
@@ -28,6 +33,17 @@ defmodule GitsWeb.EventController do
     |> render(:show, layout: {GitsWeb.Layouts, :event})
   end
 
+  def settings(conn, params) do
+    event =
+      Event
+      |> Ash.Query.filter(id: params["event_id"])
+      |> Gits.Events.read_one!()
+
+    conn
+    |> assign(:event, event)
+    |> render(:settings, layout: {GitsWeb.Layouts, :event})
+  end
+
   def new(conn, _) do
     conn
     |> assign(
@@ -35,6 +51,22 @@ defmodule GitsWeb.EventController do
       Form.for_create(Event, :create, api: Events, as: "event")
     )
     |> render(:new, layout: {GitsWeb.Layouts, :event})
+  end
+
+  def edit(conn, params) do
+    conn
+    |> assign(
+      :form,
+      Form.for_update(
+        Event
+        |> Ash.Query.filter(id: params["id"])
+        |> Gits.Events.read_one!(),
+        :update,
+        api: Events,
+        as: "event"
+      )
+    )
+    |> render(:edit, layout: {GitsWeb.Layouts, :event})
   end
 
   def create(conn, params) do
@@ -51,5 +83,22 @@ defmodule GitsWeb.EventController do
         |> assign(:form, form)
         |> render(:new, layout: {GitsWeb.Layouts, :event})
     end
+  end
+
+  def update(conn, params) do
+    conn
+    |> assign(
+      :form,
+      Form.for_update(
+        Event
+        |> Ash.Query.filter(id: params["id"])
+        |> Gits.Events.read_one!(),
+        :update,
+        api: Events,
+        as: "event"
+      )
+      |> IO.inspect()
+    )
+    |> render(:edit, layout: {GitsWeb.Layouts, :event})
   end
 end

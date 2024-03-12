@@ -2,7 +2,7 @@
 
 <.simple_form :let={f} for={@form} action={~p"/accounts/#{@account_id}/events"} method="POST">
   <.input type="text" label="Name" field={f[:name]} />
-
+  <.input type="datetime-local" label="Starts date" field={f[:starts_at]} />
   <div class="flex gap-6 items-center">
     <.button>Hello</.button>
   </div>

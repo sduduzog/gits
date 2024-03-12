@@ -21,8 +21,8 @@ defmodule GitsWeb.Router do
 
     get "/", PageController, :home
     get "/events/:id", PageController, :event
-    get "/settings", PageController, :settings
     get "/tickets", PageController, :tickets
+    get "/settings", PageController, :settings
     get "/search", PageController, :search
 
     get "/sign-in", AuthController, :sign_in
@@ -35,6 +35,7 @@ defmodule GitsWeb.Router do
     resources "/accounts", AccountController, only: [:index] do
       resources "/events", EventController do
         resources "/tickets", TicketController
+        get "/settings", EventController, :settings
       end
     end
 
@@ -46,7 +47,6 @@ defmodule GitsWeb.Router do
     ash_authentication_live_session :authentication_required,
       on_mount: {GitsWeb.LiveUserAuth, :live_user_required} do
       live "/events/:id/get-tickets", GetTicketsLive
-      live "/get-started", WizardLive.Index
     end
 
     live "/password-reset/:token", AuthLive.PasswordReset
