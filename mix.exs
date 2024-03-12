@@ -70,7 +70,7 @@ defmodule Gits.MixProject do
       {:eqrcode, "~> 0.1.10"},
       {:slugify, "~> 1.3"},
       # {:exq, "~> 0.19.0"},
-
+      {:timex, "~> 3.7"},
       {:dotenv, "~> 3.1", only: [:dev, :test]}
     ]
   end
