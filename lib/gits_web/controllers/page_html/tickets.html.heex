@@ -32,19 +32,19 @@
               <.icon name="hero-ellipsis-horizontal-mini" />
             </button>
           </div>
-          <h2 class="col-span-full font-bold line-clamp-2"><%= "foo" %></h2>
+          <h2 class="col-span-full font-bold line-clamp-2"><%= instance.ticket.event.name %></h2>
           <div class="grid text-sm">
-            <span class="text-gray-500">Date</span><span class="font-medium">29 March 2023</span>
+            <span class="text-gray-500">Date</span><span class="font-medium"><%= instance.ticket.event.starts_at |> Timex.format!("%e %b %Y", :strftime) %></span>
           </div>
 
           <div class="grid text-sm">
-            <span class="text-gray-500">Time</span><span class="font-medium">10:30 PM</span>
+            <span class="text-gray-500">Time</span><span class="font-medium"><%= instance.ticket.event.starts_at |> Timex.format!("%R %p", :strftime) %></span>
           </div>
           <div class="grid text-sm">
             <span class="text-gray-500">Location</span><span class="font-medium truncate">Artistry JHB, Fredman Drive, Sandown, Sandton, South Africa</span>
           </div>
           <div class="grid text-sm">
-            <span class="text-gray-500">Admit</span><span class="font-medium truncate max-w-24">1&times; <%= "bar" %></span>
+            <span class="text-gray-500">Admit</span><span class="font-medium truncate max-w-24"><%= instance.ticket.name %></span>
           </div>
         </div>
         <div class="px-6 relative">
@@ -52,7 +52,7 @@
         </div>
         <div class="grid justify-center blur-mdx">
           <%= raw(
-            "Ticket #{instance.id}"
+            "#{instance.id}"
             |> EQRCode.encode()
             |> EQRCode.svg(shape: "circle", color: "#475569", width: 256)
           ) %>

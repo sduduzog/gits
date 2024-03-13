@@ -18,6 +18,8 @@ defmodule Gits.Accounts.User do
       destination_attribute_on_join_resource :account_id
     end
 
+    has_many :roles, Gits.Accounts.Role
+
     has_many :ticket_instances, Gits.Events.TicketInstance, api: Gits.Events
   end
 

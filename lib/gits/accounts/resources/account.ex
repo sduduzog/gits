@@ -24,7 +24,15 @@ defmodule Gits.Accounts.Account do
   end
 
   actions do
-    defaults [:create, :read]
+    defaults [:create, :read, :update]
+
+    update :add_event do
+      argument :event, :map do
+        allow_nil? false
+      end
+
+      change manage_relationship(:event, :events, type: :create)
+    end
   end
 
   postgres do

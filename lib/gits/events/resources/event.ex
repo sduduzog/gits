@@ -1,5 +1,8 @@
 defmodule Gits.Events.Event do
-  use Ash.Resource, data_layer: AshPostgres.DataLayer, extensions: [AshArchival.Resource]
+  use Ash.Resource,
+    data_layer: AshPostgres.DataLayer,
+    extensions: [AshArchival.Resource],
+    authorizers: [Ash.Policy.Authorizer]
 
   attributes do
     uuid_primary_key :id
@@ -22,7 +25,22 @@ defmodule Gits.Events.Event do
   end
 
   actions do
-    defaults [:read, :create, :update]
+    defaults [:read, :update]
+
+    create :create do
+      argument :account, :map, allow_nil?: false
+      change manage_relationship(:account, type: :append)
+    end
+  end
+
+  policies do
+    policy action(:create) do
+      authorize_if Gits.Checks.CanCreateEvent
+    end
+
+    policy action(:update) do
+      authorize_if Gits.Checks.CanEditEventDetails
+    end
   end
 
   postgres do

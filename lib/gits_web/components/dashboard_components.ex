@@ -34,7 +34,6 @@ defmodule GitsWeb.DashboardComponents do
         href={@to}
         class={[
           "p-4 rounded-lg flex gap-3 hover:bg-gray-50",
-          "foo",
           if(@current, do: "bg-gray-100")
         ]}
       >

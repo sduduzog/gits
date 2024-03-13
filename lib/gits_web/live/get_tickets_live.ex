@@ -42,7 +42,6 @@ defmodule GitsWeb.GetTicketsLive do
       [first | _] when not is_nil(first) ->
         first
         |> Gits.Events.destroy!()
-        |> IO.inspect()
 
         {:noreply, assign_tickets(socket, socket.assigns.event.id)}
 

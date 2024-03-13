@@ -1,5 +1,8 @@
 defmodule Gits.Events.Ticket do
-  use Ash.Resource, data_layer: AshPostgres.DataLayer, extensions: [AshArchival.Resource]
+  use Ash.Resource,
+    data_layer: AshPostgres.DataLayer,
+    extensions: [AshArchival.Resource],
+    authorizers: [Ash.Policy.Authorizer]
 
   attributes do
     uuid_primary_key :id
@@ -18,12 +21,20 @@ defmodule Gits.Events.Ticket do
   end
 
   relationships do
-    belongs_to :event, Gits.Events.Event, attribute_writable?: true
+    belongs_to :event, Gits.Events.Event
     has_many :ticket_instances, Gits.Events.TicketInstance
   end
 
   actions do
-    defaults [:read, :create, :update]
+    defaults [:read, :update]
+
+    create :create do
+      argument :event, :map do
+        allow_nil? false
+      end
+
+      change manage_relationship(:event, type: :append)
+    end
 
     update :add_instance do
       argument :instance, :map do
@@ -39,6 +50,16 @@ defmodule Gits.Events.Ticket do
       end
 
       change manage_relationship(:instance, :ticket_instances, type: :remove)
+    end
+  end
+
+  policies do
+    policy action(:create) do
+      authorize_if Gits.Checks.CanCreateTicket
+    end
+
+    policy action(:update) do
+      authorize_if Gits.Checks.CanEditEventDetails
     end
   end
 

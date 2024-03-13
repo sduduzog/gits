@@ -4,6 +4,7 @@ defmodule GitsWeb.EventController do
   alias AshPhoenix.Form
   alias Gits.Events
   alias Gits.Events.Event
+  alias Gits.Accounts.Account
 
   plug :assign_params
 
@@ -27,9 +28,15 @@ defmodule GitsWeb.EventController do
     text(conn, "Hello")
   end
 
-  def show(conn, %{"id" => event_id}) do
+  def show(conn, params) do
     conn
-    |> assign(:event, event_id)
+    |> assign(
+      :event,
+      Event
+      |> Ash.Query.for_read(:read)
+      |> Ash.Query.filter(id: params["id"])
+      |> Gits.Events.read_one!()
+    )
     |> render(:show, layout: {GitsWeb.Layouts, :event})
   end
 
@@ -48,14 +55,13 @@ defmodule GitsWeb.EventController do
     conn
     |> assign(
       :form,
-      Form.for_create(Event, :create, api: Events, as: "event")
+      Form.for_create(Event, :create, api: Events, as: "event", actor: conn.assigns.current_user)
     )
     |> render(:new, layout: {GitsWeb.Layouts, :event})
   end
 
   def edit(conn, params) do
     conn
-    |> assign(:stat, "waiting")
     |> assign(
       :form,
       Form.for_update(
@@ -71,15 +77,30 @@ defmodule GitsWeb.EventController do
   end
 
   def create(conn, params) do
-    form =
-      Form.for_create(Event, :create, api: Events, as: "event")
-      |> Form.validate(params["event"])
+    Form.for_create(Event, :create, api: Events, as: "event", actor: conn.assigns.current_user)
+    |> Form.validate(
+      Map.merge(params["event"], %{
+        "account" =>
+          Account
+          |> Ash.Query.for_read(:read)
+          |> Ash.Query.filter(id: params["account_id"])
+          |> Gits.Accounts.read_one!()
+      })
+    )
+    |> case do
+      form when form.valid? ->
+        with {:ok, event} <- Form.submit(form) do
+          conn
+          |> redirect(to: ~p"/accounts/#{params["account_id"]}/events/#{event.id}/settings")
+        else
+          {:error, _} ->
+            conn
+            |> assign(:form, form)
+            |> put_flash(:error, "Couldn't create event")
+            |> render(:new, layout: {GitsWeb.Layouts, :event})
+        end
 
-    with true <- form.valid?, {:ok, event} <- Form.submit(form) do
-      conn
-      |> redirect(to: ~p"/accounts/#{params["account_id"]}/events/#{event.id}")
-    else
-      _ ->
+      form ->
         conn
         |> assign(:form, form)
         |> render(:new, layout: {GitsWeb.Layouts, :event})

@@ -4,7 +4,6 @@ defmodule GitsWeb.AuthGuard do
   def init(default), do: default
 
   def call(%{assigns: %{current_user: %Gits.Accounts.User{}}} = conn, _) do
-    IO.puts("foooo")
     conn
   end
 

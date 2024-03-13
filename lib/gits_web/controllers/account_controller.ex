@@ -1,5 +1,7 @@
 defmodule GitsWeb.AccountController do
   use GitsWeb, :controller
+  require Ash.Query
+  alias Gits.Accounts.Account
   alias Gits.Accounts
   alias Gits.Events.Event
 
@@ -26,15 +28,15 @@ defmodule GitsWeb.AccountController do
     end
   end
 
-  def show(conn, _) do
-    events =
-      Event
-      |> Ash.Query.for_read(:read)
-      |> Ash.Query.sort(id: :desc)
-      |> Gits.Events.read!()
+  def show(conn, params) do
+    account =
+      Account
+      |> Ash.Query.filter(id: params["account_id"])
+      |> Gits.Events.read_one!()
+      |> Gits.Events.load!(:events)
 
     conn
-    |> assign(:events, events)
+    |> assign(:events, account.events)
     |> render(:show, layout: {GitsWeb.Layouts, :account})
   end
 

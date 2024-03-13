@@ -2,6 +2,7 @@ defmodule GitsWeb.TicketController do
   use GitsWeb, :controller
 
   require Ash.Query
+  alias Gits.Events.Event
   alias Gits.Events
   alias Gits.Events.Ticket
   alias AshPhoenix.Form
@@ -31,10 +32,11 @@ defmodule GitsWeb.TicketController do
     conn
   end
 
-  def index(conn, _) do
+  def index(conn, params) do
     tickets =
       Ticket
       |> Ash.Query.for_read(:read)
+      |> Ash.Query.filter(event_id: params["event_id"])
       |> Gits.Events.read!()
 
     conn
@@ -53,8 +55,20 @@ defmodule GitsWeb.TicketController do
 
   def create(conn, params) do
     form =
-      Form.for_create(Ticket, :create, api: Events, as: "ticket")
-      |> Form.validate(params["ticket"])
+      Form.for_create(Ticket, :create,
+        api: Events,
+        as: "ticket",
+        actor: conn.assigns.current_user
+      )
+      |> Form.validate(
+        Map.merge(params["ticket"], %{
+          "event" =>
+            Event
+            |> Ash.Query.for_read(:read)
+            |> Ash.Query.filter(id: params["event_id"])
+            |> Gits.Events.read_one!()
+        })
+      )
 
     with true <- form.valid?, {:ok, ticket} <- Form.submit(form) do
       conn
@@ -70,11 +84,11 @@ defmodule GitsWeb.TicketController do
     end
   end
 
-  def show(conn, %{"id" => ticket_id} = _params) do
+  def show(conn, params) do
     ticket =
       Ticket
       |> Ash.Query.for_read(:read)
-      |> Ash.Query.filter(id: ticket_id)
+      |> Ash.Query.filter(id: params["id"], event_id: params["event_id"])
       |> Gits.Events.read_one!()
 
     conn
