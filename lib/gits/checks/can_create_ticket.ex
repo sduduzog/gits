@@ -4,7 +4,7 @@ defmodule Gits.Checks.CanCreateTicket do
   alias Gits.Accounts.Role
   alias Gits.Accounts.User
 
-  def match?(%User{} = actor, %{resource: Gits.Events.Ticket} = context, options) do
+  def match?(%User{} = actor, %{resource: Gits.Events.Ticket} = context, _) do
     user =
       actor
       |> Gits.Accounts.load!(

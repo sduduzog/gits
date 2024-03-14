@@ -4,9 +4,7 @@ defmodule Gits.Checks.CanCreateEvent do
   alias Gits.Accounts.Role
   alias Gits.Accounts.User
 
-  def match?(%User{} = actor, %{resource: Gits.Events.Event} = context, options) do
-    IO.inspect(context)
-
+  def match?(%User{} = actor, %{resource: Gits.Events.Event} = context, _) do
     user =
       actor
       |> Gits.Accounts.load!(
