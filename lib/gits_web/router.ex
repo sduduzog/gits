@@ -37,7 +37,11 @@ defmodule GitsWeb.Router do
         get "/settings", EventController, :settings
       end
 
-      resources "/team", TeamMemberController
+      resources "/team", TeamMemberController, only: [:index] do
+        resources "/invites", TeamInviteController, only: []
+      end
+
+      resources "/invites", TeamInviteController, only: [:new, :create, :delete]
 
       get "/settings", AccountController, :account_settings
     end

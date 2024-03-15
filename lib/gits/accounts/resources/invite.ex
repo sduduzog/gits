@@ -32,7 +32,7 @@ defmodule Gits.Accounts.Invite do
   end
 
   actions do
-    defaults [:read, :update]
+    defaults [:read, :update, :destroy]
 
     create :create do
       argument :account, :map, allow_nil?: false

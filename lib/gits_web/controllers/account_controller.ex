@@ -3,7 +3,6 @@ defmodule GitsWeb.AccountController do
   require Ash.Query
   alias Gits.Accounts.Account
   alias Gits.Accounts
-  alias Gits.Events.Event
 
   plug GitsWeb.AuthGuard
 

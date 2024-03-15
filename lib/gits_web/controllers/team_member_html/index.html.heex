@@ -3,7 +3,7 @@
 <div class="grid gap-4">
   <div class="flex justify-between">
     <h2 class="font-poppins text-2xl">Members</h2>
-    <.button phx-click={JS.navigate(~p"/accounts/#{@conn.params["account_id"]}/team/new")}>
+    <.button phx-click={JS.navigate(~p"/accounts/#{@conn.params["account_id"]}/invites/new")}>
       Invite user
     </.button>
   </div>
@@ -34,20 +34,16 @@
   <h2 class="font-poppins text-2xl">Invites</h2>
   <div class="border rounded-2xl overflow-hidden">
     <div class="px-6 py-2 pt-4 overflow-x-auto">
-      <.table
-        id="events"
-        rows={@roles}
-        row_click={
-          fn row ->
-            JS.navigate(~p"/accounts/#{@conn.params["account_id"]}/events/#{row.account_id}")
-          end
-        }
-      >
-        <:col :let={role} label="Email"><%= role.user.display_name %></:col>
-        <:action>
-          <!-- <button> -->
-          <!--   <.icon name="hero-ellipsis-vertical-mini" /> -->
-          <!-- </button> -->
+      <.table id="events" rows={@invites}>
+        <:col :let={invite} label="Email"><%= invite.email %></:col>
+        <:col :let={invite} label="Role"><%= invite.role %></:col>
+        <:action :let={invite}>
+          <.link
+            href={~p"/accounts/#{@conn.params["account_id"]}/invites/#{invite.id}"}
+            method="delete"
+          >
+            <.icon name="hero-x-mark-mini" />
+          </.link>
         </:action>
       </.table>
     </div>
