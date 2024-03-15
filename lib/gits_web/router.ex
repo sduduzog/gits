@@ -30,13 +30,16 @@ defmodule GitsWeb.Router do
     get "/forgot-password", AuthController, :forgot_password
 
     get "/accounts/:account_id", AccountController, :show
-    get "/accounts/:account_id/settings", AccountController, :account_settings
 
     resources "/accounts", AccountController, only: [:index] do
       resources "/events", EventController do
         resources "/tickets", TicketController
         get "/settings", EventController, :settings
       end
+
+      resources "/team", TeamMemberController
+
+      get "/settings", AccountController, :account_settings
     end
 
     ash_authentication_live_session :authentication_optional,

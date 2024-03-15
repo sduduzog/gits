@@ -21,26 +21,18 @@ defmodule Gits.Accounts.Account do
     has_many :events, Gits.Events.Event do
       api Gits.Events
     end
+
+    has_many :roles, Gits.Accounts.Role
+
+    has_many :invites, Gits.Accounts.Invite
   end
 
   actions do
     defaults [:create, :read, :update]
-
-    update :add_event do
-      argument :event, :map do
-        allow_nil? false
-      end
-
-      change manage_relationship(:event, :events, type: :create)
-    end
   end
 
   postgres do
     table "accounts"
     repo Gits.Repo
-  end
-
-  relationships do
-    has_many :roles, Gits.Accounts.Role
   end
 end

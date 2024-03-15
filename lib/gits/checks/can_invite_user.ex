@@ -1,4 +1,4 @@
-defmodule Gits.Checks.CanEditEventDetails do
+defmodule Gits.Checks.CanInviteUser do
   use Ash.Policy.SimpleCheck
 
   def describe(_) do

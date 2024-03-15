@@ -81,8 +81,7 @@ defmodule GitsWeb.EventController do
     |> Form.validate(
       Map.merge(params["event"], %{
         "account" =>
-          Account
-          |> Ash.Query.for_read(:read)
+          Ash.Query.for_read(Account, :read)
           |> Ash.Query.filter(id: params["account_id"])
           |> Gits.Accounts.read_one!()
       })

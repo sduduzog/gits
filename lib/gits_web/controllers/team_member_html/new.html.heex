@@ -1,0 +1,15 @@
+<h1 class="font-poppins font-semibold text-3xl text-gray-900">Invite user to your account</h1>
+
+<.simple_form :let={f} for={@form} action={@action} method="POST">
+  <.input type="text" label="Email" field={f[:email]} />
+  <.input
+    type="select"
+    label="Email"
+    field={f[:role]}
+    options={["Access Coordinator": :access_coordinator]}
+  />
+
+  <div class="flex gap-6 items-center">
+    <.button>Invite</.button>
+  </div>
+</.simple_form>

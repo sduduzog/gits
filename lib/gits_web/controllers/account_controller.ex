@@ -44,4 +44,17 @@ defmodule GitsWeb.AccountController do
     conn
     |> render(:settings, layout: {GitsWeb.Layouts, :account})
   end
+
+  def team(conn, params) do
+    conn
+    |> assign(
+      :account,
+      Account
+      |> Ash.Query.for_read(:read, actor: conn.assigns.current_user)
+      |> Ash.Query.filter(id: params["account_id"])
+      |> Gits.Accounts.read_one!()
+      |> Gits.Accounts.load!(roles: [:user])
+    )
+    |> render(:team, layout: {GitsWeb.Layouts, :account})
+  end
 end

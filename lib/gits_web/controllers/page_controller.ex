@@ -2,7 +2,6 @@ defmodule GitsWeb.PageController do
   use GitsWeb, :controller
 
   require Ash.Query
-  alias Ash.Type.DateTime
   alias Gits.Events.TicketInstance
   alias Gits.Events.Event
 

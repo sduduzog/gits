@@ -6,5 +6,6 @@ defmodule Gits.Accounts do
     resource Gits.Accounts.Role
     resource Gits.Accounts.User
     resource Gits.Accounts.Token
+    resource Gits.Accounts.Invite
   end
 end
