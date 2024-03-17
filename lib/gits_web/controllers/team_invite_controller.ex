@@ -7,6 +7,22 @@ defmodule GitsWeb.TeamInviteController do
   alias Gits.Accounts.Invite
   alias AshPhoenix.Form
 
+  def show(conn, params) do
+    conn
+    |> assign(
+      :invite,
+      Ash.Query.for_read(Invite, :read)
+      |> Ash.Query.filter(id: params["id"])
+      |> Gits.Accounts.read_one!()
+    )
+    |> render(:show, layout: false)
+  end
+
+  def update(conn, params) do
+    IO.inspect(params)
+    IO.inspect(conn)
+  end
+
   def delete(conn, params) do
     Ash.Query.for_read(Invite, :read, actor: conn.assigns.current_user)
     |> Ash.Query.filter(id: params["id"])

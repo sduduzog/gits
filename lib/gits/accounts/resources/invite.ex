@@ -15,7 +15,7 @@ defmodule Gits.Accounts.Invite do
     end
 
     attribute :status, :atom do
-      constraints one_of: [:pending, :accepted, :rejected]
+      constraints one_of: [:pending, :accepted, :declined]
 
       default :pending
 
@@ -39,6 +39,19 @@ defmodule Gits.Accounts.Invite do
 
       change manage_relationship(:account, type: :append)
     end
+
+    update :accept do
+      change set_attribute(:status, :accepted)
+    end
+
+    update :reject do
+      change set_attribute(:status, :accepted)
+    end
+  end
+
+  changes do
+    change {Gits.Accounts.Invite.Changes.CreateInvite, []},
+      where: [action_is(:create)]
   end
 
   policies do
@@ -50,5 +63,11 @@ defmodule Gits.Accounts.Invite do
   postgres do
     table "account_invites"
     repo Gits.Repo
+  end
+
+  identities do
+    identity :unique_email_invite, [:email, :account_id] do
+      eager_check_with Gits.Accounts
+    end
   end
 end

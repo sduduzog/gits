@@ -2,7 +2,6 @@ defmodule GitsWeb.TeamMemberController do
   use GitsWeb, :controller
 
   require Ash.Query
-  alias Gits.Accounts
   alias Gits.Accounts.Invite
   alias Gits.Accounts.Role
 

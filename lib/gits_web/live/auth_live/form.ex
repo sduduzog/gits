@@ -6,12 +6,15 @@ defmodule GitsWeb.AuthLive.Form do
   alias Gits.Accounts.User
   alias AshPhoenix.Form
 
-  def mount(_, %{"action" => "sign_in"}, socket) do
+  def mount(_, %{"action" => "sign_in"} = session, socket) do
     remote_ip = get_connect_info(socket, :peer_data).address
+
+    email = session["email"]
 
     socket =
       socket
       |> assign(:title, "Sign in to your account")
+      |> assign(:email, email)
       |> assign(:remote_ip, remote_ip)
       |> assign(:trigger_action, false)
       |> assign(:action, ~p"/auth/user/password/sign_in")
@@ -19,17 +22,27 @@ defmodule GitsWeb.AuthLive.Form do
       |> assign(
         :form,
         Form.for_action(User, :sign_in_with_password, api: Accounts, as: "user")
+        |> case do
+          form when not is_nil(email) ->
+            Form.set_data(form, %{email: email})
+
+          form ->
+            form
+        end
       )
 
     {:ok, socket, layout: {GitsWeb.Layouts, :auth}}
   end
 
-  def mount(_, %{"action" => "register"}, socket) do
+  def mount(_, %{"action" => "register"} = session, socket) do
     remote_ip = get_connect_info(socket, :peer_data).address
+
+    email = session["email"]
 
     socket =
       socket
       |> assign(:title, "Register a new account")
+      |> assign(:email, email)
       |> assign(:remote_ip, remote_ip)
       |> assign(:trigger_action, false)
       |> assign(:action, ~p"/auth/user/password/register")
@@ -37,6 +50,13 @@ defmodule GitsWeb.AuthLive.Form do
       |> assign(
         :form,
         Form.for_create(User, :register_with_password, api: Accounts, as: "user")
+        |> case do
+          form when not is_nil(email) ->
+            Form.set_data(form, %{email: email})
+
+          form ->
+            form
+        end
       )
 
     {:ok, socket, layout: {GitsWeb.Layouts, :auth}}
