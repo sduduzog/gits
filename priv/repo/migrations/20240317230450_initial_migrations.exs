@@ -136,9 +136,40 @@ defmodule Gits.Repo.Migrations.InitialMigrations do
           primary_key: true,
           null: false
     end
+
+    create table(:account_invites, primary_key: false) do
+      add :archived_at, :utc_datetime_usec
+      add :id, :uuid, null: false, default: fragment("uuid_generate_v4()"), primary_key: true
+      add :email, :citext, null: false
+      add :role, :text, null: false
+      add :status, :text, null: false, default: "pending"
+      add :created_at, :utc_datetime_usec, null: false, default: fragment("now()")
+      add :updated_at, :utc_datetime_usec, null: false, default: fragment("now()")
+
+      add :account_id,
+          references(:accounts,
+            column: :id,
+            name: "account_invites_account_id_fkey",
+            type: :uuid,
+            prefix: "public"
+          )
+    end
+
+    create unique_index(:account_invites, [:email, :account_id],
+             where: "archived_at IS NULL",
+             name: "account_invites_unique_email_invite_index"
+           )
   end
 
   def down do
+    drop_if_exists unique_index(:account_invites, [:email, :account_id],
+                     name: "account_invites_unique_email_invite_index"
+                   )
+
+    drop constraint(:account_invites, "account_invites_account_id_fkey")
+
+    drop table(:account_invites)
+
     drop constraint(:account_roles, "account_roles_user_id_fkey")
 
     drop constraint(:account_roles, "account_roles_account_id_fkey")

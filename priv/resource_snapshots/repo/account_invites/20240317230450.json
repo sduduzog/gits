@@ -11,10 +11,40 @@
       "primary_key?": false
     },
     {
-      "default": "\"owner\"",
+      "default": "fragment(\"uuid_generate_v4()\")",
+      "size": null,
+      "type": "uuid",
+      "source": "id",
+      "references": null,
+      "allow_nil?": false,
+      "generated?": false,
+      "primary_key?": true
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "citext",
+      "source": "email",
+      "references": null,
+      "allow_nil?": false,
+      "generated?": false,
+      "primary_key?": false
+    },
+    {
+      "default": "nil",
       "size": null,
       "type": "text",
-      "source": "type",
+      "source": "role",
+      "references": null,
+      "allow_nil?": false,
+      "generated?": false,
+      "primary_key?": false
+    },
+    {
+      "default": "\"pending\"",
+      "size": null,
+      "type": "text",
+      "source": "status",
       "references": null,
       "allow_nil?": false,
       "generated?": false,
@@ -44,44 +74,16 @@
       "default": "nil",
       "size": null,
       "type": "uuid",
-      "source": "user_id",
-      "references": {
-        "name": "account_roles_user_id_fkey",
-        "table": "users",
-        "schema": "public",
-        "on_delete": null,
-        "multitenancy": {
-          "global": null,
-          "attribute": null,
-          "strategy": null
-        },
-        "primary_key?": true,
-        "destination_attribute": "id",
-        "deferrable": false,
-        "match_type": null,
-        "match_with": null,
-        "on_update": null,
-        "destination_attribute_default": null,
-        "destination_attribute_generated": null
-      },
-      "allow_nil?": false,
-      "generated?": false,
-      "primary_key?": true
-    },
-    {
-      "default": "nil",
-      "size": null,
-      "type": "uuid",
       "source": "account_id",
       "references": {
-        "name": "account_roles_account_id_fkey",
+        "name": "account_invites_account_id_fkey",
         "table": "accounts",
         "schema": "public",
         "on_delete": null,
         "multitenancy": {
           "global": null,
-          "attribute": null,
-          "strategy": null
+          "strategy": null,
+          "attribute": null
         },
         "primary_key?": true,
         "destination_attribute": "id",
@@ -92,21 +94,32 @@
         "destination_attribute_default": null,
         "destination_attribute_generated": null
       },
-      "allow_nil?": false,
+      "allow_nil?": true,
       "generated?": false,
-      "primary_key?": true
+      "primary_key?": false
     }
   ],
-  "table": "account_roles",
-  "hash": "DAED0EFAAE4847C94776EF9CF2683B82C70714C0C48AB385BB08C94E5B40BE90",
+  "table": "account_invites",
+  "hash": "227B6DC3863C67860DB13354C649A88EB094E51B06200F84CCE36A3CCE74D7EE",
   "repo": "Elixir.Gits.Repo",
-  "identities": [],
+  "identities": [
+    {
+      "name": "unique_email_invite",
+      "keys": [
+        "email",
+        "account_id"
+      ],
+      "base_filter": "archived_at IS NULL",
+      "all_tenants?": false,
+      "index_name": "account_invites_unique_email_invite_index"
+    }
+  ],
   "schema": null,
   "base_filter": "archived_at IS NULL",
   "multitenancy": {
     "global": null,
-    "attribute": null,
-    "strategy": null
+    "strategy": null,
+    "attribute": null
   },
   "check_constraints": [],
   "custom_indexes": [],

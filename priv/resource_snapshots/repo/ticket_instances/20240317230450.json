@@ -52,8 +52,8 @@
         "on_delete": null,
         "multitenancy": {
           "global": null,
-          "attribute": null,
-          "strategy": null
+          "strategy": null,
+          "attribute": null
         },
         "primary_key?": true,
         "destination_attribute": "id",
@@ -80,8 +80,8 @@
         "on_delete": null,
         "multitenancy": {
           "global": null,
-          "attribute": null,
-          "strategy": null
+          "strategy": null,
+          "attribute": null
         },
         "primary_key?": true,
         "destination_attribute": "id",
@@ -98,15 +98,15 @@
     }
   ],
   "table": "ticket_instances",
-  "hash": "7F1905DCF996BB4A7E4145701FBEF29A077FE8F99CDB30EE0AF4754BCE2C55DC",
+  "hash": "199BDED3252229F049B8DE7A2F88878F08A28862314C2AB297E529CE2DA0E3C1",
   "repo": "Elixir.Gits.Repo",
   "identities": [],
   "schema": null,
   "base_filter": "archived_at IS NULL",
   "multitenancy": {
     "global": null,
-    "attribute": null,
-    "strategy": null
+    "strategy": null,
+    "attribute": null
   },
   "check_constraints": [],
   "custom_indexes": [],

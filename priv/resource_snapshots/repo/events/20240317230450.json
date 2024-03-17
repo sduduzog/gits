@@ -33,8 +33,8 @@
     {
       "default": "nil",
       "size": null,
-      "type": "bigint",
-      "source": "price",
+      "type": "naive_datetime",
+      "source": "starts_at",
       "references": null,
       "allow_nil?": false,
       "generated?": false,
@@ -64,16 +64,16 @@
       "default": "nil",
       "size": null,
       "type": "uuid",
-      "source": "event_id",
+      "source": "account_id",
       "references": {
-        "name": "tickets_event_id_fkey",
-        "table": "events",
+        "name": "events_account_id_fkey",
+        "table": "accounts",
         "schema": "public",
         "on_delete": null,
         "multitenancy": {
           "global": null,
-          "attribute": null,
-          "strategy": null
+          "strategy": null,
+          "attribute": null
         },
         "primary_key?": true,
         "destination_attribute": "id",
@@ -89,16 +89,16 @@
       "primary_key?": false
     }
   ],
-  "table": "tickets",
-  "hash": "8BCAE6F546563AFC38456D5143076CBE5526FE006698DD85470C6D17E092ECB8",
+  "table": "events",
+  "hash": "C9B6C196D5E32A38BD4D89F93F673F7F1C1166CEFCC5B99ECC02C4CDCBAE178C",
   "repo": "Elixir.Gits.Repo",
   "identities": [],
   "schema": null,
   "base_filter": "archived_at IS NULL",
   "multitenancy": {
     "global": null,
-    "attribute": null,
-    "strategy": null
+    "strategy": null,
+    "attribute": null
   },
   "check_constraints": [],
   "custom_indexes": [],

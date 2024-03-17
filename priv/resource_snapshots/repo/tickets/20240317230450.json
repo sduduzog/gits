@@ -21,10 +21,20 @@
       "primary_key?": true
     },
     {
-      "default": "\"user\"",
+      "default": "nil",
       "size": null,
       "type": "text",
-      "source": "type",
+      "source": "name",
+      "references": null,
+      "allow_nil?": false,
+      "generated?": false,
+      "primary_key?": false
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "bigint",
+      "source": "price",
       "references": null,
       "allow_nil?": false,
       "generated?": false,
@@ -49,18 +59,46 @@
       "allow_nil?": false,
       "generated?": false,
       "primary_key?": false
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "uuid",
+      "source": "event_id",
+      "references": {
+        "name": "tickets_event_id_fkey",
+        "table": "events",
+        "schema": "public",
+        "on_delete": null,
+        "multitenancy": {
+          "global": null,
+          "strategy": null,
+          "attribute": null
+        },
+        "primary_key?": true,
+        "destination_attribute": "id",
+        "deferrable": false,
+        "match_type": null,
+        "match_with": null,
+        "on_update": null,
+        "destination_attribute_default": null,
+        "destination_attribute_generated": null
+      },
+      "allow_nil?": true,
+      "generated?": false,
+      "primary_key?": false
     }
   ],
-  "table": "accounts",
-  "hash": "5FD5E2ACBB05A7F2A35B84F3681822B8DD0C309B1C8CD2E457D6F468B362E543",
+  "table": "tickets",
+  "hash": "5BDCA43295AFE53C61C796E5BC3EDC109B6E4CABFD7736230C87B470397EDE22",
   "repo": "Elixir.Gits.Repo",
   "identities": [],
   "schema": null,
   "base_filter": "archived_at IS NULL",
   "multitenancy": {
     "global": null,
-    "attribute": null,
-    "strategy": null
+    "strategy": null,
+    "attribute": null
   },
   "check_constraints": [],
   "custom_indexes": [],

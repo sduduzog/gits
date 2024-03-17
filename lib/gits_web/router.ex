@@ -41,7 +41,7 @@ defmodule GitsWeb.Router do
         resources "/invites", TeamInviteController, only: []
       end
 
-      resources "/invites", TeamInviteController, only: [:show, :new, :create, :delete]
+      resources "/invites", TeamInviteController, only: [:show, :update, :new, :create, :delete]
 
       get "/settings", AccountController, :account_settings
     end

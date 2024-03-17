@@ -1,4 +1,6 @@
 defmodule Gits.Accounts.Invite do
+  require Ash.Resource.Change.Builtins
+
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     extensions: [AshArchival.Resource],
@@ -42,6 +44,16 @@ defmodule Gits.Accounts.Invite do
 
     update :accept do
       change set_attribute(:status, :accepted)
+
+      change after_action(fn changeset, record ->
+               Ash.Changeset.new(Gits.Accounts.Role)
+               |> Ash.Changeset.for_create(:create, %{
+                 account_id: record.account_id,
+                 user_id: changeset.context.actor.id
+               })
+
+               {:ok, record}
+             end)
     end
 
     update :reject do
@@ -57,6 +69,10 @@ defmodule Gits.Accounts.Invite do
   policies do
     policy action(:create) do
       authorize_if Gits.Checks.CanInviteUser
+    end
+
+    policy action(:accept) do
+      authorize_if Gits.Checks.CanAcceptInvite
     end
   end
 

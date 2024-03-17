@@ -18,9 +18,38 @@ defmodule GitsWeb.TeamInviteController do
     |> render(:show, layout: false)
   end
 
+  def update(%{method: "PATCH"} = conn, params) do
+    IO.puts("patching")
+
+    conn
+    |> assign(
+      :invite,
+      Ash.Query.for_read(Invite, :read)
+      |> Ash.Query.filter(id: params["id"])
+      |> Gits.Accounts.read_one!()
+    )
+    |> render(:show, layout: false)
+  end
+
+  def update(%{method: "PUT"} = conn, params) do
+    Ash.Query.for_read(Invite, :read)
+    |> Ash.Query.filter(id: params["id"])
+    |> Gits.Accounts.read_one!()
+    |> Ash.Changeset.for_update(:accept)
+    |> Gits.Accounts.update!(actor: conn.assigns.current_user)
+
+    redirect(conn, to: ~p"/accounts/#{params["account_id"]}")
+  end
+
   def update(conn, params) do
-    IO.inspect(params)
-    IO.inspect(conn)
+    conn
+    |> assign(
+      :invite,
+      Ash.Query.for_read(Invite, :read)
+      |> Ash.Query.filter(id: params["id"])
+      |> Gits.Accounts.read_one!()
+    )
+    |> render(:show, layout: false)
   end
 
   def delete(conn, params) do

@@ -11,30 +11,10 @@
       "primary_key?": false
     },
     {
-      "default": "fragment(\"uuid_generate_v4()\")",
-      "size": null,
-      "type": "uuid",
-      "source": "id",
-      "references": null,
-      "allow_nil?": false,
-      "generated?": false,
-      "primary_key?": true
-    },
-    {
-      "default": "nil",
+      "default": "\"owner\"",
       "size": null,
       "type": "text",
-      "source": "name",
-      "references": null,
-      "allow_nil?": false,
-      "generated?": false,
-      "primary_key?": false
-    },
-    {
-      "default": "nil",
-      "size": null,
-      "type": "naive_datetime",
-      "source": "starts_at",
+      "source": "type",
       "references": null,
       "allow_nil?": false,
       "generated?": false,
@@ -64,16 +44,16 @@
       "default": "nil",
       "size": null,
       "type": "uuid",
-      "source": "account_id",
+      "source": "user_id",
       "references": {
-        "name": "events_account_id_fkey",
-        "table": "accounts",
+        "name": "account_roles_user_id_fkey",
+        "table": "users",
         "schema": "public",
         "on_delete": null,
         "multitenancy": {
           "global": null,
-          "attribute": null,
-          "strategy": null
+          "strategy": null,
+          "attribute": null
         },
         "primary_key?": true,
         "destination_attribute": "id",
@@ -84,21 +64,49 @@
         "destination_attribute_default": null,
         "destination_attribute_generated": null
       },
-      "allow_nil?": true,
+      "allow_nil?": false,
       "generated?": false,
-      "primary_key?": false
+      "primary_key?": true
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "uuid",
+      "source": "account_id",
+      "references": {
+        "name": "account_roles_account_id_fkey",
+        "table": "accounts",
+        "schema": "public",
+        "on_delete": null,
+        "multitenancy": {
+          "global": null,
+          "strategy": null,
+          "attribute": null
+        },
+        "primary_key?": true,
+        "destination_attribute": "id",
+        "deferrable": false,
+        "match_type": null,
+        "match_with": null,
+        "on_update": null,
+        "destination_attribute_default": null,
+        "destination_attribute_generated": null
+      },
+      "allow_nil?": false,
+      "generated?": false,
+      "primary_key?": true
     }
   ],
-  "table": "events",
-  "hash": "DE85E62920EAD8F3976813E2AB00D7B9E0733AC9E766A0C5861848921D9A4755",
+  "table": "account_roles",
+  "hash": "61FCEB33FB1AFFD38363B3B0DCB919B9744D4ADA12572423253D0ACCED21CB0D",
   "repo": "Elixir.Gits.Repo",
   "identities": [],
   "schema": null,
   "base_filter": "archived_at IS NULL",
   "multitenancy": {
     "global": null,
-    "attribute": null,
-    "strategy": null
+    "strategy": null,
+    "attribute": null
   },
   "check_constraints": [],
   "custom_indexes": [],

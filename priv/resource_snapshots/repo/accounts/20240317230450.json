@@ -21,30 +21,10 @@
       "primary_key?": true
     },
     {
-      "default": "nil",
-      "size": null,
-      "type": "citext",
-      "source": "email",
-      "references": null,
-      "allow_nil?": false,
-      "generated?": false,
-      "primary_key?": false
-    },
-    {
-      "default": "nil",
+      "default": "\"user\"",
       "size": null,
       "type": "text",
-      "source": "role",
-      "references": null,
-      "allow_nil?": false,
-      "generated?": false,
-      "primary_key?": false
-    },
-    {
-      "default": "\"pending\"",
-      "size": null,
-      "type": "text",
-      "source": "status",
+      "source": "type",
       "references": null,
       "allow_nil?": false,
       "generated?": false,
@@ -69,46 +49,18 @@
       "allow_nil?": false,
       "generated?": false,
       "primary_key?": false
-    },
-    {
-      "default": "nil",
-      "size": null,
-      "type": "uuid",
-      "source": "account_id",
-      "references": {
-        "name": "account_invites_account_id_fkey",
-        "table": "accounts",
-        "schema": "public",
-        "on_delete": null,
-        "multitenancy": {
-          "global": null,
-          "attribute": null,
-          "strategy": null
-        },
-        "primary_key?": true,
-        "destination_attribute": "id",
-        "deferrable": false,
-        "match_type": null,
-        "match_with": null,
-        "on_update": null,
-        "destination_attribute_default": null,
-        "destination_attribute_generated": null
-      },
-      "allow_nil?": true,
-      "generated?": false,
-      "primary_key?": false
     }
   ],
-  "table": "account_invites",
-  "hash": "C808487FC128C9649895F83E093DCB5CA6E953C3DC5F5A1CCE19E17F76082878",
+  "table": "accounts",
+  "hash": "74F9F4312DBC56FF6B5979C30FF4D2A4C5D31AAC3668C00B46E1164D702550B5",
   "repo": "Elixir.Gits.Repo",
   "identities": [],
   "schema": null,
   "base_filter": "archived_at IS NULL",
   "multitenancy": {
     "global": null,
-    "attribute": null,
-    "strategy": null
+    "strategy": null,
+    "attribute": null
   },
   "check_constraints": [],
   "custom_indexes": [],

@@ -1,10 +1,30 @@
 {
   "attributes": [
     {
-      "default": "nil",
+      "default": "fragment(\"now()\")",
       "size": null,
       "type": "utc_datetime_usec",
-      "source": "confirmed_at",
+      "source": "updated_at",
+      "references": null,
+      "allow_nil?": false,
+      "generated?": false,
+      "primary_key?": false
+    },
+    {
+      "default": "fragment(\"now()\")",
+      "size": null,
+      "type": "utc_datetime_usec",
+      "source": "created_at",
+      "references": null,
+      "allow_nil?": false,
+      "generated?": false,
+      "primary_key?": false
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "map",
+      "source": "extra_data",
       "references": null,
       "allow_nil?": true,
       "generated?": false,
@@ -13,84 +33,54 @@
     {
       "default": "nil",
       "size": null,
-      "type": "utc_datetime_usec",
-      "source": "archived_at",
+      "type": "text",
+      "source": "purpose",
       "references": null,
-      "allow_nil?": true,
+      "allow_nil?": false,
       "generated?": false,
       "primary_key?": false
     },
     {
-      "default": "fragment(\"uuid_generate_v4()\")",
+      "default": "nil",
       "size": null,
-      "type": "uuid",
-      "source": "id",
+      "type": "utc_datetime",
+      "source": "expires_at",
+      "references": null,
+      "allow_nil?": false,
+      "generated?": false,
+      "primary_key?": false
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "text",
+      "source": "subject",
+      "references": null,
+      "allow_nil?": false,
+      "generated?": false,
+      "primary_key?": false
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "text",
+      "source": "jti",
       "references": null,
       "allow_nil?": false,
       "generated?": false,
       "primary_key?": true
-    },
-    {
-      "default": "nil",
-      "size": null,
-      "type": "citext",
-      "source": "email",
-      "references": null,
-      "allow_nil?": false,
-      "generated?": false,
-      "primary_key?": false
-    },
-    {
-      "default": "nil",
-      "size": null,
-      "type": "text",
-      "source": "hashed_password",
-      "references": null,
-      "allow_nil?": false,
-      "generated?": false,
-      "primary_key?": false
-    },
-    {
-      "default": "nil",
-      "size": null,
-      "type": "text",
-      "source": "display_name",
-      "references": null,
-      "allow_nil?": false,
-      "generated?": false,
-      "primary_key?": false
-    },
-    {
-      "default": "nil",
-      "size": null,
-      "type": "text",
-      "source": "avatar",
-      "references": null,
-      "allow_nil?": true,
-      "generated?": false,
-      "primary_key?": false
     }
   ],
-  "table": "users",
-  "hash": "555AD4E3591BFA0CE464D48F35F7EEE5C757A9EC084040DA7664D2E432DB3C40",
+  "table": "tokens",
+  "hash": "D42EC1D09CF92772EFFB9742768D59BF604FE0BE24BD2FC2944ED5F256BAA2EA",
   "repo": "Elixir.Gits.Repo",
-  "identities": [
-    {
-      "name": "unique_email",
-      "keys": [
-        "email"
-      ],
-      "base_filter": "archived_at IS NULL",
-      "all_tenants?": false,
-      "index_name": "users_unique_email_index"
-    }
-  ],
+  "identities": [],
   "schema": null,
-  "base_filter": "archived_at IS NULL",
+  "base_filter": null,
   "multitenancy": {
     "global": null,
-    "attribute": null,
-    "strategy": null
+    "strategy": null,
+    "attribute": null
   },
   "check_constraints": [],
   "custom_indexes": [],

@@ -6,10 +6,20 @@
 
     <div class="flex gap-4 text-center">
       <%= if @current_user do %>
-        <.link class="bg-black text-white p-4 rounded-xl hover:underline">
+        <.link
+          href={~p"/accounts/#{@conn.params["account_id"]}/invites/#{@conn.params["id"]}"}
+          method="put"
+          class="bg-black text-white p-4 rounded-xl hover:underline"
+        >
           Accept Invitation
         </.link>
-        <.link class="m-4 hover:underline">Decline</.link>
+        <.link
+          href={~p"/accounts/#{@conn.params["account_id"]}/invites/#{@conn.params["id"]}"}
+          method="patch"
+          class="m-4 hover:underline"
+        >
+          Decline
+        </.link>
       <% else %>
         <.link
           href={"/sign-in?email=#{@invite.email}&return_to=" <> ~p"/accounts/#{@conn.params["account_id"]}/invites/#{@conn.params["id"]}"}
