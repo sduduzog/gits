@@ -3,7 +3,7 @@ defmodule Gits.Accounts.Role do
 
   attributes do
     attribute :type, :atom do
-      constraints one_of: [:owner, :access_coordinator]
+      constraints one_of: [:owner, :admin, :access_coordinator]
 
       default :owner
 

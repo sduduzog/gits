@@ -1,1 +1,10 @@
-<div>account</div>
+<div class="h-screen flex flex-wrap items-center justify-center gap-8">
+  <.link
+    :for={account <- @accounts}
+    href={~p"/accounts/#{account.id}"}
+    class="border p-6 rounded-2xl"
+  >
+    <span><%= account.id %></span>
+    <span :for={role <- account.roles}><%= role.type %></span>
+  </.link>
+</div>

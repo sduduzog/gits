@@ -1,28 +1,33 @@
 defmodule GitsWeb.AccountController do
   use GitsWeb, :controller
   require Ash.Query
+  alias Gits.Accounts.Role
   alias Gits.Accounts.Account
-  alias Gits.Accounts
 
   plug GitsWeb.AuthGuard
 
-  def index(%{assigns: %{current_user: user}} = conn, %{"to" => route}) do
-    Accounts.load!(user, :accounts)
-    |> Map.get(:accounts)
-    |> case do
-      [head | []] ->
-        redirect(conn, to: ~p"/accounts/#{head.id}/" <> route)
+  def index(conn, params) do
+    route = params["to"]
 
-      _ ->
-        render(conn, :index, layout: false)
-    end
-  end
+    accounts =
+      Account
+      |> Ash.Query.sort(created_at: :desc)
+      |> Ash.Query.load(roles: Role |> Ash.Query.filter(user_id: conn.assigns.current_user.id))
 
-  def index(%{assigns: %{current_user: user}} = conn, _) do
-    Accounts.load!(user, :accounts)
-    |> Map.get(:accounts)
-    |> case do
-      [head | []] -> redirect(conn, to: ~p"/accounts/#{head.id}")
+    with {:ok, %{accounts: accounts}} <-
+           Gits.Accounts.load(conn.assigns.current_user, accounts: accounts) do
+      case accounts do
+        [head | []] when not is_nil(route) ->
+          redirect(conn, to: ~p"/accounts/#{head.id}/" <> route)
+
+        [head | []] ->
+          redirect(conn, to: ~p"/accounts/#{head.id}")
+
+        list ->
+          assign(conn, :accounts, list |> IO.inspect())
+          |> render(:index, layout: false)
+      end
+    else
       _ -> render(conn, :index, layout: false)
     end
   end

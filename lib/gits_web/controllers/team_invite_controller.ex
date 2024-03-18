@@ -8,14 +8,21 @@ defmodule GitsWeb.TeamInviteController do
   alias AshPhoenix.Form
 
   def show(conn, params) do
-    conn
-    |> assign(
-      :invite,
-      Ash.Query.for_read(Invite, :read)
-      |> Ash.Query.filter(id: params["id"])
-      |> Gits.Accounts.read_one!()
-    )
-    |> render(:show, layout: false)
+    Ash.Query.for_read(Invite, :read)
+    |> Ash.Query.filter(id: params["id"])
+    |> Ash.Query.filter(status: :pending)
+    |> Gits.Accounts.read_one()
+    |> case do
+      {:ok, invite} when not is_nil(invite) ->
+        conn
+        |> assign(
+          :invite,
+          invite
+        )
+
+      {:ok, nil} ->
+        raise GitsWeb.Exceptions.AccountNotFoundError, "no account found"
+    end
   end
 
   def update(%{method: "PATCH"} = conn, params) do

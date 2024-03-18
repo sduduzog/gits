@@ -49,8 +49,10 @@ defmodule Gits.Accounts.Invite do
                Ash.Changeset.new(Gits.Accounts.Role)
                |> Ash.Changeset.for_create(:create, %{
                  account_id: record.account_id,
-                 user_id: changeset.context.actor.id
+                 user_id: changeset.context.actor.id,
+                 type: record.role
                })
+               |> Gits.Accounts.create!()
 
                {:ok, record}
              end)
