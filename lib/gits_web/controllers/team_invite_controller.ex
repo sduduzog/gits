@@ -19,6 +19,7 @@ defmodule GitsWeb.TeamInviteController do
           :invite,
           invite
         )
+        |> render(:show, layout: false)
 
       {:ok, nil} ->
         raise GitsWeb.Exceptions.AccountNotFoundError, "no account found"

@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "flowbite": "^2.3.0",
+    "html5-qrcode": "^2.3.8",
     "swiper": "^11.0.7"
   }
 }

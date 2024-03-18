@@ -18,7 +18,7 @@ defmodule Gits.Checks.CanCreateTicket do
             user_id: actor.id,
             account_id: context.changeset.arguments.event.account_id
           )
-          |> Ash.Query.filter(type in [:owner])
+          |> Ash.Query.filter(type in [:owner, :admin])
       )
 
     user.roles != []

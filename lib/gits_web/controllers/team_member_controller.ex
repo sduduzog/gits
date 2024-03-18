@@ -18,6 +18,7 @@ defmodule GitsWeb.TeamMemberController do
       :invites,
       Ash.Query.for_read(Invite, :read, actor: conn.assigns.current_user)
       |> Ash.Query.filter(account_id: params["account_id"])
+      |> Ash.Query.filter(status: :pending)
       |> Gits.Accounts.read!()
     )
     |> render(:index, layout: {GitsWeb.Layouts, :account})

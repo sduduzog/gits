@@ -21,7 +21,7 @@ defmodule Gits.Checks.CanInviteUser do
             user_id: actor.id,
             account_id: context.changeset.arguments.account.id
           )
-          |> Ash.Query.filter(type in [:owner])
+          |> Ash.Query.filter(type in [:owner, :admin])
       )
 
     user.roles != []

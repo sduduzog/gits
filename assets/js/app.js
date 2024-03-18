@@ -25,6 +25,7 @@ import "flowbite/dist/flowbite.phoenix";
 import { TurnstileHook } from "phoenix_turnstile";
 
 import { register as swiperRegister } from "swiper/element/bundle";
+import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
 
 swiperRegister();
 
@@ -36,6 +37,30 @@ let liveSocket = new LiveSocket("/live", Socket, {
   params: { _csrf_token: csrfToken },
   hooks: {
     Turnstile: TurnstileHook,
+    QrScanner: {
+      mounted() {
+        console.log("mounted hey");
+        const html5QrCode = new Html5Qrcode("scanner", {
+          formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
+        });
+
+        html5QrCode
+          .start(
+            { facingMode: "user" },
+            {
+              fps: 10,
+              rememberLastUserCamera: true,
+              qrbox: { width: 200, height: 200 },
+            },
+            (decodedText, decodedResult) => {
+              console.log({ decodedText, decodedResult });
+            },
+          )
+          .then(() => {
+            this.pushEvent("testing");
+          });
+      },
+    },
   },
 });
 
