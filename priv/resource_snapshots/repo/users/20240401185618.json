@@ -7,8 +7,8 @@
       "source": "confirmed_at",
       "references": null,
       "allow_nil?": true,
-      "generated?": false,
-      "primary_key?": false
+      "primary_key?": false,
+      "generated?": false
     },
     {
       "default": "nil",
@@ -17,8 +17,8 @@
       "source": "archived_at",
       "references": null,
       "allow_nil?": true,
-      "generated?": false,
-      "primary_key?": false
+      "primary_key?": false,
+      "generated?": false
     },
     {
       "default": "fragment(\"uuid_generate_v4()\")",
@@ -27,8 +27,8 @@
       "source": "id",
       "references": null,
       "allow_nil?": false,
-      "generated?": false,
-      "primary_key?": true
+      "primary_key?": true,
+      "generated?": false
     },
     {
       "default": "nil",
@@ -37,8 +37,8 @@
       "source": "email",
       "references": null,
       "allow_nil?": false,
-      "generated?": false,
-      "primary_key?": false
+      "primary_key?": false,
+      "generated?": false
     },
     {
       "default": "nil",
@@ -47,8 +47,8 @@
       "source": "hashed_password",
       "references": null,
       "allow_nil?": false,
-      "generated?": false,
-      "primary_key?": false
+      "primary_key?": false,
+      "generated?": false
     },
     {
       "default": "nil",
@@ -57,8 +57,8 @@
       "source": "display_name",
       "references": null,
       "allow_nil?": false,
-      "generated?": false,
-      "primary_key?": false
+      "primary_key?": false,
+      "generated?": false
     },
     {
       "default": "nil",
@@ -67,12 +67,12 @@
       "source": "avatar",
       "references": null,
       "allow_nil?": true,
-      "generated?": false,
-      "primary_key?": false
+      "primary_key?": false,
+      "generated?": false
     }
   ],
   "table": "users",
-  "hash": "F00101492858292F6BBB8EFC5CD35748E9F18059EEB8EE49404CFCE685CF45E3",
+  "hash": "F380AE567A288D60D6FA6B7B531197CEABF1402AEC472C817CE5C91A79A066C9",
   "repo": "Elixir.Gits.Repo",
   "identities": [
     {
@@ -86,14 +86,14 @@
     }
   ],
   "schema": null,
-  "base_filter": "archived_at IS NULL",
-  "multitenancy": {
-    "global": null,
-    "strategy": null,
-    "attribute": null
-  },
   "check_constraints": [],
   "custom_indexes": [],
+  "multitenancy": {
+    "global": null,
+    "attribute": null,
+    "strategy": null
+  },
+  "base_filter": "archived_at IS NULL",
   "custom_statements": [],
   "has_create_action": true
 }

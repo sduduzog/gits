@@ -32,8 +32,7 @@ defmodule GitsWeb.EventController do
     conn
     |> assign(
       :event,
-      Event
-      |> Ash.Query.for_read(:read)
+      Ash.Query.for_read(Event, :read)
       |> Ash.Query.filter(id: params["id"])
       |> Gits.Events.read_one!()
     )
@@ -52,8 +51,8 @@ defmodule GitsWeb.EventController do
   end
 
   def new(conn, _) do
-    conn
-    |> assign(
+    assign(
+      conn,
       :form,
       Form.for_create(Event, :create, api: Events, as: "event", actor: conn.assigns.current_user)
     )
@@ -61,8 +60,8 @@ defmodule GitsWeb.EventController do
   end
 
   def edit(conn, params) do
-    conn
-    |> assign(
+    assign(
+      conn,
       :form,
       Form.for_update(
         Event

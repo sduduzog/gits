@@ -24,7 +24,7 @@ defmodule GitsWeb.AccountController do
           redirect(conn, to: ~p"/accounts/#{head.id}")
 
         list ->
-          assign(conn, :accounts, list |> IO.inspect())
+          assign(conn, :accounts, list)
           |> render(:index, layout: false)
       end
     else

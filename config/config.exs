@@ -17,9 +17,6 @@ config :ash, :compatible_foreign_key_types, [
   {Ash.Type.Integer, Ash.Type.UUID}
 ]
 
-config :ash_graphql, :default_managed_relationship_type_name_template, :action_name
-config :ash_graphql, :allow_non_null_mutation_arguments?, true
-
 # Configures the endpoint
 config :gits, GitsWeb.Endpoint,
   url: [host: "localhost"],

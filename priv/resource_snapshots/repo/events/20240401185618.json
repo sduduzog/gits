@@ -7,8 +7,8 @@
       "source": "archived_at",
       "references": null,
       "allow_nil?": true,
-      "generated?": false,
-      "primary_key?": false
+      "primary_key?": false,
+      "generated?": false
     },
     {
       "default": "fragment(\"uuid_generate_v4()\")",
@@ -17,38 +17,28 @@
       "source": "id",
       "references": null,
       "allow_nil?": false,
-      "generated?": false,
-      "primary_key?": true
-    },
-    {
-      "default": "nil",
-      "size": null,
-      "type": "citext",
-      "source": "email",
-      "references": null,
-      "allow_nil?": false,
-      "generated?": false,
-      "primary_key?": false
+      "primary_key?": true,
+      "generated?": false
     },
     {
       "default": "nil",
       "size": null,
       "type": "text",
-      "source": "role",
+      "source": "name",
       "references": null,
       "allow_nil?": false,
-      "generated?": false,
-      "primary_key?": false
+      "primary_key?": false,
+      "generated?": false
     },
     {
-      "default": "\"pending\"",
+      "default": "nil",
       "size": null,
-      "type": "text",
-      "source": "status",
+      "type": "naive_datetime",
+      "source": "starts_at",
       "references": null,
       "allow_nil?": false,
-      "generated?": false,
-      "primary_key?": false
+      "primary_key?": false,
+      "generated?": false
     },
     {
       "default": "fragment(\"now()\")",
@@ -57,8 +47,8 @@
       "source": "created_at",
       "references": null,
       "allow_nil?": false,
-      "generated?": false,
-      "primary_key?": false
+      "primary_key?": false,
+      "generated?": false
     },
     {
       "default": "fragment(\"now()\")",
@@ -67,8 +57,8 @@
       "source": "updated_at",
       "references": null,
       "allow_nil?": false,
-      "generated?": false,
-      "primary_key?": false
+      "primary_key?": false,
+      "generated?": false
     },
     {
       "default": "nil",
@@ -76,53 +66,42 @@
       "type": "uuid",
       "source": "account_id",
       "references": {
-        "name": "account_invites_account_id_fkey",
+        "name": "events_account_id_fkey",
         "table": "accounts",
+        "primary_key?": true,
         "schema": "public",
-        "on_delete": null,
         "multitenancy": {
           "global": null,
-          "strategy": null,
-          "attribute": null
+          "attribute": null,
+          "strategy": null
         },
-        "primary_key?": true,
         "destination_attribute": "id",
-        "deferrable": false,
-        "match_type": null,
-        "match_with": null,
+        "on_delete": null,
         "on_update": null,
+        "deferrable": false,
+        "match_with": null,
+        "match_type": null,
         "destination_attribute_default": null,
         "destination_attribute_generated": null
       },
       "allow_nil?": true,
-      "generated?": false,
-      "primary_key?": false
+      "primary_key?": false,
+      "generated?": false
     }
   ],
-  "table": "account_invites",
-  "hash": "227B6DC3863C67860DB13354C649A88EB094E51B06200F84CCE36A3CCE74D7EE",
+  "table": "events",
+  "hash": "C0E1F13E70D7240A2140F6C6742B358C71DF2CCD347EB0A6558D79DBD4FBC184",
   "repo": "Elixir.Gits.Repo",
-  "identities": [
-    {
-      "name": "unique_email_invite",
-      "keys": [
-        "email",
-        "account_id"
-      ],
-      "base_filter": "archived_at IS NULL",
-      "all_tenants?": false,
-      "index_name": "account_invites_unique_email_invite_index"
-    }
-  ],
+  "identities": [],
   "schema": null,
-  "base_filter": "archived_at IS NULL",
-  "multitenancy": {
-    "global": null,
-    "strategy": null,
-    "attribute": null
-  },
   "check_constraints": [],
   "custom_indexes": [],
+  "multitenancy": {
+    "global": null,
+    "attribute": null,
+    "strategy": null
+  },
+  "base_filter": "archived_at IS NULL",
   "custom_statements": [],
   "has_create_action": true
 }

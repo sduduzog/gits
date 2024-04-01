@@ -1,4 +1,7 @@
 defmodule GitsWeb.AttendeeController do
+  alias Gits.Events.Attendee
+  alias Gits.Events.TicketInstance
+  require Ash.Query
   use GitsWeb, :controller
 
   plug :assign_params
@@ -24,10 +27,36 @@ defmodule GitsWeb.AttendeeController do
   end
 
   def new(conn, params) do
+    instance =
+      Ash.Query.filter(TicketInstance, id: params["code"])
+      |> Ash.Query.filter(ticket.event.id == ^params["event_id"])
+      |> Ash.Query.load(:user)
+      |> Gits.Events.read_one!()
+
+    errors =
+      if instance do
+        Ash.Changeset.new(Attendee, %{
+          name: instance.user.display_name,
+          email: instance.user.email,
+          event_id: params["event_id"],
+          instance_id: instance.id
+        })
+        |> Ash.Changeset.for_create(:create)
+        |> Gits.Events.create(actor: conn.assigns.current_user)
+        |> case do
+          {:error, %Ash.Error.Invalid{} = invalid} ->
+            invalid.errors
+
+          _ ->
+            nil
+        end
+      else
+        nil
+      end
+
     conn
-    |> put_layout(false)
-    |> Phoenix.LiveView.Controller.live_render(GitsWeb.NewAttendeeLive,
-      session: params
-    )
+    |> assign(:instance, instance)
+    |> assign(:errors, errors)
+    |> render(:new, layout: false)
   end
 end

@@ -10,7 +10,6 @@ defmodule Gits.Checks.CanInviteUser do
   end
 
   def match?(%User{} = actor, %{resource: Gits.Accounts.Invite} = context, _) do
-    IO.inspect(actor)
 
     user =
       Gits.Accounts.load!(

@@ -8,7 +8,6 @@ defmodule Gits.Accounts.Invite.Changes.CreateInvite do
   def change(changeset, _opts, _context) do
     changeset
     |> Ash.Changeset.after_action(fn _, %Invite{} = result ->
-      IO.inspect(result)
 
       email =
         new()

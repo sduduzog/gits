@@ -7,7 +7,7 @@ services:
       - rdata:/data
     ports:
       - "6379:6379"
-  database:
+  postgres:
     image: postgres:15
     volumes:
       - pgdata:/var/lib/postgresql/data

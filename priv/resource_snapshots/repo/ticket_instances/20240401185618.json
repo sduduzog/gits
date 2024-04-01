@@ -7,18 +7,18 @@
       "source": "archived_at",
       "references": null,
       "allow_nil?": true,
-      "generated?": false,
-      "primary_key?": false
+      "primary_key?": false,
+      "generated?": false
     },
     {
-      "default": "\"owner\"",
+      "default": "nil",
       "size": null,
-      "type": "text",
-      "source": "type",
+      "type": "bigint",
+      "source": "id",
       "references": null,
       "allow_nil?": false,
-      "generated?": false,
-      "primary_key?": false
+      "primary_key?": true,
+      "generated?": true
     },
     {
       "default": "fragment(\"now()\")",
@@ -27,8 +27,8 @@
       "source": "created_at",
       "references": null,
       "allow_nil?": false,
-      "generated?": false,
-      "primary_key?": false
+      "primary_key?": false,
+      "generated?": false
     },
     {
       "default": "fragment(\"now()\")",
@@ -37,8 +37,36 @@
       "source": "updated_at",
       "references": null,
       "allow_nil?": false,
-      "generated?": false,
-      "primary_key?": false
+      "primary_key?": false,
+      "generated?": false
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "uuid",
+      "source": "ticket_id",
+      "references": {
+        "name": "ticket_instances_ticket_id_fkey",
+        "table": "tickets",
+        "primary_key?": true,
+        "schema": "public",
+        "multitenancy": {
+          "global": null,
+          "attribute": null,
+          "strategy": null
+        },
+        "destination_attribute": "id",
+        "on_delete": null,
+        "on_update": null,
+        "deferrable": false,
+        "match_with": null,
+        "match_type": null,
+        "destination_attribute_default": null,
+        "destination_attribute_generated": null
+      },
+      "allow_nil?": true,
+      "primary_key?": false,
+      "generated?": false
     },
     {
       "default": "nil",
@@ -46,70 +74,42 @@
       "type": "uuid",
       "source": "user_id",
       "references": {
-        "name": "account_roles_user_id_fkey",
+        "name": "ticket_instances_user_id_fkey",
         "table": "users",
+        "primary_key?": true,
         "schema": "public",
-        "on_delete": null,
         "multitenancy": {
           "global": null,
-          "strategy": null,
-          "attribute": null
+          "attribute": null,
+          "strategy": null
         },
-        "primary_key?": true,
         "destination_attribute": "id",
-        "deferrable": false,
-        "match_type": null,
-        "match_with": null,
+        "on_delete": null,
         "on_update": null,
+        "deferrable": false,
+        "match_with": null,
+        "match_type": null,
         "destination_attribute_default": null,
         "destination_attribute_generated": null
       },
-      "allow_nil?": false,
-      "generated?": false,
-      "primary_key?": true
-    },
-    {
-      "default": "nil",
-      "size": null,
-      "type": "uuid",
-      "source": "account_id",
-      "references": {
-        "name": "account_roles_account_id_fkey",
-        "table": "accounts",
-        "schema": "public",
-        "on_delete": null,
-        "multitenancy": {
-          "global": null,
-          "strategy": null,
-          "attribute": null
-        },
-        "primary_key?": true,
-        "destination_attribute": "id",
-        "deferrable": false,
-        "match_type": null,
-        "match_with": null,
-        "on_update": null,
-        "destination_attribute_default": null,
-        "destination_attribute_generated": null
-      },
-      "allow_nil?": false,
-      "generated?": false,
-      "primary_key?": true
+      "allow_nil?": true,
+      "primary_key?": false,
+      "generated?": false
     }
   ],
-  "table": "account_roles",
-  "hash": "61FCEB33FB1AFFD38363B3B0DCB919B9744D4ADA12572423253D0ACCED21CB0D",
+  "table": "ticket_instances",
+  "hash": "62E27E56D2280DB57638B22FE199177C6FABEC757084831053D6A8C7B0E6C175",
   "repo": "Elixir.Gits.Repo",
   "identities": [],
   "schema": null,
-  "base_filter": "archived_at IS NULL",
-  "multitenancy": {
-    "global": null,
-    "strategy": null,
-    "attribute": null
-  },
   "check_constraints": [],
   "custom_indexes": [],
+  "multitenancy": {
+    "global": null,
+    "attribute": null,
+    "strategy": null
+  },
+  "base_filter": "archived_at IS NULL",
   "custom_statements": [],
   "has_create_action": true
 }

@@ -1,1 +1,67 @@
-<div>new attendee</div>
+<%= if @instance do %>
+  <%= if @errors do %>
+    <div class="h-screen flex items-center">
+      <div class="mx-auto max-w-screen-sm space-y-8 flex flex-col items-center">
+        <div class="bg-amber-200 p-4 rounded-full">
+          <div class="bg-amber-400 rounded-full p-5 flex">
+            <.icon name="hero-exclamation-triangle" class="scale-150 text-white" />
+          </div>
+        </div>
+        <h1 class="font-bold text-3xl">Warning</h1>
+        <span :for={error <- @errors}>Seat <%= error.message %></span>
+        <div class="flex items-center justify-center">
+          <.link
+            href={
+              ~p"/accounts/#{@conn.params["account_id"]}/events/#{@conn.params["event_id"]}/attendees/scanner"
+            }
+            class="font-medium"
+          >
+            Continue
+          </.link>
+        </div>
+      </div>
+    </div>
+  <% else %>
+    <div class="h-screen flex items-center">
+      <div class="mx-auto max-w-screen-sm space-y-8 flex flex-col items-center">
+        <div class="bg-green-200 p-4 rounded-full">
+          <div class="bg-green-400 rounded-full p-4 flex">
+            <.icon name="hero-check" class="scale-150 text-white" />
+          </div>
+        </div>
+        <h1 class="font-bold text-3xl">Success</h1>
+        <div class="flex items-center justify-center">
+          <.link
+            href={
+              ~p"/accounts/#{@conn.params["account_id"]}/events/#{@conn.params["event_id"]}/attendees/scanner"
+            }
+            class="font-medium"
+          >
+            Continue
+          </.link>
+        </div>
+      </div>
+    </div>
+  <% end %>
+<% else %>
+  <div class="h-screen flex items-center">
+    <div class="mx-auto max-w-screen-sm space-y-8 flex flex-col items-center">
+      <div class="bg-red-200 p-4 rounded-full">
+        <div class="bg-red-400 rounded-full p-5 flex">
+          <.icon name="hero-x-mark" class="scale-150 text-white" />
+        </div>
+      </div>
+      <h1 class="font-bold text-3xl">Not found</h1>
+      <div class="flex items-center justify-center">
+        <.link
+          href={
+            ~p"/accounts/#{@conn.params["account_id"]}/events/#{@conn.params["event_id"]}/attendees/scanner"
+          }
+          class="font-medium"
+        >
+          Continue
+        </.link>
+      </div>
+    </div>
+  </div>
+<% end %>

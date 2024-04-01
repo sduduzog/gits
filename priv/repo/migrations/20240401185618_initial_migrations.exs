@@ -89,6 +89,36 @@ defmodule Gits.Repo.Migrations.InitialMigrations do
       add :account_id, :uuid
     end
 
+    create table(:attendees, primary_key: false) do
+      add :archived_at, :utc_datetime_usec
+      add :id, :uuid, null: false, default: fragment("uuid_generate_v4()"), primary_key: true
+      add :name, :text, null: false
+      add :email, :citext, null: false
+      add :created_at, :utc_datetime_usec, null: false, default: fragment("now()")
+      add :updated_at, :utc_datetime_usec, null: false, default: fragment("now()")
+
+      add :instance_id,
+          references(:ticket_instances,
+            column: :id,
+            name: "attendees_instance_id_fkey",
+            type: :bigint,
+            prefix: "public"
+          )
+
+      add :event_id,
+          references(:events,
+            column: :id,
+            name: "attendees_event_id_fkey",
+            type: :uuid,
+            prefix: "public"
+          )
+    end
+
+    create unique_index(:attendees, [:email, :event_id],
+             where: "archived_at IS NULL",
+             name: "attendees_unique_per_event_index"
+           )
+
     create table(:accounts, primary_key: false) do
       add :archived_at, :utc_datetime_usec
       add :id, :uuid, null: false, default: fragment("uuid_generate_v4()"), primary_key: true
@@ -189,6 +219,16 @@ defmodule Gits.Repo.Migrations.InitialMigrations do
     end
 
     drop table(:accounts)
+
+    drop_if_exists unique_index(:attendees, [:email, :event_id],
+                     name: "attendees_unique_per_event_index"
+                   )
+
+    drop constraint(:attendees, "attendees_instance_id_fkey")
+
+    drop constraint(:attendees, "attendees_event_id_fkey")
+
+    drop table(:attendees)
 
     alter table(:events) do
       remove :account_id
