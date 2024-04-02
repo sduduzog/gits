@@ -22,8 +22,13 @@ defmodule GitsWeb.AttendeeController do
     end
   end
 
-  def index(conn, _) do
-    render(conn, :index, layout: {GitsWeb.Layouts, :event})
+  def index(conn, params) do
+    attendees =
+      Ash.Query.filter(Attendee, event.id == ^params["event_id"])
+      |> Gits.Events.read!()
+
+    assign(conn, :attendees, attendees)
+    |> render(:index, layout: {GitsWeb.Layouts, :event})
   end
 
   def new(conn, params) do
