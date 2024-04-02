@@ -2,6 +2,7 @@ defmodule Gits.Accounts.Invite do
   require Ash.Resource.Change.Builtins
 
   use Ash.Resource,
+    domain: Gits.Accounts,
     data_layer: AshPostgres.DataLayer,
     extensions: [AshArchival.Resource],
     authorizers: [Ash.Policy.Authorizer]

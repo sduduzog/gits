@@ -8,7 +8,7 @@
 import Config
 
 config :gits,
-  ash_apis: [Gits.Accounts, Gits.Events],
+  ash_domains: [Gits.Accounts, Gits.Events],
   ecto_repos: [Gits.Repo]
 
 config :ash, :utc_datetime_type, :datetime
@@ -49,7 +49,7 @@ config :esbuild,
 
 # Configure tailwind (the version is required)
 config :tailwind,
-  version: "3.4.1",
+  version: "3.4.3",
   gits: [
     args: ~w(
       --config=tailwind.config.js

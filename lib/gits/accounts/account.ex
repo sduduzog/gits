@@ -1,5 +1,5 @@
 defmodule Gits.Accounts.Account do
-  use Ash.Resource, data_layer: AshPostgres.DataLayer, extensions: [AshArchival.Resource]
+  use Ash.Resource, domain: Gits.Accounts, data_layer: AshPostgres.DataLayer, extensions: [AshArchival.Resource]
 
   attributes do
     uuid_primary_key :id

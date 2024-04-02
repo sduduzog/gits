@@ -1,5 +1,5 @@
 defmodule Gits.Accounts do
-  use Ash.Api
+  use Ash.Domain
 
   resources do
     resource Gits.Accounts.Account
