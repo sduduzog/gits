@@ -8,7 +8,7 @@ config :gits, Gits.Repo,
   database: "gits_dev",
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
-  pool_size: 2
+  pool_size: 5
 
 # For development, we disable any cache and enable
 # debugging and code reloading.
