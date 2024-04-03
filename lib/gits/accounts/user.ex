@@ -2,13 +2,13 @@ defmodule Gits.Accounts.User do
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     extensions: [AshAuthentication, AshArchival.Resource],
-    domain: Gits.Account
+    domain: Gits.Accounts
 
   attributes do
     uuid_primary_key :id
     attribute :email, :ci_string, allow_nil?: false, public?: true
     attribute :hashed_password, :string, allow_nil?: false, sensitive?: true
-    attribute :display_name, :string, allow_nil?: false
+    attribute :display_name, :string, allow_nil?: false, public?: true
     attribute :avatar, :string, allow_nil?: true
   end
 
@@ -21,7 +21,7 @@ defmodule Gits.Accounts.User do
 
     has_many :roles, Gits.Accounts.Role
 
-    has_many :ticket_instances, Gits.Events.TicketInstance, api: Gits.Events
+    has_many :ticket_instances, Gits.Events.TicketInstance, domain: Gits.Events
   end
 
   changes do
@@ -30,7 +30,6 @@ defmodule Gits.Accounts.User do
   end
 
   authentication do
-    api Gits.Accounts
 
     add_ons do
       confirmation :confirm do

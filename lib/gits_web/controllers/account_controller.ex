@@ -1,6 +1,7 @@
 defmodule GitsWeb.AccountController do
   use GitsWeb, :controller
   require Ash.Query
+  alias Gits.Events.Event
   alias Gits.Accounts.Role
   alias Gits.Accounts.Account
 
@@ -15,7 +16,7 @@ defmodule GitsWeb.AccountController do
       |> Ash.Query.load(roles: Role |> Ash.Query.filter(user_id: conn.assigns.current_user.id))
 
     with {:ok, %{accounts: accounts}} <-
-           Gits.Accounts.load(conn.assigns.current_user, accounts: accounts) do
+           Ash.load(conn.assigns.current_user, accounts: accounts) do
       case accounts do
         [head | []] when not is_nil(route) ->
           redirect(conn, to: ~p"/accounts/#{head.id}/" <> route)
@@ -34,13 +35,15 @@ defmodule GitsWeb.AccountController do
 
   def show(conn, params) do
     account =
-      Account
-      |> Ash.Query.filter(id: params["account_id"])
-      |> Gits.Events.read_one!()
-      |> Gits.Events.load!(:events)
+      Ash.Query.filter(Account, id: params["account_id"])
+      |> Ash.read_one!(actor: conn.assigns.current_user)
+
+    events =
+      Ash.Query.filter(Event, account.id == ^account.id)
+      |> Ash.read!(actor: conn.assigns.current_user)
 
     conn
-    |> assign(:events, account.events)
+    |> assign(:events, events)
     |> render(:show, layout: {GitsWeb.Layouts, :account})
   end
 
@@ -56,8 +59,8 @@ defmodule GitsWeb.AccountController do
       Account
       |> Ash.Query.for_read(:read, actor: conn.assigns.current_user)
       |> Ash.Query.filter(id: params["account_id"])
-      |> Gits.Accounts.read_one!()
-      |> Gits.Accounts.load!(roles: [:user])
+      |> Ash.read_one!()
+      |> Ash.load!(roles: [:user])
     )
     |> render(:team, layout: {GitsWeb.Layouts, :account})
   end

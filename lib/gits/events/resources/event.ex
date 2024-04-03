@@ -2,7 +2,8 @@ defmodule Gits.Events.Event do
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     extensions: [AshArchival.Resource],
-    authorizers: [Ash.Policy.Authorizer]
+    authorizers: [Ash.Policy.Authorizer],
+    domain: Gits.Events
 
   attributes do
     uuid_primary_key :id
@@ -11,14 +12,14 @@ defmodule Gits.Events.Event do
 
     attribute :starts_at, :naive_datetime, allow_nil?: false
 
-    create_timestamp :created_at, private?: false
+    create_timestamp :created_at, public?: true
 
-    update_timestamp :updated_at, private?: false
+    update_timestamp :updated_at, public?: true
   end
 
   relationships do
     belongs_to :account, Gits.Accounts.Account do
-      api Gits.Accounts
+      domain Gits.Accounts
     end
 
     has_many :tickets, Gits.Events.Ticket
@@ -34,6 +35,10 @@ defmodule Gits.Events.Event do
   end
 
   policies do
+    policy always() do
+      authorize_if always()
+    end
+
     policy action(:create) do
       authorize_if Gits.Checks.CanCreateEvent
     end
@@ -45,6 +50,6 @@ defmodule Gits.Events.Event do
 
   postgres do
     table "events"
-    repo Gits.Repo
+    repo(Gits.Repo)
   end
 end

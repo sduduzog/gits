@@ -2,7 +2,8 @@ defmodule Gits.Events.Ticket do
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     extensions: [AshArchival.Resource],
-    authorizers: [Ash.Policy.Authorizer]
+    authorizers: [Ash.Policy.Authorizer],
+    domain: Gits.Events
 
   attributes do
     uuid_primary_key :id
@@ -11,9 +12,9 @@ defmodule Gits.Events.Ticket do
 
     attribute :price, :integer, allow_nil?: false
 
-    create_timestamp :created_at, private?: false
+    create_timestamp :created_at, public?: true
 
-    update_timestamp :updated_at, private?: false
+    update_timestamp :updated_at, public?: true
   end
 
   aggregates do

@@ -1,12 +1,12 @@
 defmodule Gits.Events.TicketInstance do
-  use Ash.Resource, data_layer: AshPostgres.DataLayer, extensions: [AshArchival.Resource]
+  use Ash.Resource, data_layer: AshPostgres.DataLayer, extensions: [AshArchival.Resource], domain: Gits.Events
 
   attributes do
     integer_primary_key :id
 
-    create_timestamp :created_at, private?: false
+    create_timestamp :created_at, public?: true
 
-    update_timestamp :updated_at, private?: false
+    update_timestamp :updated_at, public?: true
   end
 
   relationships do
@@ -14,7 +14,7 @@ defmodule Gits.Events.TicketInstance do
 
     belongs_to :user, Gits.Accounts.User,
       attribute_writable?: true,
-      api: Gits.Accounts
+      domain: Gits.Accounts
   end
 
   actions do

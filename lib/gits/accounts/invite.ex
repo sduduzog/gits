@@ -2,10 +2,10 @@ defmodule Gits.Accounts.Invite do
   require Ash.Resource.Change.Builtins
 
   use Ash.Resource,
-    domain: Gits.Accounts,
     data_layer: AshPostgres.DataLayer,
     extensions: [AshArchival.Resource],
-    authorizers: [Ash.Policy.Authorizer]
+    authorizers: [Ash.Policy.Authorizer],
+    domain: Gits.Accounts
 
   attributes do
     uuid_primary_key :id
@@ -25,9 +25,9 @@ defmodule Gits.Accounts.Invite do
       allow_nil? false
     end
 
-    create_timestamp :created_at, private?: false
+    create_timestamp :created_at, public?: true
 
-    update_timestamp :updated_at, private?: false
+    update_timestamp :updated_at, public?: true
   end
 
   relationships do

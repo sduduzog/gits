@@ -25,7 +25,7 @@ defmodule GitsWeb.AttendeeController do
   def index(conn, params) do
     attendees =
       Ash.Query.filter(Attendee, event.id == ^params["event_id"])
-      |> Gits.Events.read!()
+      |> Ash.read!()
 
     assign(conn, :attendees, attendees)
     |> render(:index, layout: {GitsWeb.Layouts, :event})
@@ -36,18 +36,17 @@ defmodule GitsWeb.AttendeeController do
       Ash.Query.filter(TicketInstance, id: params["code"])
       |> Ash.Query.filter(ticket.event.id == ^params["event_id"])
       |> Ash.Query.load(:user)
-      |> Gits.Events.read_one!()
+      |> Ash.read_one!()
 
     errors =
       if instance do
-        Ash.Changeset.new(Attendee, %{
+        Ash.Changeset.for_create(Attendee,:create, %{
           name: instance.user.display_name,
           email: instance.user.email,
           event_id: params["event_id"],
           instance_id: instance.id
         })
-        |> Ash.Changeset.for_create(:create)
-        |> Gits.Events.create(actor: conn.assigns.current_user)
+        |> Ash.create(actor: conn.assigns.current_user)
         |> case do
           {:error, %Ash.Error.Invalid{} = invalid} ->
             invalid.errors

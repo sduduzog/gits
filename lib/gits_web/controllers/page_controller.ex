@@ -8,7 +8,7 @@ defmodule GitsWeb.PageController do
   def home(conn, _params) do
     events =
       Event
-      |> Gits.Events.read!()
+      |> Ash.read!()
 
     conn
     |> assign(:events, events)
@@ -19,7 +19,7 @@ defmodule GitsWeb.PageController do
     event =
       Event
       |> Ash.Query.filter(id: params["id"])
-      |> Gits.Events.read_one!()
+      |> Ash.read_one!()
 
     conn
     |> assign(:event, event)
@@ -40,8 +40,8 @@ defmodule GitsWeb.PageController do
       TicketInstance
       |> Ash.Query.filter(user_id: conn.assigns.current_user.id)
       |> Ash.Query.sort(ticket_id: :asc)
-      |> Gits.Events.read!()
-      |> Gits.Events.load!(ticket: [event: events])
+      |> Ash.read!()
+      |> Ash.load!(ticket: [event: events])
       |> Enum.filter(fn x -> x.ticket.event end)
       |> Enum.sort_by(& &1.ticket.event.starts_at)
 

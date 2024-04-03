@@ -1,5 +1,5 @@
 defmodule Gits.Accounts.Role do
-  use Ash.Resource, data_layer: AshPostgres.DataLayer, extensions: [AshArchival.Resource]
+  use Ash.Resource, data_layer: AshPostgres.DataLayer, extensions: [AshArchival.Resource], domain: Gits.Accounts
 
   attributes do
     attribute :type, :atom do
@@ -10,9 +10,9 @@ defmodule Gits.Accounts.Role do
       allow_nil? false
     end
 
-    create_timestamp :created_at, private?: false
+    create_timestamp :created_at, public?: true
 
-    update_timestamp :updated_at, private?: false
+    update_timestamp :updated_at, public?: true
   end
 
   actions do

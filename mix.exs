@@ -59,6 +59,7 @@ defmodule Gits.MixProject do
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.2"},
       {:ash, "~> 3.0.0-rc.6"},
+      {:picosat_elixir, "~> 0.2.0"},
       {:ash_phoenix, "~> 2.0.0-rc.1"},
       {:ash_postgres, "~> 2.0.0-rc.3"},
       {:ash_authentication, "~> 4.0.0-rc.1"},
