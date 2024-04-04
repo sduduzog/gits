@@ -50,6 +50,7 @@ defmodule Gits.MixProject do
        app: false,
        compile: false,
        depth: 1},
+      {:tailwind_formatter, "~> 0.4.0", only: [:dev, :test], runtime: false},
       {:swoosh, "~> 1.5"},
       {:finch, "~> 0.13"},
       {:telemetry_metrics, "~> 0.6"},

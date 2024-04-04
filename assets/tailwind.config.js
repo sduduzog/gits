@@ -6,12 +6,7 @@ const fs = require("fs");
 const path = require("path");
 
 module.exports = {
-  content: [
-    "./js/**/*.js",
-    "../lib/gits_web.ex",
-    "../lib/gits_web/**/*.*ex",
-    "./node_modules/flowbite/**/*.js",
-  ],
+  content: ["./js/**/*.js", "../lib/gits_web.ex", "../lib/gits_web/**/*.*ex"],
   theme: {
     extend: {
       fontFamily: {
@@ -25,7 +20,6 @@ module.exports = {
   },
   plugins: [
     require("@tailwindcss/forms"),
-    require("flowbite/plugin"),
     // Allows prefixing tailwind classes with LiveView classes to add rules
     // only when LiveView classes are applied, for example:
     //
