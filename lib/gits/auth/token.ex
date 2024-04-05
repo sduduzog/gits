@@ -1,8 +1,8 @@
-defmodule Gits.Accounts.Token do
+defmodule Gits.Auth.Token do
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     extensions: [AshAuthentication.TokenResource],
-    domain: Gits.Accounts
+    domain: Gits.Auth
 
   postgres do
     table "tokens"

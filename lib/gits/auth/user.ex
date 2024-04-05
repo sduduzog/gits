@@ -1,8 +1,9 @@
-defmodule Gits.Accounts.User do
+defmodule Gits.Auth.User do
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     extensions: [AshAuthentication, AshArchival.Resource],
-    domain: Gits.Accounts
+    authorizers: Ash.Policy.Authorizer,
+    domain: Gits.Auth
 
   attributes do
     uuid_primary_key :id
@@ -12,29 +13,11 @@ defmodule Gits.Accounts.User do
     attribute :avatar, :string, allow_nil?: true
   end
 
-  relationships do
-    many_to_many :accounts, Gits.Accounts.Account do
-      through Gits.Accounts.Role
-      source_attribute_on_join_resource :user_id
-      destination_attribute_on_join_resource :account_id
-    end
-
-    has_many :roles, Gits.Accounts.Role
-
-    has_many :ticket_instances, Gits.Events.TicketInstance, domain: Gits.Events
-  end
-
-  changes do
-    change {Gits.Accounts.User.Changes.CreateAccount, []},
-      where: [action_is(:register_with_password)]
-  end
-
   authentication do
-
     add_ons do
       confirmation :confirm do
         monitor_fields [:email]
-        sender Gits.Accounts.User.Senders.AccountConfirmationSender
+        sender Gits.Auth.Senders.AccountConfirmation
       end
     end
 
@@ -44,18 +27,14 @@ defmodule Gits.Accounts.User do
         sign_in_tokens_enabled? true
         confirmation_required? false
         register_action_accept([:display_name])
-
-        resettable do
-          sender Gits.Accounts.User.Senders.SendPasswordResetEmail
-        end
       end
     end
 
     tokens do
       enabled? true
-      token_resource Gits.Accounts.Token
+      token_resource Gits.Auth.Token
 
-      signing_secret Gits.Accounts.Secrets
+      signing_secret Gits.Secrets
     end
   end
 
@@ -66,11 +45,21 @@ defmodule Gits.Accounts.User do
 
   identities do
     identity :unique_email, [:email] do
-      eager_check_with Gits.Accounts
+      eager_check_with Gits.Auth
     end
   end
 
   actions do
     defaults [:read]
+  end
+
+  policies do
+    bypass AshAuthentication.Checks.AshAuthenticationInteraction do
+      authorize_if always()
+    end
+
+    policy always() do
+      forbid_if always()
+    end
   end
 end

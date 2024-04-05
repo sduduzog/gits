@@ -15,6 +15,10 @@ defmodule GitsWeb.PageController do
     |> render(:home)
   end
 
+  def organizers(conn, _) do
+    render(conn, :organizers)
+  end
+
   def event(conn, params) do
     event =
       Event

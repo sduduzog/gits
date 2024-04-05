@@ -3,7 +3,7 @@ defmodule GitsWeb.AuthController do
   use AshAuthentication.Phoenix.Controller
 
   def sign_in(conn, params) do
-    with %Gits.Accounts.User{} <- conn.assigns.current_user do
+    with %Gits.Auth.User{} <- conn.assigns.current_user do
       redirect(conn, to: ~p"/")
     end
 
@@ -21,7 +21,7 @@ defmodule GitsWeb.AuthController do
   end
 
   def register(conn, params) do
-    with %Gits.Accounts.User{} <- conn.assigns.current_user do
+    with %Gits.Auth.User{} <- conn.assigns.current_user do
       redirect(conn, to: ~p"/")
     end
 

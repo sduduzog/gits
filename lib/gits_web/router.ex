@@ -20,6 +20,7 @@ defmodule GitsWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+    get "/organizers", PageController, :organizers
     get "/events/:id", PageController, :event
     get "/tickets", PageController, :tickets
     get "/settings", PageController, :settings
@@ -61,7 +62,7 @@ defmodule GitsWeb.Router do
     live "/password-reset/:token", AuthLive.PasswordReset
 
     sign_out_route AuthController
-    auth_routes_for Gits.Accounts.User, to: AuthController
+    auth_routes_for Gits.Auth.User, to: AuthController
   end
 
   # Other scopes may use custom stacks.

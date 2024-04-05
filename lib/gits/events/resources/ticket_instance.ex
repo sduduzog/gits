@@ -1,5 +1,8 @@
 defmodule Gits.Events.TicketInstance do
-  use Ash.Resource, data_layer: AshPostgres.DataLayer, extensions: [AshArchival.Resource], domain: Gits.Events
+  use Ash.Resource,
+    data_layer: AshPostgres.DataLayer,
+    extensions: [AshArchival.Resource],
+    domain: Gits.Events
 
   attributes do
     integer_primary_key :id
@@ -11,10 +14,6 @@ defmodule Gits.Events.TicketInstance do
 
   relationships do
     belongs_to :ticket, Gits.Events.Ticket, attribute_writable?: true
-
-    belongs_to :user, Gits.Accounts.User,
-      attribute_writable?: true,
-      domain: Gits.Accounts
   end
 
   actions do

@@ -17,21 +17,8 @@ defmodule Gits.Events.Event do
     update_timestamp :updated_at, public?: true
   end
 
-  relationships do
-    belongs_to :account, Gits.Accounts.Account do
-      domain Gits.Accounts
-    end
-
-    has_many :tickets, Gits.Events.Ticket
-  end
-
   actions do
     defaults [:read, :update]
-
-    create :create do
-      argument :account, :map, allow_nil?: false
-      change manage_relationship(:account, type: :append)
-    end
   end
 
   policies do
