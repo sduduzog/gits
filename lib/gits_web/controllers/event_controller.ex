@@ -1,9 +1,9 @@
 defmodule GitsWeb.EventController do
   use GitsWeb, :controller
   require Ash.Query
+  alias Gits.Dashboard.Account
   alias Gits.Dashboard.Event
   alias AshPhoenix.Form
-  alias Gits.Accounts.Account
 
   plug :assign_params
   plug :set_layout
@@ -33,8 +33,8 @@ defmodule GitsWeb.EventController do
       conn,
       :events,
       Ash.Query.filter(Event, account.id == ^params["account_id"])
+      |> Ash.Query.sort(created_at: :desc)
       |> Ash.read!()
-      |> IO.inspect()
     )
     |> render(:index)
   end
@@ -85,7 +85,7 @@ defmodule GitsWeb.EventController do
       form ->
         conn
         |> assign(:form, form)
-        |> render(:new, layout: {GitsWeb.Layouts, :event})
+        |> render(:new)
     end
   end
 
@@ -107,50 +107,20 @@ defmodule GitsWeb.EventController do
       Form.for_update(
         Event
         |> Ash.Query.filter(id: params["id"])
-        |> Gits.Events.read_one!(),
+        |> Ash.read_one!(),
         :update,
-        api: Events,
-        as: "event"
+        as: "event",
+        actor: conn.assigns.current_user
       )
     )
-    |> render(:edit, layout: {GitsWeb.Layouts, :event})
-  end
-
-  def create(conn, params) do
-    Form.for_create(Event, :create, api: Events, as: "event", actor: conn.assigns.current_user)
-    |> Form.validate(
-      Map.merge(params["event"], %{
-        "account" =>
-          Ash.Query.for_read(Account, :read)
-          |> Ash.Query.filter(id: params["account_id"])
-          |> Gits.Accounts.read_one!()
-      })
-    )
-    |> case do
-      form when form.valid? ->
-        with {:ok, event} <- Form.submit(form) do
-          conn
-          |> redirect(to: ~p"/accounts/#{params["account_id"]}/events/#{event.id}/settings")
-        else
-          {:error, _} ->
-            conn
-            |> assign(:form, form)
-            |> put_flash(:error, "Couldn't create event")
-            |> render(:new, layout: {GitsWeb.Layouts, :event})
-        end
-
-      form ->
-        conn
-        |> assign(:form, form)
-        |> render(:new, layout: {GitsWeb.Layouts, :event})
-    end
+    |> render(:edit)
   end
 
   def update(conn, params) do
     Form.for_update(
       Event
       |> Ash.Query.filter(id: params["id"])
-      |> Gits.Events.read_one!(),
+      |> Ash.read_one!(),
       :update,
       api: Events,
       as: "event"
@@ -165,13 +135,13 @@ defmodule GitsWeb.EventController do
           _ ->
             conn
             |> assign(:form, form)
-            |> render(:edit, layout: {GitsWeb.Layouts, :event})
+            |> render(:edit)
         end
 
       form ->
         conn
         |> assign(:form, form)
-        |> render(:edit, layout: {GitsWeb.Layouts, :event})
+        |> render(:edit)
     end
   end
 end

@@ -22,6 +22,7 @@ defmodule Gits.Dashboard.Event do
 
     create :first_event do
       primary? true
+      accept :*
     end
 
     create :create do

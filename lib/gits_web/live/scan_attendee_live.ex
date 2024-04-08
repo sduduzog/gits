@@ -12,7 +12,6 @@ defmodule GitsWeb.ScanAttendeeLive do
   end
 
   def handle_params(unsigned_params, _uri, socket) do
-    IO.inspect(unsigned_params)
     {:noreply, assign(socket, :scan_results, unsigned_params["code"])}
   end
 

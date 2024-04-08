@@ -49,6 +49,7 @@ defmodule GitsWeb.DashboardComponents do
         label="Event Overview"
         icon="hero-calendar-days-mini"
         request_path={@request_path}
+        root={true}
         to={@base}
       />
       <.sidebar_item

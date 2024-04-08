@@ -1,4 +1,4 @@
-<div class="gap-4 flex max-w-screen-2xl overflow-x-auto mx-auto lg:overflow-visible lg:flex-wrap lg:gap-9 xl:gap-14">
+<div class="mx-auto flex max-w-screen-2xl gap-4 overflow-x-auto lg:flex-wrap lg:gap-9 lg:overflow-visible xl:gap-14">
   <.link
     :for={event <- @events}
     navigate={~p"/events/#{event.id}"}
@@ -7,22 +7,22 @@
   >
     <img
       src="/images/placeholder.png"
-      class="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
+      class="h-full w-full object-cover transition-transform duration-300 hover:scale-110"
     />
-    <div class="absolute top-3 right-3 bg-white flex flex-col py-2.5 p-3 rounded-lg items-center">
-      <span class="font-bold text-lg text-gray-800 tabular-nums leading-4">
+    <div class="absolute top-3 right-3 flex flex-col items-center rounded-lg bg-white p-3 py-2.5">
+      <span class="text-lg font-bold tabular-nums leading-4 text-gray-800">
         <%= event.starts_at |> Timex.format!("%d", :strftime) %>
       </span>
-      <span class="text-xs text-gray-600 leading-4">
+      <span class="text-xs leading-4 text-gray-600">
         <%= event.starts_at |> Timex.format!("%b", :strftime) %>
       </span>
     </div>
 
-    <div class="absolute bottom-3 inset-x-3 bg-white rounded-lg p-2 space-y-2">
+    <div class="absolute inset-x-3 bottom-3 space-y-2 rounded-lg bg-white p-2">
       <h3 class="line-clamp-2 text-sm font-semibold"><%= event.name %></h3>
-      <div class="flex justify-between items-center">
-        <span class="text-gray-600 text-sm">Mea Culpa</span>
-        <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
+      <div class="flex items-center justify-between">
+        <span class="text-sm text-gray-600">Mea Culpa</span>
+        <span class="rounded bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-300">
           R 300
         </span>
       </div>

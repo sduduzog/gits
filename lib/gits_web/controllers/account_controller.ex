@@ -14,16 +14,26 @@ defmodule GitsWeb.AccountController do
     put_layout(conn, html: :dashboard)
   end
 
+  defp auth_guard(conn, _) do
+    if conn.assigns.current_user do
+      conn
+    else
+      return_to = URI.encode_query(%{"return_to" => "#{conn.request_path}?#{conn.query_string}"})
+
+      conn |> redirect(to: "/sign-in?#{return_to}") |> halt()
+    end
+  end
+
   def new(conn, _) do
     form =
-      Event |> Form.for_create(:create, as: "event", actor: conn.assigns.current_user)
+      Event |> Form.for_create(:first_event, as: "event", actor: conn.assigns.current_user)
 
     render(assign(conn, :form, form), :new, layout: false)
   end
 
   def create(conn, params) do
     form =
-      Form.for_create(Event, :create,
+      Form.for_create(Event, :first_event,
         as: "event",
         actor: conn.assigns.current_user
       )
@@ -48,7 +58,7 @@ defmodule GitsWeb.AccountController do
       redirect(conn, to: ~p"/accounts/#{account.id}/events/#{event.id}/settings")
     end
 
-    render(assign(conn, :form, form), :new)
+    render(assign(conn, :form, form), :new, layout: false)
   end
 
   def show(conn, _) do
@@ -57,7 +67,6 @@ defmodule GitsWeb.AccountController do
     #
     # strategy =
     #   AshAuthentication.Info.strategy!(conn.assigns.current_user, :confirm)
-    #   |> IO.inspect()
     #
     # {:ok, token} =
     #   AshAuthentication.AddOn.Confirmation.confirmation_token(strategy, changeset, changeset.data)
@@ -75,7 +84,6 @@ defmodule GitsWeb.AccountController do
       |> Ash.Query.filter(members.user.id == ^conn.assigns.current_user.id)
       |> Ash.Query.load(:members)
       |> Ash.read!()
-      |> IO.inspect()
 
     case accounts do
       [head | []] when not is_nil(route) ->
@@ -147,14 +155,4 @@ defmodule GitsWeb.AccountController do
   #   )
   #   |> render(:team, layout: {GitsWeb.Layouts, :account})
   # end
-
-  defp auth_guard(conn, _) do
-    if conn.assigns.current_user do
-      conn
-    else
-      return_to = URI.encode_query(%{"return_to" => "#{conn.request_path}?#{conn.query_string}"})
-
-      conn |> redirect(to: "/sign-in?#{return_to}")
-    end
-  end
 end

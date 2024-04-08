@@ -2,7 +2,7 @@
   <a href="/" class="font-poppins text-3xl font-black italic">GiTS</a>
   <h1 class="font-poppins text-3xl font-semibold text-gray-900">Create new event</h1>
 
-  <.simple_form :let={f} for={@form} action="/accounts" method="POST" class="">
+  <.simple_form :let={f} for={@form} action="/accounts" method="POST" class="max-w-screen-lg">
     <div class="w-full sm:max-w-lg">
       <.input type="text" label="Name" field={f[:name]} />
     </div>
