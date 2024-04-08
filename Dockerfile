@@ -19,6 +19,15 @@ ARG DEBIAN_VERSION=bullseye-20240311-slim
 ARG BUILDER_IMAGE="hexpm/elixir:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-debian-${DEBIAN_VERSION}"
 ARG RUNNER_IMAGE="debian:${DEBIAN_VERSION}"
 
+FROM node:lts as assets
+
+# build assets
+COPY assets/package.json assets/package-lock.json ./assets/
+
+RUN npm --prefix ./assets ci --progress=false --no-audit --loglevel=error
+
+COPY assets assets
+
 FROM ${BUILDER_IMAGE} as builder
 
 # install build dependencies
@@ -51,7 +60,7 @@ COPY priv priv
 
 COPY lib lib
 
-COPY assets assets
+COPY --from=assets assets assets
 
 # compile assets
 RUN mix assets.deploy

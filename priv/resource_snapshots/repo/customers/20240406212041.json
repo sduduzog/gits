@@ -1,0 +1,29 @@
+{
+  "attributes": [
+    {
+      "default": "fragment(\"gen_random_uuid()\")",
+      "size": null,
+      "type": "uuid",
+      "source": "id",
+      "references": null,
+      "allow_nil?": false,
+      "generated?": false,
+      "primary_key?": true
+    }
+  ],
+  "table": "customers",
+  "hash": "F3C2F87D3DF5B5E60BD3741357B97EB866AD39245B5711E4D7CB93E63FA3D29B",
+  "repo": "Elixir.Gits.Repo",
+  "identities": [],
+  "schema": null,
+  "base_filter": null,
+  "multitenancy": {
+    "global": null,
+    "strategy": null,
+    "attribute": null
+  },
+  "check_constraints": [],
+  "custom_indexes": [],
+  "custom_statements": [],
+  "has_create_action": false
+}

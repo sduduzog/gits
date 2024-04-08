@@ -1,10 +1,10 @@
-<div class="h-screen flex flex-wrap items-center justify-center gap-8">
+<div class="flex h-screen flex-wrap items-center justify-center gap-8">
   <.link
     :for={account <- @accounts}
-    href={~p"/accounts/#{account.id}"}
+    href={~p"/accounts/#{account.id}?#{URI.encode_query(%{"to" => @conn.params["to"]})}"}
     class="border p-6 rounded-2xl"
   >
-    <span><%= account.id %></span>
-    <span :for={role <- account.roles}><%= role.type %></span>
+    <span><%= account.name %></span>
+    <span :for={member <- account.members}><%= member.role %></span>
   </.link>
 </div>

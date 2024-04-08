@@ -1,0 +1,11 @@
+<header class="flex gap-4 p-2 px-4">
+  <button
+    class="flex rounded-xl p-2 lg:hidden"
+    phx-click={Phoenix.LiveView.JS.add_class("translate-x-72", to: "#sidebar")}
+  >
+    <.icon name="hero-bars-3" />
+  </button>
+  <div class="pt-0.5 lg:pt-16">
+    <h1 class="text-3xl font-bold"><%= @title %></h1>
+  </div>
+</header>

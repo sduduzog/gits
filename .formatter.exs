@@ -7,7 +7,8 @@
     :ash_phoenix,
     :ash_postgres,
     :ash_authentication,
-    :ash_authentication_phoenix
+    :ash_authentication_phoenix,
+    :reactor
   ],
   subdirectories: ["priv/*/migrations"],
   plugins: [TailwindFormatter, Phoenix.LiveView.HTMLFormatter],

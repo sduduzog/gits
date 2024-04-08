@@ -1,0 +1,10 @@
+<.link
+  href={@to}
+  class={[
+    "rounded-xl hover:bg-gray-50 p-4 font-medium flex gap-4 text-gray-700 items-center",
+    if(@current, do: "bg-gray-100")
+  ]}
+>
+  <.icon name={@icon} />
+  <span class="text-xl"><%= @label %></span>
+</.link>

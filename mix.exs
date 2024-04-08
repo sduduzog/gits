@@ -59,19 +59,17 @@ defmodule Gits.MixProject do
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.2"},
-      {:ash, "~> 3.0.0-rc.12"},
+      {:ash, "~> 3.0.0-rc.15"},
       {:picosat_elixir, "~> 0.2.0"},
       {:ash_phoenix, "~> 2.0.0-rc.3"},
       {:ash_postgres, "~> 2.0.0-rc.3"},
       {:ash_authentication, "~> 4.0.0-rc.1"},
       {:ash_authentication_phoenix, "~> 2.0.0-rc.0"},
       {:ash_archival, "~> 0.1.6-rc.0"},
+      {:reactor, "~> 0.8.1"},
       {:phoenix_turnstile, "~> 1.1"},
       {:eqrcode, "~> 0.1.10"},
-      {:slugify, "~> 1.3"},
-      # {:exq, "~> 0.19.0"},
-      {:timex, "~> 3.7"},
-      {:dotenv, "~> 3.1", only: [:dev, :test]}
+      {:timex, "~> 3.7"}
     ]
   end
 
@@ -83,7 +81,7 @@ defmodule Gits.MixProject do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
-      setup: ["deps.get", "ecto.setup", "cmd --cd npm install", "assets.setup", "assets.build"],
+      setup: ["deps.get", "ecto.setup", "assets.setup", "assets.build"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],

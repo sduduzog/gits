@@ -22,7 +22,7 @@
     >
       <%= if @current_user do %>
         <div class="px-4 py-3 text-sm text-gray-900 dark:text-white">
-          <div><%= @current_user.display_name %></div>
+          <div>Signed in with</div>
           <div class="truncate font-medium"><%= @current_user.email %></div>
         </div>
       <% else %>
@@ -53,27 +53,6 @@
             class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
           >
             Settings
-          </a>
-        </li>
-      </ul>
-      <ul
-        class="py-2 text-sm text-gray-700 dark:text-gray-200"
-        aria-labelledby="dropdownUserAvatarButton"
-      >
-        <li>
-          <a
-            href="/accounts"
-            class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-          >
-            Dashboard
-          </a>
-        </li>
-        <li>
-          <a
-            href={"/search?" <> URI.encode_query(%{"to" => "events/new"})}
-            class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-          >
-            Create an event
           </a>
         </li>
       </ul>

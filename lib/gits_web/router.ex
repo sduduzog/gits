@@ -17,36 +17,23 @@ defmodule GitsWeb.Router do
   end
 
   scope "/", GitsWeb do
+    pipe_through [:browser]
+
+    resources "/accounts", AccountController do
+      resources "/events", EventController do
+        get "/settings", EventController, :settings
+      end
+    end
+  end
+
+  scope "/", GitsWeb do
     pipe_through :browser
+
+    sign_out_route AuthController
+    auth_routes_for Gits.Auth.User, to: AuthController
 
     get "/", PageController, :home
     get "/organizers", PageController, :organizers
-    get "/events/:id", PageController, :event
-    get "/tickets", PageController, :tickets
-    get "/settings", PageController, :settings
-    get "/search", PageController, :search
-
-    get "/sign-in", AuthController, :sign_in
-    get "/register", AuthController, :register
-    get "/forgot-password", AuthController, :forgot_password
-
-    get "/accounts/:account_id", AccountController, :show
-
-    resources "/accounts", AccountController, only: [:index] do
-      resources "/events", EventController do
-        resources "/attendees", AttendeeController, except: [:show]
-        resources "/tickets", TicketController
-        get "/settings", EventController, :settings
-      end
-
-      resources "/team", TeamMemberController, only: [:index] do
-        resources "/invites", TeamInviteController, only: []
-      end
-
-      resources "/invites", TeamInviteController, only: [:show, :update, :new, :create, :delete]
-
-      get "/settings", AccountController, :account_settings
-    end
 
     ash_authentication_live_session :authentication_optional,
       on_mount: {GitsWeb.LiveUserAuth, :live_user_optional} do
@@ -59,10 +46,23 @@ defmodule GitsWeb.Router do
       live "/accounts/:account_id/events/:event_id/attendees/scanner", ScanAttendeeLive
     end
 
-    live "/password-reset/:token", AuthLive.PasswordReset
+    ash_authentication_live_session :authentication_forbidden,
+      on_mount: {GitsWeb.LiveUserAuth, :live_no_user} do
+      live "/password-reset/:token", AuthLive.PasswordReset
+    end
 
+    get "/sign-in", AuthController, :sign_in
+    get "/register", AuthController, :register
+    get "/forgot-password", AuthController, :forgot_password
     sign_out_route AuthController
     auth_routes_for Gits.Auth.User, to: AuthController
+
+    # sign_in_route(
+    #   register_path: "/register",
+    #   reset_path: "/reset",
+    #   on_mount: [{GitsWeb.LiveUserAuth, :live_no_user}],
+    #   overrides: [GitsWeb.AuthOverrides, AshAuthentication.Phoenix.Overrides.Default]
+    # )
   end
 
   # Other scopes may use custom stacks.

@@ -10,11 +10,8 @@ defmodule Gits.Events.Event do
 
     attribute :name, :string, allow_nil?: false
 
+    attribute :description, :string, allow_nil?: false
     attribute :starts_at, :naive_datetime, allow_nil?: false
-
-    create_timestamp :created_at, public?: true
-
-    update_timestamp :updated_at, public?: true
   end
 
   actions do
@@ -25,18 +22,10 @@ defmodule Gits.Events.Event do
     policy always() do
       authorize_if always()
     end
-
-    policy action(:create) do
-      authorize_if Gits.Checks.CanCreateEvent
-    end
-
-    policy action(:update) do
-      authorize_if Gits.Checks.CanEditEventDetails
-    end
   end
 
   postgres do
     table "events"
-    repo(Gits.Repo)
+    repo Gits.Repo
   end
 end

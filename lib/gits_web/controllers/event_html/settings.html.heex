@@ -1,28 +1,42 @@
-<h1 class="font-poppins font-semibold text-3xl text-gray-900">Event Details</h1>
+<.dashboard_sidebar
+  base={~p"/accounts/#{@conn.params["account_id"]}"}
+  request_path={@conn.request_path}
+/>
+<.main>
+  <.main_header title="Creat new event"></.main_header>
 
-<div class="border rounded-2xl p-4">
-  <div class="flex justify-between items-center">
-    <h2 class="font-poppins text-2xl">Event Listing</h2>
-    <.link
-      href={~p"/accounts/#{@account_id}/events/#{@event_id}/edit"}
-      class="flex gap-2 items-center"
-    >
-      <span>Edit</span>
-      <.icon name="hero-arrow-right-mini" />
-    </.link>
+  <h1 class="font-poppins text-3xl font-semibold text-gray-900">Event Details</h1>
+
+  <div class="rounded-2xl border p-4">
+    <div class="flex items-center justify-between">
+      <h2 class="font-poppins text-2xl">Event Listing</h2>
+      <.link
+        href={~p"/accounts/#{@account_id}/events/#{@event_id}/edit"}
+        class="flex gap-2 items-center"
+      >
+        <span>Edit</span>
+        <.icon name="hero-arrow-right-mini" />
+      </.link>
+    </div>
+    <dl class="divide-y divide-gray-100">
+      <div class="py-6 sm:grid sm:grid-cols-3 sm:gap-4">
+        <dt class="text-sm font-medium text-gray-900">Name</dt>
+        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+          <%= @event.name %>
+        </dd>
+      </div>
+      <div class="py-6 sm:grid sm:grid-cols-3 sm:gap-4">
+        <dt class="text-sm font-medium text-gray-900">Decription</dt>
+        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+          <%= @event.description %>
+        </dd>
+      </div>
+      <div class="py-6 sm:grid sm:grid-cols-3 sm:gap-4">
+        <dt class="text-sm font-medium text-gray-900">Start date</dt>
+        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+          <%= @event.starts_at |> Timex.format!("%e %b %Y, %R %p", :strftime) %>
+        </dd>
+      </div>
+    </dl>
   </div>
-  <dl class="divide-y divide-gray-100">
-    <div class="py-6 sm:grid sm:grid-cols-3 sm:gap-4">
-      <dt class="text-sm font-medium text-gray-900">Name</dt>
-      <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-        <%= @event.name %>
-      </dd>
-    </div>
-    <div class="py-6 sm:grid sm:grid-cols-3 sm:gap-4">
-      <dt class="text-sm font-medium text-gray-900">Start date</dt>
-      <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-        <%= @event.starts_at |> Timex.format!("%e %b %Y, %R %p", :strftime) %>
-      </dd>
-    </div>
-  </dl>
-</div>
+</.main>

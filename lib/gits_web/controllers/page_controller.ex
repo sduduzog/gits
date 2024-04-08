@@ -2,21 +2,39 @@ defmodule GitsWeb.PageController do
   use GitsWeb, :controller
 
   require Ash.Query
+  alias Gits.Dashboard.Member
   alias Gits.Events.TicketInstance
   alias Gits.Events.Event
 
   def home(conn, _params) do
-    events =
-      Event
-      |> Ash.read!()
+    # events =
+    #   Event
+    #   |> Ash.read!()
 
     conn
-    |> assign(:events, events)
+    |> assign(:events, [])
     |> render(:home)
   end
 
   def organizers(conn, _) do
-    render(conn, :organizers)
+    membership_exists?(conn)
+    |> case do
+      true -> redirect(conn, to: "/accounts")
+      _ -> render(conn, :organizers) |> halt()
+    end
+  end
+
+  defp membership_exists?(conn) do
+    conn.assigns.current_user
+    |> case do
+      user when not is_nil(user) ->
+        Member
+        |> Ash.Query.filter(user.id == ^conn.assigns.current_user.id)
+        |> Ash.exists?()
+
+      nil ->
+        false
+    end
   end
 
   def event(conn, params) do

@@ -2,8 +2,7 @@ defmodule GitsWeb.AuthLive.Form do
   use GitsWeb, :live_view
   use PhoenixHTMLHelpers
 
-  alias Gits.Accounts
-  alias Gits.Accounts.User
+  alias Gits.Auth.User
   alias AshPhoenix.Form
 
   def mount(_, %{"action" => "sign_in"} = session, socket) do
@@ -21,7 +20,7 @@ defmodule GitsWeb.AuthLive.Form do
       |> assign(:is_register?, false)
       |> assign(
         :form,
-        Form.for_action(User, :sign_in_with_password, api: Accounts, as: "user")
+        Form.for_action(User, :sign_in_with_password, as: "user")
         |> case do
           form when not is_nil(email) ->
             Form.set_data(form, %{email: email})
@@ -49,7 +48,7 @@ defmodule GitsWeb.AuthLive.Form do
       |> assign(:is_register?, true)
       |> assign(
         :form,
-        Form.for_create(User, :register_with_password, api: Accounts, as: "user")
+        Form.for_create(User, :register_with_password, as: "user")
         |> case do
           form when not is_nil(email) ->
             Form.set_data(form, %{email: email})
@@ -77,6 +76,7 @@ defmodule GitsWeb.AuthLive.Form do
           |> assign(:form, form)
           |> assign(:errors, Form.errors(form))
           |> assign(:trigger_action, form.valid?)
+          |> IO.inspect()
 
         {:noreply, socket}
 

@@ -1,1 +1,30 @@
-<div>THis is an event list</div>
+<.dashboard_sidebar
+  base={~p"/accounts/#{@conn.params["account_id"]}"}
+  request_path={@conn.request_path}
+/>
+<.main>
+  <.main_header title="Events"></.main_header>
+  <div class="px-4">
+    <.button phx-click={JS.navigate(~p"/accounts/#{@conn.params["account_id"]}/events/new")}>
+      New event
+    </.button>
+  </div>
+  <div class="overflow-x-auto px-6 py-2 pt-4">
+    <.table
+      id="tickets"
+      rows={@events}
+      row_click={
+        fn row ->
+          JS.navigate(~p"/accounts/#{@conn.params["account_id"]}/events/#{row.id}")
+        end
+      }
+    >
+      <:col :let={event} label="Name"><%= event.name %></:col>
+      <:action>
+        <!-- <button> -->
+          <!--   <.icon name="hero-ellipsis-vertical-mini" /> -->
+          <!-- </button> -->
+      </:action>
+    </.table>
+  </div>
+</.main>

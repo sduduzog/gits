@@ -361,7 +361,7 @@ defmodule GitsWeb.CoreComponents do
         ]}
         {@rest}
       ><%= Phoenix.HTML.Form.normalize_value("textarea", @value) %></textarea>
-      <.error :for={msg <- @errors}><%= msg %></.error>
+      <.error :for={msg <- @errors}><%= @label <> " " <> msg %></.error>
     </div>
     """
   end
