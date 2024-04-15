@@ -1,4 +1,5 @@
 import Config
+import Dotenvy, only: [source!: 1, env!: 2]
 
 # config/runtime.exs is executed for all environments, including
 # during releases. It is executed after compilation and before the
@@ -19,6 +20,10 @@ import Config
 if System.get_env("PHX_SERVER") do
   config :gits, GitsWeb.Endpoint, server: true
 end
+
+source!([".env", System.get_env()])
+
+config :gits, :google, maps_api_key: env!("GOOGLE_MAPS_API_KEY", :string)
 
 if config_env() == :prod do
   database_url =

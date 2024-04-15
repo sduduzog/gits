@@ -8,6 +8,7 @@ defmodule Gits.Dashboard.Event do
     attribute :name, :string, allow_nil?: false, public?: true
     attribute :description, :string, allow_nil?: false, public?: true
     attribute :starts_at, :naive_datetime, allow_nil?: false, public?: true
+    attribute :address_place_id, :string, allow_nil?: true
     create_timestamp :created_at
     update_timestamp :updated_at
   end
@@ -31,6 +32,10 @@ defmodule Gits.Dashboard.Event do
       argument :account, :map
 
       change manage_relationship(:account, type: :append)
+    end
+
+    update :update_address do
+      accept :address_place_id
     end
   end
 

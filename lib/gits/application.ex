@@ -18,7 +18,8 @@ defmodule Gits.Application do
       # {Gits.Worker, arg},
       # Start to serve requests, typically the last entry
       GitsWeb.Endpoint,
-      {AshAuthentication.Supervisor, otp_app: :gits}
+      {AshAuthentication.Supervisor, otp_app: :gits},
+      {Cachex, name: :cache, limit: 100}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

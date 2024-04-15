@@ -22,6 +22,7 @@ defmodule GitsWeb.Router do
     resources "/accounts", AccountController do
       resources "/events", EventController do
         get "/settings", EventController, :settings
+        get "/address", EventController, :address
       end
     end
   end

@@ -6,7 +6,7 @@
 
 <.main>
   <.main_header title="Settings"></.main_header>
-  <div class="px-4">
+  <div class="space-y-8 px-4">
     <div class="rounded-2xl border p-4 lg:p-12">
       <div class="flex items-center justify-between">
         <h2 class="font-poppins text-xl font-medium">Event Listing</h2>
@@ -37,6 +37,76 @@
           <dt class="text-sm font-medium text-gray-900">Start date</dt>
           <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
             <%= @event.starts_at |> Timex.format!("%e %b %Y, %R %p", :strftime) %>
+          </dd>
+        </div>
+      </dl>
+    </div>
+
+    <div class="rounded-2xl border p-4 lg:p-12">
+      <div class="flex items-center justify-between">
+        <h2 class="font-poppins text-xl font-medium">Location</h2>
+        <.link
+          href={
+            ~p"/accounts/#{@conn.params["account_id"]}/events/#{@conn.params["event_id"]}/address"
+          }
+          class="flex gap-2 items-center"
+        >
+          <span>Change</span>
+          <.icon name="hero-arrow-right-mini" />
+        </.link>
+      </div>
+
+      <dl class="divide-y divide-gray-100">
+        <div class="py-6 sm:grid sm:grid-cols-3 sm:gap-4">
+          <dt class="text-sm font-medium text-gray-900">Address</dt>
+          <dd class="mt-1 grid flex-wrap gap-4 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0 sm:flex">
+            <%= if @address do %>
+              <div class="grid">
+                <span><%= @address.name %></span>
+                <span><%= @address.address %></span>
+              </div>
+            <% else %>
+              <div>No address chosen</div>
+            <% end %>
+          </dd>
+        </div>
+      </dl>
+    </div>
+
+    <div class="rounded-2xl border p-4 lg:p-12">
+      <div class="flex items-center justify-between">
+        <h2 class="font-poppins text-xl font-medium">Graphics</h2>
+        <.link
+          href={
+            ~p"/accounts/#{@conn.params["account_id"]}/events/#{@conn.params["event_id"]}/edit"
+          }
+          class="flex gap-2 items-center"
+        >
+          <span></span>
+          <!-- <.icon name="hero-arrow-right-mini" /> -->
+        </.link>
+      </div>
+
+      <dl class="divide-y divide-gray-100">
+        <div class="py-6 sm:grid sm:grid-cols-3 sm:gap-4">
+          <dt class="text-sm font-medium text-gray-900">Name</dt>
+          <dd class="mt-1 grid flex-wrap gap-4 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0 sm:flex">
+            <div class="aspect-[4/5] h-64 bg-gray-200 p-4"></div>
+            <div class="">
+              <span>Upload</span>
+            </div>
+          </dd>
+        </div>
+      </dl>
+
+      <dl class="divide-y divide-gray-100">
+        <div class="py-6 sm:grid sm:grid-cols-3 sm:gap-4">
+          <dt class="text-sm font-medium text-gray-900">Name</dt>
+          <dd class="mt-1 grid flex-wrap gap-4 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0 sm:flex">
+            <div class="aspect-[3/2] h-48 bg-gray-200 p-4"></div>
+            <div class="">
+              <span>Upload</span>
+            </div>
           </dd>
         </div>
       </dl>

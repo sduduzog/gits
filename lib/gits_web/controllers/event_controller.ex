@@ -95,9 +95,48 @@ defmodule GitsWeb.EventController do
       |> Ash.Query.filter(id: params["event_id"])
       |> Ash.read_one!()
 
+    address =
+      case event.address_place_id do
+        id when not is_nil(id) -> get_address(id)
+        _ -> nil
+      end
+
     conn
     |> assign(:event, event)
+    |> assign(:address, address)
     |> render(:settings)
+  end
+
+  defp get_address(place_id) do
+    Cachex.fetch(:cache, place_id, fn key ->
+      config = Application.get_env(:gits, :google)
+
+      Req.new(base_url: "https://places.googleapis.com")
+      |> Req.Request.put_header("X-Goog-Api-Key", config[:maps_api_key])
+      |> Req.Request.put_header(
+        "X-Goog-FieldMask",
+        "displayName,formattedAddress,location"
+      )
+      |> Req.get!(url: "/v1/places/#{key}")
+      |> Map.get(:body)
+      |> case do
+        %{"displayName" => name, "formattedAddress" => address, "location" => location} ->
+          {:commit,
+           %{
+             name: name["text"],
+             address: address,
+             location: %{lat: location["latitude"], long: location["longitude"]}
+           }}
+
+        _ ->
+          {:ignore, nil}
+      end
+    end)
+    |> case do
+      {:commit, place, _} -> place
+      {:ok, place} -> place
+      _ -> nil
+    end
   end
 
   def edit(conn, params) do
@@ -114,6 +153,15 @@ defmodule GitsWeb.EventController do
       )
     )
     |> render(:edit)
+  end
+
+  def address(conn, params) do
+    conn
+    |> put_layout(false)
+    |> Phoenix.LiveView.Controller.live_render(
+      GitsWeb.EventAddressLive,
+      session: %{"params" => params}
+    )
   end
 
   def update(conn, params) do

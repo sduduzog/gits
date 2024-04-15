@@ -1,6 +1,6 @@
 <div id="uiscan" phx-hook="QrScannerInfo">
   <div class="flex">
-    <div class="flex border border-gray-300 rounded-2xl divide-x">
+    <div class="flex divide-x rounded-2xl border border-gray-300">
       <button
         :for={camera <- @cameras}
         phx-click={JS.push("change_camera", value: %{id: camera["id"]})}
