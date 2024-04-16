@@ -13,14 +13,14 @@ defmodule GitsWeb.TicketController do
   end
 
   def index(conn, params) do
-    # tickets =
-    #   Ticket
-    #   |> Ash.Query.for_read(:read)
-    #   |> Ash.Query.filter(event_id: params["event_id"])
-    #   |> Gits.Events.read!()
+    tickets =
+      Ticket
+      |> Ash.Query.for_read(:read)
+      |> Ash.Query.filter(event_id: params["event_id"])
+      |> Ash.read!()
 
     conn
-    |> assign(:tickets, [])
+    |> assign(:tickets, tickets)
     |> render(:index)
   end
 
@@ -71,11 +71,11 @@ defmodule GitsWeb.TicketController do
       Ticket
       |> Ash.Query.for_read(:read)
       |> Ash.Query.filter(id: params["id"], event_id: params["event_id"])
-      |> Gits.Events.read_one!()
+      |> Ash.read_one!()
 
     conn
     |> assign(:ticket, ticket)
-    |> render(:show, layout: {GitsWeb.Layouts, :ticket})
+    |> render(:show)
   end
 
   def edit(conn, %{"id" => ticket_id} = _params) do

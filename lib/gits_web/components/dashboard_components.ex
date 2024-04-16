@@ -83,23 +83,11 @@ defmodule GitsWeb.DashboardComponents do
     ~H"""
     <.sidebar>
       <.sidebar_item
-        label="Event Overview"
+        label="Ticket Overview"
         icon="hero-calendar-days-mini"
         request_path={@request_path}
         root={true}
         to={@base}
-      />
-      <.sidebar_item
-        label="Settings"
-        icon="hero-cog-6-tooth-mini"
-        request_path={@request_path}
-        to={@base <> "/settings"}
-      />
-      <.sidebar_item
-        label="Tickets"
-        icon="hero-ticket-mini"
-        request_path={@request_path}
-        to={@base <> "/tickets"}
       />
       <.sidebar_item
         label="Go back"

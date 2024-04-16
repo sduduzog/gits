@@ -1,42 +1,53 @@
-<h1 class="font-poppins font-semibold text-3xl text-gray-900">Ticket</h1>
+<.ticket_sidebar
+  back={~p"/accounts/#{@conn.params["account_id"]}/events/#{@conn.params["event_id"]}/tickets"}
+  base={
+    ~p"/accounts/#{@conn.params["account_id"]}/events/#{@conn.params["event_id"]}/tickets/#{@conn.params["id"]}"
+  }
+  request_path={@conn.request_path}
+/>
 
-<div :if={false} class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-  <div class="border p-4 rounded-2xl grid grid-cols-2">
-    <div class="grid">
-      <span class="text-sm text-gray-500">Name</span>
-      <span class="text-lg">General</span>
+<.main>
+  <.main_header title="Ticket"></.main_header>
+  <div class="space-y-8 px-4">
+    <div :if={false} class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div class="grid grid-cols-2 rounded-2xl border p-4">
+        <div class="grid">
+          <span class="text-sm text-gray-500">Name</span>
+          <span class="text-lg">General</span>
+        </div>
+
+        <div class="grid">
+          <span class="text-sm text-gray-500">Price</span>
+          <span class="text-lg">R 450</span>
+        </div>
+      </div>
     </div>
 
-    <div class="grid">
-      <span class="text-sm text-gray-500">Price</span>
-      <span class="text-lg">R 450</span>
+    <div class="rounded-2xl border p-4">
+      <div class="flex items-center justify-between">
+        <h2 class="font-poppins text-2xl">Ticket details</h2>
+        <.link
+          href={"/accounts/#{@conn.params["account_id"]}/events/#{@conn.params["event_id"]}/tickets/#{@conn.params["id"]}/edit"}
+          class="flex gap-2 items-center"
+        >
+          <span>Edit</span>
+          <.icon name="hero-arrow-right-mini" />
+        </.link>
+      </div>
+      <dl class="divide-y divide-gray-100">
+        <div class="py-6 sm:grid sm:grid-cols-3 sm:gap-4">
+          <dt class="text-sm font-medium text-gray-900">Name</dt>
+          <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+            <%= @ticket.name %>
+          </dd>
+        </div>
+        <div class="py-6 sm:grid sm:grid-cols-3 sm:gap-4">
+          <dt class="text-sm font-medium text-gray-900">Price</dt>
+          <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+            R <%= 0 %>
+          </dd>
+        </div>
+      </dl>
     </div>
   </div>
-</div>
-
-<div class="border rounded-2xl p-4">
-  <div class="flex justify-between items-center">
-    <h2 class="font-poppins text-2xl">Ticket details</h2>
-    <.link
-      href={"/accounts/#{@account_id}/events/#{@event_id}/tickets/#{@ticket_id}/edit"}
-      class="flex gap-2 items-center"
-    >
-      <span>Edit</span>
-      <.icon name="hero-arrow-right-mini" />
-    </.link>
-  </div>
-  <dl class="divide-y divide-gray-100">
-    <div class="py-6 sm:grid sm:grid-cols-3 sm:gap-4">
-      <dt class="text-sm font-medium text-gray-900">Name</dt>
-      <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-        <%= @ticket.name %>
-      </dd>
-    </div>
-    <div class="py-6 sm:grid sm:grid-cols-3 sm:gap-4">
-      <dt class="text-sm font-medium text-gray-900">Price</dt>
-      <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-        R <%= @ticket.price %>
-      </dd>
-    </div>
-  </dl>
-</div>
+</.main>

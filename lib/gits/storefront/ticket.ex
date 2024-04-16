@@ -8,7 +8,7 @@ defmodule Gits.Storefront.Ticket do
   attributes do
     uuid_primary_key :id
 
-    attribute :name, :string, allow_nil?: false
+    attribute :name, :string, allow_nil?: false, public?: true
 
     create_timestamp :created_at, public?: true
 
@@ -20,7 +20,16 @@ defmodule Gits.Storefront.Ticket do
   end
 
   actions do
-    defaults [:create, :read, :update]
+    default_accept :*
+    defaults [:read, :update]
+
+    create :create do
+      accept :*
+
+      argument :event, :map
+
+      change manage_relationship(:event, type: :append)
+    end
   end
 
   policies do
