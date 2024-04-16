@@ -1,16 +1,27 @@
-<h1 class="font-poppins font-semibold text-3xl text-gray-900">Edit ticket</h1>
+<.ticket_sidebar
+  back={~p"/accounts/#{@conn.params["account_id"]}/events/#{@conn.params["event_id"]}/tickets"}
+  base={
+    ~p"/accounts/#{@conn.params["account_id"]}/events/#{@conn.params["event_id"]}/tickets/#{@conn.params["id"]}"
+  }
+  request_path={@conn.request_path}
+/>
 
-<.simple_form
-  :let={f}
-  for={@form}
-  action={~p"/accounts/#{@account_id}/events/#{@event_id}/tickets/#{@ticket_id}"}
-  method="PUT"
->
-  <input type="hidden" name={f[:event_id].name} value={@event_id} />
-  <.input type="text" label="Name" field={f[:name]} />
-  <.input type="number" label="Price" field={f[:price]} />
+<.main>
+  <.main_header title="Edit ticket"></.main_header>
 
-  <div class="flex gap-6 items-center">
-    <.button>Edit</.button>
-  </div>
-</.simple_form>
+  <.simple_form
+    :let={f}
+    for={@form}
+    action={
+      ~p"/accounts/#{@conn.params["account_id"]}/events/#{@conn.params["event_id"]}/tickets/#{@conn.params["id"]}"
+    }
+    method="PUT"
+  >
+    <.input type="text" label="Name" field={f[:name]} />
+    <.input type="number" label="Price" field={f[:price]} />
+
+    <div class="flex items-center gap-6">
+      <.button>Edit</.button>
+    </div>
+  </.simple_form>
+</.main>

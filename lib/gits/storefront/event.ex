@@ -27,6 +27,12 @@ defmodule Gits.Storefront.Event do
     belongs_to :account, Gits.Dashboard.Account do
       domain Gits.Dashboard
     end
+
+    has_many :tickets, Gits.Storefront.Ticket
+  end
+
+  aggregates do
+    min :minimum_ticket_price, :tickets, :price
   end
 
   actions do

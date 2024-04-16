@@ -1,7 +1,6 @@
 defmodule Gits.Storefront.Ticket do
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
-    extensions: [AshArchival.Resource],
     authorizers: [Ash.Policy.Authorizer],
     domain: Gits.Storefront
 
@@ -9,6 +8,8 @@ defmodule Gits.Storefront.Ticket do
     uuid_primary_key :id
 
     attribute :name, :string, allow_nil?: false, public?: true
+
+    attribute :price, :integer, allow_nil?: false, public?: true
 
     create_timestamp :created_at, public?: true
 
@@ -21,7 +22,7 @@ defmodule Gits.Storefront.Ticket do
 
   actions do
     default_accept :*
-    defaults [:read, :update]
+    defaults [:read, :update, :destroy]
 
     create :create do
       accept :*

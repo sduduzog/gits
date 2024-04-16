@@ -45,7 +45,6 @@ defmodule GitsWeb.TicketController do
         actor: conn.assigns.current_user
       )
       |> Form.validate(Map.merge(params["ticket"], %{"event" => event}))
-      |> IO.inspect()
 
     with true <- form.valid?, {:ok, ticket} <- Form.submit(form) do
       conn
@@ -83,12 +82,15 @@ defmodule GitsWeb.TicketController do
       Ticket
       |> Ash.Query.for_read(:read)
       |> Ash.Query.filter(id: ticket_id)
-      |> Gits.Events.read_one!()
+      |> Ash.read_one!()
 
     conn
     |> assign(:ticket, ticket)
-    |> assign(:form, Form.for_update(ticket, :update, api: Events, as: "ticket"))
-    |> render(:edit, layout: {GitsWeb.Layouts, :ticket})
+    |> assign(
+      :form,
+      Form.for_update(ticket, :update, as: "ticket", actor: conn.assigns.current_user)
+    )
+    |> render(:edit)
   end
 
   def update(conn, %{"id" => ticket_id} = params) do
@@ -115,12 +117,20 @@ defmodule GitsWeb.TicketController do
       _ ->
         conn
         |> assign(:form, form)
-        |> render(:edit, layout: {GitsWeb.Layouts, :event})
+        |> render(:edit)
     end
 
     conn
     |> assign(:ticket, ticket)
     |> assign(:form, form)
-    |> render(:edit, layout: {GitsWeb.Layouts, :ticket})
+    |> render(:edit)
+  end
+
+  def delete(conn, params) do
+    Ash.get!(Ticket, params["id"])
+    |> Ash.destroy!(actor: conn.assigns.current_user)
+
+    conn
+    |> redirect(to: ~p"/accounts/#{params["account_id"]}/events/#{params["event_id"]}/tickets")
   end
 end

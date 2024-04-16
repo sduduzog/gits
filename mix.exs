@@ -65,7 +65,6 @@ defmodule Gits.MixProject do
       {:ash_postgres, "~> 2.0.0-rc.7"},
       {:ash_authentication, "~> 4.0.0-rc.6"},
       {:ash_authentication_phoenix, "~> 2.0.0-rc.2"},
-      {:ash_archival, "~> 0.1.6-rc.0"},
       {:reactor, "~> 0.8.1"},
       {:phoenix_turnstile, "~> 1.1"},
       {:eqrcode, "~> 0.1.10"},

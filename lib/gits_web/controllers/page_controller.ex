@@ -3,15 +3,17 @@ defmodule GitsWeb.PageController do
 
   require Ash.Query
   alias Gits.Dashboard.Member
-  alias Gits.Events.Event
+  alias Gits.Storefront.Event
 
   def home(conn, _params) do
-    # events =
-    #   Event
-    #   |> Ash.read!()
+    events =
+      Event
+      |> Ash.Query.load(:minimum_ticket_price)
+      |> Ash.read!()
+      |> IO.inspect()
 
     conn
-    |> assign(:events, [])
+    |> assign(:events, events)
     |> render(:home)
   end
 
