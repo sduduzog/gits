@@ -7,7 +7,6 @@ services:
       - rdata:/data
     ports:
       - "6379:6379"
-    command: redis-server --save 20 a --loglevel warning --requirepass redis123
   postgres:
     image: postgres:15
     volumes:
@@ -17,17 +16,17 @@ services:
     environment:
       - POSTGRES_PASSWORD=postgres
 
-  # minio:
-  #   image: quay.io/minio/minio
-  #   volumes:
-  #     - mdata:/data
-  #   ports:
-  #     - '9000:9000'
-  #     - '9090:9090'
-  #   environment:
-  #     - MINIO_ROOT_USER=root
-  #     - MINIO_ROOT_PASSWORD=rootuser
-  #   command: server /data --console-address ":9090"
+  minio:
+    image: quay.io/minio/minio
+    volumes:
+      - mdata:/data
+    ports:
+      - "9000:9000"
+      - "9090:9090"
+    environment:
+      - MINIO_ROOT_USER=root
+      - MINIO_ROOT_PASSWORD=rootuser
+    command: server /data --console-address ":9090"
   #
   # email:
   #   image: axllent/mailpit
@@ -40,4 +39,5 @@ services:
   #
 volumes:
   pgdata:
+  mdata:
   rdata:

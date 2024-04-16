@@ -155,15 +155,6 @@ defmodule GitsWeb.EventController do
     |> render(:edit)
   end
 
-  def address(conn, params) do
-    conn
-    |> put_layout(false)
-    |> Phoenix.LiveView.Controller.live_render(
-      GitsWeb.EventAddressLive,
-      session: %{"params" => params}
-    )
-  end
-
   def update(conn, params) do
     Form.for_update(
       Event
@@ -191,5 +182,23 @@ defmodule GitsWeb.EventController do
         |> assign(:form, form)
         |> render(:edit)
     end
+  end
+
+  def address(conn, params) do
+    conn
+    |> put_layout(false)
+    |> Phoenix.LiveView.Controller.live_render(
+      GitsWeb.EventAddressLive,
+      session: %{"params" => params}
+    )
+  end
+
+  def upload_listing_image(conn, params) do
+    conn
+    |> put_layout(false)
+    |> Phoenix.LiveView.Controller.live_render(
+      GitsWeb.UploadListingLive,
+      session: %{"params" => params}
+    )
   end
 end
