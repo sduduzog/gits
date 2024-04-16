@@ -72,7 +72,12 @@ defmodule Gits.MixProject do
       {:timex, "~> 3.7"},
       {:dotenvy, "~> 0.8.0"},
       {:req, "~> 0.4.0"},
-      {:cachex, "~> 3.6"}
+      {:cachex, "~> 3.6"},
+      {:image, "~> 0.44"},
+      {:ex_aws, "~> 2.5"},
+      {:ex_aws_s3, "~> 2.5"},
+      {:hackney, "~> 1.20"},
+      {:sweet_xml, "~> 0.7.4"}
     ]
   end
 

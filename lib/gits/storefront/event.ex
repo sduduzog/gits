@@ -1,7 +1,7 @@
-defmodule Gits.Dashboard.Event do
+defmodule Gits.Storefront.Event do
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
-    domain: Gits.Dashboard
+    domain: Gits.Storefront
 
   attributes do
     uuid_primary_key :id
@@ -14,7 +14,9 @@ defmodule Gits.Dashboard.Event do
   end
 
   relationships do
-    belongs_to :account, Gits.Dashboard.Account
+    belongs_to :account, Gits.Dashboard.Account do
+      domain Gits.Dashboard
+    end
   end
 
   actions do

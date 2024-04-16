@@ -2,7 +2,7 @@ defmodule GitsWeb.EventController do
   use GitsWeb, :controller
   require Ash.Query
   alias Gits.Dashboard.Account
-  alias Gits.Dashboard.Event
+  alias Gits.Storefront.Event
   alias AshPhoenix.Form
 
   plug :assign_params
@@ -101,9 +101,12 @@ defmodule GitsWeb.EventController do
         _ -> nil
       end
 
+    listing_image = get_listing_image(params["account_id"], params["event_id"])
+
     conn
     |> assign(:event, event)
     |> assign(:address, address)
+    |> assign(:listing_image, listing_image)
     |> render(:settings)
   end
 
@@ -133,9 +136,29 @@ defmodule GitsWeb.EventController do
       end
     end)
     |> case do
-      {:commit, place, _} -> place
-      {:ok, place} -> place
-      _ -> nil
+      {:commit, place, _} ->
+        place
+
+      {:commit, place} ->
+        place
+
+      {:ok, place} ->
+        place
+
+      _ ->
+        nil
+    end
+  end
+
+  defp get_listing_image(account_id, event_id) do
+    ExAws.S3.head_object("gits", "#{account_id}/#{event_id}/listing.jpg")
+    |> ExAws.request()
+    |> case do
+      {:ok, foo} ->
+        "/bucket/#{account_id}/#{event_id}/listing.jpg"
+
+      {:error, _} ->
+        nil
     end
   end
 

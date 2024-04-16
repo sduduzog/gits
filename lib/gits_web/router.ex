@@ -59,12 +59,7 @@ defmodule GitsWeb.Router do
     sign_out_route AuthController
     auth_routes_for Gits.Auth.User, to: AuthController
 
-    # sign_in_route(
-    #   register_path: "/register",
-    #   reset_path: "/reset",
-    #   on_mount: [{GitsWeb.LiveUserAuth, :live_no_user}],
-    #   overrides: [GitsWeb.AuthOverrides, AshAuthentication.Phoenix.Overrides.Default]
-    # )
+    get "/bucket/*keys", PageController, :bucket
   end
 
   # Other scopes may use custom stacks.

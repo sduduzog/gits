@@ -12,7 +12,10 @@ defmodule Gits.Dashboard.Account do
 
   relationships do
     has_many :members, Gits.Dashboard.Member
-    has_many :events, Gits.Dashboard.Event
+
+    has_many :events, Gits.Storefront.Event do
+      domain Gits.Storefront
+    end
   end
 
   actions do

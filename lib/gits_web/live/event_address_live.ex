@@ -1,6 +1,6 @@
 defmodule GitsWeb.EventAddressLive do
   require Ash.Query
-  alias Gits.Dashboard.Event
+  alias Gits.Storefront.Event
   use GitsWeb, :live_view
   import GitsWeb.DashboardComponents
 

@@ -21,19 +21,27 @@ defmodule GitsWeb.UploadListingLive do
   def handle_event("save", _params, socket) do
     case uploaded_entries(socket, :listing) do
       {[entry], []} ->
-        consume_uploaded_entry(socket, entry, fn %{path: _} ->
+        consume_uploaded_entry(socket, entry, fn %{path: path} ->
+          Image.open!(path)
+          |> Image.stream!(suffix: ".jpg", buffer_size: 5_242_880)
+          |> ExAws.S3.upload(
+            "gits",
+            "#{socket.assigns.account_id}/#{socket.assigns.event_id}/listing.jpg",
+            content_type: "image/jpeg"
+          )
+          |> ExAws.request()
+
           {:ok, nil}
         end)
-        |> IO.inspect()
 
-        {:noreply, socket}
+        {:noreply,
+         redirect(socket,
+           to:
+             ~p"/accounts/#{socket.assigns.account_id}/events/#{socket.assigns.event_id}/settings"
+         )}
 
       _ ->
         {:noreply, socket}
     end
   end
-
-  defp error_to_string(:too_large), do: "Too large"
-  defp error_to_string(:not_accepted), do: "You have selected an unacceptable file type"
-  defp error_to_string(:too_many_files), do: "You have selected too many files"
 end

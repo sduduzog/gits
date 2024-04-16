@@ -76,4 +76,32 @@ defmodule GitsWeb.PageController do
   def search(conn, _params) do
     render(conn, :search)
   end
+
+  def bucket(conn, params) do
+    filename = Enum.join(params["keys"], "/")
+
+    ExAws.S3.head_object("gits", filename)
+    |> ExAws.request()
+    |> case do
+      {:ok, _} ->
+        response =
+          ExAws.S3.get_object("gits", filename)
+          |> ExAws.request!()
+
+        {_, etag} = Enum.find(response.headers, fn {key, _} -> key == "ETag" end)
+        {_, content_type} = Enum.find(response.headers, fn {key, _} -> key == "Content-Type" end)
+
+        {_, last_modified} =
+          Enum.find(response.headers, fn {key, _} -> key == "Last-Modified" end)
+
+        conn
+        |> put_resp_header("ETag", etag)
+        |> put_resp_header("Content-Type", content_type)
+        |> put_resp_header("Last-Modified", last_modified)
+        |> send_resp(:ok, response.body)
+
+      {:error, _} ->
+        nil
+    end
+  end
 end

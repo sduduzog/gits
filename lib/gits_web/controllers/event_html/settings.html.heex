@@ -83,7 +83,11 @@
           <dt class="text-sm font-medium text-gray-900">Listing image</dt>
           <dd class="mt-1 grid flex-wrap items-start gap-4 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0 sm:flex">
             <div class="aspect-[4/5] h-64 rounded-xl bg-gray-200">
-              <img src="/images/placeholder.png" alt="" class="h-full w-full object-cover" />
+              <%= if @listing_image do %>
+                <img src={@listing_image} alt="" class="h-full w-full object-cover" />
+              <% else %>
+                <img src="/images/placeholder.png" alt="" class="h-full w-full object-cover" />
+              <% end %>
             </div>
             <div class="min-w-xs flex grow gap-4 sm:justify-end">
               <button

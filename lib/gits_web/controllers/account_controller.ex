@@ -5,7 +5,7 @@ defmodule GitsWeb.AccountController do
   alias AshPhoenix.Form
 
   alias Gits.Dashboard.Account
-  alias Gits.Dashboard.Event
+  alias Gits.Storefront.Event
 
   plug :auth_guard
   plug :set_layout
