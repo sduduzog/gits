@@ -37,6 +37,7 @@ defmodule GitsWeb.Router do
     auth_routes_for Gits.Auth.User, to: AuthController
 
     get "/", PageController, :home
+    get "/events/:id", PageController, :event
     get "/organizers", PageController, :organizers
 
     ash_authentication_live_session :authentication_optional,

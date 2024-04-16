@@ -1,4 +1,4 @@
-defmodule Gits.Storefront.Ticket do
+defmodule Gits.Storefront.TicketInstance do
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     authorizers: [Ash.Policy.Authorizer],
@@ -6,14 +6,14 @@ defmodule Gits.Storefront.Ticket do
 
   attributes do
     uuid_primary_key :id
-    attribute :name, :string, allow_nil?: false, public?: true
-    attribute :price, :integer, allow_nil?: false, public?: true
+
     create_timestamp :created_at, public?: true
+
     update_timestamp :updated_at, public?: true
   end
 
   relationships do
-    belongs_to :event, Gits.Storefront.Event
+    belongs_to :ticket, Gits.Storefront.Ticket
   end
 
   actions do
@@ -23,9 +23,9 @@ defmodule Gits.Storefront.Ticket do
     create :create do
       accept :*
 
-      argument :event, :map
+      argument :ticket, :map
 
-      change manage_relationship(:event, type: :append)
+      change manage_relationship(:ticket, type: :append)
     end
   end
 
@@ -36,7 +36,7 @@ defmodule Gits.Storefront.Ticket do
   end
 
   postgres do
-    table "tickets"
+    table "ticket_instances"
     repo Gits.Repo
   end
 end

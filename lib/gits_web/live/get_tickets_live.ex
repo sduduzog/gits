@@ -1,15 +1,15 @@
 defmodule GitsWeb.GetTicketsLive do
   use GitsWeb, :live_view
   require Ash.Query
-  alias Gits.Events.Event
-  alias Gits.Events.Ticket
+  alias Gits.Storefront.Event
+  alias Gits.Storefront.Ticket
   alias Gits.Events.TicketInstance
 
   def mount(%{"id" => event_id}, _session, socket) do
     event =
       Event
       |> Ash.Query.filter(id: event_id)
-      |> Gits.Events.read_one!()
+      |> Ash.read_one!()
 
     socket =
       socket
@@ -28,7 +28,7 @@ defmodule GitsWeb.GetTicketsLive do
       |> Ash.Changeset.for_update(:add_instance,
         instance: %{user_id: socket.assigns.current_user.id}
       )
-      |> Gits.Events.update!()
+      |> Ash.update!()
 
     {:noreply, assign_tickets(socket, ticket.event_id)}
   end
@@ -37,7 +37,7 @@ defmodule GitsWeb.GetTicketsLive do
     TicketInstance
     |> Ash.Query.filter(ticket_id: ticket_id, user_id: socket.assigns.current_user.id)
     |> Ash.Query.sort(created_at: :desc)
-    |> Gits.Events.read!()
+    |> Ash.read!()
     |> case do
       [first | _] when not is_nil(first) ->
         first
@@ -57,7 +57,7 @@ defmodule GitsWeb.GetTicketsLive do
       |> Ash.Query.aggregate(:quantity, :count, :ticket_instances,
         query: [filter: [user_id: socket.assigns.current_user.id]]
       )
-      |> Gits.Events.read!()
+      |> Ash.read!()
 
     assign(socket, :tickets, tickets)
   end
