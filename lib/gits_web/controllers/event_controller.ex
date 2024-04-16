@@ -5,27 +5,10 @@ defmodule GitsWeb.EventController do
   alias Gits.Storefront.Event
   alias AshPhoenix.Form
 
-  plug :assign_params
   plug :set_layout
 
   defp set_layout(conn, _) do
     put_layout(conn, html: :dashboard)
-  end
-
-  def assign_params(conn, _) do
-    case conn.path_info do
-      [_, account_id, _, event_id | _] ->
-        conn
-        |> assign(:account_id, account_id)
-        |> assign(:event_id, event_id)
-
-      [_, account_id, _] ->
-        conn
-        |> assign(:account_id, account_id)
-
-      _ ->
-        conn
-    end
   end
 
   def index(conn, params) do
@@ -102,11 +85,13 @@ defmodule GitsWeb.EventController do
       end
 
     listing_image = get_listing_image(params["account_id"], params["event_id"])
+    feature_image = get_feature_image(params["account_id"], params["event_id"])
 
     conn
     |> assign(:event, event)
     |> assign(:address, address)
     |> assign(:listing_image, listing_image)
+    |> assign(:feature_image, feature_image)
     |> render(:settings)
   end
 
@@ -151,11 +136,27 @@ defmodule GitsWeb.EventController do
   end
 
   defp get_listing_image(account_id, event_id) do
-    ExAws.S3.head_object("gits", "#{account_id}/#{event_id}/listing.jpg")
+    filename = "#{account_id}/#{event_id}/listing.jpg"
+
+    ExAws.S3.head_object("gits", filename)
+    |> ExAws.request()
+    |> case do
+      {:ok, _} ->
+        "/bucket/#{filename}"
+
+      {:error, _} ->
+        nil
+    end
+  end
+
+  defp get_feature_image(account_id, event_id) do
+    filename = "#{account_id}/#{event_id}/feature.jpg"
+
+    ExAws.S3.head_object("gits", filename)
     |> ExAws.request()
     |> case do
       {:ok, foo} ->
-        "/bucket/#{account_id}/#{event_id}/listing.jpg"
+        "/bucket/#{filename}"
 
       {:error, _} ->
         nil
@@ -221,6 +222,15 @@ defmodule GitsWeb.EventController do
     |> put_layout(false)
     |> Phoenix.LiveView.Controller.live_render(
       GitsWeb.UploadListingLive,
+      session: %{"params" => params}
+    )
+  end
+
+  def upload_feature_image(conn, params) do
+    conn
+    |> put_layout(false)
+    |> Phoenix.LiveView.Controller.live_render(
+      GitsWeb.UploadFeatureLive,
       session: %{"params" => params}
     )
   end

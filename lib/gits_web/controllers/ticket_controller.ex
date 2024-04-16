@@ -2,73 +2,50 @@ defmodule GitsWeb.TicketController do
   use GitsWeb, :controller
 
   require Ash.Query
-  alias Gits.Events.Event
-  alias Gits.Events
-  alias Gits.Events.Ticket
+  alias Gits.Storefront.Event
+  alias Gits.Storefront.Ticket
   alias AshPhoenix.Form
 
-  plug :assign_params
+  plug :set_layout
 
-  def assign_params(%{path_info: [_, account_id, _, event_id, _]} = conn, _) do
-    conn
-    |> assign(:account_id, account_id)
-    |> assign(:event_id, event_id)
-  end
-
-  def assign_params(%{path_info: [_, account_id, _, event_id, _, ticket_id | _tail]} = conn, _) do
-    unless ticket_id == "new" do
-      conn
-      |> assign(:account_id, account_id)
-      |> assign(:event_id, event_id)
-      |> assign(:ticket_id, ticket_id)
-    else
-      conn
-      |> assign(:account_id, account_id)
-      |> assign(:event_id, event_id)
-    end
-  end
-
-  def assign_params(conn, _) do
-    conn
+  defp set_layout(conn, _) do
+    put_layout(conn, html: :dashboard)
   end
 
   def index(conn, params) do
-    tickets =
-      Ticket
-      |> Ash.Query.for_read(:read)
-      |> Ash.Query.filter(event_id: params["event_id"])
-      |> Gits.Events.read!()
+    # tickets =
+    #   Ticket
+    #   |> Ash.Query.for_read(:read)
+    #   |> Ash.Query.filter(event_id: params["event_id"])
+    #   |> Gits.Events.read!()
 
     conn
-    |> assign(:tickets, tickets)
-    |> render(:index, layout: {GitsWeb.Layouts, :event})
+    |> assign(:tickets, [])
+    |> render(:index)
   end
 
   def new(conn, _) do
     conn
     |> assign(
       :form,
-      Form.for_create(Ticket, :create, api: Events, as: "ticket")
-    )
-    |> render(:new, layout: {GitsWeb.Layouts, :event})
-  end
-
-  def create(conn, params) do
-    form =
       Form.for_create(Ticket, :create,
-        api: Events,
         as: "ticket",
         actor: conn.assigns.current_user
       )
-      |> Form.validate(
-        Map.merge(params["ticket"], %{
-          "event" =>
-            Event
-            |> Ash.Query.for_read(:read)
-            |> Ash.Query.filter(id: params["event_id"])
-            |> Gits.Events.read_one!()
-        })
+    )
+    |> render(:new)
+  end
+
+  def create(conn, params) do
+    event = Event |> Ash.get!(params["event_id"])
+
+    form =
+      Form.for_create(Ticket, :create,
+        as: "ticket",
+        actor: conn.assigns.current_user
       )
+      |> Form.validate(Map.merge(params["ticket"], %{"event" => event}))
+      |> IO.inspect()
 
     with true <- form.valid?, {:ok, ticket} <- Form.submit(form) do
       conn
@@ -77,10 +54,15 @@ defmodule GitsWeb.TicketController do
           ~p"/accounts/#{params["account_id"]}/events/#{params["event_id"]}/tickets/#{ticket.id}"
       )
     else
-      _ ->
+      false ->
         conn
         |> assign(:form, form)
-        |> render(:new, layout: {GitsWeb.Layouts, :event})
+        |> render(:new)
+
+      {:error, _} ->
+        conn
+        |> assign(:form, form)
+        |> render(:new)
     end
   end
 

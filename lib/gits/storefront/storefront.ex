@@ -3,5 +3,6 @@ defmodule Gits.Storefront do
 
   resources do
     resource Gits.Storefront.Event
+    resource Gits.Storefront.Ticket
   end
 end

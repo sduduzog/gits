@@ -1,30 +1,38 @@
-<h1 class="font-poppins text-3xl font-semibold text-gray-900">Tickets</h1>
+<.event_sidebar
+  back={~p"/accounts/#{@conn.params["account_id"]}/events"}
+  base={~p"/accounts/#{@conn.params["account_id"]}/events/#{@conn.params["event_id"]}"}
+  request_path={@conn.request_path}
+/>
 
-<div class="grid gap-4">
-  <div class="flex justify-between">
-    <h2 class="font-poppins text-2xl">Ticket Types</h2>
-    <.button phx-click={JS.navigate(~p"/accounts/#{@account_id}/events/#{@event_id}/tickets/new")}>
-      Create new
+<.main>
+  <.main_header title="Tickets"></.main_header>
+  <div class="px-4">
+    <.button phx-click={
+      JS.navigate(
+        ~p"/accounts/#{@conn.params["account_id"]}/events/#{@conn.params["event_id"]}/tickets/new"
+      )
+    }>
+      New ticket
     </.button>
   </div>
-  <div class="overflow-hidden rounded-2xl border">
-    <div class="overflow-x-auto px-6 py-2 pt-4">
-      <.table
-        id="tickets"
-        rows={@tickets}
-        row_click={
-          fn row ->
-            JS.navigate(~p"/accounts/#{@account_id}/events/#{@event_id}/tickets/#{row.id}")
-          end
-        }
-      >
-        <:col :let={event} label="Name"><%= event.name %></:col>
-        <:action>
-          <!-- <button> -->
+  <div class="overflow-x-auto px-6 py-2 pt-4">
+    <.table
+      id="tickets"
+      rows={@tickets}
+      row_click={
+        fn row ->
+          JS.navigate(
+            ~p"/accounts/#{@conn.params["account_id"]}/events/#{@conn.params["event_id"]}/tickets/#{row.id}"
+          )
+        end
+      }
+    >
+      <:col :let={ticket} label="Name"><%= ticket.name %></:col>
+      <:action>
+        <!-- <button> -->
           <!--   <.icon name="hero-ellipsis-vertical-mini" /> -->
           <!-- </button> -->
-        </:action>
-      </.table>
-    </div>
+      </:action>
+    </.table>
   </div>
-</div>
+</.main>

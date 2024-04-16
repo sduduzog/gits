@@ -1,6 +1,8 @@
 defmodule Gits.Storefront.Event do
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
+    extensions: [AshArchival.Resource],
+    authorizers: [Ash.Policy.Authorizer],
     domain: Gits.Storefront
 
   attributes do
@@ -9,6 +11,14 @@ defmodule Gits.Storefront.Event do
     attribute :description, :string, allow_nil?: false, public?: true
     attribute :starts_at, :naive_datetime, allow_nil?: false, public?: true
     attribute :address_place_id, :string, allow_nil?: true
+
+    attribute :visibility, :atom do
+      allow_nil? false
+      public? true
+      constraints one_of: [:private, :protected, :public]
+      default :private
+    end
+
     create_timestamp :created_at
     update_timestamp :updated_at
   end
@@ -38,6 +48,12 @@ defmodule Gits.Storefront.Event do
 
     update :update_address do
       accept :address_place_id
+    end
+  end
+
+  policies do
+    policy always() do
+      authorize_if always()
     end
   end
 

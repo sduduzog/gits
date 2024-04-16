@@ -16,6 +16,13 @@
       <.input type="text" label="Name" field={f[:name]} />
       <.input type="textarea" label="Description" field={f[:description]} />
       <.input type="datetime-local" label="Starts date" field={f[:starts_at]} />
+      <.input
+        type="select"
+        label="Visibility"
+        field={f[:visibility]}
+        options={[Private: :private, Protected: :protected, Public: :public]}
+      />
+
       <div class="flex items-center gap-6">
         <.button>Update</.button>
       </div>

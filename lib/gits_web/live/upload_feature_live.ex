@@ -1,4 +1,4 @@
-defmodule GitsWeb.UploadListingLive do
+defmodule GitsWeb.UploadFeatureLive do
   use GitsWeb, :live_view
   import GitsWeb.DashboardComponents
 
@@ -8,8 +8,7 @@ defmodule GitsWeb.UploadListingLive do
     socket =
       assign(socket, :account_id, params["account_id"])
       |> assign(:event_id, params["event_id"])
-      |> assign(:uploaded_files, [])
-      |> allow_upload(:listing, accept: ~w(.jpg .jpeg .png), max_entries: 1)
+      |> allow_upload(:feature, accept: ~w(.jpg .jpeg .png), max_entries: 1)
 
     {:ok, socket, layout: {GitsWeb.Layouts, :dashboard}}
   end
@@ -19,19 +18,18 @@ defmodule GitsWeb.UploadListingLive do
   end
 
   def handle_event("save", _params, socket) do
-    case uploaded_entries(socket, :listing) do
+    case uploaded_entries(socket, :feature) do
       {[entry], []} ->
         consume_uploaded_entry(socket, entry, fn %{path: path} ->
           Image.open!(path)
-          |> Image.thumbnail!("480x600", fit: :cover)
+          |> Image.thumbnail!("720x480", fit: :cover)
           |> Image.stream!(suffix: ".jpg", buffer_size: 5_242_880, quality: 100)
           |> ExAws.S3.upload(
             "gits",
-            "#{socket.assigns.account_id}/#{socket.assigns.event_id}/listing.jpg",
+            "#{socket.assigns.account_id}/#{socket.assigns.event_id}/feature.jpg",
             content_type: "image/jpeg"
           )
-          |> ExAws.request!()
-          |> IO.inspect()
+          |> ExAws.request()
 
           {:ok, nil}
         end)

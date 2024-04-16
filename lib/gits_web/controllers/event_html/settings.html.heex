@@ -33,10 +33,18 @@
             <span class="whitespace-pre-line"><%= @event.description %></span>
           </dd>
         </div>
+
         <div class="py-6 sm:grid sm:grid-cols-3 sm:gap-4">
           <dt class="text-sm font-medium text-gray-900">Start date</dt>
           <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
             <%= @event.starts_at |> Timex.format!("%e %b %Y, %R %p", :strftime) %>
+          </dd>
+        </div>
+
+        <div class="py-6 sm:grid sm:grid-cols-3 sm:gap-4">
+          <dt class="text-sm font-medium text-gray-900">Visibility</dt>
+          <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+            <%= @event.visibility %>
           </dd>
         </div>
       </dl>
@@ -82,24 +90,57 @@
         <div class="py-6 sm:grid sm:grid-cols-3 sm:gap-4">
           <dt class="text-sm font-medium text-gray-900">Listing image</dt>
           <dd class="mt-1 grid flex-wrap items-start gap-4 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0 sm:flex">
-            <div class="aspect-[4/5] h-64 rounded-xl bg-gray-200">
-              <%= if @listing_image do %>
-                <img src={@listing_image} alt="" class="h-full w-full object-cover" />
-              <% else %>
-                <img src="/images/placeholder.png" alt="" class="h-full w-full object-cover" />
-              <% end %>
+            <div class="bg-gray-50/50 flex w-full max-w-md justify-center rounded-xl border p-4">
+              <div class="aspect-[4/5] h-64 rounded-xl bg-gray-200">
+                <%= if @listing_image do %>
+                  <img
+                    src={@listing_image}
+                    alt=""
+                    class="object-coverx h-full w-full bg-blue-200 object-contain"
+                  />
+                <% else %>
+                  <img src="/images/placeholder.png" alt="" class="h-full w-full object-cover" />
+                <% end %>
+              </div>
             </div>
             <div class="min-w-xs flex grow gap-4 sm:justify-end">
-              <button
+              <.link
                 class="flex rounded-xl p-2 hover:bg-gray-100"
-                phx-click={
-                  Phoenix.LiveView.JS.navigate(
-                    ~p"/accounts/#{@conn.params["account_id"]}/events/#{@conn.params["event_id"]}/upload/listing"
-                  )
+                href={
+                  ~p"/accounts/#{@conn.params["account_id"]}/events/#{@conn.params["event_id"]}/upload/listing"
                 }
               >
                 <.icon name="hero-pencil-square" />
-              </button>
+              </.link>
+            </div>
+          </dd>
+        </div>
+
+        <div class="py-6 sm:grid sm:grid-cols-3 sm:gap-4">
+          <dt class="text-sm font-medium text-gray-900">Feature image</dt>
+          <dd class="mt-1 grid flex-wrap items-start gap-4 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0 sm:flex">
+            <div class="bg-gray-50/50 flex w-full max-w-md justify-center rounded-xl border p-4">
+              <div class="aspect-[3/2] h-48 rounded-xl bg-gray-200">
+                <%= if @feature_image do %>
+                  <img
+                    src={@feature_image}
+                    alt=""
+                    class="object-coverx h-full w-full bg-blue-200 object-contain"
+                  />
+                <% else %>
+                  <img src="/images/placeholder.png" alt="" class="h-full w-full object-cover" />
+                <% end %>
+              </div>
+            </div>
+            <div class="min-w-xs flex grow gap-4 sm:justify-end">
+              <.link
+                class="flex rounded-xl p-2 hover:bg-gray-100"
+                href={
+                  ~p"/accounts/#{@conn.params["account_id"]}/events/#{@conn.params["event_id"]}/upload/feature"
+                }
+              >
+                <.icon name="hero-pencil-square" />
+              </.link>
             </div>
           </dd>
         </div>

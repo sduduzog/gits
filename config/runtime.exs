@@ -27,9 +27,13 @@ config :gits, :google, maps_api_key: env!("GOOGLE_MAPS_API_KEY", :string)
 
 config :ex_aws,
   access_key_id: env!("AWS_ACCESS_KEY_ID", :string),
-  secret_access_key: env!("AWS_SECRET_ACCESS_KEY", :string)
+  secret_access_key: env!("AWS_SECRET_ACCESS_KEY", :string),
+  region: "auto"
 
-config :ex_aws, :s3, scheme: "http://", host: "localhost", port: 9000
+config :ex_aws, :s3,
+  scheme: env!("AWS_S3_SCHEME", :string),
+  host: env!("AWS_S3_HOST", :string),
+  port: env!("AWS_S3_PORT", :integer)
 
 if config_env() == :prod do
   database_url =

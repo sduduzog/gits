@@ -75,6 +75,43 @@ defmodule GitsWeb.DashboardComponents do
     """
   end
 
+  attr :base, :string, required: true
+  attr :request_path, :string, required: true
+  attr :back, :string, required: true
+
+  def ticket_sidebar(assigns) do
+    ~H"""
+    <.sidebar>
+      <.sidebar_item
+        label="Event Overview"
+        icon="hero-calendar-days-mini"
+        request_path={@request_path}
+        root={true}
+        to={@base}
+      />
+      <.sidebar_item
+        label="Settings"
+        icon="hero-cog-6-tooth-mini"
+        request_path={@request_path}
+        to={@base <> "/settings"}
+      />
+      <.sidebar_item
+        label="Tickets"
+        icon="hero-ticket-mini"
+        request_path={@request_path}
+        to={@base <> "/tickets"}
+      />
+      <.sidebar_item
+        label="Go back"
+        icon="hero-arrow-left-mini"
+        request_path={@request_path}
+        root={true}
+        to={@back}
+      />
+    </.sidebar>
+    """
+  end
+
   attr :label, :string, required: true
   attr :icon, :string, required: true
   attr :to, :string, required: true

@@ -3,7 +3,6 @@ defmodule GitsWeb.PageController do
 
   require Ash.Query
   alias Gits.Dashboard.Member
-  alias Gits.Events.TicketInstance
   alias Gits.Events.Event
 
   def home(conn, _params) do

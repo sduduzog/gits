@@ -21,9 +21,11 @@ defmodule GitsWeb.Router do
 
     resources "/accounts", AccountController do
       resources "/events", EventController do
+        resources "/tickets", TicketController
         get "/settings", EventController, :settings
         get "/address", EventController, :address
         get "/upload/listing", EventController, :upload_listing_image
+        get "/upload/feature", EventController, :upload_feature_image
       end
     end
   end
