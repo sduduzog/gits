@@ -1,4 +1,7 @@
 defmodule Gits.Storefront.Event do
+  require Ash.Query
+  require Ash.Resource.Preparation.Builtins
+
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     extensions: [AshArchival.Resource],
@@ -6,7 +9,7 @@ defmodule Gits.Storefront.Event do
     domain: Gits.Storefront
 
   attributes do
-    uuid_primary_key :id
+    integer_primary_key :id
     attribute :name, :string, allow_nil?: false, public?: true
     attribute :description, :string, allow_nil?: false, public?: true
     attribute :starts_at, :naive_datetime, allow_nil?: false, public?: true
@@ -35,9 +38,29 @@ defmodule Gits.Storefront.Event do
     min :minimum_ticket_price, :tickets, :price
   end
 
+  calculations do
+    calculate :masked_id, :string, Gits.Storefront.Calculations.MaskId
+    calculate :address, :map, Gits.Storefront.Event.Calculations.Address
+  end
+
   actions do
     default_accept :*
     defaults [:read, :destroy, update: :*]
+
+    read :masked do
+      argument :id, :string
+
+      prepare before_action(fn query, _ ->
+                id =
+                  Sqids.new!()
+                  |> Sqids.decode!(Ash.Query.get_argument(query, :id))
+                  |> hd()
+
+                query |> Ash.Query.filter(id: id)
+              end)
+
+      prepare build(load: [:masked_id])
+    end
 
     create :first_event do
       primary? true
@@ -66,5 +89,19 @@ defmodule Gits.Storefront.Event do
   postgres do
     table "events"
     repo Gits.Repo
+  end
+end
+
+defmodule Gits.Storefront.Event.Calculations.Address do
+  use Ash.Resource.Calculation
+
+  def load(_, _, _) do
+    [:address_place_id]
+  end
+
+  def calculate(records, opts, context) do
+    Enum.map(records, fn record ->
+      Gits.Cache.get_address(record.address_place_id)
+    end)
   end
 end

@@ -13,7 +13,11 @@ defmodule Gits.Storefront.Ticket do
   end
 
   relationships do
-    belongs_to :event, Gits.Storefront.Event
+    belongs_to :event, Gits.Storefront.Event do
+      attribute_type :integer
+    end
+
+    has_many :instances, Gits.Storefront.TicketInstance
   end
 
   actions do
@@ -27,6 +31,12 @@ defmodule Gits.Storefront.Ticket do
 
       change manage_relationship(:event, type: :append)
     end
+  end
+
+  calculations do
+    calculate :customer_instance_count,
+              :integer,
+              expr(count(instances, query: [filter: expr(customer == ^actor(:id))]))
   end
 
   policies do

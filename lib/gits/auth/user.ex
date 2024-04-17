@@ -13,6 +13,9 @@ defmodule Gits.Auth.User do
   end
 
   actions do
+    default_accept :*
+    defaults [:read]
+
     update :send_confirmation_email do
       accept []
     end

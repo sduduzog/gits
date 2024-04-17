@@ -31,7 +31,6 @@ defmodule GitsWeb.UploadListingLive do
             content_type: "image/jpeg"
           )
           |> ExAws.request!()
-          |> IO.inspect()
 
           {:ok, nil}
         end)

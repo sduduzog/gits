@@ -76,63 +76,17 @@ defmodule GitsWeb.EventController do
     event =
       Event
       |> Ash.Query.filter(id: params["event_id"])
+      |> Ash.Query.load(:address)
       |> Ash.read_one!()
-
-    address =
-      case event.address_place_id do
-        id when not is_nil(id) -> get_address(id)
-        _ -> nil
-      end
 
     listing_image = get_listing_image(params["account_id"], params["event_id"])
     feature_image = get_feature_image(params["account_id"], params["event_id"])
 
     conn
     |> assign(:event, event)
-    |> assign(:address, address)
     |> assign(:listing_image, listing_image)
     |> assign(:feature_image, feature_image)
     |> render(:settings)
-  end
-
-  defp get_address(place_id) do
-    Cachex.fetch(:cache, place_id, fn key ->
-      config = Application.get_env(:gits, :google)
-
-      Req.new(base_url: "https://places.googleapis.com")
-      |> Req.Request.put_header("X-Goog-Api-Key", config[:maps_api_key])
-      |> Req.Request.put_header(
-        "X-Goog-FieldMask",
-        "displayName,formattedAddress,location"
-      )
-      |> Req.get!(url: "/v1/places/#{key}")
-      |> Map.get(:body)
-      |> case do
-        %{"displayName" => name, "formattedAddress" => address, "location" => location} ->
-          {:commit,
-           %{
-             name: name["text"],
-             address: address,
-             location: %{lat: location["latitude"], long: location["longitude"]}
-           }}
-
-        _ ->
-          {:ignore, nil}
-      end
-    end)
-    |> case do
-      {:commit, place, _} ->
-        place
-
-      {:commit, place} ->
-        place
-
-      {:ok, place} ->
-        place
-
-      _ ->
-        nil
-    end
   end
 
   defp get_listing_image(account_id, event_id) do

@@ -7,10 +7,9 @@ defmodule GitsWeb.PageController do
 
   def home(conn, _params) do
     events =
-      Event
-      |> Ash.Query.load(:minimum_ticket_price)
+      Ash.Query.for_read(Event, :read)
+      |> Ash.Query.load([:minimum_ticket_price, :masked_id, :address])
       |> Ash.read!()
-      |> IO.inspect()
 
     conn
     |> assign(:events, events)
@@ -36,17 +35,6 @@ defmodule GitsWeb.PageController do
       nil ->
         false
     end
-  end
-
-  def event(conn, params) do
-    event =
-      Event
-      |> Ash.Query.filter(id: params["id"])
-      |> Ash.read_one!()
-
-    conn
-    |> assign(:event, event)
-    |> render(:event)
   end
 
   def settings(conn, _params) do

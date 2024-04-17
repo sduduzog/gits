@@ -68,10 +68,10 @@
         <div class="py-6 sm:grid sm:grid-cols-3 sm:gap-4">
           <dt class="text-sm font-medium text-gray-900">Address</dt>
           <dd class="mt-1 grid flex-wrap gap-4 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0 sm:flex">
-            <%= if @address do %>
+            <%= if @event.address do %>
               <div class="grid">
-                <span><%= @address.name %></span>
-                <span><%= @address.address %></span>
+                <span><%= @event.address.name %></span>
+                <span><%= @event.address.address %></span>
               </div>
             <% else %>
               <div>No address chosen</div>

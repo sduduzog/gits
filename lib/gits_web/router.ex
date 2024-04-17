@@ -37,17 +37,17 @@ defmodule GitsWeb.Router do
     auth_routes_for Gits.Auth.User, to: AuthController
 
     get "/", PageController, :home
-    get "/events/:id", PageController, :event
     get "/organizers", PageController, :organizers
 
     ash_authentication_live_session :authentication_optional,
       on_mount: {GitsWeb.LiveUserAuth, :live_user_optional} do
+      live "/events/:id", EventLive
       live "/events/:id/payment", EventLive.Payment
     end
 
     ash_authentication_live_session :authentication_required,
       on_mount: {GitsWeb.LiveUserAuth, :live_user_required} do
-      live "/events/:id/get-tickets", GetTicketsLive
+      live "/tickets", TicketsLive
       live "/accounts/:account_id/events/:event_id/attendees/scanner", ScanAttendeeLive
     end
 

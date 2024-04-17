@@ -96,9 +96,7 @@ defmodule GitsWeb.TicketController do
   def update(conn, %{"id" => ticket_id} = params) do
     ticket =
       Ticket
-      |> Ash.Query.for_read(:read)
-      |> Ash.Query.filter(id: ticket_id)
-      |> Gits.Events.read_one!()
+      |> Ash.get!(ticket_id)
 
     form =
       Form.for_update(ticket, :update,
