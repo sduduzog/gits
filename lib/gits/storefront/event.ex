@@ -62,17 +62,14 @@ defmodule Gits.Storefront.Event do
       prepare build(load: [:masked_id])
     end
 
-    create :first_event do
-      primary? true
-      accept :*
-    end
-
     create :create do
       accept :*
 
-      argument :account, :map
+      argument :account, :map do
+        allow_nil? false
+      end
 
-      change manage_relationship(:account, type: :append)
+      change manage_relationship(:account, type: :create)
     end
 
     update :update_address do
@@ -88,6 +85,10 @@ defmodule Gits.Storefront.Event do
 
     policy action(:masked) do
       authorize_if expr(visibility in [:protected, :public])
+    end
+
+    policy action(:create) do
+      forbid_if always()
     end
   end
 

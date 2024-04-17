@@ -1,5 +1,8 @@
 defmodule Gits.Dashboard.Member do
-  use Ash.Resource, data_layer: AshPostgres.DataLayer, domain: Gits.Dashboard
+  use Ash.Resource,
+    data_layer: AshPostgres.DataLayer,
+    authorizers: [Ash.Policy.Authorizer],
+    domain: Gits.Dashboard
 
   attributes do
     uuid_primary_key :id
@@ -34,6 +37,13 @@ defmodule Gits.Dashboard.Member do
       argument :user, :map
 
       change manage_relationship(:user, type: :append)
+    end
+  end
+
+  policies do
+    policy action(:create) do
+      authorize_if expr(user.id == ^actor(:id))
+      authorize_if always()
     end
   end
 

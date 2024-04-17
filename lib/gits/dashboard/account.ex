@@ -1,6 +1,7 @@
 defmodule Gits.Dashboard.Account do
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
+    authorizers: [Ash.Policy.Authorizer],
     domain: Gits.Dashboard
 
   attributes do
@@ -23,12 +24,21 @@ defmodule Gits.Dashboard.Account do
     defaults [:read, :destroy, update: :*]
 
     create :create do
+      primary? true
       accept :*
 
-      argument :member, :map
-      argument :event, :map
+      argument :member, :map do
+        allow_nil? false
+      end
+
       change manage_relationship(:member, :members, type: :create)
-      change manage_relationship(:event, :events, type: :create)
+    end
+  end
+
+  policies do
+    policy action(:create) do
+      authorize_if expr(members.user.id == ^actor(:id))
+      authorize_if always()
     end
   end
 

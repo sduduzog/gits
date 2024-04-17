@@ -30,7 +30,7 @@ defmodule GitsWeb.PageController do
       user when not is_nil(user) ->
         Member
         |> Ash.Query.filter(user.id == ^conn.assigns.current_user.id)
-        |> Ash.exists?()
+        |> Ash.exists?(actor: conn.assigns.current_user)
 
       nil ->
         false
