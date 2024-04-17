@@ -41,8 +41,13 @@ defmodule Gits.Storefront.TicketInstance do
   end
 
   policies do
-    policy always() do
+    policy action([:read, :create]) do
+      authorize_if expr(customer.id == ^actor(:id))
       authorize_if always()
+    end
+
+    policy action([:destroy]) do
+      authorize_if expr(customer.id == ^actor(:id))
     end
   end
 
@@ -59,7 +64,7 @@ defmodule Gits.Storefront.TicketInstance.Calculations.Address do
     [:event_address_place_id]
   end
 
-  def calculate(records, opts, context) do
+  def calculate(records, _opts, _context) do
     Enum.map(records, fn record ->
       Gits.Cache.get_address(record.event_address_place_id)
     end)

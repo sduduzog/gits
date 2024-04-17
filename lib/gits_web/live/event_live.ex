@@ -18,9 +18,13 @@ defmodule GitsWeb.EventLive do
       end
 
     event =
-      Ash.Query.for_read(Event, :masked, %{id: params["id"]})
+      Ash.Query.for_read(Event, :masked, %{id: params["id"]}, actor: customer)
       |> Ash.Query.load([:address])
       |> Ash.read_one!()
+
+    unless event do
+      raise GitsWeb.Exceptions.NotFound
+    end
 
     tickets =
       Ash.Query.for_read(Ticket, :read)
@@ -83,10 +87,10 @@ defmodule GitsWeb.EventLive do
       |> Ash.create!()
 
       tickets =
-        Ash.Query.for_read(Ticket, :read)
+        Ash.Query.for_read(Ticket, :read, %{}, actor: customer)
         |> Ash.Query.filter(event.id == ^event.id)
         |> Ash.Query.load(:customer_instance_count)
-        |> Ash.read!(actor: customer)
+        |> Ash.read!()
 
       socket =
         socket
@@ -99,10 +103,6 @@ defmodule GitsWeb.EventLive do
          to: ~p"/register?return_to=#{~p"/events/#{socket.assigns.event.masked_id}"}"
        )}
     end
-  end
-
-  def handle_event(event, _, socket) do
-    {:noreply, socket}
   end
 
   defp get_feature_image(account_id, event_id) do

@@ -12,14 +12,15 @@ defmodule GitsWeb.EventController do
   end
 
   def index(conn, params) do
-    assign(
-      conn,
-      :events,
-      Ash.Query.filter(Event, account.id == ^params["account_id"])
+    events =
+      Ash.Query.for_read(Event, :read, %{}, actor: nil)
+      |> Ash.Query.filter(account.id == ^params["account_id"])
       |> Ash.Query.sort(created_at: :desc)
       |> Ash.read!()
-    )
-    |> render(:index)
+
+    conn = assign(conn, :events, events)
+
+    render(conn, :index)
   end
 
   def show(conn, params) do

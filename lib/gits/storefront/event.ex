@@ -81,8 +81,13 @@ defmodule Gits.Storefront.Event do
   end
 
   policies do
-    policy always() do
+    policy action(:read) do
+      forbid_if expr(visibility == :private)
       authorize_if always()
+    end
+
+    policy action(:masked) do
+      authorize_if expr(visibility in [:protected, :public])
     end
   end
 
@@ -99,7 +104,7 @@ defmodule Gits.Storefront.Event.Calculations.Address do
     [:address_place_id]
   end
 
-  def calculate(records, opts, context) do
+  def calculate(records, _opts, _context) do
     Enum.map(records, fn record ->
       Gits.Cache.get_address(record.address_place_id)
     end)
