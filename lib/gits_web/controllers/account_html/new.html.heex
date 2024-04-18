@@ -2,14 +2,23 @@
   <a href="/" class="font-poppins text-3xl font-black italic">GiTS</a>
   <h1 class="font-poppins text-3xl font-semibold text-gray-900">Create new event</h1>
 
-  <.simple_form :let={f} for={@form} action="/accounts" method="POST" class="max-w-screen-lg">
-    <div class="w-full sm:max-w-lg">
-      <.input type="text" label="Name" field={f[:name]} />
-    </div>
-    <.input type="textarea" label="Description" field={f[:description]} />
-    <div class="max-w-60 w-full">
-      <.input type="datetime-local" label="Starts date" field={f[:starts_at]} />
-    </div>
+  <.simple_form
+    :let={account_form}
+    for={@form}
+    action="/accounts"
+    method="POST"
+    class="max-w-screen-lg"
+  >
+    <.inputs_for :let={f} field={account_form[:event]}>
+      <div class="w-full sm:max-w-lg">
+        <.input type="text" label="Name" field={f[:name]} />
+      </div>
+      <.input type="textarea" label="Description" field={f[:description]} />
+      <div class="max-w-60 w-full">
+        <.input type="datetime-local" label="Starts date" field={f[:starts_at]} />
+      </div>
+    </.inputs_for>
+
     <div class="flex items-center gap-6">
       <.button>Create</.button>
     </div>

@@ -2,10 +2,10 @@ defmodule GitsWeb.AccountController do
   use GitsWeb, :controller
 
   require Ash.Query
+  alias Gits.Storefront.Event
   alias AshPhoenix.Form
 
   alias Gits.Dashboard.Account
-  alias Gits.Storefront.Event
 
   plug :auth_guard
   plug :set_layout
@@ -18,15 +18,20 @@ defmodule GitsWeb.AccountController do
     if conn.assigns.current_user do
       conn
     else
-      return_to = URI.encode_query(%{"return_to" => "#{conn.request_path}?#{conn.query_string}"})
-
-      conn |> redirect(to: ~p"/register?#{return_to}") |> halt()
+      conn
+      |> redirect(to: ~p"/register?return_to=#{conn.request_path <> "?" <> conn.query_string}")
+      |> halt()
     end
   end
 
   def new(conn, _) do
     form =
-      Event |> Form.for_create(:create, as: "event", actor: conn.assigns.current_user)
+      Form.for_create(Account, :create,
+        forms: [event: [resource: Event, create_action: :create]],
+        as: "account",
+        actor: conn.assigns.current_user
+      )
+      |> Form.add_form(:event, validate?: false)
 
     assign(conn, :form, form) |> render(:new, layout: false)
   end
@@ -35,52 +40,22 @@ defmodule GitsWeb.AccountController do
     user = conn.assigns.current_user
 
     form =
-      Form.for_create(Event, :create,
-        as: "event",
+      Form.for_create(Account, :create,
+        as: "account",
+        forms: [event: [resource: Event, create_action: :create]],
         actor: user
       )
+      |> Form.add_form(:event, validate?: false)
       |> Form.validate(
-        Map.merge(params["event"], %{
-          account: %{name: user.display_name, members: [%{user: user}]}
-        })
+        Map.merge(params["account"], %{member: %{user: user}, name: user.display_name})
       )
 
-    with true <- form.valid?, results <- Form.submit(form) do
-      IO.inspect(results)
-      assign(conn, :form, form) |> render(:new, layout: false)
+    with true <- form.valid?, {:ok, %{events: [event]} = account} <- Form.submit(form) do
+      redirect(conn, to: ~p"/accounts/#{account.id}/events/#{event.id}/settings")
     else
-      error ->
-        IO.inspect(error)
+      _ ->
         assign(conn, :form, form) |> render(:new, layout: false)
     end
-
-    # if form.valid? do
-    #   account =
-    #     Account
-    #     |> Ash.Changeset.for_create(:create, %{
-    #       name: conn.assigns.current_user.display_name,
-    #       member: %{user: conn.assigns.current_user},
-    #       event: %{
-    #         name: form.params["name"],
-    #         description: form.params["description"],
-    #         starts_at: form.params["starts_at"]
-    #       }
-    #     })
-    #     |> Ash.create!(load: [:events])
-    #
-    #   [event] = account.events
-    #
-    #   redirect(conn, to: ~p"/accounts/#{account.id}/events/#{event.id}/settings")
-    # end
-    #
-    # render(assign(conn, :form, form), :new, layout: false)
-  end
-
-  defp create_account(user) do
-    Ash.Changeset.for_create(Account, :create, %{name: user.display_name, member: %{user: user}},
-      actor: user
-    )
-    |> Ash.create!()
   end
 
   def show(conn, _) do
@@ -102,7 +77,7 @@ defmodule GitsWeb.AccountController do
     route = params["to"]
 
     accounts =
-      Account
+      Ash.Query.for_read(Account, :read, %{}, actor: conn.assigns.current_user)
       |> Ash.Query.filter(members.user.id == ^conn.assigns.current_user.id)
       |> Ash.Query.load(:members)
       |> Ash.read!()

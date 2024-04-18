@@ -31,14 +31,22 @@ defmodule Gits.Dashboard.Account do
         allow_nil? false
       end
 
+      argument :event, :map do
+        allow_nil? false
+      end
+
       change manage_relationship(:member, :members, type: :create)
+      change manage_relationship(:event, :events, type: :create)
     end
   end
 
   policies do
-    policy action(:create) do
-      authorize_if expr(members.user.id == ^actor(:id))
+    policy action(:read) do
       authorize_if always()
+    end
+
+    policy action(:create) do
+      authorize_if Gits.Checks.CanCreate
     end
   end
 

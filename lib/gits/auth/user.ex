@@ -12,6 +12,14 @@ defmodule Gits.Auth.User do
     attribute :display_name, :string, allow_nil?: false, public?: true
   end
 
+  relationships do
+    has_one :member, Gits.Dashboard.Member do
+      domain Gits.Dashboard
+    end
+
+    has_one :customer, Gits.Storefront.Customer
+  end
+
   actions do
     default_accept :*
     defaults [:read]
@@ -61,10 +69,6 @@ defmodule Gits.Auth.User do
     identity :unique_email, [:email] do
       eager_check_with Gits.Auth
     end
-  end
-
-  actions do
-    defaults [:read]
   end
 
   policies do

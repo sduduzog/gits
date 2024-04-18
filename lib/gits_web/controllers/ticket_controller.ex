@@ -15,7 +15,7 @@ defmodule GitsWeb.TicketController do
   def index(conn, params) do
     tickets =
       Ticket
-      |> Ash.Query.for_read(:read)
+      |> Ash.Query.for_read(:read, %{}, actor: conn.assigns.current_user)
       |> Ash.Query.filter(event_id: params["event_id"])
       |> Ash.read!()
 
@@ -37,7 +37,7 @@ defmodule GitsWeb.TicketController do
   end
 
   def create(conn, params) do
-    event = Event |> Ash.get!(params["event_id"])
+    event = Ash.get!(Event, params["event_id"], actor: conn.assigns.current_user)
 
     form =
       Form.for_create(Ticket, :create,

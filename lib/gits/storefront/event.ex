@@ -63,12 +63,10 @@ defmodule Gits.Storefront.Event do
     end
 
     create :create do
+      primary? true
       accept :*
 
-      argument :account, :map do
-        allow_nil? false
-      end
-
+      argument :account, :map
       change manage_relationship(:account, type: :create)
     end
 
@@ -79,16 +77,11 @@ defmodule Gits.Storefront.Event do
 
   policies do
     policy action(:read) do
-      forbid_if expr(visibility == :private)
       authorize_if always()
     end
 
-    policy action(:masked) do
-      authorize_if expr(visibility in [:protected, :public])
-    end
-
     policy action(:create) do
-      forbid_if always()
+      authorize_if Gits.Checks.CanCreate
     end
   end
 

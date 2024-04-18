@@ -40,7 +40,16 @@ defmodule Gits.Storefront.Ticket do
   end
 
   policies do
-    policy always() do
+    policy action(:read) do
+      authorize_if always()
+    end
+
+    policy action(:create) do
+      authorize_if expr(
+                     event.account.members.user.id == ^actor(:id) and
+                       event.account.members.role in [:owner]
+                   )
+
       authorize_if always()
     end
   end

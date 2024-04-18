@@ -41,9 +41,12 @@ defmodule Gits.Dashboard.Member do
   end
 
   policies do
-    policy action(:create) do
-      authorize_if expr(user.id == ^actor(:id))
+    policy action(:read) do
       authorize_if always()
+    end
+
+    policy action(:create) do
+      authorize_if Gits.Checks.CanCreate
     end
   end
 

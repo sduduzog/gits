@@ -13,7 +13,7 @@ defmodule GitsWeb.EventController do
 
   def index(conn, params) do
     events =
-      Ash.Query.for_read(Event, :read, %{}, actor: nil)
+      Ash.Query.for_read(Event, :read, %{}, actor: conn.assigns.current_user)
       |> Ash.Query.filter(account.id == ^params["account_id"])
       |> Ash.Query.sort(created_at: :desc)
       |> Ash.read!()
@@ -24,13 +24,17 @@ defmodule GitsWeb.EventController do
   end
 
   def show(conn, params) do
-    conn
-    |> assign(
-      :event,
-      Ash.Query.for_read(Event, :read)
+    event =
+      Ash.Query.for_read(Event, :read, %{}, actor: conn.assigns.current_user)
       |> Ash.Query.filter(id: params["id"])
       |> Ash.read_one!()
-    )
+
+    unless event do
+      raise GitsWeb.Exceptions.NotFound
+    end
+
+    conn
+    |> assign(:event, event)
     |> render(:show)
   end
 
@@ -75,7 +79,7 @@ defmodule GitsWeb.EventController do
 
   def settings(conn, params) do
     event =
-      Event
+      Ash.Query.for_read(Event, :read, %{}, actor: conn.assigns.current_user)
       |> Ash.Query.filter(id: params["event_id"])
       |> Ash.Query.load(:address)
       |> Ash.read_one!()
@@ -110,7 +114,7 @@ defmodule GitsWeb.EventController do
     ExAws.S3.head_object("gits", filename)
     |> ExAws.request()
     |> case do
-      {:ok, foo} ->
+      {:ok, _} ->
         "/bucket/#{filename}"
 
       {:error, _} ->
@@ -119,48 +123,57 @@ defmodule GitsWeb.EventController do
   end
 
   def edit(conn, params) do
-    assign(
-      conn,
-      :form,
-      Form.for_update(
-        Event
-        |> Ash.Query.filter(id: params["id"])
-        |> Ash.read_one!(),
-        :update,
-        as: "event",
-        actor: conn.assigns.current_user
-      )
-    )
+    event = Ash.get!(Event, params["id"], actor: conn.assigns.current_user)
+    form = Form.for_update(event, :update, as: "event", actor: conn.assigns.current_user)
+
+    assign(conn, :form, form)
     |> render(:edit)
   end
 
   def update(conn, params) do
-    Form.for_update(
-      Event
-      |> Ash.Query.filter(id: params["id"])
-      |> Ash.read_one!(),
-      :update,
-      api: Events,
-      as: "event"
-    )
-    |> Form.validate(params["event"])
-    |> case do
-      form when form.valid? ->
-        with {:ok, event} <- Form.submit(form) do
-          conn
-          |> redirect(to: ~p"/accounts/#{params["account_id"]}/events/#{event.id}/settings")
-        else
-          _ ->
-            conn
-            |> assign(:form, form)
-            |> render(:edit)
-        end
+    event = Ash.get!(Event, params["id"], actor: conn.assigns.current_user)
 
-      form ->
-        conn
-        |> assign(:form, form)
+    form =
+      Form.for_update(event, :update, as: "event", actor: conn.assigns.current_user)
+      |> Form.validate(params["event"])
+
+    with true <- form.valid?, {:ok, event} <- Form.submit(form) do
+      assign(conn, :form, form)
+      |> redirect(to: ~p"/accounts/#{params["account_id"]}/events/#{event.id}/settings")
+    else
+      error ->
+        IO.inspect(error)
+
+        assign(conn, :form, form)
         |> render(:edit)
     end
+
+    # Form.for_update(
+    #   Event
+    #   |> Ash.Query.filter(id: params["id"])
+    #   |> Ash.read_one!(),
+    #   :update,
+    #   api: Events,
+    #   as: "event"
+    # )
+    # |> Form.validate(params["event"])
+    # |> case do
+    #   form when form.valid? ->
+    #     with {:ok, event} <- Form.submit(form) do
+    #       conn
+    #       |> redirect(to: ~p"/accounts/#{params["account_id"]}/events/#{event.id}/settings")
+    #     else
+    #       _ ->
+    #         conn
+    #         |> assign(:form, form)
+    #         |> render(:edit)
+    #     end
+    #
+    #   form ->
+    #     conn
+    #     |> assign(:form, form)
+    #     |> render(:edit)
+    # end
   end
 
   def address(conn, params) do
