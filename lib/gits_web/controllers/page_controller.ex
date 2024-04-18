@@ -7,7 +7,7 @@ defmodule GitsWeb.PageController do
 
   def home(conn, _params) do
     events =
-      Ash.Query.for_read(Event, :read, %{}, actor: conn.assigns.current_user)
+      Ash.Query.for_read(Event, :masked, %{}, actor: conn.assigns.current_user)
       |> Ash.Query.load([:minimum_ticket_price, :masked_id, :address])
       |> Ash.read!()
 

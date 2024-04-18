@@ -4,9 +4,7 @@ defmodule GitsWeb.EventAddressLive do
   use GitsWeb, :live_view
   import GitsWeb.DashboardComponents
 
-  def mount(_, session, socket) do
-    params = session["params"]
-
+  def mount(params, _session, socket) do
     socket =
       assign(socket, :account_id, params["account_id"])
       |> assign(:event_id, params["event_id"])
@@ -17,10 +15,12 @@ defmodule GitsWeb.EventAddressLive do
   end
 
   def handle_event("select_place", unsigned_params, socket) do
-    Event
+    Ash.Query.for_read(Event, :read, %{}, actor: socket.assigns.current_user)
     |> Ash.Query.filter(id: socket.assigns.event_id)
     |> Ash.read_one!()
-    |> Ash.Changeset.for_update(:update_address, %{address_place_id: unsigned_params["id"]})
+    |> Ash.Changeset.for_update(:update_address, %{address_place_id: unsigned_params["id"]},
+      actor: socket.assigns.current_user
+    )
     |> Ash.update!()
 
     {:noreply,

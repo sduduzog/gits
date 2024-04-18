@@ -147,33 +147,6 @@ defmodule GitsWeb.EventController do
         assign(conn, :form, form)
         |> render(:edit)
     end
-
-    # Form.for_update(
-    #   Event
-    #   |> Ash.Query.filter(id: params["id"])
-    #   |> Ash.read_one!(),
-    #   :update,
-    #   api: Events,
-    #   as: "event"
-    # )
-    # |> Form.validate(params["event"])
-    # |> case do
-    #   form when form.valid? ->
-    #     with {:ok, event} <- Form.submit(form) do
-    #       conn
-    #       |> redirect(to: ~p"/accounts/#{params["account_id"]}/events/#{event.id}/settings")
-    #     else
-    #       _ ->
-    #         conn
-    #         |> assign(:form, form)
-    #         |> render(:edit)
-    #     end
-    #
-    #   form ->
-    #     conn
-    #     |> assign(:form, form)
-    #     |> render(:edit)
-    # end
   end
 
   def address(conn, params) do

@@ -51,12 +51,20 @@ defmodule Gits.Storefront.Event do
       argument :id, :string
 
       prepare before_action(fn query, _ ->
-                id =
-                  Sqids.new!()
-                  |> Sqids.decode!(Ash.Query.get_argument(query, :id))
-                  |> hd()
+                argument = Ash.Query.get_argument(query, :id)
 
-                query |> Ash.Query.filter(id: id)
+                case argument do
+                  nil ->
+                    query
+
+                  input ->
+                    id =
+                      Sqids.new!()
+                      |> Sqids.decode!(input)
+                      |> hd()
+
+                    query |> Ash.Query.filter(id: id)
+                end
               end)
 
       prepare build(load: [:masked_id])
@@ -76,12 +84,27 @@ defmodule Gits.Storefront.Event do
   end
 
   policies do
-    policy action(:read) do
-      authorize_if always()
+    bypass action(:read) do
+      authorize_if expr(
+                     account.members.role in [:owner] and account.members.user.id == ^actor(:id)
+                   )
     end
 
-    policy action(:create) do
+    bypass action(:masked) do
+      authorize_if expr(visibility in [:protected, :public] and not is_nil(^arg(:id)))
+    end
+
+    policy action([:masked, :read]) do
+      forbid_unless expr(visibility == :public)
+      authorize_if Gits.Checks.CanRead
+    end
+
+    policy action_type(:create) do
       authorize_if Gits.Checks.CanCreate
+    end
+
+    policy action_type(:update) do
+      authorize_if Gits.Checks.CanUpdate
     end
   end
 

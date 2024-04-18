@@ -1,8 +1,8 @@
-defmodule Gits.Checks.CanRead do
+defmodule Gits.Checks.CanUpdate do
   use Ash.Policy.SimpleCheck
 
-  def describe(_options) do
-    "can read"
+  def describe(_) do
+    "can update"
   end
 
   def match?(_actor, _context, _options) do
