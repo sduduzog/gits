@@ -75,7 +75,7 @@ defmodule Gits.Storefront.Event do
       accept :*
 
       argument :account, :map
-      change manage_relationship(:account, type: :create)
+      change manage_relationship(:account, type: :append)
     end
 
     update :update_address do

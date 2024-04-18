@@ -102,6 +102,10 @@ defmodule GitsWeb.EventController do
       |> Ash.Query.load(:address)
       |> Ash.read_one!()
 
+    unless event do
+      raise GitsWeb.Exceptions.NotFound
+    end
+
     listing_image = get_listing_image(params["account_id"], params["event_id"])
     feature_image = get_feature_image(params["account_id"], params["event_id"])
 
