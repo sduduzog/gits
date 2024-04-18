@@ -18,6 +18,37 @@ defmodule Gits.Storefront.Customer do
     end
 
     has_many :instances, Gits.Storefront.TicketInstance
+
+    many_to_many :tickets, Gits.Storefront.Ticket do
+      through Gits.Storefront.TicketInstance
+    end
+  end
+
+  calculations do
+    calculate :tickets_total, :integer do
+      calculation expr(
+                    sum(tickets,
+                      field: :price,
+                      query: [filter: expr(event.id == ^arg(:event_id))]
+                    )
+                  )
+
+      argument :event_id, :integer do
+        allow_nil? false
+      end
+    end
+
+    calculate :tickets_count, :integer do
+      calculation expr(
+                    count(tickets,
+                      query: [filter: expr(event.id == ^arg(:event_id))]
+                    )
+                  )
+
+      argument :event_id, :integer do
+        allow_nil? false
+      end
+    end
   end
 
   identities do

@@ -26,83 +26,89 @@ defmodule GitsWeb.EventLive do
       raise GitsWeb.Exceptions.NotFound
     end
 
-    tickets =
-      Ash.Query.for_read(Ticket, :read)
-      |> Ash.Query.filter(event == event)
-      |> Ash.Query.load([:customer_instance_count])
-      |> Ash.read!(actor: customer)
-
     socket =
       socket
       |> assign(:customer, customer)
       |> assign(:event, event)
-      |> assign(:tickets, tickets)
 
-    {:ok, socket}
+    reload(socket, true)
   end
 
   def handle_params(_, _, socket) do
     {:noreply, socket}
   end
 
-  def handle_event("remove_ticket", unsigned_params, socket) do
-    customer = socket.assigns.customer
-
-    Ash.Query.for_read(TicketInstance, :read, %{}, actor: customer)
-    |> Ash.Query.filter(ticket.id == ^unsigned_params["id"])
-    |> Ash.Query.limit(1)
-    |> Ash.read_one!()
-    |> Ash.destroy!(actor: customer)
-
-    event = socket.assigns.event
-
-    tickets =
-      Ash.Query.for_read(Ticket, :read)
-      |> Ash.Query.filter(event.id == ^event.id)
-      |> Ash.Query.load(:customer_instance_count)
-      |> Ash.read!(actor: customer)
-
-    socket =
-      socket
-      |> assign(:tickets, tickets)
-
+  def handle_event("continue", _unsigned_params, socket) do
+    socket = assign(socket, :summarise, true)
     {:noreply, socket}
   end
 
+  def handle_event("remove_ticket", unsigned_params, socket) do
+    user = socket.assigns.current_user
+
+    Ash.Query.for_read(TicketInstance, :read, %{}, actor: user)
+    |> Ash.Query.filter(ticket.id == ^unsigned_params["id"])
+    |> Ash.Query.limit(1)
+    |> Ash.read_one!()
+    |> Ash.destroy!(actor: user)
+
+    reload(socket)
+  end
+
   def handle_event("add_ticket", unsigned_params, socket) do
-    if socket.assigns.current_user do
-      ticket = Ash.get!(Ticket, unsigned_params["id"])
-      event = socket.assigns.event
-      customer = socket.assigns.customer
+    case socket.assigns.current_user do
+      user when is_struct(user) ->
+        ticket = Ash.get!(Ticket, unsigned_params["id"])
+        customer = socket.assigns.customer
 
-      Ash.Changeset.for_create(
-        TicketInstance,
-        :create,
-        %{
-          ticket: ticket,
-          customer: customer
-        },
-        actor: customer
-      )
-      |> Ash.create!()
+        Ash.Changeset.for_create(
+          TicketInstance,
+          :create,
+          %{
+            ticket: ticket,
+            customer: customer
+          },
+          actor: user
+        )
+        |> Ash.create!()
 
-      tickets =
-        Ash.Query.for_read(Ticket, :read, %{}, actor: customer)
-        |> Ash.Query.filter(event.id == ^event.id)
-        |> Ash.Query.load(:customer_instance_count)
-        |> Ash.read!()
+        reload(socket)
 
-      socket =
-        socket
-        |> assign(:tickets, tickets)
-
-      {:noreply, socket}
-    else
-      {:noreply,
-       redirect(socket,
-         to: ~p"/register?return_to=#{~p"/events/#{socket.assigns.event.masked_id}"}"
-       )}
+      nil ->
+        {:noreply,
+         redirect(socket,
+           to: ~p"/register?return_to=#{~p"/events/#{socket.assigns.event.masked_id}"}"
+         )}
     end
+  end
+
+  defp reload(socket, initial \\ false) do
+    user = socket.assigns.current_user
+    customer = socket.assigns.customer
+    event = socket.assigns.event
+
+    customer = if initial, do: customer, else: Ash.reload!(customer)
+
+    customer =
+      customer
+      |> Ash.load!(
+        tickets_total: [event_id: event.id],
+        tickets_count: [event_id: event.id]
+      )
+      |> IO.inspect()
+
+    tickets =
+      Ash.Query.for_read(Ticket, :read, %{}, actor: user)
+      |> Ash.Query.filter(event.id == ^event.id)
+      |> Ash.Query.load(:instance_count)
+      |> Ash.read!()
+
+    socket =
+      socket
+      |> assign(:customer, customer)
+      |> assign(:tickets, tickets)
+
+    if initial, do: {:ok, socket}, else: {:noreply, socket}
   end
 
   defp get_feature_image(account_id, event_id) do

@@ -61,6 +61,7 @@ defmodule Gits.MixProject do
       {:bandit, "~> 1.2"},
       {:ash, "~> 3.0.0-rc.21"},
       {:picosat_elixir, "~> 0.2.0"},
+      {:ash_state_machine, "~> 0.2.3-rc.0"},
       {:ash_phoenix, "~> 2.0.0-rc.4"},
       {:ash_postgres, "~> 2.0.0-rc.7"},
       {:ash_authentication, "~> 4.0.0-rc.6"},

@@ -12,6 +12,7 @@ defmodule GitsWeb.PageController do
       |> Ash.read!()
 
     conn
+    |> put_layout(false)
     |> assign(:events, events)
     |> render(:home)
   end
@@ -20,7 +21,7 @@ defmodule GitsWeb.PageController do
     membership_exists?(conn)
     |> case do
       true -> redirect(conn, to: "/accounts")
-      _ -> render(conn, :organizers) |> halt()
+      _ -> conn |> put_layout(false) |> render(:organizers) |> halt()
     end
   end
 

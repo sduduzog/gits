@@ -47,7 +47,7 @@
       <span class="grow font-medium"><%= ticket.name %></span>
       <span class="text-gray-500">R <%= ticket.price %></span>
       <div class="flex items-center rounded-md bg-zinc-100">
-        <%= if ticket.customer_instance_count > 0 do %>
+        <%= if ticket.instance_count > 0 do %>
           <button
             class="flex rounded-md bg-zinc-100 p-2"
             phx-click={JS.push("remove_ticket", value: %{id: ticket.id})}
@@ -55,7 +55,7 @@
             <.icon name="hero-minus-mini" />
           </button>
           <span class="w-8 bg-zinc-100 text-center tabular-nums">
-            <%= ticket.customer_instance_count %>
+            <%= ticket.instance_count %>
           </span>
         <% end %>
         <button
@@ -66,8 +66,22 @@
         </button>
       </div>
     </div>
-    <div class="col-span-full flex justify-end">
-      <!-- <.button>Continue</.button> -->
+    <div
+      :if={@customer}
+      class="sticky bottom-3 col-start-1 flex w-full max-w-xl justify-end gap-4 self-end rounded-2xl border bg-white p-4 shadow-md"
+    >
+      <div class="grow">
+        <span class="font-semibold text-zinc-800">R <%= @customer.tickets_total || 0 %></span>
+      </div>
+      <.button phx-click={show_modal("summary-modal")}>Continue</.button>
     </div>
   </div>
 </div>
+
+<.modal :if={@customer} id="summary-modal">
+  <%= if @customer.tickets_count > 0 do %>
+    <div>Continue with tickets</div>
+  <% else %>
+    <div>No tickets yet</div>
+  <% end %>
+</.modal>

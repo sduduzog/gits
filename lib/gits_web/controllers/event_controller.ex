@@ -61,9 +61,7 @@ defmodule GitsWeb.EventController do
       conn
       |> redirect(to: ~p"/accounts/#{params["account_id"]}/events/#{event.id}/settings")
     else
-      error ->
-        IO.inspect(error)
-
+      _ ->
         assign(conn, :form, form)
         |> render(:new)
     end

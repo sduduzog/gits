@@ -1,4 +1,4 @@
-<%= if @ticket_instances == [] do %>
+<%= if @tickets == [] do %>
   <div>Buy one or two tickets, they'll show up here</div>
 <% else %>
   <div class=""></div>
@@ -17,34 +17,38 @@
       coverflow-effect-slide-shadows="true"
     >
       <swiper-slide
-        :for={instance <- @instances}
+        :for={ticket <- @tickets}
         class="max-w-64 overflow-hidden rounded-2xl bg-white"
       >
         <div class="grid-cols-[2fr_1fr] grid gap-4 p-4 ">
           <div class="col-span-full flex items-center">
             <span class="col-span-full grow text-xs font-bold text-gray-500">
-              #<%= instance.id %>
+              #<%= ticket.instance_id %>
             </span>
             <button
+              :if={false}
               class="inline-flex rounded-lg p-2"
               phx-click={GitsWeb.CoreComponents.show_modal("expand-ticket")}
             >
               <.icon name="hero-ellipsis-horizontal-mini" />
             </button>
           </div>
-          <h2 class="line-clamp-2 col-span-full font-bold"><%= instance.event_name %></h2>
+          <h2 class="line-clamp-2 col-span-full font-bold"><%= ticket.event_name %></h2>
           <div class="grid text-sm">
-            <span class="text-gray-500">Date</span><span class="font-medium"><%= instance.event_starts_at |> Timex.format!("%e %b %Y", :strftime) %></span>
+            <span class="text-gray-500">Date</span><span class="font-medium"><%= ticket.event_starts_at |> Timex.format!("%e %b %Y", :strftime) %></span>
           </div>
 
           <div class="grid text-sm">
-            <span class="text-gray-500">Time</span><span class="font-medium"><%= instance.event_starts_at |> Timex.format!("%R %p", :strftime) %></span>
+            <span class="text-gray-500">Time</span><span class="font-medium"><%= ticket.event_starts_at |> Timex.format!("%R %p", :strftime) %></span>
           </div>
           <div class="grid text-sm">
-            <span class="text-gray-500">Location</span><span class="truncate font-medium"><%= instance.event_address.name %></span>
+            <span class="text-gray-500">Location</span><span
+              :if={ticket.event_address}
+              class="truncate font-medium"
+            ><%= ticket.event_address.name %></span>
           </div>
           <div class="grid text-sm">
-            <span class="text-gray-500">Admit</span><span class="max-w-24 truncate font-medium"><%= instance.ticket_name %></span>
+            <span class="text-gray-500">Admit</span><span class="max-w-24 truncate font-medium"><%= ticket.name %></span>
           </div>
         </div>
         <div class="relative px-6">
@@ -52,7 +56,7 @@
         </div>
         <div class="blur-mdx grid justify-center">
           <%= raw(
-            "#{instance.id}"
+            "#{ticket.instance_id}"
             |> EQRCode.encode()
             |> EQRCode.svg(shape: "circle", color: "#475569", width: 256)
           ) %>

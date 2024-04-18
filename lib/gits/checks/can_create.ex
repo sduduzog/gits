@@ -33,7 +33,6 @@ defmodule Gits.Checks.CanCreate do
   end
 
   def match?(actor, context, _) do
-    IO.inspect(context)
     false
   end
 end

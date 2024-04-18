@@ -2,6 +2,7 @@ defmodule Gits.Storefront.TicketInstance do
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     authorizers: [Ash.Policy.Authorizer],
+    extensions: [AshStateMachine],
     domain: Gits.Storefront
 
   attributes do
@@ -10,6 +11,11 @@ defmodule Gits.Storefront.TicketInstance do
     create_timestamp :created_at, public?: true
 
     update_timestamp :updated_at, public?: true
+  end
+
+  state_machine do
+    initial_states [:assigned]
+    default_initial_state :assigned
   end
 
   relationships do
@@ -42,12 +48,12 @@ defmodule Gits.Storefront.TicketInstance do
 
   policies do
     policy action([:read, :create]) do
-      authorize_if expr(customer.id == ^actor(:id))
+      authorize_if expr(customer.user.id == ^actor(:id))
       authorize_if always()
     end
 
     policy action([:destroy]) do
-      authorize_if expr(customer.id == ^actor(:id))
+      authorize_if expr(customer.user.id == ^actor(:id))
     end
   end
 

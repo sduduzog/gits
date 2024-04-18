@@ -38,13 +38,23 @@ defmodule Gits.Storefront.Ticket do
   end
 
   calculations do
-    calculate :customer_instance_count,
+    calculate :event_name, :string, expr(event.name)
+    calculate :event_starts_at, :naive_datetime, expr(event.starts_at)
+    calculate :event_address_place_id, :string, expr(event.address_place_id)
+    calculate :event_address, :map, Gits.Storefront.Ticket.Calculations.Address
+
+    calculate :instance_count,
               :integer,
-              expr(count(instances, query: [filter: expr(customer == ^actor(:id))]))
+              expr(count(instances, query: [filter: expr(customer.user.id == ^actor(:id))]))
+  end
+
+  aggregates do
+    first :instance_id, :instances, :id
   end
 
   policies do
     policy action(:read) do
+      forbid_if expr(price > 0)
       authorize_if Gits.Checks.CanRead
     end
 
@@ -56,5 +66,19 @@ defmodule Gits.Storefront.Ticket do
   postgres do
     table "tickets"
     repo Gits.Repo
+  end
+end
+
+defmodule Gits.Storefront.Ticket.Calculations.Address do
+  use Ash.Resource.Calculation
+
+  def load(_, _, _) do
+    [:event_address_place_id]
+  end
+
+  def calculate(records, _opts, _context) do
+    Enum.map(records, fn record ->
+      Gits.Cache.get_address(record.event_address_place_id)
+    end)
   end
 end
