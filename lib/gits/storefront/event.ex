@@ -85,13 +85,17 @@ defmodule Gits.Storefront.Event do
 
   policies do
     bypass action(:read) do
-      authorize_if expr(
-                     account.members.role in [:owner] and account.members.user.id == ^actor(:id)
-                   )
+      forbid_unless expr(account.members.user.id == ^actor(:id))
+      authorize_if expr(account.members.role in [:owner])
     end
 
     bypass action(:masked) do
       authorize_if expr(visibility in [:protected, :public] and not is_nil(^arg(:id)))
+    end
+
+    policy action(:read) do
+      forbid_unless expr(visibility == :public)
+      authorize_if Gits.Checks.CanRead
     end
 
     policy action([:masked, :read]) do
@@ -99,11 +103,11 @@ defmodule Gits.Storefront.Event do
       authorize_if Gits.Checks.CanRead
     end
 
-    policy action_type(:create) do
+    policy action(:create) do
       authorize_if Gits.Checks.CanCreate
     end
 
-    policy action_type(:update) do
+    policy action(:update) do
       authorize_if Gits.Checks.CanUpdate
     end
   end
