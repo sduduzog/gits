@@ -32,7 +32,8 @@ defmodule Gits.Checks.CanCreate do
     true
   end
 
-  def match?(_, _, _) do
+  def match?(actor, context, _) do
+    IO.inspect(context)
     false
   end
 end

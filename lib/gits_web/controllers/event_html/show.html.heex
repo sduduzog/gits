@@ -4,11 +4,12 @@
   request_path={@conn.request_path}
 />
 <.main>
-  <.main_header title="Event Overview"></.main_header>
+  <.main_header title="Overview"></.main_header>
 
   <div class="grid gap-4 px-4">
-    <div class="flex justify-between">
+    <div class="flex items-center justify-between">
       <h2 class="font-poppins text-2xl"><%= @event.name %></h2>
+      <.link href={~p"/events/#{@event.masked_id}"}><.icon name="hero-link-mini" /></.link>
     </div>
     <div class="overflow-hidden rounded-2xl border">
       <div class="overflow-x-auto px-6 py-2 pt-4"></div>

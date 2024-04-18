@@ -1,6 +1,7 @@
 defmodule GitsWeb.EventController do
   use GitsWeb, :controller
   require Ash.Query
+  alias Gits.Dashboard.Member
   alias Gits.Dashboard.Account
   alias Gits.Storefront.Event
   alias AshPhoenix.Form
@@ -11,10 +12,9 @@ defmodule GitsWeb.EventController do
     put_layout(conn, html: :dashboard)
   end
 
-  def index(conn, params) do
+  def index(conn, _params) do
     events =
       Ash.Query.for_read(Event, :read, %{}, actor: conn.assigns.current_user)
-      |> Ash.Query.filter(account.id == ^params["account_id"])
       |> Ash.Query.sort(created_at: :desc)
       |> Ash.read!()
 
@@ -27,6 +27,7 @@ defmodule GitsWeb.EventController do
     event =
       Ash.Query.for_read(Event, :read, %{}, actor: conn.assigns.current_user)
       |> Ash.Query.filter(id: params["id"])
+      |> Ash.Query.load(:masked_id)
       |> Ash.read_one!()
 
     unless event do
@@ -39,42 +40,59 @@ defmodule GitsWeb.EventController do
   end
 
   def new(conn, _) do
-    assign(
-      conn,
-      :form,
-      Form.for_create(Event, :create, as: "event", actor: conn.assigns.current_user)
-    )
+    form = Form.for_create(Event, :create, as: "event", actor: conn.assigns.current_user)
+
+    assign(conn, :form, form)
     |> render(:new)
   end
 
   def create(conn, params) do
-    Form.for_create(Event, :create, as: "event", actor: conn.assigns.current_user)
-    |> Form.validate(
-      Map.merge(params["event"], %{
-        "account" =>
-          Ash.Query.for_read(Account, :read)
-          |> Ash.Query.filter(id: params["account_id"])
-          |> Ash.read_one!()
-      })
-    )
-    |> case do
-      form when form.valid? ->
-        with {:ok, event} <- Form.submit(form) do
-          conn
-          |> redirect(to: ~p"/accounts/#{params["account_id"]}/events/#{event.id}/settings")
-        else
-          {:error, _} ->
-            conn
-            |> assign(:form, form)
-            |> put_flash(:error, "Couldn't create event")
-            |> render(:new, layout: {GitsWeb.Layouts, :event})
-        end
+    members = Ash.Query.filter(Member, user.id == ^conn.assigns.current_user.id)
 
-      form ->
-        conn
-        |> assign(:form, form)
+    account =
+      Ash.get!(Account, params["account_id"], actor: conn.assigns.current_user)
+      |> Ash.load!(members: members)
+
+    form =
+      Form.for_create(Event, :create, as: "event", actor: conn.assigns.current_user)
+      |> Form.validate(Map.merge(params["event"], %{account: account}))
+
+    with true <- form.valid?, {:ok, event} <- Form.submit(form) do
+      conn
+      |> redirect(to: ~p"/accounts/#{params["account_id"]}/events/#{event.id}/settings")
+    else
+      error ->
+        IO.inspect(error)
+
+        assign(conn, :form, form)
         |> render(:new)
     end
+
+    # Form.for_create(Event, :create, as: "event", actor: conn.assigns.current_user)
+    # |> Form.validate(
+    #   Map.merge(params["event"], %{
+    #     "account" =>
+    #       Ash.Query.for_read(Account, :read)
+    #       |> Ash.Query.filter(id: params["account_id"])
+    #       |> Ash.read_one!()
+    #   })
+    # )
+    # |> case do
+    #   form when form.valid? ->
+    #     with {:ok, event} <- Form.submit(form) do
+    #     else
+    #       {:error, _} ->
+    #         conn
+    #         |> assign(:form, form)
+    #         |> put_flash(:error, "Couldn't create event")
+    #         |> render(:new, layout: {GitsWeb.Layouts, :event})
+    #     end
+    #
+    #   form ->
+    #     conn
+    #     |> assign(:form, form)
+    #     |> render(:new)
+    # end
   end
 
   def settings(conn, params) do
@@ -141,9 +159,7 @@ defmodule GitsWeb.EventController do
       assign(conn, :form, form)
       |> redirect(to: ~p"/accounts/#{params["account_id"]}/events/#{event.id}/settings")
     else
-      error ->
-        IO.inspect(error)
-
+      _ ->
         assign(conn, :form, form)
         |> render(:edit)
     end
@@ -174,5 +190,12 @@ defmodule GitsWeb.EventController do
       GitsWeb.UploadFeatureLive,
       session: %{"params" => params}
     )
+  end
+
+  def delete(conn, params) do
+    Ash.get!(Event, params["id"], actor: conn.assigns.current_user)
+    |> Ash.destroy!(actor: conn.assigns.current_user)
+
+    conn |> redirect(to: ~p"/accounts/#{params["account_id"]}/events")
   end
 end

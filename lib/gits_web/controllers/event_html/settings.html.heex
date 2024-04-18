@@ -147,4 +147,30 @@
       </dl>
     </div>
   </div>
+
+  <div class="px-4">
+    <div class="rounded-2xl border p-4">
+      <div class="flex items-center justify-between">
+        <h2 class="font-poppins text-2xl">Danger zone</h2>
+      </div>
+      <dl class="divide-y divide-gray-100">
+        <div class="py-6 sm:grid sm:grid-cols-3 sm:gap-4">
+          <dt class="text-sm font-medium text-red-500">
+            Delete this event. This cannot be undone
+          </dt>
+          <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+            <.link
+              href={
+                ~p"/accounts/#{@conn.params["account_id"]}/events/#{@conn.params["event_id"]}"
+              }
+              method="delete"
+              class="rounded-xl border border-red-400 bg-red-50 px-4 py-2 text-red-600"
+            >
+              Delete this event
+            </.link>
+          </dd>
+        </div>
+      </dl>
+    </div>
+  </div>
 </.main>

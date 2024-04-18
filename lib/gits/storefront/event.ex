@@ -93,22 +93,21 @@ defmodule Gits.Storefront.Event do
       authorize_if expr(visibility in [:protected, :public] and not is_nil(^arg(:id)))
     end
 
-    policy action(:read) do
-      forbid_unless expr(visibility == :public)
-      authorize_if Gits.Checks.CanRead
-    end
-
     policy action([:masked, :read]) do
       forbid_unless expr(visibility == :public)
-      authorize_if Gits.Checks.CanRead
+      authorize_if always()
     end
 
     policy action(:create) do
-      authorize_if Gits.Checks.CanCreate
+      authorize_if always()
     end
 
     policy action(:update) do
       authorize_if Gits.Checks.CanUpdate
+    end
+
+    policy action(:destroy) do
+      authorize_if Gits.Checks.CanDestroy
     end
   end
 

@@ -27,13 +27,9 @@ defmodule Gits.Dashboard.Account do
       primary? true
       accept :*
 
-      argument :member, :map do
-        allow_nil? false
-      end
+      argument :member, :map
 
-      argument :event, :map do
-        allow_nil? false
-      end
+      argument :event, :map
 
       change manage_relationship(:member, :members, type: :create)
       change manage_relationship(:event, :events, type: :create)

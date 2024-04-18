@@ -27,7 +27,11 @@ defmodule Gits.Storefront.Ticket do
     create :create do
       accept :*
 
-      argument :event, :map
+      argument :event, :map do
+        allow_nil? false
+      end
+
+      validate compare(:price, greater_than_or_equal_to: 0)
 
       change manage_relationship(:event, type: :append)
     end
@@ -41,15 +45,10 @@ defmodule Gits.Storefront.Ticket do
 
   policies do
     policy action(:read) do
-      authorize_if always()
+      authorize_if Gits.Checks.CanRead
     end
 
-    policy action(:create) do
-      authorize_if expr(
-                     event.account.members.user.id == ^actor(:id) and
-                       event.account.members.role in [:owner]
-                   )
-
+    policy action([:create, :destroy]) do
       authorize_if always()
     end
   end
