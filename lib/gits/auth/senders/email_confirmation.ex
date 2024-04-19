@@ -7,5 +7,6 @@ defmodule Gits.Auth.Senders.EmailConfirmation do
       user,
       url(~p"/auth/user/confirm/?confirm=#{token}")
     )
+    |> IO.inspect()
   end
 end

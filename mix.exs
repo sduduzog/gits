@@ -52,6 +52,7 @@ defmodule Gits.MixProject do
        depth: 1},
       {:tailwind_formatter, "~> 0.4.0", only: [:dev, :test], runtime: false},
       {:swoosh, "~> 1.5"},
+      {:gen_smtp, "~> 1.2"},
       {:finch, "~> 0.13"},
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
@@ -68,6 +69,7 @@ defmodule Gits.MixProject do
       {:ash_authentication_phoenix, "~> 2.0.0-rc.2"},
       {:phoenix_turnstile, "~> 1.1"},
       {:sqids, "~> 0.1.0"},
+      {:slugify, "~> 1.3"},
       {:eqrcode, "~> 0.1.10"},
       {:timex, "~> 3.7"},
       {:dotenvy, "~> 0.8.0"},
@@ -77,7 +79,9 @@ defmodule Gits.MixProject do
       {:ex_aws, "~> 2.5"},
       {:ex_aws_s3, "~> 2.5"},
       {:hackney, "~> 1.20"},
-      {:sweet_xml, "~> 0.7.4"}
+      {:sweet_xml, "~> 0.7.4"},
+      {:phoenix_seo, "~> 0.1.9"},
+      {:mjml_eex, "~> 0.10.0"}
     ]
   end
 

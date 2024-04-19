@@ -22,7 +22,7 @@ defmodule Gits.Auth.Emails do
 
   defp deliver(to, subject, body) do
     new()
-    |> from({"GiTS", "hey@gits.co.za"})
+    |> from({"GiTS", "hey@sandbox8ae8eee3fcff4f77a8def1ee763a4277.mailgun.org"})
     |> to(to_string(to))
     |> subject(subject)
     |> html_body(body)
