@@ -80,13 +80,21 @@
   </div>
 </div>
 
-<.modal :if={@customer} id="summary-modal" show={true} on_cancel={JS.push("clear_basket")}>
-  <%= if @customer.tickets_count > 0 do %>
-    <div>Continue with tickets</div>
-    <div>
-      <.button phx-click="settle_basket">Finish</.button>
-    </div>
+<.modal :if={@customer} id="summary-modal" on_cancel={JS.push("clear_basket")}>
+  <%= if @basket do %>
+    <%= @basket.state %>
+  <% end %>
+  <%= if @basket != nil and @basket.state == :settled do %>
+    <div>basket open</div>
+    <div></div>
   <% else %>
-    <div>No tickets yet</div>
+    <%= if @customer.tickets_count > 0 do %>
+      <div>Continue with tickets</div>
+      <div>
+        <.button phx-click="settle_basket">Finish</.button>
+      </div>
+    <% else %>
+      <div>No tickets yet</div>
+    <% end %>
   <% end %>
 </.modal>

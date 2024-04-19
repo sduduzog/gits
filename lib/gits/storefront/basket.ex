@@ -53,8 +53,22 @@ defmodule Gits.Storefront.Basket do
     update :settle_free do
       require_atomic? false
 
-      validate argument_equals(:amount, 0)
+      validate attribute_equals(:amount, 0)
       change transition_state(:settled)
+
+      change after_action(fn _, result, %{actor: actor} ->
+               TicketInstance
+               |> Ash.Query.for_read(:read, %{}, actor: actor)
+               |> Ash.Query.filter(basket.id == ^result.id)
+               |> Ash.read!()
+               |> Enum.each(fn instance ->
+                 instance
+                 |> Ash.Changeset.for_update(:ready_to_scan, %{}, actor: actor)
+                 |> Ash.update!()
+               end)
+
+               {:ok, result}
+             end)
     end
 
     update :abandon do
@@ -72,7 +86,6 @@ defmodule Gits.Storefront.Basket do
                  |> Ash.Changeset.for_update(:abandon, %{}, actor: actor)
                  |> Ash.update!()
                end)
-               |> IO.inspect()
 
                {:ok, result}
              end)

@@ -2,6 +2,7 @@ defmodule GitsWeb.PageController do
   use GitsWeb, :controller
 
   require Ash.Query
+  alias Gits.Storefront.Customer
   alias Gits.Dashboard.Member
   alias Gits.Storefront.Event
 
@@ -44,23 +45,15 @@ defmodule GitsWeb.PageController do
   end
 
   def tickets(conn, _params) do
-    events =
-      Event
-      |> Ash.Query.filter(starts_at > now())
+    customer =
+      Ash.Query.for_read(Customer, :read, %{}, actor: conn.assigns.current_user)
+      |> Ash.Query.filter(user.id == ^conn.assigns.current_user.id)
+      |> Ash.Query.load(
+        scannable_instances: [:event_name, :ticket_name, :event_starts_at, :event_address]
+      )
+      |> Ash.read_one!()
 
-    ticket_instances =
-      TicketInstance
-      |> Ash.Query.filter(user_id: conn.assigns.current_user.id)
-      |> Ash.Query.sort(ticket_id: :asc)
-      |> Ash.read!()
-      |> Ash.load!(ticket: [event: events])
-      |> Enum.filter(fn x -> x.ticket.event end)
-      |> Enum.sort_by(& &1.ticket.event.starts_at)
-
-    conn
-    |> assign(:ticket_instances, ticket_instances)
-    |> assign(:events, events)
-    |> render(:tickets)
+    conn |> assign(:customer, customer) |> render(:tickets)
   end
 
   def search(conn, _params) do

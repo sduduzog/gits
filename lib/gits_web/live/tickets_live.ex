@@ -8,7 +8,9 @@ defmodule GitsWeb.TicketsLive do
       Ash.Query.for_read(Customer, :read, %{}, actor: socket.assigns.current_user)
       |> Ash.Query.filter(user.id == ^socket.assigns.current_user.id)
       |> Ash.Query.load(tickets: [:instance_id, :event_name, :event_starts_at, :event_address])
+      |> Ash.Query.load(:instances)
       |> Ash.read_one!()
+      |> IO.inspect()
 
     socket =
       socket

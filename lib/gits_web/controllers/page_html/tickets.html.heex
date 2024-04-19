@@ -1,10 +1,10 @@
-<%= if @ticket_instances == [] do %>
+<%= if @customer == nil or @customer.scannable_instances == [] do %>
   <div>Buy one or two tickets, they'll show up here</div>
 <% else %>
   <div class=""></div>
   <div class="flex gap-8">
     <swiper-container
-      class="w-full max-w-sm mx-0 py-6 bg-gray-100 rounded-2xl"
+      class="mx-0 w-full max-w-sm rounded-2xl bg-gray-100 py-6"
       events-prefix="swiper"
       effect="coverflow"
       grab-cursor="true"
@@ -17,40 +17,44 @@
       coverflow-effect-slide-shadows="true"
     >
       <swiper-slide
-        :for={instance <- @ticket_instances}
-        class="bg-white rounded-2xl overflow-hidden max-w-64"
+        :for={instance <- @customer.scannable_instances}
+        class="max-w-64 overflow-hidden rounded-2xl bg-white"
       >
-        <div class="p-4 grid grid-cols-[2fr_1fr] gap-4 ">
+        <div class="grid-cols-[2fr_1fr] grid gap-4 p-4 ">
           <div class="col-span-full flex items-center">
-            <span class="col-span-full font-bold text-gray-500 grow text-xs">
+            <span class="col-span-full grow text-xs font-bold text-gray-500">
               #<%= instance.id %>
             </span>
             <button
-              class="inline-flex p-2 rounded-lg"
+              :if={false}
+              class="inline-flex rounded-lg p-2"
               phx-click={GitsWeb.CoreComponents.show_modal("expand-ticket")}
             >
               <.icon name="hero-ellipsis-horizontal-mini" />
             </button>
           </div>
-          <h2 class="col-span-full font-bold line-clamp-2"><%= instance.ticket.event.name %></h2>
+          <h2 class="line-clamp-2 col-span-full font-bold"><%= instance.event_name %></h2>
           <div class="grid text-sm">
-            <span class="text-gray-500">Date</span><span class="font-medium"><%= instance.ticket.event.starts_at |> Timex.format!("%e %b %Y", :strftime) %></span>
+            <span class="text-gray-500">Date</span><span class="font-medium"><%= instance.event_starts_at |> Timex.format!("%e %b %Y", :strftime) %></span>
           </div>
 
           <div class="grid text-sm">
-            <span class="text-gray-500">Time</span><span class="font-medium"><%= instance.ticket.event.starts_at |> Timex.format!("%R %p", :strftime) %></span>
+            <span class="text-gray-500">Time</span><span class="font-medium"><%= instance.event_starts_at |> Timex.format!("%R %p", :strftime) %></span>
           </div>
           <div class="grid text-sm">
-            <span class="text-gray-500">Location</span><span class="font-medium truncate">Artistry JHB, Fredman Drive, Sandown, Sandton, South Africa</span>
+            <span class="text-gray-500">Location</span><span
+              :if={instance.event_address}
+              class="truncate font-medium"
+            ><%= instance.event_address.name %></span>
           </div>
           <div class="grid text-sm">
-            <span class="text-gray-500">Admit</span><span class="font-medium truncate max-w-24"><%= instance.ticket.name %></span>
+            <span class="text-gray-500">Admit</span><span class="max-w-24 truncate font-medium"><%= instance.ticket_name %></span>
           </div>
         </div>
-        <div class="px-6 relative">
+        <div class="relative px-6">
           <hr class="border-dashed" />
         </div>
-        <div class="grid justify-center blur-mdx">
+        <div class="blur-mdx grid justify-center">
           <%= raw(
             "#{instance.id}"
             |> EQRCode.encode()
@@ -63,6 +67,4 @@
       best viewed on mobile
     </div>
   </div>
-
-  <.modal id="foo" show={}></.modal>
 <% end %>

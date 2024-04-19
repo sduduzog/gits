@@ -95,6 +95,10 @@ defmodule Gits.Storefront.TicketInstance do
       authorize_if always()
     end
 
+    policy action(:ready_to_scan) do
+      authorize_if always()
+    end
+
     policy action(:abandon) do
       authorize_if always()
     end

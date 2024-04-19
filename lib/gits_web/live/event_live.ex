@@ -31,6 +31,7 @@ defmodule GitsWeb.EventLive do
       socket
       |> assign(:customer, customer)
       |> assign(:event, event)
+      |> assign(:basket, nil)
 
     reload(socket, true)
   end
@@ -40,38 +41,43 @@ defmodule GitsWeb.EventLive do
   end
 
   def handle_event("clear_basket", _, socket) do
-    socket =
-      if Map.has_key?(socket.assigns, :basket) and socket.assigns.basket != nil do
-        socket.assigns.basket
-        |> Ash.Changeset.for_update(:abandon, %{}, actor: socket.assigns.current_user)
-        |> Ash.update!()
+    if socket.assigns.basket != nil and socket.assigns.basket.state == :open do
+      socket.assigns.basket
+      |> Ash.Changeset.for_update(:abandon, %{}, actor: socket.assigns.current_user)
+      |> Ash.update!()
+    end
 
-        socket |> assign(:basket, nil)
-      else
-        socket
-      end
-
-    reload(socket)
+    socket
+    |> assign(:basket, nil)
+    |> reload()
   end
 
   def handle_event("settle_basket", _unsigned_params, socket) do
     socket =
-      socket
-      |> assign_new(:basket, fn assigns ->
-        user = assigns.current_user
-        customer = assigns.customer
+      unless socket.assigns.basket do
+        user = socket.assigns.current_user
+        customer = socket.assigns.customer
 
-        Basket
-        |> Ash.Changeset.for_create(
-          :create,
-          %{
-            amount: customer.tickets_total_price,
-            instances: Enum.map(customer.instances, fn instance -> instance.id end)
-          },
-          actor: user
-        )
-        |> Ash.create!()
-      end)
+        basket =
+          Basket
+          |> Ash.Changeset.for_create(
+            :create,
+            %{
+              amount: customer.tickets_total_price,
+              instances: Enum.map(customer.instances, fn instance -> instance.id end)
+            },
+            actor: user
+          )
+          |> Ash.create!()
+
+        basket
+        |> Ash.Changeset.for_update(:settle_free, %{}, actor: user)
+        |> Ash.update!()
+
+        socket |> assign(:basket, basket |> Ash.reload!())
+      else
+        socket
+      end
 
     {:noreply, socket}
   end
@@ -81,9 +87,11 @@ defmodule GitsWeb.EventLive do
 
     Ash.Query.for_read(TicketInstance, :read, %{}, actor: user)
     |> Ash.Query.filter(ticket.id == ^unsigned_params["id"])
+    |> Ash.Query.filter(state == :reserved)
     |> Ash.Query.limit(1)
     |> Ash.read_one!()
-    |> Ash.destroy!(actor: user)
+    |> Ash.Changeset.for_update(:release, %{}, actor: user)
+    |> Ash.update!()
 
     reload(socket)
   end
