@@ -45,7 +45,11 @@ defmodule Gits.Storefront.Ticket do
 
     calculate :instance_count,
               :integer,
-              expr(count(instances, query: [filter: expr(customer.user.id == ^actor(:id))]))
+              expr(
+                count(instances,
+                  query: [filter: expr(customer.user.id == ^actor(:id) and state == :reserved)]
+                )
+              )
   end
 
   aggregates do

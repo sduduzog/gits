@@ -71,16 +71,21 @@
       class="sticky bottom-3 col-start-1 flex w-full max-w-xl justify-end gap-4 self-end rounded-2xl border bg-white p-4 shadow-md"
     >
       <div class="grow">
-        <span class="font-semibold text-zinc-800">R <%= @customer.tickets_total || 0 %></span>
+        <span class="font-semibold text-zinc-800">
+          R <%= @customer.tickets_total_price || 0 %>
+        </span>
       </div>
       <.button phx-click={show_modal("summary-modal")}>Continue</.button>
     </div>
   </div>
 </div>
 
-<.modal :if={@customer} id="summary-modal">
+<.modal :if={@customer} id="summary-modal" show={true} on_cancel={JS.push("clear_basket")}>
   <%= if @customer.tickets_count > 0 do %>
     <div>Continue with tickets</div>
+    <div>
+      <.button phx-click="settle_basket">Finish</.button>
+    </div>
   <% else %>
     <div>No tickets yet</div>
   <% end %>

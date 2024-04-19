@@ -1,4 +1,5 @@
 defmodule GitsWeb.EventLive do
+  alias Gits.Storefront.Basket
   alias Gits.Storefront.Customer
   alias Gits.Storefront.TicketInstance
   alias Gits.Storefront.Ticket
@@ -38,8 +39,40 @@ defmodule GitsWeb.EventLive do
     {:noreply, socket}
   end
 
-  def handle_event("continue", _unsigned_params, socket) do
-    socket = assign(socket, :summarise, true)
+  def handle_event("clear_basket", _, socket) do
+    socket =
+      if Map.has_key?(socket.assigns, :basket) and socket.assigns.basket != nil do
+        socket.assigns.basket
+        |> Ash.Changeset.for_update(:abandon, %{}, actor: socket.assigns.current_user)
+        |> Ash.update!()
+
+        socket |> assign(:basket, nil)
+      else
+        socket
+      end
+
+    reload(socket)
+  end
+
+  def handle_event("settle_basket", _unsigned_params, socket) do
+    socket =
+      socket
+      |> assign_new(:basket, fn assigns ->
+        user = assigns.current_user
+        customer = assigns.customer
+
+        Basket
+        |> Ash.Changeset.for_create(
+          :create,
+          %{
+            amount: customer.tickets_total_price,
+            instances: Enum.map(customer.instances, fn instance -> instance.id end)
+          },
+          actor: user
+        )
+        |> Ash.create!()
+      end)
+
     {:noreply, socket}
   end
 
@@ -92,10 +125,14 @@ defmodule GitsWeb.EventLive do
     customer =
       customer
       |> Ash.load!(
-        tickets_total: [event_id: event.id],
-        tickets_count: [event_id: event.id]
+        tickets_total_price: [event_id: event.id],
+        tickets_count: [event_id: event.id],
+        instances:
+          TicketInstance
+          |> Ash.Query.for_read(:read, %{}, actor: user)
+          |> Ash.Query.filter(ticket.event.id == ^event.id)
+          |> Ash.Query.filter(state == :reserved)
       )
-      |> IO.inspect()
 
     tickets =
       Ash.Query.for_read(Ticket, :read, %{}, actor: user)

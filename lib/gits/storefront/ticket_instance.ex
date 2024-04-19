@@ -14,13 +14,22 @@ defmodule Gits.Storefront.TicketInstance do
   end
 
   state_machine do
-    initial_states [:assigned]
-    default_initial_state :assigned
+    initial_states [:reserved]
+    default_initial_state :reserved
+
+    transitions do
+      transition :add_to_basket, from: :reserved, to: :added_to_basket
+      transition :abandon, from: :added_to_basket, to: :abandoned
+      transition :ready_to_scan, from: :added_to_basket, to: :ready_to_scan
+      transition :scan, from: :ready_to_scan, to: :scanned
+      transition :release, from: :reserved, to: :released
+    end
   end
 
   relationships do
     belongs_to :ticket, Gits.Storefront.Ticket
     belongs_to :customer, Gits.Storefront.Customer
+    belongs_to :basket, Gits.Storefront.Basket
   end
 
   actions do
@@ -36,6 +45,36 @@ defmodule Gits.Storefront.TicketInstance do
       change manage_relationship(:ticket, type: :append)
       change manage_relationship(:customer, type: :append)
     end
+
+    update :add_to_basket do
+      require_atomic? false
+
+      change transition_state(:added_to_basket)
+    end
+
+    update :abandon do
+      require_atomic? false
+
+      change transition_state(:abandoned)
+    end
+
+    update :release do
+      require_atomic? false
+
+      change transition_state(:released)
+    end
+
+    update :ready_to_scan do
+      require_atomic? false
+
+      change transition_state(:ready_to_scan)
+    end
+
+    update :scan do
+      require_atomic? false
+
+      change transition_state(:scanned)
+    end
   end
 
   calculations do
@@ -49,6 +88,22 @@ defmodule Gits.Storefront.TicketInstance do
   policies do
     policy action([:read, :create]) do
       authorize_if expr(customer.user.id == ^actor(:id))
+      authorize_if always()
+    end
+
+    policy action(:add_to_basket) do
+      authorize_if always()
+    end
+
+    policy action(:abandon) do
+      authorize_if always()
+    end
+
+    policy action(:release) do
+      authorize_if always()
+    end
+
+    policy action(:update) do
       authorize_if always()
     end
 

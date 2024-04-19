@@ -36,11 +36,16 @@ defmodule Gits.Storefront.Event do
 
   aggregates do
     min :minimum_ticket_price, :tickets, :price
+    max :maximum_ticket_price, :tickets, :price
   end
 
   calculations do
     calculate :masked_id, :string, Gits.Storefront.Calculations.MaskId
     calculate :address, :map, Gits.Storefront.Event.Calculations.Address
+
+    calculate :ticket_price_varies,
+              :boolean,
+              expr(maximum_ticket_price - minimum_ticket_price > 0)
   end
 
   actions do

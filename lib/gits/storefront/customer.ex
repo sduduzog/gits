@@ -25,7 +25,7 @@ defmodule Gits.Storefront.Customer do
   end
 
   calculations do
-    calculate :tickets_total, :integer do
+    calculate :tickets_total_price, :integer do
       calculation expr(
                     sum(tickets,
                       field: :price,
@@ -41,7 +41,9 @@ defmodule Gits.Storefront.Customer do
     calculate :tickets_count, :integer do
       calculation expr(
                     count(tickets,
-                      query: [filter: expr(event.id == ^arg(:event_id))]
+                      query: [
+                        filter: expr(event.id == ^arg(:event_id) and instances.state == :reserved)
+                      ]
                     )
                   )
 

@@ -4,6 +4,7 @@
     :ecto_sql,
     :phoenix,
     :ash,
+    :ash_state_machine,
     :ash_phoenix,
     :ash_postgres,
     :ash_authentication,

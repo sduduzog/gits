@@ -39,6 +39,9 @@
                 <% else %>
                   FREE
                 <% end %>
+                <%= if event.ticket_price_varies do %>
+                  &plus;
+                <% end %>
               </span>
             </div>
           </div>
