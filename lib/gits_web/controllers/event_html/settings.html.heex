@@ -93,11 +93,7 @@
             <div class="bg-gray-50/50 flex w-full max-w-md justify-center rounded-xl border p-4">
               <div class="aspect-[4/5] h-64 rounded-xl bg-gray-200">
                 <%= if @listing_image do %>
-                  <img
-                    src={@listing_image}
-                    alt=""
-                    class="object-coverx h-full w-full bg-blue-200 object-contain"
-                  />
+                  <img src={@listing_image} alt="" class="h-full w-full bg-blue-200 object-cover" />
                 <% else %>
                   <img src="/images/placeholder.png" alt="" class="h-full w-full object-cover" />
                 <% end %>
