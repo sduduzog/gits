@@ -10,7 +10,7 @@ defmodule GitsWeb.EmailHTML do
         title: "Verify your email address",
         user_name: "Sdu",
         preview: "This is a preview",
-        base_url: Application.get_env(:gits, :base_url) |> IO.inspect(),
+        base_url: Application.get_env(:gits, :base_url),
         url: "/foo"
       )
 

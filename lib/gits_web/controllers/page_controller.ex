@@ -18,23 +18,25 @@ defmodule GitsWeb.PageController do
   end
 
   def organizers(conn, _) do
-    membership_exists?(conn)
-    |> case do
-      true -> redirect(conn, to: "/accounts")
-      _ -> conn |> render(:organizers) |> halt()
-    end
-  end
-
-  defp membership_exists?(conn) do
-    conn.assigns.current_user
-    |> case do
-      user when not is_nil(user) ->
+    member =
+      if conn.assigns.current_user do
         Member
+        |> Ash.Query.for_read(:read, %{}, actor: conn.assigns.current_user)
         |> Ash.Query.filter(user.id == ^conn.assigns.current_user.id)
-        |> Ash.exists?(actor: conn.assigns.current_user)
+        |> Ash.Query.load(:account)
+        |> Ash.Query.load(:waitlisted)
+        |> Ash.Query.limit(1)
+        |> Ash.read_one!()
+      else
+        nil
+      end
 
-      nil ->
-        false
+    if not is_nil(member) and not is_nil(member.account) do
+      redirect(conn, to: "/accounts")
+    else
+      conn = assign(conn, :member, member)
+
+      conn |> render(:organizers)
     end
   end
 
@@ -73,6 +75,30 @@ defmodule GitsWeb.PageController do
 
   def search(conn, _params) do
     render(conn, :search)
+  end
+
+  def join_wailtist(conn, _) do
+    user = conn.assigns.current_user
+
+    if is_nil(user) do
+      redirect(conn, to: "/register?return_to=#{conn.request_path}")
+    else
+      member =
+        Member
+        |> Ash.Query.for_read(:read, %{}, actor: conn.assigns.current_user)
+        |> Ash.Query.filter(user.id == ^conn.assigns.current_user.id)
+        |> Ash.Query.limit(1)
+        |> Ash.read_one!()
+        |> IO.inspect()
+
+      if is_nil(member) do
+        Member
+        |> Ash.Changeset.for_create(:waitlist, %{user: user}, actor: user)
+        |> Ash.create!()
+      end
+    end
+
+    redirect(conn, to: "/organizers")
   end
 
   def bucket(conn, params) do

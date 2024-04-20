@@ -34,7 +34,7 @@ defmodule GitsWeb.AccountController do
       )
       |> Form.add_form(:event, validate?: false)
 
-    assign(conn, :form, form) |> render(:new, layout: false)
+    conn |> put_layout(html: :thin) |> assign(:form, form) |> render(:new)
   end
 
   def create(conn, params) do
@@ -62,7 +62,7 @@ defmodule GitsWeb.AccountController do
   def show(conn, params) do
     account =
       Ash.Query.for_read(Account, :read, %{}, actor: conn.assigns.current_user)
-      |> Ash.Query.filter(id: params["account_id"])
+      |> Ash.Query.filter(id: params["id"])
       |> Ash.Query.load(
         members:
           Ash.Query.for_read(Member, :read)

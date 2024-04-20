@@ -2,6 +2,7 @@ defmodule Gits.Dashboard.Member do
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     authorizers: [Ash.Policy.Authorizer],
+    extensions: [AshStateMachine],
     domain: Gits.Dashboard
 
   attributes do
@@ -18,12 +19,21 @@ defmodule Gits.Dashboard.Member do
     update_timestamp :updated_at
   end
 
+  state_machine do
+    initial_states [:active, :waitlisted]
+    default_initial_state :active
+  end
+
   relationships do
     belongs_to :account, Gits.Dashboard.Account
 
     belongs_to :user, Gits.Auth.User do
       domain Gits.Auth
     end
+  end
+
+  calculations do
+    calculate :waitlisted, :boolean, expr(state == :waitlisted)
   end
 
   actions do
@@ -38,6 +48,13 @@ defmodule Gits.Dashboard.Member do
 
       change manage_relationship(:user, type: :append)
     end
+
+    create :waitlist do
+      argument :user, :map
+
+      change set_attribute(:state, :waitlisted)
+      change manage_relationship(:user, type: :append)
+    end
   end
 
   policies do
@@ -46,7 +63,11 @@ defmodule Gits.Dashboard.Member do
     end
 
     policy action(:create) do
-      authorize_if Gits.Checks.CanCreate
+      authorize_if always()
+    end
+
+    policy always() do
+      authorize_if actor_present()
     end
   end
 

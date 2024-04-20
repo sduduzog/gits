@@ -38,6 +38,7 @@ defmodule GitsWeb.Router do
     get "/", PageController, :home
     get "/tickets", PageController, :tickets
     get "/organizers", PageController, :organizers
+    get "/join-waitlist", PageController, :join_wailtist
     get "/faq", PageController, :faq
 
     ash_authentication_live_session :authentication_optional,
