@@ -38,7 +38,8 @@ defmodule GitsWeb.EventLive do
   end
 
   def handle_params(_, _, socket) do
-    {:noreply, socket}
+    IO.inspect(socket)
+    {:noreply, SEO.assign(socket, socket.assigns.event)}
   end
 
   def handle_event("clear_basket", _, socket) do
@@ -154,6 +155,6 @@ defmodule GitsWeb.EventLive do
       |> assign(:customer, customer)
       |> assign(:tickets, tickets)
 
-    if initial, do: {:ok, socket}, else: {:noreply, socket}
+    if initial, do: {:ok, socket, temporary_assigns: [{SEO.key(), nil}]}, else: {:noreply, socket}
   end
 end
