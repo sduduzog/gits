@@ -65,4 +65,25 @@ defmodule GitsWeb.AuthController do
     |> clear_session()
     |> redirect(to: return_to)
   end
+
+  def resend_verification_email(conn, _) do
+    if conn.assigns.current_user && conn.assigns.current_user.confirmed_at == nil do
+      changeset =
+        Ash.Changeset.for_update(conn.assigns.current_user, :send_confirmation_email)
+
+      strategy =
+        AshAuthentication.Info.strategy!(conn.assigns.current_user, :confirm)
+
+      {:ok, token} =
+        AshAuthentication.AddOn.Confirmation.confirmation_token(
+          strategy,
+          changeset,
+          changeset.data
+        )
+
+      Gits.Auth.Senders.UserConfirmation.send(changeset.data, token, [])
+    end
+
+    conn |> put_layout(false) |> render(:email_sent)
+  end
 end

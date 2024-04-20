@@ -26,6 +26,10 @@
           Please verify your email address to unlock all the features of our platform.
           We've sent you a link to verify your email address.
         </span>
+
+        <.link href={~p"/resend-verification?return_to=#{@conn.request_path}"}>
+          Resend email
+        </.link>
       </div>
     </div>
 
@@ -40,9 +44,12 @@
           Just a couple of things before your event is ready for the world
         </span>
 
-        <ul>
-          <li>Add tickets to your event</li>
-        </ul>
+        <ol class="list-decimal space-y-2 px-4">
+          <li>Add tickets</li>
+          <li>Upload graphics for the event</li>
+          <li>Make your event discoverable</li>
+          <li>Add the address</li>
+        </ol>
       </div>
     </div>
   </div>

@@ -60,6 +60,7 @@ defmodule GitsWeb.Router do
     get "/sign-in", AuthController, :sign_in
     get "/register", AuthController, :register
     get "/forgot-password", AuthController, :forgot_password
+    get "/resend-verification", AuthController, :resend_verification_email
     sign_out_route AuthController
     auth_routes_for Gits.Auth.User, to: AuthController
 

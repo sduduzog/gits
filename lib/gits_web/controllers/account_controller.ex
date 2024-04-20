@@ -59,17 +59,6 @@ defmodule GitsWeb.AccountController do
   end
 
   def show(conn, _) do
-    # changeset =
-    #   Ash.Changeset.for_update(conn.assigns.current_user, :send_confirmation_email)
-    #
-    # strategy =
-    #   AshAuthentication.Info.strategy!(conn.assigns.current_user, :confirm)
-    #
-    # {:ok, token} =
-    #   AshAuthentication.AddOn.Confirmation.confirmation_token(strategy, changeset, changeset.data)
-    #
-    # Gits.Auth.Senders.EmailConfirmation.send(changeset.data, token, [])
-
     render(conn, :show)
   end
 
