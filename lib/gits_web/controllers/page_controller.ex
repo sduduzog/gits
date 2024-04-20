@@ -66,29 +66,45 @@ defmodule GitsWeb.PageController do
     bucket_name = Application.get_env(:gits, :bucket_name)
     filename = Enum.join(params["keys"], "/")
 
-    ExAws.S3.head_object(bucket_name, filename)
-    |> ExAws.request()
-    |> case do
-      {:ok, _} ->
-        response =
-          ExAws.S3.get_object(bucket_name, filename)
-          |> ExAws.request!()
-
-        {_, etag} = Enum.find(response.headers, fn {key, _} -> key == "ETag" end)
-        {_, content_type} = Enum.find(response.headers, fn {key, _} -> key == "Content-Type" end)
-
-        {_, last_modified} =
-          Enum.find(response.headers, fn {key, _} -> key == "Last-Modified" end)
-
-        conn
-        |> put_resp_header("ETag", etag)
-        |> put_resp_header("Content-Type", content_type)
-        |> put_resp_header("Last-Modified", last_modified)
-        |> send_resp(:ok, response.body)
-
+    with {:ok, _} <-
+           ExAws.S3.head_object(bucket_name, filename)
+           |> ExAws.request(),
+         {:ok, url} <- get_presigned_url(bucket_name, filename) do
+      redirect(conn, external: url)
+    else
       {:error, error} ->
         IO.inspect(error)
         nil
     end
+
+    # ExAws.S3.head_object(bucket_name, filename)
+    # |> ExAws.request()
+    # |> case do
+    #   {:ok, _} ->
+    #     response =
+    #       ExAws.S3.get_object(bucket_name, filename)
+    #       |> ExAws.request!()
+    #
+    #     {_, etag} = Enum.find(response.headers, fn {key, _} -> key == "ETag" end)
+    #     {_, content_type} = Enum.find(response.headers, fn {key, _} -> key == "Content-Type" end)
+    #
+    #     {_, last_modified} =
+    #       Enum.find(response.headers, fn {key, _} -> key == "Last-Modified" end)
+    #
+    #     conn
+    #     |> put_resp_header("ETag", etag)
+    #     |> put_resp_header("Content-Type", content_type)
+    #     |> put_resp_header("Last-Modified", last_modified)
+    #     |> send_resp(:ok, response.body)
+    #
+    #   {:error, error} ->
+    #     IO.inspect(error)
+    #     nil
+    # end
+  end
+
+  defp get_presigned_url(bucket_name, filename) do
+    ExAws.Config.new(:s3)
+    |> ExAws.S3.presigned_url(:get, bucket_name, filename, [])
   end
 end
