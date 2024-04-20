@@ -19,4 +19,3 @@ defmodule Gits.Bucket do
     |> ExAws.request!()
   end
 end
-

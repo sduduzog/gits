@@ -63,14 +63,15 @@ defmodule GitsWeb.PageController do
   end
 
   def bucket(conn, params) do
+    bucket_name = Application.get_env(:gits, :bucket_name)
     filename = Enum.join(params["keys"], "/")
 
-    ExAws.S3.head_object("gits", filename)
+    ExAws.S3.head_object(bucket_name, filename)
     |> ExAws.request()
     |> case do
       {:ok, _} ->
         response =
-          ExAws.S3.get_object("gits", filename)
+          ExAws.S3.get_object(bucket_name, filename)
           |> ExAws.request!()
 
         {_, etag} = Enum.find(response.headers, fn {key, _} -> key == "ETag" end)
