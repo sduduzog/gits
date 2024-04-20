@@ -1,1 +1,38 @@
-<div>404 error</div>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>403 | Not found</title>
+    <link rel="stylesheet" href="/assets/app.css" />
+    <script defer type="text/javascript" src="/assets/app.js">
+    </script>
+  </head>
+  <body>
+    <div class="flex h-screen items-center">
+      <div class="flex grow flex-col justify-center gap-6 px-6 lg:px-8">
+        <div>
+          <span class="text-7xl font-light">403</span>
+        </div>
+
+        <h2 class="text-xl font-medium tracking-tight text-gray-900">
+          You aren't supposed to be here
+        </h2>
+
+        <div class="flex max-w-screen-2xl gap-4 overflow-x-auto lg:flex-wrap lg:gap-9 lg:overflow-visible xl:gap-14">
+          <.link
+            href={~p"/accounts/new"}
+            class="border-2 border-zinc-900 font-medium py-2 px-4 rounded-xl"
+          >
+            Go home
+          </.link>
+        </div>
+
+        <p class="text-sm text-zinc-700">
+          If this is a mistake, contact us on
+          <a href="mailto:support@gits.co.za">support@gits.co.za</a>
+        </p>
+      </div>
+    </div>
+  </body>
+</html>
