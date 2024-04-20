@@ -18,4 +18,24 @@ defmodule Gits.Bucket do
     )
     |> ExAws.request!()
   end
+
+  def get_listing_image_path(account_id, event_id) do
+    get_image(account_id, event_id, "listing")
+  end
+
+  def get_feature_image_path(account_id, event_id) do
+    get_image(account_id, event_id, "feature")
+  end
+
+  defp get_image(account_id, event_id, type) do
+    bucket_name = Application.get_env(:gits, :bucket_name)
+    filename = "#{account_id}/#{event_id}/#{type}.jpg"
+
+    ExAws.S3.head_object(bucket_name, filename)
+    |> ExAws.request()
+    |> case do
+      {:ok, _} -> "/bucket/#{filename}"
+      _ -> "/images/placeholder.png"
+    end
+  end
 end

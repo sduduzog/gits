@@ -104,42 +104,14 @@ defmodule GitsWeb.EventController do
       raise GitsWeb.Exceptions.NotFound
     end
 
-    listing_image = get_listing_image(params["account_id"], params["event_id"])
-    feature_image = get_feature_image(params["account_id"], params["event_id"])
+    listing_image = Gits.Bucket.get_listing_image_path(params["account_id"], params["event_id"])
+    feature_image = Gits.Bucket.get_feature_image_path(params["account_id"], params["event_id"])
 
     conn
     |> assign(:event, event)
     |> assign(:listing_image, listing_image)
     |> assign(:feature_image, feature_image)
     |> render(:settings)
-  end
-
-  defp get_listing_image(account_id, event_id) do
-    filename = "#{account_id}/#{event_id}/listing.jpg"
-
-    ExAws.S3.head_object("gits", filename)
-    |> ExAws.request()
-    |> case do
-      {:ok, _} ->
-        "/bucket/#{filename}"
-
-      {:error, _} ->
-        nil
-    end
-  end
-
-  defp get_feature_image(account_id, event_id) do
-    filename = "#{account_id}/#{event_id}/feature.jpg"
-
-    ExAws.S3.head_object("gits", filename)
-    |> ExAws.request()
-    |> case do
-      {:ok, _} ->
-        "/bucket/#{filename}"
-
-      {:error, _} ->
-        nil
-    end
   end
 
   def edit(conn, params) do

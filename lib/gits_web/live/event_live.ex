@@ -32,6 +32,7 @@ defmodule GitsWeb.EventLive do
       |> assign(:customer, customer)
       |> assign(:event, event)
       |> assign(:basket, nil)
+      |> assign(:feature_image, Gits.Bucket.get_feature_image_path(event.account_id, event.id))
 
     reload(socket, true)
   end
@@ -154,20 +155,5 @@ defmodule GitsWeb.EventLive do
       |> assign(:tickets, tickets)
 
     if initial, do: {:ok, socket}, else: {:noreply, socket}
-  end
-
-  defp get_feature_image(account_id, event_id) do
-    get_image(account_id, event_id, "feature")
-  end
-
-  def get_image(account_id, event_id, type) do
-    filename = "#{account_id}/#{event_id}/#{type}.jpg"
-
-    ExAws.S3.head_object("gits", filename)
-    |> ExAws.request()
-    |> case do
-      {:ok, _} -> "/bucket/#{filename}"
-      _ -> "/images/placeholder.png"
-    end
   end
 end

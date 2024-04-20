@@ -2,8 +2,8 @@
   <div class="grid gap-4 sm:grid-cols-[18rem_auto] lg:grid-cols-[30rem_auto] lg:gap-12">
     <div class="aspect-[3/2] overflow-hidden rounded-2xl">
       <img
-        src={get_feature_image(@event.account_id, @event.id)}
-        alt=""
+        src={@feature_image}
+        alt="Feature image"
         class="h-full w-full object-cover transition-transform duration-300 hover:scale-110"
       />
     </div>
@@ -25,7 +25,7 @@
       </div>
       <div class="flex gap-6 p-2 px-3">
         <.icon name="hero-map-pin-mini" class="text-zinc-600 shrink-0" />
-        <span class="line-clamp-2 text-sm text-zinc-500">
+        <span class="line-clamp-2 px-1 text-sm text-zinc-500">
           <%= if @event.address do %>
             <%= @event.address.name %>, <%= @event.address.address %>
           <% end %>
