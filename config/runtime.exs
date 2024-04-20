@@ -139,7 +139,8 @@ if config_env() == :prod do
   config :gits, Gits.Mailer,
     adapter: Swoosh.Adapters.Mailgun,
     api_key: api_key,
-    domain: domain
+    domain: domain,
+    base_url: "https://api.eu.mailgun.net/v3"
 
   config :gits, :sender_email, "hey@#{domain}"
 
