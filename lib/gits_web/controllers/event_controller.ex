@@ -48,7 +48,6 @@ defmodule GitsWeb.EventController do
 
   def create(conn, params) do
     user = conn.assigns.current_user
-    members = Ash.Query.filter(Member, user.id == ^user.id)
 
     account =
       Ash.get!(Account, params["account_id"], actor: user)

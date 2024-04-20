@@ -13,6 +13,7 @@ defmodule GitsWeb.PageController do
       |> Ash.read!()
 
     conn
+    |> put_layout(html: :thin)
     |> assign(:events, events)
     |> render(:home)
   end
@@ -36,7 +37,9 @@ defmodule GitsWeb.PageController do
     else
       conn = assign(conn, :member, member)
 
-      conn |> render(:organizers)
+      conn
+      |> put_layout(html: :thin)
+      |> render(:organizers)
     end
   end
 
@@ -58,7 +61,7 @@ defmodule GitsWeb.PageController do
         nil
       end
 
-    conn |> assign(:customer, customer) |> render(:tickets)
+    conn |> put_layout(html: :thin) |> assign(:customer, customer) |> render(:tickets)
   end
 
   def faq(conn, _) do
