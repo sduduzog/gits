@@ -86,7 +86,8 @@ defmodule GitsWeb.PageController do
         |> put_resp_header("Last-Modified", last_modified)
         |> send_resp(:ok, response.body)
 
-      {:error, _} ->
+      {:error, error} ->
+        IO.inspect(error)
         nil
     end
   end

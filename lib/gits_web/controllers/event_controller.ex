@@ -65,32 +65,6 @@ defmodule GitsWeb.EventController do
         assign(conn, :form, form)
         |> render(:new)
     end
-
-    # Form.for_create(Event, :create, as: "event", actor: conn.assigns.current_user)
-    # |> Form.validate(
-    #   Map.merge(params["event"], %{
-    #     "account" =>
-    #       Ash.Query.for_read(Account, :read)
-    #       |> Ash.Query.filter(id: params["account_id"])
-    #       |> Ash.read_one!()
-    #   })
-    # )
-    # |> case do
-    #   form when form.valid? ->
-    #     with {:ok, event} <- Form.submit(form) do
-    #     else
-    #       {:error, _} ->
-    #         conn
-    #         |> assign(:form, form)
-    #         |> put_flash(:error, "Couldn't create event")
-    #         |> render(:new, layout: {GitsWeb.Layouts, :event})
-    #     end
-    #
-    #   form ->
-    #     conn
-    #     |> assign(:form, form)
-    #     |> render(:new)
-    # end
   end
 
   def settings(conn, params) do
