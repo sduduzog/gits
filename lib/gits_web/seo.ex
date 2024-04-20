@@ -15,6 +15,7 @@ defmodule GitsWeb.SEO do
   def site_config(_conn) do
     SEO.Site.build(
       default_title: "GiTS - Ticketing & events",
+      title_suffix: " - GiTS",
       description: "Easy events, affortable tickets",
       manifest_url: "/site.webmanifest"
     )
@@ -24,20 +25,20 @@ end
 defimpl SEO.OpenGraph.Build, for: Gits.Storefront.Event do
   use GitsWeb, :verified_routes
 
-  def build(event, conn) do
+  def build(event, _conn) do
     SEO.OpenGraph.build(
       detail:
         SEO.OpenGraph.Article.build(
           published_time: event.updated_at,
           author: "GiTS"
         ),
-      image: image(event, conn),
+      image: image(event),
       title: event.name,
       description: event.description
     )
   end
 
-  defp image(event, conn) do
+  defp image(event) do
     bucket_name = Application.get_env(:gits, :bucket_name)
     filename = "#{event.account_id}/#{event.id}/feature.jpg"
 
@@ -61,8 +62,6 @@ defimpl SEO.Site.Build, for: Gits.Storefront.Event do
   use GitsWeb, :verified_routes
 
   def build(event, conn) do
-    # Because of `Phoenix.Param`, structs will assume the key of `:id` when
-    # interpolating the struct into the verified route.
     SEO.Site.build(
       url: url(conn, ~p"/events/#{event.masked_id}"),
       title: event.name,

@@ -31,6 +31,7 @@ defmodule GitsWeb.EventLive do
       socket
       |> assign(:customer, customer)
       |> assign(:event, event)
+      |> assign(:page_title, event.name)
       |> assign(:basket, nil)
       |> assign(:feature_image, Gits.Bucket.get_feature_image_path(event.account_id, event.id))
 

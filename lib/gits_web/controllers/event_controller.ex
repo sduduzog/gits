@@ -18,7 +18,7 @@ defmodule GitsWeb.EventController do
       |> Ash.Query.sort(created_at: :desc)
       |> Ash.read!()
 
-    conn = assign(conn, :events, events)
+    conn =  assign(conn, :events, events) 
 
     render(conn, :index)
   end
@@ -47,14 +47,14 @@ defmodule GitsWeb.EventController do
   end
 
   def create(conn, params) do
-    members = Ash.Query.filter(Member, user.id == ^conn.assigns.current_user.id)
+    user = conn.assigns.current_user
+    members = Ash.Query.filter(Member, user.id == ^user.id)
 
     account =
-      Ash.get!(Account, params["account_id"], actor: conn.assigns.current_user)
-      |> Ash.load!(members: members)
+      Ash.get!(Account, params["account_id"], actor: user)
 
     form =
-      Form.for_create(Event, :create, as: "event", actor: conn.assigns.current_user)
+      Form.for_create(Event, :create, as: "event", actor: user)
       |> Form.validate(Map.merge(params["event"], %{account: account}))
 
     with true <- form.valid?, {:ok, event} <- Form.submit(form) do
