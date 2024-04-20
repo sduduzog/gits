@@ -33,7 +33,7 @@ defmodule Gits.Auth.User do
     add_ons do
       confirmation :confirm do
         monitor_fields [:email]
-        sender Gits.Auth.Senders.EmailConfirmation
+        sender Gits.Auth.Senders.UserConfirmation
       end
     end
 

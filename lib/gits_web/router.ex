@@ -85,6 +85,8 @@ defmodule GitsWeb.Router do
 
       live_dashboard "/dashboard", metrics: GitsWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
+
+      get "/email", GitsWeb.EmailController, :test
     end
   end
 end

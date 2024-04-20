@@ -58,6 +58,7 @@ config :gits, GitsWeb.Endpoint,
     patterns: [
       ~r"priv/static/(?!uploads/).*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
+      ~r"lib/gits/email_templates/.*(heex)$",
       ~r"lib/gits_web/(controllers|live|components)/.*(ex|heex)$"
     ]
   ]
@@ -80,3 +81,7 @@ config :phoenix_live_view, :debug_heex_annotations, true
 
 # Disable swoosh api client as it is only required for production adapters.
 config :swoosh, :api_client, false
+
+config :gits, :base_url, "http://localhost:4000"
+
+config :gits, :sender_email, "hey@gits.co.za"

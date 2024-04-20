@@ -1,4 +1,5 @@
 defmodule Gits.Auth.Emails do
+  alias Gits.EmailTemplates.UserConfirmation
   import Swoosh.Email
   use GitsWeb, :verified_routes
 
@@ -8,21 +9,24 @@ defmodule Gits.Auth.Emails do
     """)
   end
 
-  def deliver_magic_link(user, url) do
-    deliver(user.email, "Magic Link", """
-    <a href="#{url}">#{url}</a>
-    """)
-  end
+  def deliver_user_confirmation_link(user, url) do
+    template =
+      UserConfirmation.render(
+        title: "Verify your email address",
+        user_name: user.display_name,
+        preview: "Click on the link to verify your email",
+        base_url: Application.get_env(:gits, :base_url),
+        url: url
+      )
 
-  def deliver_email_confirmation_link(user, url) do
-    deliver(user.email, "Account confirmation", """
-    <a href="#{url}">#{url}</a>
-    """)
+    deliver(user.email, "Verify your email address", template)
   end
 
   defp deliver(to, subject, body) do
+    sender = Application.get_env(:gits, :sender_email)
+
     new()
-    |> from({"GiTS", "hey@sandbox8ae8eee3fcff4f77a8def1ee763a4277.mailgun.org"})
+    |> from({"GiTS", sender})
     |> to(to_string(to))
     |> subject(subject)
     |> html_body(body)

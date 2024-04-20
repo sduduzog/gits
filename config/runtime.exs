@@ -74,8 +74,8 @@ if config_env() == :prod do
       You can generate one by calling: mix phx.gen.secret
       """
 
-  host = System.get_env("PHX_HOST") || "example.com"
-  port = String.to_integer(System.get_env("PORT") || "4000")
+  host = env!("PHX_HOST", :string)
+  port = env!("PORT", :integer, 4000)
 
   config :gits, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
 
@@ -90,6 +90,8 @@ if config_env() == :prod do
       port: port
     ],
     secret_key_base: secret_key_base
+
+  config :gits, :base_url, "https://#{host}"
 
   # ## SSL Support
   #
@@ -128,11 +130,16 @@ if config_env() == :prod do
   # In production you need to configure the mailer to use a different adapter.
   # Also, you may need to configure the Swoosh API client of your choice if you
   # are not using SMTP. Here is an example of the configuration:
-  #
-  #     config :gits, Gits.Mailer,
-  #       adapter: Swoosh.Adapters.Mailgun,
-  #       api_key: System.get_env("MAILGUN_API_KEY"),
-  #       domain: System.get_env("MAILGUN_DOMAIN")
+
+  domain = env!("MAILGUN_DOMAIN", :string)
+
+  config :gits, Gits.Mailer,
+    adapter: Swoosh.Adapters.Mailgun,
+    api_key: env!("MAILGUN_API_KEY", :string),
+    domain: domain
+
+  config :gits, :sender_email, "hey@#{domain}"
+
   #
   # For this example you need include a HTTP client required by Swoosh API client.
   # Swoosh supports Hackney and Finch out of the box:

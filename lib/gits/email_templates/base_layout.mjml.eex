@@ -1,0 +1,28 @@
+<mjml lang="en">
+  <mj-head>
+    <mj-font name="Poppins" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" />
+    <mj-attributes>
+      <mj-text font-size="16px" padding="10px 0" line-height="1.25"></mj-text>
+      <mj-all font-family="Poppins,-apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Helvetica,Arial,sans-serif,&quot;Apple Color Emoji&quot;,&quot;Segoe UI Emoji&quot;" />
+    </mj-attributes>
+    <mj-title><%= @title %></mj-title>
+    <mj-preview><%= @preview %></mj-preview>
+  </mj-head>
+  <mj-body background-color="#fafafa">
+    <mj-wrapper padding="50px 10px" border-radius="16px">
+      <mj-section padding="50px 20px" background-color="#ffffff" border-radius="10px">
+        <mj-column>
+          <mj-text font-size="26px" font-weight="600"><%= @title %></mj-text>
+          <%= @inner_content %>
+          <mj-text>Regards</mj-text>
+          <mj-text font-style="italic" font-size="24px" font-weight="900">
+            <mj-raw>
+              <a style="text-decoration: none; color: black;" href="<%= @base_url %>">GiTS</a>
+            </mj-raw>
+          </mj-text>
+          <mj-text padding-top="10px" font-size="10px" color="#64748b">&copy; 2024</mj-text>
+        </mj-column>
+      </mj-section>
+    </mj-wrapper>
+  </mj-body>
+</mjml>
