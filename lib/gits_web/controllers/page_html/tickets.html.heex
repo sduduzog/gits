@@ -5,10 +5,35 @@
         <a href="/" class="font-poppins text-3xl font-black italic">GiTS</a>
       </div>
 
-      <h2 class="text-xl font-medium tracking-tight text-gray-900">
-        This is where the magic happens!<br />
-        Of course, after you've gotten a ticket from one of our organisers
-      </h2>
+      <%= if @customer do %>
+        <h2 class="text-xl font-medium tracking-tight text-gray-900">
+          Your tickets, once you've gotten some, will appear here
+        </h2>
+
+        <div class="flex max-w-screen-2xl gap-4 overflow-x-auto lg:flex-wrap lg:gap-9 lg:overflow-visible xl:gap-14">
+          <.link href={~p"/"} class="border-2 border-zinc-900 font-medium py-2 px-4 rounded-xl">
+            Go home
+          </.link>
+        </div>
+      <% else %>
+        <h2 class="text-xl font-medium tracking-tight text-gray-900">
+          Sign in to see your tickets
+        </h2>
+
+        <div class="flex max-w-screen-2xl gap-4 overflow-x-auto lg:flex-wrap lg:gap-9 lg:overflow-visible xl:gap-14">
+          <.link
+            href={~p"/sign-in?return_to=/tickets"}
+            class="border-2 border-zinc-900 font-medium py-2 px-4 rounded-xl"
+          >
+            Sign in
+          </.link>
+        </div>
+      <% end %>
+
+      <p class="text-sm text-zinc-700">
+        If you feel something is off, contact us on
+        <a href="mailto:support@gits.co.za">support@gits.co.za</a>
+      </p>
     </div>
   </div>
   <footer class="bg-white">

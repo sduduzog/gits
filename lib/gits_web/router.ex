@@ -38,6 +38,7 @@ defmodule GitsWeb.Router do
     get "/", PageController, :home
     get "/tickets", PageController, :tickets
     get "/organizers", PageController, :organizers
+    get "/faq", PageController, :faq
 
     ash_authentication_live_session :authentication_optional,
       on_mount: {GitsWeb.LiveUserAuth, :live_user_optional} do

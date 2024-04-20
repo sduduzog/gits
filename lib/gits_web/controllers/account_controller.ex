@@ -2,6 +2,7 @@ defmodule GitsWeb.AccountController do
   use GitsWeb, :controller
 
   require Ash.Query
+  alias Gits.Dashboard.Member
   alias Gits.Storefront.Event
   alias AshPhoenix.Form
 
@@ -58,8 +59,24 @@ defmodule GitsWeb.AccountController do
     end
   end
 
-  def show(conn, _) do
-    render(conn, :show)
+  def show(conn, params) do
+    account =
+      Ash.Query.for_read(Account, :read, %{}, actor: conn.assigns.current_user)
+      |> Ash.Query.filter(id: params["account_id"])
+      |> Ash.Query.load(
+        members:
+          Ash.Query.for_read(Member, :read)
+          |> Ash.Query.filter(user.id == ^conn.assigns.current_user.id)
+      )
+      |> Ash.read_one!()
+
+    unless account do
+      raise GitsWeb.Exceptions.NotFound, "no account found"
+    end
+
+    conn
+    |> assign(:members, account.members)
+    |> render(:show)
   end
 
   def index(conn, params) do
@@ -84,31 +101,6 @@ defmodule GitsWeb.AccountController do
     end
   end
 
-  # def index(conn, params) do
-  #   route = params["to"]
-  #
-  #   accounts =
-  #     Account
-  #     |> Ash.Query.sort(created_at: :desc)
-  #     |> Ash.Query.load(roles: Role |> Ash.Query.filter(user_id: conn.assigns.current_user.id))
-  #
-  #   with {:ok, %{accounts: accounts}} <-
-  #          Ash.load(conn.assigns.current_user, accounts: accounts) do
-  #     case accounts do
-  #       [head | []] when not is_nil(route) ->
-  #         redirect(conn, to: ~p"/accounts/#{head.id}/" <> route)
-  #
-  #       [head | []] ->
-  #         redirect(conn, to: ~p"/accounts/#{head.id}")
-  #
-  #       list ->
-  #         assign(conn, :accounts, list)
-  #         |> render(:index, layout: false)
-  #     end
-  #   else
-  #     _ -> render(conn, :index, layout: false)
-  #   end
-  # end
   #
   # def show(conn, params) do
   #   account =

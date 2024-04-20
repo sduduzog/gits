@@ -1,6 +1,6 @@
-<div class="p-4 lg:hidden flex items-center gap-3">
+<div class="flex items-center gap-3 p-4 lg:hidden">
   <button
-    class="p-1 rounded-xl"
+    class="rounded-xl p-1"
     type="button"
     data-drawer-target="drawer-navigation"
     data-drawer-show="drawer-navigation"
@@ -8,27 +8,27 @@
   >
     <.icon name="hero-bars-3" />
   </button>
-  <a href="/" class="font-black font-poppins italic text-3xl">G</a>
+  <a href="/" class="font-poppins text-3xl font-black italic">G</a>
 </div>
-<div class="lg:h-screen lg:flex">
+<div class="lg:flex lg:h-screen">
   <div
     id="drawer-navigation"
-    class="fixed top-0 left-0 z-40 w-64 h-screen p-4 overflow-y-auto transition-transform -translate-x-full bg-white dark:bg-gray-800 lg:static lg:transform-none flex flex-col gap-2"
+    class="fixed top-0 left-0 z-40 flex h-screen w-64 -translate-x-full flex-col gap-2 overflow-y-auto bg-white p-4 transition-transform dark:bg-gray-800 lg:static lg:transform-none"
     tabindex="-1"
   >
-    <div class="px-2 flex items-center gap-3">
-      <a href="/" class="font-black pl-2 font-poppins italic text-3xl">G</a>
+    <div class="flex items-center gap-3 px-2">
+      <a href="/" class="font-poppins pl-2 text-3xl font-black italic">G</a>
     </div>
-    <div class="p-2 grid gap-4">
+    <div class="grid gap-4 p-2">
       <button
-        class=" flex items-center text-sm gap-2 p-2 rounded-xl border"
+        class=" flex items-center gap-2 rounded-xl border p-2 text-sm"
         phx-click={JS.navigate(~p"/accounts/#{@account_id}")}
       >
         <.icon name="hero-arrow-left-mini" />
         <span>Back to Dashboard</span>
       </button>
       <button
-        class=" flex items-center text-sm gap-2 p-2 rounded-xl border"
+        class=" flex items-center gap-2 rounded-xl border p-2 text-sm"
         phx-click={JS.navigate(~p"/accounts/#{@account_id}/events/#{@event_id}")}
       >
         <.icon name="hero-arrow-left-mini" />
@@ -37,7 +37,7 @@
     </div>
 
     <.sidebar_list>
-      <span class="text-sm px-4 text-gray-600">Ticket</span>
+      <span class="px-4 text-sm text-gray-600">Ticket</span>
       <%= if @conn.params["event_id"] || @conn.params["id"] do %>
         <.sidebar_list_item
           label="Tickets"
