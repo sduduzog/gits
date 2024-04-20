@@ -24,12 +24,7 @@ defmodule GitsWeb.UploadFeatureLive do
           Image.open!(path)
           |> Image.thumbnail!("720x480", fit: :cover)
           |> Image.stream!(suffix: ".jpg", buffer_size: 5_242_880, quality: 100)
-          |> ExAws.S3.upload(
-            "gits",
-            "#{socket.assigns.account_id}/#{socket.assigns.event_id}/feature.jpg",
-            content_type: "image/jpeg"
-          )
-          |> ExAws.request()
+          |> Gits.Bucket.upload_feature_image(socket.assigns.account_id, socket.assigns.event_id)
 
           {:ok, nil}
         end)

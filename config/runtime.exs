@@ -36,6 +36,8 @@ source!(["#{config_dir_prefix}.env", System.get_env()])
 
 config :gits, :google, maps_api_key: env!("GOOGLE_MAPS_API_KEY", :string)
 
+config :gits, :bucket_name, env!("BUCKET_NAME")
+
 config :ex_aws,
   access_key_id: env!("AWS_ACCESS_KEY_ID", :string),
   secret_access_key: env!("AWS_SECRET_ACCESS_KEY", :string),
