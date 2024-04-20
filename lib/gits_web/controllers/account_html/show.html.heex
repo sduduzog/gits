@@ -13,6 +13,10 @@
           Please verify your email address to unlock all the features of our platform.
           We've sent you a link to verify your email address.
         </span>
+
+        <.link href={~p"/resend-verification?return_to=#{@conn.request_path}"}>
+          Resend email
+        </.link>
       </div>
     </div>
   </div>

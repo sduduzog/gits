@@ -134,10 +134,11 @@ if config_env() == :prod do
   # are not using SMTP. Here is an example of the configuration:
 
   domain = env!("MAILGUN_DOMAIN", :string)
+  api_key = env!("MAILGUN_API_KEY", :string)
 
   config :gits, Gits.Mailer,
     adapter: Swoosh.Adapters.Mailgun,
-    api_key: env!("MAILGUN_API_KEY", :string),
+    api_key: api_key,
     domain: domain
 
   config :gits, :sender_email, "hey@#{domain}"
