@@ -7,8 +7,6 @@ defmodule GitsWeb.PageController do
   alias Gits.Storefront.Event
 
   def home(conn, _params) do
-    # ExAws.S3.list_buckets() |> ExAws.request!() |> IO.inspect()
-
     events =
       Ash.Query.for_read(Event, :masked, %{}, actor: conn.assigns.current_user)
       |> Ash.Query.load([:minimum_ticket_price, :masked_id, :address, :ticket_price_varies])
@@ -48,12 +46,23 @@ defmodule GitsWeb.PageController do
 
   def tickets(conn, _params) do
     customer =
-      Ash.Query.for_read(Customer, :read, %{}, actor: conn.assigns.current_user)
-      |> Ash.Query.filter(user.id == ^conn.assigns.current_user.id)
-      |> Ash.Query.load(
-        scannable_instances: [:event_name, :ticket_name, :event_starts_at, :event_address]
-      )
-      |> Ash.read_one!()
+      if conn.assigns.current_user do
+        Ash.Query.for_read(Customer, :read, %{}, actor: conn.assigns.current_user)
+        |> Ash.Query.filter(user.id == ^conn.assigns.current_user.id)
+        |> Ash.Query.load(
+          scannable_instances: [:event_name, :ticket_name, :event_starts_at, :event_address]
+        )
+        |> Ash.read_one!()
+      else
+        nil
+      end
+
+    conn =
+      unless customer do
+        put_layout(conn, false)
+      else
+        conn
+      end
 
     conn |> assign(:customer, customer) |> render(:tickets)
   end
@@ -72,35 +81,9 @@ defmodule GitsWeb.PageController do
          {:ok, url} <- get_presigned_url(bucket_name, filename) do
       redirect(conn, external: url)
     else
-      {:error, error} ->
-        IO.inspect(error)
+      {:error, _} ->
         nil
     end
-
-    # ExAws.S3.head_object(bucket_name, filename)
-    # |> ExAws.request()
-    # |> case do
-    #   {:ok, _} ->
-    #     response =
-    #       ExAws.S3.get_object(bucket_name, filename)
-    #       |> ExAws.request!()
-    #
-    #     {_, etag} = Enum.find(response.headers, fn {key, _} -> key == "ETag" end)
-    #     {_, content_type} = Enum.find(response.headers, fn {key, _} -> key == "Content-Type" end)
-    #
-    #     {_, last_modified} =
-    #       Enum.find(response.headers, fn {key, _} -> key == "Last-Modified" end)
-    #
-    #     conn
-    #     |> put_resp_header("ETag", etag)
-    #     |> put_resp_header("Content-Type", content_type)
-    #     |> put_resp_header("Last-Modified", last_modified)
-    #     |> send_resp(:ok, response.body)
-    #
-    #   {:error, error} ->
-    #     IO.inspect(error)
-    #     nil
-    # end
   end
 
   defp get_presigned_url(bucket_name, filename) do

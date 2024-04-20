@@ -2,33 +2,18 @@
 <.main>
   <.main_header title="Dashboard"></.main_header>
   <div class="grid w-full items-start gap-4 px-4 align-top md:grid-cols-2">
-    <div class="flex gap-2 rounded-xl border p-6 shadow">
+    <div :if={@current_user.confirmed_at == nil} class="flex gap-2 rounded-xl border p-6 shadow">
       <.icon name="hero-exclamation-triangle" class="text-amber-500 shrink-0" />
       <div class="grid gap-2">
-        <span class="font-medium">
+        <h2 class="font-medium">
           Verify your email address
-        </span>
+        </h2>
 
-        <span class="text-gray-700"></span>
-        <.link>Go to profile</.link>
-      </div>
-    </div>
-    <div class="flex gap-2 rounded-xl border p-6 shadow">
-      <.icon name="hero-information-circle" class="text-green-500 shrink-0" />
-      <div class="grid gap-2">
-        <span class="font-medium">
-          Finish setting up account
+        <span class="text-gray-700">
+          Please verify your email address to unlock all the features of our platform.
+          We've sent you a link to verify your email address.
         </span>
-
-        <span class="text-gray-700"></span>
-        <.link>Go to account settings</.link>
       </div>
-    </div>
-    <div class="grid gap-2 rounded-xl border p-6 shadow">
-      <h3 class="text-lg font-semibold">Checklist</h3>
-      <span class="text-gray-500 line-through">1. Create my first event</span>
-      <span class="text-gray-900 ">2. Upload graphics for the event</span>
-      <span class="text-gray-900">3. Add ticket to the event</span>
     </div>
   </div>
 </.main>

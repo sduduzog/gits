@@ -4,15 +4,46 @@
   request_path={@conn.request_path}
 />
 <.main>
-  <.main_header title="Overview"></.main_header>
+  <.main_header title="Event overview"></.main_header>
+  <!-- <div class="grid gap-4 px-4"> -->
+  <!--   <div class="flex items-center justify-between"> -->
+  <!--     <h2 class="font-poppins text-2xl"><%= @event.name %></h2> -->
+  <!--     <.link href={~p"/events/#{@event.masked_id}"}><.icon name="hero-link-mini" /></.link> -->
+  <!--   </div> -->
+  <!--   <div class="overflow-hidden rounded-2xl border"> -->
+  <!--     <div class="overflow-x-auto px-6 py-2 pt-4"></div> -->
+  <!--   </div> -->
+  <!-- </div> -->
+  <div class="grid w-full items-start gap-4 px-4 align-top md:grid-cols-2">
+    <div :if={@current_user.confirmed_at == nil} class="flex gap-2 rounded-xl border p-6 shadow">
+      <.icon name="hero-exclamation-triangle" class="text-amber-500 shrink-0" />
+      <div class="grid gap-2">
+        <h2 class="font-medium">
+          Verify your email address
+        </h2>
 
-  <div class="grid gap-4 px-4">
-    <div class="flex items-center justify-between">
-      <h2 class="font-poppins text-2xl"><%= @event.name %></h2>
-      <.link href={~p"/events/#{@event.masked_id}"}><.icon name="hero-link-mini" /></.link>
+        <span class="text-gray-700">
+          Please verify your email address to unlock all the features of our platform.
+          We've sent you a link to verify your email address.
+        </span>
+      </div>
     </div>
-    <div class="overflow-hidden rounded-2xl border">
-      <div class="overflow-x-auto px-6 py-2 pt-4"></div>
+
+    <div :if={@current_user.confirmed_at == nil} class="flex gap-2 rounded-xl border p-6 shadow">
+      <.icon name="hero-exclamation-triangle" class="text-amber-500 shrink-0" />
+      <div class="grid gap-2">
+        <h2 class="font-medium">
+          Continue editing your event
+        </h2>
+
+        <span class="text-gray-700">
+          Just a couple of things before your event is ready for the world
+        </span>
+
+        <ul>
+          <li>Add tickets to your event</li>
+        </ul>
+      </div>
     </div>
   </div>
 </.main>
