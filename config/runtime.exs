@@ -1,5 +1,5 @@
 import Config
-import Dotenvy, only: [source!: 1, env!: 2]
+import Dotenvy
 
 # config/runtime.exs is executed for all environments, including
 # during releases. It is executed after compilation and before the
@@ -21,14 +21,25 @@ if System.get_env("PHX_SERVER") do
   config :gits, GitsWeb.Endpoint, server: true
 end
 
-source!([".env", System.get_env()])
+config_dir_prefix =
+  System.fetch_env("RELEASE_ROOT")
+  |> case do
+    :error ->
+      ""
+
+    {:ok, value} ->
+      IO.puts("Loading dotenv files from #{value}")
+      "#{value}/"
+  end
+
+source!(["#{config_dir_prefix}.env", System.get_env()])
 
 config :gits, :google, maps_api_key: env!("GOOGLE_MAPS_API_KEY", :string)
 
 config :ex_aws,
   access_key_id: env!("AWS_ACCESS_KEY_ID", :string),
   secret_access_key: env!("AWS_SECRET_ACCESS_KEY", :string),
-  region: "auto"
+  region: env!("AWS_REGION", :string)
 
 config :ex_aws, :s3,
   scheme: env!("AWS_S3_SCHEME", :string),

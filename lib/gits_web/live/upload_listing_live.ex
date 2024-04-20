@@ -3,6 +3,7 @@ defmodule GitsWeb.UploadListingLive do
   import GitsWeb.DashboardComponents
 
   def mount(_, session, socket) do
+    ExAws.Config.new(:s3) |> IO.inspect()
     params = session["params"]
 
     socket =

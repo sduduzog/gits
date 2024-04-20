@@ -19,7 +19,17 @@ defmodule Gits.Release do
   end
 
   defp repos do
-    Application.fetch_env!(@app, :ecto_repos)
+    domains()
+    |> Enum.flat_map(fn domain ->
+      domain
+      |> Ash.Domain.Info.resources()
+      |> Enum.map(&AshPostgres.DataLayer.Info.repo/1)
+    end)
+    |> Enum.uniq()
+  end
+
+  defp domains do
+    Application.fetch_env!(@app, :ash_domains)
   end
 
   defp load_app do

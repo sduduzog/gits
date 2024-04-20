@@ -14,7 +14,10 @@
 ARG ELIXIR_VERSION=1.16.2
 ARG OTP_VERSION=26.1.2
 ARG DEBIAN_VERSION=bullseye-20240311-slim
+ARG UBUNTU_VERSION=jammy-20240405
 
+ARG FOO="hexpm/elixir:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-ubuntu-${UBUNTU_VERSION}"
+ARG BAR="ubuntu:${UBUNTU_VERSION}"
 
 ARG BUILDER_IMAGE="hexpm/elixir:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-debian-${DEBIAN_VERSION}"
 ARG RUNNER_IMAGE="debian:${DEBIAN_VERSION}"
@@ -28,7 +31,7 @@ RUN npm --prefix ./assets ci --progress=false --no-audit --loglevel=error
 
 COPY assets assets
 
-FROM ${BUILDER_IMAGE} as builder
+FROM ${FOO} as builder
 
 # install build dependencies
 RUN apt-get update -y && apt-get install -y build-essential git \
@@ -76,7 +79,7 @@ RUN mix release
 
 # start a new build stage so that the final image will only contain
 # the compiled release and other runtime necessities
-FROM ${RUNNER_IMAGE}
+FROM ${BAR}
 
 RUN apt-get update -y && \
   apt-get install -y libstdc++6 openssl libncurses5 locales ca-certificates \

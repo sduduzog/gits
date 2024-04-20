@@ -103,6 +103,10 @@ defmodule Gits.Storefront.Event do
       authorize_if always()
     end
 
+    policy action(:update_address) do
+      authorize_if always()
+    end
+
     policy action(:create) do
       authorize_if always()
     end

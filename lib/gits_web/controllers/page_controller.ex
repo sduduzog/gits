@@ -7,10 +7,8 @@ defmodule GitsWeb.PageController do
   alias Gits.Storefront.Event
 
   def home(conn, _params) do
-    Application.get_env(:ex_aws, :access_key_id) |> IO.inspect()
+    # ExAws.S3.list_buckets() |> ExAws.request!() |> IO.inspect()
 
-    # access_key_id: env!("AWS_ACCESS_KEY_ID", :string),
-    # secret_access_key: env!("AWS_SECRET_ACCESS_KEY", :string),
     events =
       Ash.Query.for_read(Event, :masked, %{}, actor: conn.assigns.current_user)
       |> Ash.Query.load([:minimum_ticket_price, :masked_id, :address, :ticket_price_varies])

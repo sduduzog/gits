@@ -1,19 +1,6 @@
 version: "3.7"
 
 services:
-  # app:
-  #   build: .
-  #   environment:
-  #     - DATABASE_URL=pg://postgres:postgres@postgres:5432/postgres
-  #     - SECRET_KEY_BASE=Vc01d75uXtVvsxxox35qmgwCk2Jk9pzszpBgrBOBYKMeNj+/V+r+zRhGKHibLNhI
-  #     - PHX_HOST=app.gits.orb.local
-  #
-  #     - AWS_S3_SCHEME=http://
-  #     - AWS_S3_HOST=minio
-  #     - AWS_S3_PORT=9000
-  #   volumes:
-  #     - ${PWD}/.env:/app/.env
-
   redis:
     image: redis:7.2
     volumes:
