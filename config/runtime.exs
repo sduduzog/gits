@@ -95,6 +95,10 @@ if config_env() == :prod do
 
   config :gits, :base_url, "https://#{host}"
 
+  config :phoenix_turnstile,
+    site_key: env!("TURNSTILE_SITE_KEY"),
+    secret_key: env!("TURNSTILE_SECRET_KEY")
+
   # ## SSL Support
   #
   # To get SSL working, you will need to add the `https` key
