@@ -96,13 +96,16 @@
   </div>
 </div>
 
-<.modal :if={@customer} id="summary-modal" on_cancel={JS.push("clear_basket")} show={true}>
-  <%= if @basket do %>
-    <%= @basket.state %>
-  <% end %>
+<.modal :if={@customer} id="summary-modal" on_cancel={JS.push("clear_basket")}>
   <%= if @basket != nil and @basket.state == :settled do %>
-    <div>basket open</div>
-    <div></div>
+    <div phx-hook="Confetti" class="space-y-2" id="confetti">
+      <p class="font-medium">All done!</p>
+      <p class="text-gray-700">
+        You'll find your tickets ready to use when you navigate to
+        <.link href="/tickets" class="text-gray-900 font-medium">tickets</.link>
+      </p>
+      <p>See you there!</p>
+    </div>
   <% else %>
     <%= if @customer.tickets_count > 0 do %>
       <h3 class="font-medium">Summary</h3>
@@ -123,15 +126,6 @@
       </div>
       <div class="pt-4">
         <.button phx-click="settle_basket">Finish</.button>
-      </div>
-    <% else %>
-      <div phx-hook="Confetti" class="space-y-2" id="confetti">
-        <p class="font-medium">All done!</p>
-        <p>
-          You'll find your tickets ready to use when you navigate to
-          <.link href="/tickets">tickets</.link>
-        </p>
-        <p>See you there!</p>
       </div>
     <% end %>
   <% end %>
