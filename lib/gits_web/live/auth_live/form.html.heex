@@ -34,7 +34,11 @@
   </div>
 
   <div class="flex items-center gap-6">
-    <.button>Sign in</.button>
+    <%= if @is_register? do %>
+      <.button>Register</.button>
+    <% else %>
+      <.button>Sign in</.button>
+    <% end %>
   </div>
 
   <Turnstile.widget theme="light" appearance="interaction-only" />
