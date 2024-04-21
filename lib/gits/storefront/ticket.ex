@@ -57,7 +57,11 @@ defmodule Gits.Storefront.Ticket do
                 1 -
                   count(instances,
                     query: [
-                      filter: expr(state in [:reserved] and customer.user.id == ^actor(:id))
+                      filter:
+                        expr(
+                          state in [:reserved, :added_to_basket, :ready_to_scan, :scanned] and
+                            customer.user.id == ^actor(:id)
+                        )
                     ]
                   )
               )

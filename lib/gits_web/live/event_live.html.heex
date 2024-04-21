@@ -55,7 +55,7 @@
           FREE
         <% end %>
       </span>
-      <div class="flex items-center rounded-md bg-zinc-100">
+      <div class="flex h-9 items-center rounded-md bg-zinc-100">
         <%= if ticket.instance_count > 0 do %>
           <button
             class="flex rounded-md bg-zinc-100 p-2"
@@ -96,7 +96,7 @@
   </div>
 </div>
 
-<.modal :if={@customer} id="summary-modal" on_cancel={JS.push("clear_basket")} show={true}>
+<.modal :if={@customer} id="summary-modal" on_cancel={JS.push("clear_basket")} show={false}>
   <%= if @basket do %>
     <%= @basket.state %>
   <% end %>
