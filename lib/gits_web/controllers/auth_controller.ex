@@ -44,7 +44,17 @@ defmodule GitsWeb.AuthController do
     |> Phoenix.LiveView.Controller.live_render(GitsWeb.AuthLive.ForgotPassword)
   end
 
-  def success(conn, _activity, user, _token) do
+  def success(conn, {:password, :reset_request}, user, token) do
+    IO.inspect(user)
+    IO.inspect(token)
+
+    conn
+    |> put_flash(:info, "An email with instructions to reset your password has been sent.")
+    |> redirect(to: "/sign-in")
+  end
+
+  def success(conn, activity, user, _token) do
+    IO.inspect(activity)
     return_to = get_session(conn, :return_to) || ~p"/"
 
     conn

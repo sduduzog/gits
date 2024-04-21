@@ -2,8 +2,7 @@ defmodule GitsWeb.AuthLive.ForgotPassword do
   use GitsWeb, :live_view
   use PhoenixHTMLHelpers
 
-  alias Gits.Accounts
-  alias Gits.Accounts.User
+  alias Gits.Auth.User
   alias AshPhoenix.Form
 
   def mount(_, _, socket) do
@@ -16,7 +15,7 @@ defmodule GitsWeb.AuthLive.ForgotPassword do
       |> assign(:action, ~p"/auth/user/password/reset_request")
       |> assign(
         :form,
-        Form.for_action(User, :request_password_reset_with_password, api: Accounts, as: "user")
+        Form.for_action(User, :request_password_reset_with_password, as: "user")
       )
 
     {:ok, socket, layout: {GitsWeb.Layouts, :auth}}
