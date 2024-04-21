@@ -96,7 +96,7 @@
   </div>
 </div>
 
-<.modal :if={@customer} id="summary-modal" on_cancel={JS.push("clear_basket")} show={false}>
+<.modal :if={@customer} id="summary-modal" on_cancel={JS.push("clear_basket")} show={true}>
   <%= if @basket do %>
     <%= @basket.state %>
   <% end %>
@@ -125,7 +125,14 @@
         <.button phx-click="settle_basket">Finish</.button>
       </div>
     <% else %>
-      <div>No tickets yet</div>
+      <div phx-hook="Confetti" class="space-y-2" id="confetti">
+        <p class="font-medium">All done!</p>
+        <p>
+          You'll find your tickets ready to use when you navigate to
+          <.link href="/tickets">tickets</.link>
+        </p>
+        <p>See you there!</p>
+      </div>
     <% end %>
   <% end %>
 </.modal>

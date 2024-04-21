@@ -25,6 +25,7 @@ import { TurnstileHook } from "phoenix_turnstile";
 
 import { register as swiperRegister } from "swiper/element/bundle";
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
+import { confetti } from "@tsparticles/confetti";
 
 swiperRegister();
 
@@ -43,6 +44,11 @@ let liveSocket = new LiveSocket("/live", Socket, {
   params: { _csrf_token: csrfToken },
   hooks: {
     Turnstile: TurnstileHook,
+    Confetti: {
+      async mounted() {
+        setTimeout(() => confetti("confetti"), 200);
+      },
+    },
     QrScannerInfo: {
       mounted() {
         Html5Qrcode.getCameras().then((cameras) => {
