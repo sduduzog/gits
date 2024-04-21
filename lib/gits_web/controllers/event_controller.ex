@@ -18,7 +18,7 @@ defmodule GitsWeb.EventController do
       |> Ash.Query.sort(created_at: :desc)
       |> Ash.read!()
 
-    conn =  assign(conn, :events, events) 
+    conn = assign(conn, :events, events)
 
     render(conn, :index)
   end

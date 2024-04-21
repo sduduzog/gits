@@ -28,17 +28,20 @@
         <span class="line-clamp-2 px-1 text-sm text-zinc-500">
           <%= if @event.address do %>
             <%= @event.address.name %>, <%= @event.address.address %>
+          <% else %>
+            Venue not confirmed
           <% end %>
         </span>
       </div>
-      <div class="text-sm text-zinc-600">
+      <div class="rounded-xl border-gray-100 bg-gray-50 p-2 text-sm text-zinc-600">
+        <span class="font-semibold text-zinc-900">About this event</span>
         <p class="whitespace-pre-line"><%= @event.description %></p>
       </div>
     </div>
   </div>
 
   <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-8">
-    <h2 class="col-span-full px-1 text-lg font-medium">Get tickets</h2>
+    <h2 :if={Enum.any?(@tickets)} class="col-span-full px-1 text-lg font-medium">Get tickets</h2>
     <div
       :for={ticket <- @tickets}
       id={"#{ticket.id}"}
@@ -67,7 +70,7 @@
       </div>
     </div>
     <div
-      :if={@customer}
+      :if={not is_nil(@customer) and Enum.any?(@tickets)}
       class="sticky bottom-3 col-start-1 flex w-full max-w-xl justify-end gap-4 self-end rounded-2xl border bg-white p-4 shadow-md"
     >
       <div class="grow">

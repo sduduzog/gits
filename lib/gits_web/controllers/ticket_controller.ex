@@ -66,9 +66,11 @@ defmodule GitsWeb.TicketController do
   end
 
   def show(conn, params) do
+    user = conn.assigns.current_user
+
     ticket =
       Ticket
-      |> Ash.Query.for_read(:read)
+      |> Ash.Query.for_read(:read, %{}, actor: user)
       |> Ash.Query.filter(id: params["id"], event_id: params["event_id"])
       |> Ash.read_one!()
 

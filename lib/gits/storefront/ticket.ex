@@ -57,9 +57,13 @@ defmodule Gits.Storefront.Ticket do
   end
 
   policies do
+    bypass action(:read) do
+      authorize_if expr(event.account.members.user.id == ^actor(:id))
+    end
+
     policy action(:read) do
       forbid_if expr(price > 0)
-      authorize_if Gits.Checks.CanRead
+      authorize_if actor_present()
     end
 
     policy action([:create, :destroy]) do
