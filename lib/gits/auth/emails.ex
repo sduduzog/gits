@@ -6,7 +6,7 @@ defmodule Gits.Auth.Emails do
 
   def deliver_password_reset_link(user, url) do
     template =
-      EmailTemplates.PasswordReset.render(
+      PasswordReset.render(
         title: "Reset your password",
         user_name: user.display_name,
         base_url: Application.get_env(:gits, :base_url),
