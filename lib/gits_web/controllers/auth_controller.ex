@@ -45,9 +45,6 @@ defmodule GitsWeb.AuthController do
   end
 
   def success(conn, {:password, :reset_request}, user, token) do
-    IO.inspect(user)
-    IO.inspect(token)
-
     conn
     |> put_flash(:info, "An email with instructions to reset your password has been sent.")
     |> redirect(to: "/sign-in")
