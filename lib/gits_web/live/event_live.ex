@@ -1,4 +1,5 @@
 defmodule GitsWeb.EventLive do
+  alias Hex.API.User
   alias Gits.Storefront.Basket
   alias Gits.Storefront.Customer
   alias Gits.Storefront.TicketInstance
@@ -8,8 +9,10 @@ defmodule GitsWeb.EventLive do
   alias Gits.Storefront.Event
 
   def mount(params, _, socket) do
+    user = socket.assigns.current_user
+
     customer =
-      case socket.assigns.current_user do
+      case user do
         user when is_struct(user) ->
           Ash.Changeset.for_create(Customer, :create, %{user_id: user.id}, actor: user)
           |> Ash.create!()
@@ -19,8 +22,8 @@ defmodule GitsWeb.EventLive do
       end
 
     event =
-      Ash.Query.for_read(Event, :masked, %{id: params["id"]}, actor: customer)
-      |> Ash.Query.load([:address])
+      Ash.Query.for_read(Event, :masked, %{id: params["id"]}, actor: user)
+      |> Ash.Query.load([:address, tickets: [:available_for_customer]])
       |> Ash.read_one!()
 
     unless event do
@@ -39,7 +42,6 @@ defmodule GitsWeb.EventLive do
   end
 
   def handle_params(_, _, socket) do
-    IO.inspect(socket)
     {:noreply, SEO.assign(socket, socket.assigns.event)}
   end
 
@@ -100,9 +102,19 @@ defmodule GitsWeb.EventLive do
   end
 
   def handle_event("add_ticket", unsigned_params, socket) do
+    user = socket.assigns.current_user
+
+    with {:ok, ticket} <- Ash.get(Ticket, unsigned_params["id"], actor: user),
+         {ok, ticket} <- Ash.load(ticket, :available_for_customer, actor: user) do
+      IO.inspect(ticket)
+    end
+
     case socket.assigns.current_user do
       user when is_struct(user) ->
-        ticket = Ash.get!(Ticket, unsigned_params["id"])
+        ticket =
+          Ash.get!(Ticket, unsigned_params["id"], actor: user)
+          |> Ash.load!([:available_for_customer], actor: user)
+
         customer = socket.assigns.customer
 
         Ash.Changeset.for_create(
@@ -148,7 +160,7 @@ defmodule GitsWeb.EventLive do
     tickets =
       Ash.Query.for_read(Ticket, :read, %{}, actor: user)
       |> Ash.Query.filter(event.id == ^event.id)
-      |> Ash.Query.load(:instance_count)
+      |> Ash.Query.load([:instance_count, :available_for_customer])
       |> Ash.read!()
 
     socket =

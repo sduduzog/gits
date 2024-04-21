@@ -48,7 +48,13 @@
       class="flex items-center gap-4 rounded-xl border p-4"
     >
       <span class="grow font-medium"><%= ticket.name %></span>
-      <span class="text-gray-500">R <%= ticket.price %></span>
+      <span class="text-gray-500">
+        <%= if ticket.price > 0 do %>
+          R <%= ticket.price %>
+        <% else %>
+          FREE
+        <% end %>
+      </span>
       <div class="flex items-center rounded-md bg-zinc-100">
         <%= if ticket.instance_count > 0 do %>
           <button
@@ -62,6 +68,7 @@
           </span>
         <% end %>
         <button
+          :if={ticket.available_for_customer > 0}
           class="flex rounded-md bg-zinc-100 p-2"
           phx-click={JS.push("add_ticket", value: %{id: ticket.id})}
         >
@@ -78,12 +85,18 @@
           R <%= @customer.tickets_total_price || 0 %>
         </span>
       </div>
-      <.button phx-click={show_modal("summary-modal")}>Continue</.button>
+      <.button
+        disabled={is_nil(@customer) or @customer.tickets_count == 0}
+        class={if is_nil(@customer) or @customer.tickets_count == 0, do: "opacity-0", else: ""}
+        phx-click={show_modal("summary-modal")}
+      >
+        Continue
+      </.button>
     </div>
   </div>
 </div>
 
-<.modal :if={@customer} id="summary-modal" on_cancel={JS.push("clear_basket")}>
+<.modal :if={@customer} id="summary-modal" on_cancel={JS.push("clear_basket")} show={true}>
   <%= if @basket do %>
     <%= @basket.state %>
   <% end %>

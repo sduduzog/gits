@@ -92,7 +92,6 @@ defmodule GitsWeb.PageController do
         |> Ash.Query.filter(user.id == ^conn.assigns.current_user.id)
         |> Ash.Query.limit(1)
         |> Ash.read_one!()
-        |> IO.inspect()
 
       if is_nil(member) do
         Member

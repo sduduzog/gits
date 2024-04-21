@@ -50,6 +50,17 @@ defmodule Gits.Storefront.Ticket do
                   query: [filter: expr(customer.user.id == ^actor(:id) and state == :reserved)]
                 )
               )
+
+    calculate :available_for_customer,
+              :integer,
+              expr(
+                1 -
+                  count(instances,
+                    query: [
+                      filter: expr(state in [:reserved] and customer.user.id == ^actor(:id))
+                    ]
+                  )
+              )
   end
 
   aggregates do
@@ -63,7 +74,7 @@ defmodule Gits.Storefront.Ticket do
 
     policy action(:read) do
       forbid_if expr(price > 0)
-      authorize_if actor_present()
+      authorize_if always()
     end
 
     policy action([:create, :destroy]) do

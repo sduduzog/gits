@@ -91,6 +91,18 @@ defmodule Gits.Storefront.TicketInstance do
       authorize_if always()
     end
 
+    bypass action(:create) do
+      forbid_unless expr(ticket.available_for_customer > 0)
+    end
+
+    policy action(:create) do
+      authorize_if actor_present()
+    end
+
+    policy action_type(:create) do
+      authorize_if actor_present()
+    end
+
     policy action(:add_to_basket) do
       authorize_if always()
     end
