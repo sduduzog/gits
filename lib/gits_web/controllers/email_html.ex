@@ -6,10 +6,9 @@ defmodule GitsWeb.EmailHTML do
 
   def test(_assigns) do
     template =
-      EmailTemplates.UserConfirmation.render(
-        title: "Verify your email address",
+      EmailTemplates.PasswordReset.render(
+        title: "Reset your password",
         user_name: "Sdu",
-        preview: "This is a preview",
         base_url: Application.get_env(:gits, :base_url),
         url: "/foo"
       )

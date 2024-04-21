@@ -1,12 +1,19 @@
 defmodule Gits.Auth.Emails do
   alias Gits.EmailTemplates.UserConfirmation
+  alias Gits.EmailTemplates.PasswordReset
   import Swoosh.Email
   use GitsWeb, :verified_routes
 
   def deliver_password_reset_link(user, url) do
-    deliver(user.email, "Password reset", """
-    <a href="#{url}">#{url}</a>
-    """)
+    template =
+      EmailTemplates.PasswordReset.render(
+        title: "Reset your password",
+        user_name: user.display_name,
+        base_url: Application.get_env(:gits, :base_url),
+        url: url
+      )
+
+    deliver(user.email, "Reset your password", template)
   end
 
   def deliver_user_confirmation_link(user, url) do
@@ -14,7 +21,6 @@ defmodule Gits.Auth.Emails do
       UserConfirmation.render(
         title: "Verify your email address",
         user_name: user.display_name,
-        preview: "Click on the link to verify your email",
         base_url: Application.get_env(:gits, :base_url),
         url: url
       )

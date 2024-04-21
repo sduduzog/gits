@@ -3,9 +3,12 @@ defmodule Gits.Auth.Senders.UserConfirmation do
   use GitsWeb, :verified_routes
 
   def send(user, token, _opts) do
-    Gits.Auth.Emails.deliver_user_confirmation_link(
-      user,
-      url(~p"/auth/user/confirm/?confirm=#{token}")
-    )
+    case Gits.Auth.Emails.deliver_user_confirmation_link(
+           user,
+           url(~p"/auth/user/confirm/?confirm=#{token}")
+         ) do
+      {:ok, _} -> :ok
+      _ -> :error
+    end
   end
 end
