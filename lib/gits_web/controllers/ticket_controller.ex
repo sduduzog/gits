@@ -80,9 +80,11 @@ defmodule GitsWeb.TicketController do
   end
 
   def edit(conn, %{"id" => ticket_id} = _params) do
+    user = conn.assigns.current_user
+
     ticket =
       Ticket
-      |> Ash.Query.for_read(:read)
+      |> Ash.Query.for_read(:read, %{}, actor: user)
       |> Ash.Query.filter(id: ticket_id)
       |> Ash.read_one!()
 
@@ -90,20 +92,23 @@ defmodule GitsWeb.TicketController do
     |> assign(:ticket, ticket)
     |> assign(
       :form,
-      Form.for_update(ticket, :update, as: "ticket", actor: conn.assigns.current_user)
+      Form.for_update(ticket, :update, as: "ticket", actor: user)
     )
     |> render(:edit)
   end
 
   def update(conn, %{"id" => ticket_id} = params) do
+    user = conn.assigns.current_user
+
     ticket =
       Ticket
-      |> Ash.get!(ticket_id)
+      |> Ash.get!(ticket_id, actor: user)
 
     form =
       Form.for_update(ticket, :update,
         api: Events,
-        as: "ticket"
+        as: "ticket",
+        actor: user
       )
       |> Form.validate(params["ticket"])
 

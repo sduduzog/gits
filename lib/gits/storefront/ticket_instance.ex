@@ -38,7 +38,6 @@ defmodule Gits.Storefront.TicketInstance do
 
     create :create do
       accept :*
-
       argument :ticket, :map
       argument :customer, :map
 
@@ -92,7 +91,8 @@ defmodule Gits.Storefront.TicketInstance do
     end
 
     bypass action(:create) do
-      forbid_unless expr(ticket.available_for_customer > 0)
+      forbid_if expr(ticket.available_for_customer == 0)
+      authorize_if actor_present()
     end
 
     policy action(:create) do

@@ -104,19 +104,21 @@ defmodule GitsWeb.EventLive do
   def handle_event("add_ticket", unsigned_params, socket) do
     user = socket.assigns.current_user
 
-    with {:ok, ticket} <- Ash.get(Ticket, unsigned_params["id"], actor: user),
-         {ok, ticket} <- Ash.load(ticket, :available_for_customer, actor: user) do
-      IO.inspect(ticket)
+    if is_nil(user) do
+      {:noreply,
+       redirect(socket,
+         to: ~p"/register?return_to=#{~p"/events/#{socket.assigns.event.masked_id}"}"
+       )}
+    else
+      try_creating_ticket(user, socket.assigns.customer, unsigned_params["id"])
+      reload(socket)
     end
+  end
 
-    case socket.assigns.current_user do
-      user when is_struct(user) ->
-        ticket =
-          Ash.get!(Ticket, unsigned_params["id"], actor: user)
-          |> Ash.load!([:available_for_customer], actor: user)
-
-        customer = socket.assigns.customer
-
+  defp try_creating_ticket(user, customer, ticket_id) do
+    with {:ok, ticket} <- Ash.get(Ticket, ticket_id, actor: user),
+         {:ok, ticket} <- Ash.load(ticket, :available_for_customer, actor: user) do
+      if ticket.available_for_customer > 0 do
         Ash.Changeset.for_create(
           TicketInstance,
           :create,
@@ -127,14 +129,7 @@ defmodule GitsWeb.EventLive do
           actor: user
         )
         |> Ash.create!()
-
-        reload(socket)
-
-      nil ->
-        {:noreply,
-         redirect(socket,
-           to: ~p"/register?return_to=#{~p"/events/#{socket.assigns.event.masked_id}"}"
-         )}
+      end
     end
   end
 

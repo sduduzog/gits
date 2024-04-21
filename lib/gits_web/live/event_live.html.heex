@@ -105,8 +105,23 @@
     <div></div>
   <% else %>
     <%= if @customer.tickets_count > 0 do %>
-      <div>Continue with tickets</div>
-      <div>
+      <h3 class="font-medium">Summary</h3>
+      <div class="mt-4 rounded-lg border p-2">
+        <div
+          :for={ticket <- Enum.filter(@tickets, fn ticket -> ticket.instance_count > 0 end)}
+          class="flex items-center justify-between"
+        >
+          <span class="text-sm"><%= ticket.instance_count %>&times; <%= ticket.name %></span>
+          <span class="text-gray-500">
+            <%= if ticket.price > 0 do %>
+              R <%= ticket.price %>
+            <% else %>
+              FREE
+            <% end %>
+          </span>
+        </div>
+      </div>
+      <div class="pt-4">
         <.button phx-click="settle_basket">Finish</.button>
       </div>
     <% else %>
