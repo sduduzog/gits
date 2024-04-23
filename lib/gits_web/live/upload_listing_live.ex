@@ -23,7 +23,7 @@ defmodule GitsWeb.UploadListingLive do
       {[entry], []} ->
         consume_uploaded_entry(socket, entry, fn %{path: path} ->
           Image.open!(path)
-          |> Image.thumbnail!("480x600", fit: :cover)
+          |> Image.thumbnail!("256x320", fit: :cover)
           |> Image.stream!(suffix: ".jpg", buffer_size: 5_242_880, quality: 100)
           |> Gits.Bucket.upload_listing_image(socket.assigns.account_id, socket.assigns.event_id)
 

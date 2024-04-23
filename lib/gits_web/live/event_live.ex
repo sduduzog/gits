@@ -154,7 +154,6 @@ defmodule GitsWeb.EventLive do
           |> Ash.Query.filter(ticket.event.id == ^event.id)
           |> Ash.Query.filter(state == :reserved)
       )
-      |> IO.inspect()
 
     tickets =
       Ash.Query.for_read(Ticket, :read, %{}, actor: user)

@@ -1,20 +1,37 @@
-<header class="flex items-center gap-4 p-4 md:px-8">
+<header class="mx-auto flex max-w-screen-xl items-center gap-6 p-4 md:p-8">
   <div>
     <a href="/" class="font-poppins text-2xl font-black italic">GiTS</a>
   </div>
   <div role="none" class="grow"></div>
+  <div>
+    <.link
+      href="/tickets"
+      class="text-sm hover:bg-gray-100 px-4 p-2 rounded-lg hover:ring-2 ring-gray-500"
+    >
+      Tickets
+    </.link>
+  </div>
+  <%= if @current_user do %>
+    <.link :if={false} href="/profile" class="text-sm bg-gray-100 px-4 p-2 rounded-lg ">
+      Tickets
+    </.link>
+  <% else %>
+    <.link href="/sign-in" class="text-sm bg-gray-100 px-4 p-2 rounded-lg">Sign in</.link>
+  <% end %>
+
   <div phx-click-away={JS.add_class("hidden", to: "#header-dropdown")} class="relative">
     <button
       id="header-dropdown-button"
-      class="flex rounded-full bg-gray-200 text-sm focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600 md:me-0"
+      class="flex shrink-0 rounded-full p-2 text-sm hover:bg-gray-200 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600 md:me-0"
       type="button"
       phx-click={JS.toggle_class("hidden", to: "#header-dropdown")}
     >
-      <%= if @current_user do %>
-        <img class="h-8 w-8 rounded-full" src="/images/placeholder.png" alt="user photo" />
-      <% else %>
-        <.icon name="hero-user" class="p-0.5 m-1 text-gray-600" />
-      <% end %>
+      <.icon name="hero-bars-2" />
+      <!-- <%= if @current_user do %> -->
+      <!--   <img class="h-8 w-8 rounded-full" src="/images/placeholder.png" alt="user photo" /> -->
+      <!-- <% else %> -->
+      <!--   <.icon name="hero-user" class="p-0.5 m-1 text-gray-600" /> -->
+      <!-- <% end %> -->
     </button>
     <div
       id="header-dropdown"
@@ -34,7 +51,7 @@
         </a>
       <% end %>
       <ul
-        :if={@current_user}
+        :if={not is_nil(@current_user) and false}
         class="py-2 text-sm text-gray-700 dark:text-gray-200"
         aria-labelledby="dropdownUserAvatarButton"
       >

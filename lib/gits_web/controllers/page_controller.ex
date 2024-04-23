@@ -13,7 +13,6 @@ defmodule GitsWeb.PageController do
       |> Ash.read!()
 
     conn
-    |> put_layout(html: :thin)
     |> assign(:events, events)
     |> render(:home)
   end
@@ -61,7 +60,7 @@ defmodule GitsWeb.PageController do
         nil
       end
 
-    conn |> put_layout(html: :thin) |> assign(:customer, customer) |> render(:tickets)
+    conn |> assign(:customer, customer) |> render(:tickets)
   end
 
   def faq(conn, _) do
@@ -71,6 +70,11 @@ defmodule GitsWeb.PageController do
         q: "Can I print my ticket?",
         a:
           "No. The world is digital enough. There's no use downloading or printing the ticket when you're still going to open your phone to get the ticket from your gallery anyways"
+      },
+      %{
+        q: "Where's the rest of GiTS",
+        a:
+          "We're being careful by how much we release into the wild. The aim is to have the most stable version of gits available to the general public. Until then, we'll just continue releasing enough to get things done. This doesn't stop you from buying a ticket to an event on the platform or creating your own."
       }
     ])
     |> render(:faq)
