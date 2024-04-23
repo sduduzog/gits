@@ -11,7 +11,7 @@
   <div>
     <.link
       href="/tickets"
-      class="text-sm hover:bg-gray-100 px-4 p-2 rounded-lg hover:ring-2 ring-gray-500"
+      class="text-sm hover:bg-gray-100 px-4 p-2 rounded-xl hover:bg-gray-50 focus-visible:ring-1 focus-visible:ring-gray-400"
     >
       Tickets
     </.link>
@@ -27,16 +27,11 @@
   <div phx-click-away={JS.add_class("hidden", to: "#header-dropdown")} class="relative">
     <button
       id="header-dropdown-button"
-      class="flex shrink-0 rounded-full p-2 text-sm hover:bg-gray-200 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600 md:me-0"
+      class="flex shrink-0 rounded-xl p-2 text-sm hover:bg-gray-50 focus-visible:ring-1 focus-visible:ring-gray-400"
       type="button"
       phx-click={JS.toggle_class("hidden", to: "#header-dropdown")}
     >
       <.icon name="hero-bars-2" />
-      <!-- <%= if @current_user do %> -->
-      <!--   <img class="h-8 w-8 rounded-full" src="/images/placeholder.png" alt="user photo" /> -->
-      <!-- <% else %> -->
-      <!--   <.icon name="hero-user" class="p-0.5 m-1 text-gray-600" /> -->
-      <!-- <% end %> -->
     </button>
     <div
       id="header-dropdown"
