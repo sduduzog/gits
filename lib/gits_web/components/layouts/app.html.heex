@@ -1,8 +1,13 @@
+<% navigation = [] %>
 <header class="mx-auto flex max-w-screen-xl items-center gap-6 p-4 md:p-8">
   <div>
     <a href="/" class="font-poppins text-2xl font-black italic">GiTS</a>
   </div>
-  <div role="none" class="grow"></div>
+  <div role="none" class="flex grow items-center justify-center">
+    <nav class="hidden items-center text-sm lg:flex">
+      <.link :for={nav <- navigation} href={nav.to}><%= nav.label %></.link>
+    </nav>
+  </div>
   <div>
     <.link
       href="/tickets"
@@ -51,11 +56,26 @@
         </a>
       <% end %>
       <ul
+        class="py-2 text-sm text-gray-700 dark:text-gray-200 lg:hidden"
+        aria-labelledby="dropdownUserAvatarButton"
+      >
+        <li>
+          <.link
+            :for={nav <- navigation}
+            class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+            href={nav.to}
+          >
+            <%= nav.label %>
+          </.link>
+        </li>
+      </ul>
+      <ul
         :if={not is_nil(@current_user) and false}
         class="py-2 text-sm text-gray-700 dark:text-gray-200"
         aria-labelledby="dropdownUserAvatarButton"
       >
         <li>
+          <.link :for={nav <- navigation} href={nav.to}><%= nav.label %></.link>
           <a
             href={~p"/tickets"}
             class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"

@@ -81,8 +81,7 @@ defmodule Gits.MixProject do
       {:hackney, "~> 1.20"},
       {:sweet_xml, "~> 0.7.4"},
       {:phoenix_seo, "~> 0.1.9"},
-      {:mjml_eex, "~> 0.10.0"},
-      {:tails, "~> 0.1.10"}
+      {:mjml_eex, "~> 0.10.0"}
     ]
   end
 
