@@ -55,6 +55,21 @@ defmodule Gits.Storefront.Customer do
         allow_nil? false
       end
     end
+
+    calculate :ready_tickets_count, :integer do
+      calculation expr(
+                    count(tickets,
+                      query: [
+                        filter:
+                          expr(event.id == ^arg(:event_id) and instances.state == :ready_to_scan)
+                      ]
+                    )
+                  )
+
+      argument :event_id, :integer do
+        allow_nil? false
+      end
+    end
   end
 
   identities do
@@ -73,6 +88,8 @@ defmodule Gits.Storefront.Customer do
     end
 
     update :add_ticket do
+      require_atomic? false
+      argument :ticket, :map
     end
   end
 

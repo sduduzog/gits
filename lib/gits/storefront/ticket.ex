@@ -1,4 +1,6 @@
 defmodule Gits.Storefront.Ticket do
+  require Ash.Resource.Change.Builtins
+
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     authorizers: [Ash.Policy.Authorizer],
@@ -35,6 +37,26 @@ defmodule Gits.Storefront.Ticket do
 
       change manage_relationship(:event, type: :append)
     end
+
+    update :add_instance do
+      require_atomic? false
+
+      argument :instance, :map do
+        allow_nil? false
+      end
+
+      change manage_relationship(:instance, :instances, type: :create)
+    end
+
+    update :remove_instance do
+      require_atomic? false
+
+      argument :instance, :map do
+        allow_nil? false
+      end
+
+      change manage_relationship(:instance, :instances, on_match: {:update, :release})
+    end
   end
 
   calculations do
@@ -43,27 +65,20 @@ defmodule Gits.Storefront.Ticket do
     calculate :event_address_place_id, :string, expr(event.address_place_id)
     calculate :event_address, :map, Gits.Storefront.Ticket.Calculations.Address
 
+    calculate :customer_reserved_instance_count,
+              :integer,
+              expr(
+                count(instances,
+                  query: [filter: expr(customer.id == ^actor(:id) and state == :reserved)]
+                )
+              )
+
     calculate :instance_count,
               :integer,
               expr(
                 count(instances,
-                  query: [filter: expr(customer.user.id == ^actor(:id) and state == :reserved)]
+                  query: [filter: expr(customer.id == ^actor(:id) and state == :reserved)]
                 )
-              )
-
-    calculate :available_for_customer,
-              :integer,
-              expr(
-                1 -
-                  count(instances,
-                    query: [
-                      filter:
-                        expr(
-                          state in [:reserved, :added_to_basket, :ready_to_scan, :scanned] and
-                            customer.user.id == ^actor(:id)
-                        )
-                    ]
-                  )
               )
   end
 
@@ -72,6 +87,21 @@ defmodule Gits.Storefront.Ticket do
   end
 
   policies do
+    policy action(:add_instance) do
+      authorize_if expr(
+                     count(instances, query: [filter: expr(state in [:reserved, :ready_to_scan])]) <
+                       5
+                   )
+    end
+
+    policy action(:add_instance) do
+      authorize_if actor_present()
+    end
+
+    policy action(:remove_instance) do
+      authorize_if actor_present()
+    end
+
     bypass action(:read) do
       authorize_if expr(event.account.members.user.id == ^actor(:id))
     end

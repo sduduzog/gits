@@ -1,7 +1,7 @@
 defmodule GitsWeb.EventLive do
+  alias Gits.Storefront.TicketInstance
   alias Gits.Storefront.Basket
   alias Gits.Storefront.Customer
-  alias Gits.Storefront.TicketInstance
   alias Gits.Storefront.Ticket
   use GitsWeb, :live_view
   use Tails
@@ -22,8 +22,7 @@ defmodule GitsWeb.EventLive do
       end
 
     event =
-      Ash.Query.for_read(Event, :masked, %{id: params["id"]}, actor: user)
-      |> Ash.Query.load([:address, tickets: [:available_for_customer]])
+      Ash.Query.for_read(Event, :masked, %{id: params["id"]}, actor: customer)
       |> Ash.read_one!()
 
     unless event do
@@ -37,12 +36,15 @@ defmodule GitsWeb.EventLive do
       |> assign(:page_title, event.name)
       |> assign(:basket, nil)
       |> assign(:feature_image, Gits.Bucket.get_feature_image_path(event.account_id, event.id))
+      |> assign(:tickets, [])
+      |> assign(:summary_line, nil)
+      |> assign(:hint, nil)
 
-    reload(socket, true)
+    {:ok, socket, temporary_assigns: [{SEO.key(), nil}]}
   end
 
   def handle_params(_, _, socket) do
-    {:noreply, SEO.assign(socket, socket.assigns.event)}
+    reload(SEO.assign(socket, socket.assigns.event))
   end
 
   def handle_event("clear_basket", _, socket) do
@@ -91,21 +93,39 @@ defmodule GitsWeb.EventLive do
   end
 
   def handle_event("remove_ticket", unsigned_params, socket) do
-    user = socket.assigns.current_user
+    customer = socket.assigns.customer
 
-    Ash.Query.for_read(TicketInstance, :read, %{}, actor: user)
-    |> Ash.Query.filter(ticket.id == ^unsigned_params["id"])
-    |> Ash.Query.filter(state == :reserved)
-    |> Ash.Query.limit(1)
-    |> Ash.read_one!()
-    |> Ash.Changeset.for_update(:release, %{}, actor: user)
-    |> Ash.update!()
+    event =
+      socket.assigns.event
+
+    ticket =
+      Enum.find(event.tickets, fn %Ticket{id: id} -> id == unsigned_params["id"] end)
+      |> Ash.load!(
+        [instances: Ash.Query.filter(TicketInstance, state == :reserved) |> Ash.Query.limit(1)],
+        actor: customer
+      )
+
+    [instance] = ticket.instances
+
+    ticket
+    |> Ash.Changeset.for_update(:remove_instance, %{instance: instance}, actor: customer)
+    |> Ash.update()
 
     reload(socket)
   end
 
   def handle_event("add_ticket", unsigned_params, socket) do
     user = socket.assigns.current_user
+    customer = socket.assigns.customer
+    ticket = Ash.get!(Ticket, unsigned_params["id"], actor: user)
+
+    unless is_nil(customer) do
+      ticket
+      |> Ash.Changeset.for_update(:add_instance, %{instance: %{customer: customer}},
+        actor: customer
+      )
+      |> Ash.update()
+    end
 
     if is_nil(user) do
       {:noreply,
@@ -113,59 +133,25 @@ defmodule GitsWeb.EventLive do
          to: ~p"/register?return_to=#{~p"/events/#{socket.assigns.event.masked_id}"}"
        )}
     else
-      try_creating_ticket(user, socket.assigns.customer, unsigned_params["id"])
       reload(socket)
     end
   end
 
-  defp try_creating_ticket(user, customer, ticket_id) do
-    with {:ok, ticket} <- Ash.get(Ticket, ticket_id, actor: user),
-         {:ok, ticket} <- Ash.load(ticket, :available_for_customer, actor: user) do
-      if ticket.available_for_customer > 0 do
-        Ash.Changeset.for_create(
-          TicketInstance,
-          :create,
-          %{
-            ticket: ticket,
-            customer: customer
-          },
-          actor: user
-        )
-        |> Ash.create!()
-      end
-    end
-  end
-
-  defp reload(socket, initial \\ false) do
-    user = socket.assigns.current_user
+  defp reload(socket) do
     customer = socket.assigns.customer
-    event = socket.assigns.event
 
-    customer = if initial, do: customer, else: Ash.reload!(customer)
-
-    customer =
-      customer
+    event =
+      socket.assigns.event
       |> Ash.load!(
-        tickets_total_price: [event_id: event.id],
-        tickets_count: [event_id: event.id],
-        instances:
-          TicketInstance
-          |> Ash.Query.for_read(:read, %{}, actor: user)
-          |> Ash.Query.filter(ticket.event.id == ^event.id)
-          |> Ash.Query.filter(state == :reserved)
+        [
+          :address,
+          tickets: [:customer_reserved_instance_count]
+        ],
+        actor: customer
       )
 
-    tickets =
-      Ash.Query.for_read(Ticket, :read, %{}, actor: user)
-      |> Ash.Query.filter(event.id == ^event.id)
-      |> Ash.Query.load([:instance_count, :available_for_customer])
-      |> Ash.read!()
+    socket = assign(socket, :event, event)
 
-    socket =
-      socket
-      |> assign(:customer, customer)
-      |> assign(:tickets, tickets)
-
-    if initial, do: {:ok, socket, temporary_assigns: [{SEO.key(), nil}]}, else: {:noreply, socket}
+    {:noreply, socket}
   end
 end

@@ -37,11 +37,12 @@ defmodule Gits.Storefront.TicketInstance do
     defaults [:read, :update, :destroy]
 
     create :create do
-      accept :*
-      argument :ticket, :map
-      argument :customer, :map
+      primary? true
 
-      change manage_relationship(:ticket, type: :append)
+      argument :customer, :map do
+        allow_nil? false
+      end
+
       change manage_relationship(:customer, type: :append)
     end
 
@@ -85,21 +86,11 @@ defmodule Gits.Storefront.TicketInstance do
   end
 
   policies do
-    policy action([:read, :create]) do
-      authorize_if expr(customer.user.id == ^actor(:id))
-      authorize_if always()
-    end
-
-    bypass action(:create) do
-      forbid_if expr(ticket.available_for_customer == 0)
-      authorize_if actor_present()
-    end
-
     policy action(:create) do
       authorize_if actor_present()
     end
 
-    policy action_type(:create) do
+    policy action(:read) do
       authorize_if actor_present()
     end
 
@@ -117,14 +108,6 @@ defmodule Gits.Storefront.TicketInstance do
 
     policy action(:release) do
       authorize_if always()
-    end
-
-    policy action(:update) do
-      authorize_if always()
-    end
-
-    policy action([:destroy]) do
-      authorize_if expr(customer.user.id == ^actor(:id))
     end
   end
 

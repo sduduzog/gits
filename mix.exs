@@ -60,7 +60,7 @@ defmodule Gits.MixProject do
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.2"},
-      {:ash, "~> 3.0.0-rc.27"},
+      {:ash, "~> 3.0.0-rc.28"},
       {:picosat_elixir, "~> 0.2.0"},
       {:ash_state_machine, "~> 0.2.3-rc.0"},
       {:ash_phoenix, "~> 2.0.0-rc.6"},
