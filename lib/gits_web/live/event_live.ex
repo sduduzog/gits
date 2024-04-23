@@ -58,8 +58,11 @@ defmodule GitsWeb.EventLive do
   end
 
   def handle_event("settle_basket", _unsigned_params, socket) do
+    customer = socket.assigns.customer
+    disabled = is_nil(socket.assigns.customer) or customer.tickets_count == 0
+
     socket =
-      unless socket.assigns.basket do
+      unless not is_nil(socket.assigns.basket) or disabled do
         user = socket.assigns.current_user
         customer = socket.assigns.customer
 
