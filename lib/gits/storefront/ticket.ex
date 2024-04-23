@@ -92,7 +92,13 @@ defmodule Gits.Storefront.Ticket do
 
   policies do
     policy action(:add_instance) do
-      authorize_if expr(count(hot_instances) < 5)
+      authorize_if expr(count(hot_instances) < 4)
+    end
+
+    policy action(:add_instance) do
+      authorize_if expr(
+                     count(hot_instances, query: [filter: expr(customer.id == ^actor(:id))]) < 2
+                   )
     end
 
     policy action(:add_instance) do
