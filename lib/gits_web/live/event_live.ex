@@ -95,17 +95,17 @@ defmodule GitsWeb.EventLive do
   def handle_event("remove_ticket", unsigned_params, socket) do
     customer = socket.assigns.customer
 
-    event =
-      socket.assigns.event
-
     ticket =
-      Enum.find(event.tickets, fn %Ticket{id: id} -> id == unsigned_params["id"] end)
-      |> Ash.load!(
-        [instances: Ash.Query.filter(TicketInstance, state == :reserved) |> Ash.Query.limit(1)],
-        actor: customer
+      Ash.Query.for_read(Ticket, :read, %{}, actor: customer)
+      |> Ash.Query.filter(id: unsigned_params["id"])
+      |> Ash.Query.load(
+        instances: Ash.Query.filter(TicketInstance, state == :reserved) |> Ash.Query.limit(1)
       )
+      |> Ash.read_one!()
 
-    [instance] = ticket.instances
+    instance =
+      ticket.instances
+      |> hd()
 
     ticket
     |> Ash.Changeset.for_update(:remove_instance, %{instance: instance}, actor: customer)

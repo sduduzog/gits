@@ -20,6 +20,10 @@ defmodule Gits.Storefront.Ticket do
     end
 
     has_many :instances, Gits.Storefront.TicketInstance
+
+    has_many :hot_instances, Gits.Storefront.TicketInstance do
+      filter expr(state in [:reserved, :ready_to_scan])
+    end
   end
 
   actions do
@@ -88,10 +92,7 @@ defmodule Gits.Storefront.Ticket do
 
   policies do
     policy action(:add_instance) do
-      authorize_if expr(
-                     count(instances, query: [filter: expr(state in [:reserved, :ready_to_scan])]) <
-                       5
-                   )
+      authorize_if expr(count(hot_instances) < 5)
     end
 
     policy action(:add_instance) do
