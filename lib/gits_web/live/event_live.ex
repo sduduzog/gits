@@ -4,7 +4,6 @@ defmodule GitsWeb.EventLive do
   alias Gits.Storefront.Customer
   alias Gits.Storefront.Ticket
   use GitsWeb, :live_view
-  use Tails
   require Ash.Query
   alias Gits.Storefront.Event
 

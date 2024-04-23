@@ -73,19 +73,9 @@
         </div>
       </div>
     </div>
-    <div class={
-      classes(
-        "sticky bottom-3 col-start-1 flex w-full max-w-xl justify-end gap-4 self-end rounded-2xl border bg-white p-4 shadow-md"
-      )
-    }>
-      <div class="grid grow text-sm">
-        <span :if={@summary_line}>Price</span>
-        <span :if={@hint}>Hints <%= @customer.ready_tickets_count %></span>
-      </div>
-      <.button
-        disabled={is_nil(@customer) or @customer.tickets_count == 0}
-        phx-click={show_modal("summary-modal")}
-      >
+    <div class="sticky bottom-3 col-span-full flex w-full grow justify-end gap-4 rounded-2xl border bg-white p-4 shadow-lg lg:static lg:shadow-none">
+      <div class="grid grow grow text-sm"></div>
+      <.button phx-click={show_modal("summary-modal")}>
         Continue
       </.button>
     </div>
