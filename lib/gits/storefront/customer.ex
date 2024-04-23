@@ -71,6 +71,9 @@ defmodule Gits.Storefront.Customer do
       upsert? true
       upsert_identity :unique_user_id
     end
+
+    update :add_ticket do
+    end
   end
 
   policies do

@@ -42,52 +42,56 @@
 
   <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-8">
     <h2 :if={Enum.any?(@tickets)} class="col-span-full px-1 text-lg font-medium">Get tickets</h2>
-    <div
-      :for={ticket <- @tickets}
-      id={"#{ticket.id}"}
-      class="flex items-center gap-4 rounded-xl border p-4"
-    >
-      <span class="grow font-medium"><%= ticket.name %></span>
-      <span class="text-gray-500">
-        <%= if ticket.price > 0 do %>
-          R <%= ticket.price %>
-        <% else %>
-          FREE
-        <% end %>
-      </span>
-      <div class="flex h-9 items-center rounded-md bg-zinc-100">
-        <%= if ticket.instance_count > 0 do %>
+    <div :for={ticket <- @tickets} id={"#{ticket.id}"}>
+      <div class="flex items-center gap-4 rounded-xl border p-4">
+        <span class="grow font-medium"><%= ticket.name %></span>
+        <span class="text-gray-500">
+          <%= if ticket.price > 0 do %>
+            R <%= ticket.price %>
+          <% else %>
+            FREE
+          <% end %>
+        </span>
+        <div class="flex h-9 items-center rounded-md bg-zinc-100">
+          <%= if ticket.instance_count > 0 do %>
+            <button
+              class="flex rounded-md bg-zinc-100 p-2"
+              phx-click={JS.push("remove_ticket", value: %{id: ticket.id})}
+            >
+              <.icon name="hero-minus-mini" />
+            </button>
+            <span class="w-8 bg-zinc-100 text-center tabular-nums">
+              <%= ticket.instance_count %>
+            </span>
+          <% end %>
           <button
+            :if={ticket.available_for_customer > 0}
             class="flex rounded-md bg-zinc-100 p-2"
-            phx-click={JS.push("remove_ticket", value: %{id: ticket.id})}
+            phx-click={JS.push("add_ticket", value: %{id: ticket.id})}
           >
-            <.icon name="hero-minus-mini" />
+            <.icon name="hero-plus-mini" />
           </button>
-          <span class="w-8 bg-zinc-100 text-center tabular-nums">
-            <%= ticket.instance_count %>
-          </span>
-        <% end %>
-        <button
-          :if={ticket.available_for_customer > 0}
-          class="flex rounded-md bg-zinc-100 p-2"
-          phx-click={JS.push("add_ticket", value: %{id: ticket.id})}
-        >
-          <.icon name="hero-plus-mini" />
-        </button>
+        </div>
       </div>
     </div>
     <div
       :if={not is_nil(@customer) and Enum.any?(@tickets)}
-      class="sticky bottom-3 col-start-1 flex w-full max-w-xl justify-end gap-4 self-end rounded-2xl border bg-white p-4 shadow-md"
+      class={
+        classes(
+          "sticky bottom-3 col-start-1 flex w-full max-w-xl justify-end gap-4 self-end rounded-2xl border bg-white p-4 shadow-md"
+        )
+      }
     >
       <div class="grow">
-        <span class="font-semibold text-zinc-800">
+        <span
+          :if={not is_nil(@customer.tickets_total_price) and @customer.tickets_total_price > 0}
+          class="font-semibold text-zinc-800"
+        >
           R <%= @customer.tickets_total_price || 0 %>
         </span>
       </div>
       <.button
         disabled={is_nil(@customer) or @customer.tickets_count == 0}
-        class={if is_nil(@customer) or @customer.tickets_count == 0, do: "opacity-0", else: ""}
         phx-click={show_modal("summary-modal")}
       >
         Continue

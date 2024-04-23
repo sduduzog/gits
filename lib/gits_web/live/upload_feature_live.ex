@@ -22,8 +22,8 @@ defmodule GitsWeb.UploadFeatureLive do
       {[entry], []} ->
         consume_uploaded_entry(socket, entry, fn %{path: path} ->
           Image.open!(path)
-          |> Image.thumbnail!("720x480", fit: :cover)
-          |> Image.stream!(suffix: ".jpg", buffer_size: 5_242_880, quality: 100)
+          |> Image.thumbnail!("480x320", fit: :cover)
+          |> Image.stream!(suffix: ".jpg", buffer_size: 5_242_880, quality: 90)
           |> Gits.Bucket.upload_feature_image(socket.assigns.account_id, socket.assigns.event_id)
 
           {:ok, nil}

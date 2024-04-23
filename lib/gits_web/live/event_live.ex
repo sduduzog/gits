@@ -1,10 +1,10 @@
 defmodule GitsWeb.EventLive do
-  alias Hex.API.User
   alias Gits.Storefront.Basket
   alias Gits.Storefront.Customer
   alias Gits.Storefront.TicketInstance
   alias Gits.Storefront.Ticket
   use GitsWeb, :live_view
+  use Tails
   require Ash.Query
   alias Gits.Storefront.Event
 
@@ -151,6 +151,7 @@ defmodule GitsWeb.EventLive do
           |> Ash.Query.filter(ticket.event.id == ^event.id)
           |> Ash.Query.filter(state == :reserved)
       )
+      |> IO.inspect()
 
     tickets =
       Ash.Query.for_read(Ticket, :read, %{}, actor: user)
