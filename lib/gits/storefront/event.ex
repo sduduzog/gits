@@ -32,11 +32,13 @@ defmodule Gits.Storefront.Event do
     end
 
     has_many :tickets, Gits.Storefront.Ticket
+    has_many :baskets, Gits.Storefront.Basket
   end
 
   aggregates do
     min :minimum_ticket_price, :tickets, :price
     max :maximum_ticket_price, :tickets, :price
+    sum :customer_reserved_instance_total, :tickets, :customer_reserved_instance_total
   end
 
   calculations do
@@ -83,6 +85,12 @@ defmodule Gits.Storefront.Event do
       change manage_relationship(:account, type: :append)
     end
 
+    update :prepare_basket do
+      require_atomic? false
+      change ensure_selected([:tickets])
+      manual Gits.Storefront.Actions.PrepareBasket
+    end
+
     update :update_address do
       accept :address_place_id
     end
@@ -105,6 +113,10 @@ defmodule Gits.Storefront.Event do
 
     policy action(:update_address) do
       authorize_if always()
+    end
+
+    policy action(:prepare_basket) do
+      authorize_if actor_present()
     end
 
     policy action(:create) do

@@ -35,9 +35,6 @@ defmodule GitsWeb.EventLive do
       |> assign(:page_title, event.name)
       |> assign(:basket, nil)
       |> assign(:feature_image, Gits.Bucket.get_feature_image_path(event.account_id, event.id))
-      |> assign(:tickets, [])
-      |> assign(:summary_line, nil)
-      |> assign(:hint, nil)
 
     {:ok, socket, temporary_assigns: [{SEO.key(), nil}]}
   end
@@ -60,34 +57,30 @@ defmodule GitsWeb.EventLive do
 
   def handle_event("settle_basket", _unsigned_params, socket) do
     customer = socket.assigns.customer
-    disabled = is_nil(socket.assigns.customer) or customer.tickets_count == 0
 
-    socket =
-      unless not is_nil(socket.assigns.basket) or disabled do
-        user = socket.assigns.current_user
-        customer = socket.assigns.customer
+    event =
+      socket.assigns.event
 
-        basket =
-          Basket
-          |> Ash.Changeset.for_create(
-            :create,
-            %{
-              amount: customer.tickets_total_price,
-              instances: Enum.map(customer.instances, fn instance -> instance.id end)
-            },
-            actor: user
-          )
-          |> Ash.create!()
+    event
+    |> Ash.Changeset.for_update(:prepare_basket, %{}, actor: customer)
+    |> Ash.update!()
 
-        basket
-        |> Ash.Changeset.for_update(:settle_free, %{}, actor: user)
-        |> Ash.update!()
+    # basket =
+    # Basket
+    # |> Ash.Changeset.for_create(
+    #   :create,
+    #   %{
+    #     event: event
+    #   },
+    #   actor: customer
+    # )
+    # |> Ash.create!()
 
-        socket |> assign(:basket, basket |> Ash.reload!())
-      else
-        socket
-      end
-
+    #   |> Ash.create!()
+    # basket
+    # |> Ash.Changeset.for_update(:settle_free, %{}, actor: customer)
+    # |> Ash.update!()
+    # socket |> assign(:basket, basket |> Ash.reload!())
     {:noreply, socket}
   end
 
@@ -144,7 +137,7 @@ defmodule GitsWeb.EventLive do
       |> Ash.load!(
         [
           :address,
-          tickets: [:customer_reserved_instance_count]
+          tickets: [:customer_reserved_instance_count, :customer_reserved_instance_total]
         ],
         actor: customer
       )

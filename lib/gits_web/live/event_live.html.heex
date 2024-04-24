@@ -82,7 +82,7 @@
   </div>
 </div>
 
-<.modal :if={@customer} id="summary-modal" on_cancel={JS.push("clear_basket")}>
+<.modal :if={@customer} id="summary-modal" on_cancel={JS.push("clear_basket")} show={true}>
   <%= if @basket != nil and @basket.state == :settled do %>
     <div phx-hook="Confetti" class="space-y-2" id="confetti">
       <p class="font-medium">All done!</p>
@@ -95,12 +95,19 @@
   <% else %>
     <%= if @customer.tickets_count > 0 do %>
       <h3 class="font-medium">Summary</h3>
-      <div class="mt-4 rounded-lg border p-2">
+      <div class="mt-4 rounded-lg border p-2 px-4">
         <div
-          :for={ticket <- Enum.filter(@tickets, fn ticket -> ticket.instance_count > 0 end)}
+          :for={
+            ticket <-
+              Enum.filter(@event.tickets, fn ticket ->
+                ticket.customer_reserved_instance_count > 0
+              end)
+          }
           class="flex items-center justify-between"
         >
-          <span class="text-sm"><%= ticket.instance_count %>&times; <%= ticket.name %></span>
+          <span class="text-sm">
+            <%= ticket.customer_reserved_instance_count %> &times; <%= ticket.name %>
+          </span>
           <span class="text-gray-500">
             <%= if ticket.price > 0 do %>
               R <%= ticket.price %>
@@ -109,6 +116,13 @@
             <% end %>
           </span>
         </div>
+      </div>
+
+      <div class="flex justify-between p-2 px-4 font-semibold">
+        <span>Total</span>
+        <span class="">
+          FREE
+        </span>
       </div>
       <div class="pt-4">
         <.button phx-click="settle_basket">Finish</.button>

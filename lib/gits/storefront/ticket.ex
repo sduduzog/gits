@@ -10,6 +10,7 @@ defmodule Gits.Storefront.Ticket do
     uuid_primary_key :id
     attribute :name, :string, allow_nil?: false, public?: true
     attribute :price, :integer, allow_nil?: false, public?: true
+    attribute :allowed_quantity_per_user, :integer, allow_nil?: true, public?: true
     create_timestamp :created_at, public?: true
     update_timestamp :updated_at, public?: true
   end
@@ -22,7 +23,7 @@ defmodule Gits.Storefront.Ticket do
     has_many :instances, Gits.Storefront.TicketInstance
 
     has_many :hot_instances, Gits.Storefront.TicketInstance do
-      filter expr(state in [:reserved, :ready_to_scan])
+      filter expr(state in [:reserved, :added_to_basket, :ready_to_scan, :scanned])
     end
   end
 
@@ -77,6 +78,10 @@ defmodule Gits.Storefront.Ticket do
                 )
               )
 
+    calculate :customer_reserved_instance_total,
+              :integer,
+              expr(customer_reserved_instance_count * price)
+
     calculate :instance_count,
               :integer,
               expr(
@@ -109,12 +114,7 @@ defmodule Gits.Storefront.Ticket do
       authorize_if actor_present()
     end
 
-    bypass action(:read) do
-      authorize_if expr(event.account.members.user.id == ^actor(:id))
-    end
-
     policy action(:read) do
-      forbid_if expr(price > 0)
       authorize_if always()
     end
 

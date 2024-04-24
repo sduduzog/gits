@@ -1,5 +1,8 @@
 defmodule Gits.Storefront.Basket do
   require Ash.Query
+  require Ash.Resource.Change.Builtins
+  require Ash.Resource.Change.Builtins
+  require Ash.Resource.Change.Builtins
   alias Gits.Storefront.TicketInstance
   require Ash.Resource.Change.Builtins
 
@@ -30,24 +33,28 @@ defmodule Gits.Storefront.Basket do
   end
 
   relationships do
+    belongs_to :event, Gits.Storefront.Event
     has_many :instances, Gits.Storefront.TicketInstance
   end
 
   actions do
-    default_accept :*
     defaults [:read, :update, :destroy]
 
     create :create do
-      accept :*
+      primary? true
 
-      argument :instances, {:array, :integer} do
+      argument :event, :struct do
         allow_nil? false
       end
 
-      change manage_relationship(:instances,
-               on_lookup: {:relate_and_update, :add_to_basket},
-               on_match: {:update, :add_to_basket}
-             )
+      change set_attribute(:amount, 0)
+
+      change manage_relationship(:event, type: :append)
+
+      # change manage_relationship(:instances,
+      #          on_lookup: {:relate_and_update, :add_to_basket},
+      #          on_match: {:update, :add_to_basket}
+      #        )
     end
 
     update :settle_free do
