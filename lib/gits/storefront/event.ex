@@ -87,7 +87,7 @@ defmodule Gits.Storefront.Event do
 
     update :prepare_basket do
       require_atomic? false
-      change ensure_selected([:tickets])
+      change ensure_selected([:tickets, :customer_reserved_instance_total])
       manual Gits.Storefront.Actions.PrepareBasket
     end
 

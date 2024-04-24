@@ -19,6 +19,7 @@ defmodule Gits.Storefront.TicketInstance do
 
     transitions do
       transition :add_to_basket, from: :reserved, to: :added_to_basket
+      transition :add_to_basket_ready, from: :reserved, to: :ready_to_scan
       transition :abandon, from: :added_to_basket, to: :abandoned
       transition :ready_to_scan, from: :added_to_basket, to: :ready_to_scan
       transition :scan, from: :ready_to_scan, to: :scanned
@@ -50,6 +51,12 @@ defmodule Gits.Storefront.TicketInstance do
       require_atomic? false
 
       change transition_state(:added_to_basket)
+    end
+
+    update :add_to_basket_ready do
+      require_atomic? false
+
+      change transition_state(:ready_to_scan)
     end
 
     update :abandon do
@@ -91,10 +98,18 @@ defmodule Gits.Storefront.TicketInstance do
     end
 
     policy action(:read) do
+      authorize_if expr(customer.id == ^actor(:id))
+    end
+
+    policy action(:read) do
       authorize_if actor_present()
     end
 
-    policy action(:add_to_basket) do
+    policy action(:add_to_basket_ready) do
+      authorize_if expr(ticket.price == 0)
+    end
+
+    policy action(:add_to_basket_ready) do
       authorize_if always()
     end
 

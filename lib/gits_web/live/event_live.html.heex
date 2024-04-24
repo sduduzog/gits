@@ -82,7 +82,7 @@
   </div>
 </div>
 
-<.modal :if={@customer} id="summary-modal" on_cancel={JS.push("clear_basket")} show={true}>
+<.modal :if={@customer} id="summary-modal" on_cancel={JS.push("clear_basket")}>
   <%= if @basket != nil and @basket.state == :settled do %>
     <div phx-hook="Confetti" class="space-y-2" id="confetti">
       <p class="font-medium">All done!</p>
@@ -109,8 +109,8 @@
             <%= ticket.customer_reserved_instance_count %> &times; <%= ticket.name %>
           </span>
           <span class="text-gray-500">
-            <%= if ticket.price > 0 do %>
-              R <%= ticket.price %>
+            <%= if ticket.customer_reserved_instance_total > 0 do %>
+              R <%= ticket.customer_reserved_instance_total %>
             <% else %>
               FREE
             <% end %>
@@ -121,7 +121,11 @@
       <div class="flex justify-between p-2 px-4 font-semibold">
         <span>Total</span>
         <span class="">
-          FREE
+          <%= if @event.customer_reserved_instance_total > 0 do %>
+            R <%= @event.customer_reserved_instance_total %>
+          <% else %>
+            FREE
+          <% end %>
         </span>
       </div>
       <div class="pt-4">

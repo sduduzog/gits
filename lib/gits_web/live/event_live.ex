@@ -44,15 +44,16 @@ defmodule GitsWeb.EventLive do
   end
 
   def handle_event("clear_basket", _, socket) do
-    if socket.assigns.basket != nil and socket.assigns.basket.state == :open do
-      socket.assigns.basket
-      |> Ash.Changeset.for_update(:abandon, %{}, actor: socket.assigns.current_user)
-      |> Ash.update!()
-    end
-
-    socket
-    |> assign(:basket, nil)
-    |> reload()
+    #   if socket.assigns.basket != nil and socket.assigns.basket.state == :open do
+    #     socket.assigns.basket
+    #     |> Ash.Changeset.for_update(:abandon, %{}, actor: socket.assigns.current_user)
+    #     |> Ash.update!()
+    #   end
+    #
+    #   socket
+    #   |> assign(:basket, nil)
+    #   |> reload()
+    {:noreply, socket}
   end
 
   def handle_event("settle_basket", _unsigned_params, socket) do
@@ -61,9 +62,34 @@ defmodule GitsWeb.EventLive do
     event =
       socket.assigns.event
 
-    event
-    |> Ash.Changeset.for_update(:prepare_basket, %{}, actor: customer)
-    |> Ash.update!()
+    amount = event.customer_reserved_instance_total
+
+    instances =
+      event.tickets
+      |> Ash.load!([instances: TicketInstance |> Ash.Query.filter(state == :reserved)],
+        actor: customer
+      )
+      |> Enum.flat_map(fn ticket -> ticket.instances end)
+
+    socket =
+      if amount == 0 do
+        basket =
+          Ash.Changeset.for_create(
+            Basket,
+            :create_settled,
+            %{amount: amount, event: event, instances: instances},
+            actor: customer
+          )
+          |> Ash.create!()
+
+        assign(socket, :basket, basket)
+      else
+        socket
+      end
+
+    # event
+    # |> Ash.Changeset.for_update(:prepare_basket, %{}, actor: customer)
+    # |> Ash.update!()
 
     # basket =
     # Basket
@@ -137,6 +163,7 @@ defmodule GitsWeb.EventLive do
       |> Ash.load!(
         [
           :address,
+          :customer_reserved_instance_total,
           tickets: [:customer_reserved_instance_count, :customer_reserved_instance_total]
         ],
         actor: customer

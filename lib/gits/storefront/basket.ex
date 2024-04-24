@@ -23,7 +23,7 @@ defmodule Gits.Storefront.Basket do
   end
 
   state_machine do
-    initial_states [:open]
+    initial_states [:open, :settled]
     default_initial_state :open
 
     transitions do
@@ -33,7 +33,10 @@ defmodule Gits.Storefront.Basket do
   end
 
   relationships do
-    belongs_to :event, Gits.Storefront.Event
+    belongs_to :event, Gits.Storefront.Event do
+      attribute_type :integer
+    end
+
     has_many :instances, Gits.Storefront.TicketInstance
   end
 
@@ -41,20 +44,46 @@ defmodule Gits.Storefront.Basket do
     defaults [:read, :update, :destroy]
 
     create :create do
+      accept [:amount]
       primary? true
 
-      argument :event, :struct do
+      argument :event, :map do
         allow_nil? false
       end
 
-      change set_attribute(:amount, 0)
+      argument :instances, {:array, :map} do
+        allow_nil? false
+      end
 
       change manage_relationship(:event, type: :append)
 
-      # change manage_relationship(:instances,
-      #          on_lookup: {:relate_and_update, :add_to_basket},
-      #          on_match: {:update, :add_to_basket}
-      #        )
+      change manage_relationship(:instances,
+               on_lookup: {:relate_and_update, :add_to_basket},
+               on_match: {:update, :add_to_basket}
+             )
+    end
+
+    create :create_settled do
+      accept [:amount]
+
+      argument :event, :map do
+        allow_nil? false
+      end
+
+      argument :instances, {:array, :map} do
+        allow_nil? false
+      end
+
+      validate attribute_equals(:amount, 0)
+
+      change set_attribute(:state, :settled)
+
+      change manage_relationship(:event, type: :append)
+
+      change manage_relationship(:instances,
+               on_lookup: {:relate_and_update, :add_to_basket_ready},
+               on_match: {:update, :add_to_basket_ready}
+             )
     end
 
     update :settle_free do
