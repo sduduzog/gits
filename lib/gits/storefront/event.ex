@@ -85,12 +85,6 @@ defmodule Gits.Storefront.Event do
       change manage_relationship(:account, type: :append)
     end
 
-    update :prepare_basket do
-      require_atomic? false
-      change ensure_selected([:tickets, :customer_reserved_instance_total])
-      manual Gits.Storefront.Actions.PrepareBasket
-    end
-
     update :update_address do
       accept :address_place_id
     end
@@ -113,10 +107,6 @@ defmodule Gits.Storefront.Event do
 
     policy action(:update_address) do
       authorize_if always()
-    end
-
-    policy action(:prepare_basket) do
-      authorize_if actor_present()
     end
 
     policy action(:create) do

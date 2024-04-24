@@ -44,15 +44,6 @@ defmodule GitsWeb.EventLive do
   end
 
   def handle_event("clear_basket", _, socket) do
-    #   if socket.assigns.basket != nil and socket.assigns.basket.state == :open do
-    #     socket.assigns.basket
-    #     |> Ash.Changeset.for_update(:abandon, %{}, actor: socket.assigns.current_user)
-    #     |> Ash.update!()
-    #   end
-    #
-    #   socket
-    #   |> assign(:basket, nil)
-    #   |> reload()
     {:noreply, socket}
   end
 
@@ -87,26 +78,6 @@ defmodule GitsWeb.EventLive do
         socket
       end
 
-    # event
-    # |> Ash.Changeset.for_update(:prepare_basket, %{}, actor: customer)
-    # |> Ash.update!()
-
-    # basket =
-    # Basket
-    # |> Ash.Changeset.for_create(
-    #   :create,
-    #   %{
-    #     event: event
-    #   },
-    #   actor: customer
-    # )
-    # |> Ash.create!()
-
-    #   |> Ash.create!()
-    # basket
-    # |> Ash.Changeset.for_update(:settle_free, %{}, actor: customer)
-    # |> Ash.update!()
-    # socket |> assign(:basket, basket |> Ash.reload!())
     {:noreply, socket}
   end
 

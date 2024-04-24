@@ -79,15 +79,6 @@ defmodule GitsWeb.AuthLive.Form do
 
         {:noreply, socket}
 
-      {:ok, nil} ->
-        socket =
-          socket
-          |> assign(:form, form)
-          |> assign(:errors, Form.errors(form))
-          |> assign(:trigger_action, form.valid?)
-
-        {:noreply, socket}
-
       {:error, _} ->
         nil
     end

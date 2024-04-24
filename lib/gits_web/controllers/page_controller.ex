@@ -52,12 +52,21 @@ defmodule GitsWeb.PageController do
       if conn.assigns.current_user do
         Ash.Query.for_read(Customer, :read, %{}, actor: conn.assigns.current_user)
         |> Ash.Query.filter(user.id == ^conn.assigns.current_user.id)
-        |> Ash.Query.load(
-          scannable_instances: [:event_name, :ticket_name, :event_starts_at, :event_address]
-        )
         |> Ash.read_one!()
+        |> IO.inspect()
       else
         nil
+      end
+
+    customer =
+      if not is_nil(customer) do
+        customer
+        |> Ash.load!(
+          [scannable_instances: [:event_name, :ticket_name, :event_starts_at, :event_address]],
+          actor: customer
+        )
+      else
+        customer
       end
 
     conn |> assign(:customer, customer) |> render(:tickets)

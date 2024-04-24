@@ -20,75 +20,75 @@
     <.link :if={false} href="/profile" class="text-sm bg-gray-100 px-4 p-2 rounded-lg ">
       Tickets
     </.link>
+
+    <div phx-click-away={JS.add_class("hidden", to: "#header-dropdown")} class="relative">
+      <button
+        id="header-dropdown-button"
+        class="flex shrink-0 rounded-xl p-2 text-sm hover:bg-gray-50 focus-visible:ring-1 focus-visible:ring-gray-400"
+        type="button"
+        phx-click={JS.toggle_class("hidden", to: "#header-dropdown")}
+      >
+        <.icon name="hero-bars-2" />
+      </button>
+      <div
+        id="header-dropdown"
+        class="absolute top-full right-2 z-10 hidden w-44 divide-y divide-gray-100 rounded-lg bg-white shadow dark:divide-gray-600 dark:bg-gray-700"
+      >
+        <%= if @current_user do %>
+          <div class="px-4 py-3 text-sm text-gray-900 dark:text-white">
+            <div>Signed in with</div>
+            <div class="truncate font-medium"><%= @current_user.email %></div>
+          </div>
+        <% else %>
+          <a
+            href={~p"/sign-in"}
+            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
+          >
+            Sign In
+          </a>
+        <% end %>
+        <ul
+          class="py-2 text-sm text-gray-700 dark:text-gray-200 lg:hidden"
+          aria-labelledby="dropdownUserAvatarButton"
+        >
+          <li>
+            <.link
+              :for={nav <- navigation}
+              class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+              href={nav.to}
+            >
+              <%= nav.label %>
+            </.link>
+          </li>
+        </ul>
+        <ul
+          :if={not is_nil(@current_user) and false}
+          class="py-2 text-sm text-gray-700 dark:text-gray-200"
+          aria-labelledby="dropdownUserAvatarButton"
+        >
+          <li>
+            <.link :for={nav <- navigation} href={nav.to}><%= nav.label %></.link>
+            <a
+              href={~p"/tickets"}
+              class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+            >
+              Tickets
+            </a>
+          </li>
+        </ul>
+        <div :if={@current_user} class="py-2">
+          <a
+            href={~p"/sign-out"}
+            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
+          >
+            Sign out
+          </a>
+        </div>
+      </div>
+    </div>
   <% else %>
     <.link href="/sign-in" class="text-sm bg-gray-100 px-4 p-2 rounded-lg">Sign in</.link>
   <% end %>
-
-  <div phx-click-away={JS.add_class("hidden", to: "#header-dropdown")} class="relative">
-    <button
-      id="header-dropdown-button"
-      class="flex shrink-0 rounded-xl p-2 text-sm hover:bg-gray-50 focus-visible:ring-1 focus-visible:ring-gray-400"
-      type="button"
-      phx-click={JS.toggle_class("hidden", to: "#header-dropdown")}
-    >
-      <.icon name="hero-bars-2" />
-    </button>
-    <div
-      id="header-dropdown"
-      class="absolute top-full right-2 z-10 hidden w-44 divide-y divide-gray-100 rounded-lg bg-white shadow dark:divide-gray-600 dark:bg-gray-700"
-    >
-      <%= if @current_user do %>
-        <div class="px-4 py-3 text-sm text-gray-900 dark:text-white">
-          <div>Signed in with</div>
-          <div class="truncate font-medium"><%= @current_user.email %></div>
-        </div>
-      <% else %>
-        <a
-          href={~p"/sign-in"}
-          class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
-        >
-          Sign In
-        </a>
-      <% end %>
-      <ul
-        class="py-2 text-sm text-gray-700 dark:text-gray-200 lg:hidden"
-        aria-labelledby="dropdownUserAvatarButton"
-      >
-        <li>
-          <.link
-            :for={nav <- navigation}
-            class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-            href={nav.to}
-          >
-            <%= nav.label %>
-          </.link>
-        </li>
-      </ul>
-      <ul
-        :if={not is_nil(@current_user) and false}
-        class="py-2 text-sm text-gray-700 dark:text-gray-200"
-        aria-labelledby="dropdownUserAvatarButton"
-      >
-        <li>
-          <.link :for={nav <- navigation} href={nav.to}><%= nav.label %></.link>
-          <a
-            href={~p"/tickets"}
-            class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-          >
-            Tickets
-          </a>
-        </li>
-      </ul>
-      <div :if={@current_user} class="py-2">
-        <a
-          href={~p"/sign-out"}
-          class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
-        >
-          Sign out
-        </a>
-      </div>
-    </div>
-  </div>
 </header>
 <main class="mx-auto max-w-screen-xl space-y-4 p-4 md:space-y-8 md:p-8">
   <.flash_group flash={@flash} />
