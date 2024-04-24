@@ -38,6 +38,7 @@ defmodule Gits.Storefront.Event do
   aggregates do
     min :minimum_ticket_price, :tickets, :price
     max :maximum_ticket_price, :tickets, :price
+    sum :customer_reserved_instance_count, :tickets, :customer_reserved_instance_count
     sum :customer_reserved_instance_total, :tickets, :customer_reserved_instance_total
   end
 

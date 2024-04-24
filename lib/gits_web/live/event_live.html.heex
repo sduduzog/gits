@@ -75,7 +75,10 @@
     </div>
     <div class="sticky bottom-3 col-span-full flex w-full grow justify-end gap-4 rounded-2xl border bg-white p-4 shadow-lg lg:static lg:shadow-none">
       <div class="grid grow grow text-sm"></div>
-      <.button phx-click={show_modal("summary-modal")}>
+      <.button
+        disabled={@event.customer_reserved_instance_count == 0}
+        phx-click={show_modal("summary-modal")}
+      >
         Continue
       </.button>
     </div>

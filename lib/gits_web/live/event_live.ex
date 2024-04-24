@@ -78,7 +78,7 @@ defmodule GitsWeb.EventLive do
         socket
       end
 
-    {:noreply, socket}
+    reload(socket)
   end
 
   def handle_event("remove_ticket", unsigned_params, socket) do
@@ -134,6 +134,7 @@ defmodule GitsWeb.EventLive do
       |> Ash.load!(
         [
           :address,
+          :customer_reserved_instance_count,
           :customer_reserved_instance_total,
           tickets: [:customer_reserved_instance_count, :customer_reserved_instance_total]
         ],
