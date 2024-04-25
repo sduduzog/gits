@@ -9,8 +9,30 @@ defmodule Gits.Storefront.Ticket do
   attributes do
     uuid_primary_key :id
     attribute :name, :string, allow_nil?: false, public?: true
-    attribute :price, :integer, allow_nil?: false, public?: true
-    attribute :allowed_quantity_per_user, :integer, allow_nil?: true, public?: true
+
+    attribute :price, :decimal do
+      allow_nil? false
+      public? true
+      constraints min: 0
+    end
+
+    attribute :allowed_quantity_per_user, :integer do
+      allow_nil? true
+      public? true
+      constraints min: 0
+      default 1
+    end
+
+    attribute :total_quantity, :integer do
+      allow_nil? true
+      public? true
+      constraints min: 0
+      default 100
+    end
+
+    attribute :sale_starts_at, :naive_datetime, public?: true
+    attribute :sale_ends_at, :naive_datetime, public?: true
+
     create_timestamp :created_at, public?: true
     update_timestamp :updated_at, public?: true
   end
