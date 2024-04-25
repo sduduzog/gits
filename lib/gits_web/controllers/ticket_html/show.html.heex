@@ -41,10 +41,25 @@
             <%= @ticket.name %>
           </dd>
         </div>
+
         <div class="py-6 sm:grid sm:grid-cols-3 sm:gap-4">
           <dt class="text-sm font-medium text-gray-900">Price</dt>
           <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
             R <%= @ticket.price %>
+          </dd>
+        </div>
+
+        <div class="py-6 sm:grid sm:grid-cols-3 sm:gap-4">
+          <dt class="text-sm font-medium text-gray-900">Allowed quantity per user</dt>
+          <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+            <%= @ticket.allowed_quantity_per_user %>
+          </dd>
+        </div>
+
+        <div class="py-6 sm:grid sm:grid-cols-3 sm:gap-4">
+          <dt class="text-sm font-medium text-gray-900">Total quantity</dt>
+          <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+            <%= @ticket.total_quantity %>
           </dd>
         </div>
       </dl>

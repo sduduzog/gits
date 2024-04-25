@@ -48,21 +48,28 @@
       <div class="flex items-center gap-4 rounded-xl border p-4">
         <div class="grid grow text-sm">
           <span class="grow text-xl font-medium"><%= ticket.name %></span>
-          <span class=" text-sm text-gray-500">R <%= ticket.price %></span>
+          <span class=" text-sm text-gray-500">
+            <%= if ticket.price > 0 do %>
+              R <%= ticket.price %>
+            <% else %>
+              FREE
+            <% end %>
+          </span>
         </div>
 
         <div class="flex h-9 items-center gap-2 rounded-md">
-          <button
-            :if={ticket.customer_reserved_instance_count > 0}
-            class="flex rounded-md bg-gray-100 p-2"
-            phx-click={JS.push("remove_ticket", value: %{id: ticket.id})}
-          >
-            <.icon name="hero-minus-mini" />
-          </button>
+          <%= if ticket.customer_reserved_instance_count > 0 do %>
+            <button
+              class="flex rounded-md bg-gray-100 p-2"
+              phx-click={JS.push("remove_ticket", value: %{id: ticket.id})}
+            >
+              <.icon name="hero-minus-mini" />
+            </button>
 
-          <span class="w-8 text-center tabular-nums">
-            <%= ticket.customer_reserved_instance_count %>
-          </span>
+            <span class="w-8 text-center tabular-nums">
+              <%= ticket.customer_reserved_instance_count %>
+            </span>
+          <% end %>
 
           <button
             class="flex rounded-md bg-gray-100 p-2"
@@ -73,7 +80,10 @@
         </div>
       </div>
     </div>
-    <div class="sticky bottom-3 col-span-full flex w-full grow justify-end gap-4 rounded-2xl border bg-white p-4 shadow-lg lg:static lg:shadow-none">
+    <div
+      :if={not is_nil(@customer)}
+      class="sticky bottom-3 col-span-full flex w-full grow justify-end gap-4 rounded-2xl border bg-white p-4 shadow-lg lg:static lg:shadow-none"
+    >
       <div class="grid grow grow text-sm"></div>
       <.button
         disabled={@event.customer_reserved_instance_count == 0}
@@ -131,7 +141,7 @@
           <% end %>
         </span>
       </div>
-      <div class="pt-4">
+      <div class="flex justify-end pt-4">
         <.button phx-click="settle_basket">Finish</.button>
       </div>
     <% end %>
