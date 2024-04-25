@@ -119,16 +119,13 @@ defmodule GitsWeb.TicketController do
           ~p"/accounts/#{params["account_id"]}/events/#{params["event_id"]}/tickets/#{ticket.id}"
       )
     else
-      _ ->
+      foo ->
+        IO.inspect(foo)
+
         conn
         |> assign(:form, form)
         |> render(:edit)
     end
-
-    conn
-    |> assign(:ticket, ticket)
-    |> assign(:form, form)
-    |> render(:edit)
   end
 
   def delete(conn, params) do

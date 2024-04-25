@@ -51,7 +51,7 @@ defmodule Gits.Storefront.Ticket do
 
   actions do
     default_accept :*
-    defaults [:read, :update, :destroy]
+    defaults [:read, :destroy]
 
     create :create do
       accept :*
@@ -63,6 +63,11 @@ defmodule Gits.Storefront.Ticket do
       validate compare(:price, greater_than_or_equal_to: 0)
 
       change manage_relationship(:event, type: :append)
+    end
+
+    update :update do
+      accept :*
+      require_atomic? false
     end
 
     update :add_instance do
