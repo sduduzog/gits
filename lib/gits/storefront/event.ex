@@ -40,6 +40,7 @@ defmodule Gits.Storefront.Event do
     max :maximum_ticket_price, :tickets, :price
     sum :customer_reserved_instance_count, :tickets, :customer_reserved_instance_count
     sum :customer_reserved_instance_total, :tickets, :customer_reserved_instance_total
+    sum :customer_secured_instance_count, :tickets, :customer_secured_instance_count
   end
 
   calculations do
@@ -49,6 +50,8 @@ defmodule Gits.Storefront.Event do
     calculate :ticket_price_varies,
               :boolean,
               expr(maximum_ticket_price - minimum_ticket_price > 0)
+
+    calculate :customer_has_tickets, :boolean, expr(customer_secured_instance_count > 0)
   end
 
   actions do

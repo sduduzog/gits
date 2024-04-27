@@ -34,13 +34,31 @@ defmodule GitsWeb.EventLive do
       |> assign(:event, event)
       |> assign(:page_title, event.name)
       |> assign(:basket, nil)
+      |> assign(:show_tickets_modal, false)
       |> assign(:feature_image, Gits.Bucket.get_feature_image_path(event.account_id, event.id))
 
     {:ok, socket, temporary_assigns: [{SEO.key(), nil}]}
   end
 
-  def handle_params(_, _, socket) do
+  def handle_params(%{"show" => what}, _uri, socket) do
+    SEO.assign(socket, socket.assigns.event)
+    |> which_modal(what)
+    |> reload()
+  end
+
+  def handle_params(_unsigned_params, _uri, socket) do
     reload(SEO.assign(socket, socket.assigns.event))
+  end
+
+  defp which_modal(socket, "tickets") do
+    customer =
+      socket.assigns.customer
+      |> Ash.load!(
+        [scannable_instances: [:event_name, :ticket_name, :event_starts_at, :event_address]],
+        actor: socket.assigns.customer
+      )
+
+    socket |> assign(:show_tickets_modal, true) |> assign(:customer, customer)
   end
 
   def handle_event("clear_basket", _, socket) do
@@ -134,8 +152,10 @@ defmodule GitsWeb.EventLive do
       |> Ash.load!(
         [
           :address,
+          :customer_has_tickets,
           :customer_reserved_instance_count,
           :customer_reserved_instance_total,
+          :customer_secured_instance_count,
           tickets: [:customer_reserved_instance_count, :customer_reserved_instance_total]
         ],
         actor: customer

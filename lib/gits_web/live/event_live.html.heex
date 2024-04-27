@@ -81,19 +81,57 @@
       </div>
     </div>
     <div
-      :if={not is_nil(@customer)}
+      :if={@event.customer_reserved_instance_count > 0 or @event.customer_has_tickets}
       class="sticky bottom-3 col-span-full flex w-full grow justify-end gap-4 rounded-2xl border bg-white p-4 shadow-lg lg:static lg:shadow-none"
     >
-      <div class="grid grow grow text-sm"></div>
-      <.button
-        disabled={@event.customer_reserved_instance_count == 0}
-        phx-click={show_modal("summary-modal")}
-      >
-        Continue
-      </.button>
+      <%= if @event.customer_reserved_instance_count > 0  do %>
+        <div class="grid grow grow text-sm">
+          <div :if={@event.customer_has_tickets} class=""></div>
+          <div :if={@event.customer_has_tickets} class="">
+            <span>You have tickets</span>
+          </div>
+        </div>
+        <.button
+          disabled={@event.customer_reserved_instance_count == 0}
+          phx-click={show_modal("summary-modal")}
+        >
+          Continue
+        </.button>
+      <% else %>
+        <div :if={@event.customer_has_tickets} class="flex grow">
+          <div class="grid grow grow text-sm">
+            <div :if={@event.customer_has_tickets} class=""></div>
+            <div :if={@event.customer_has_tickets} class="">
+              <span>
+                You have <%= @event.customer_secured_instance_count %> ticket<%= if @event.customer_secured_instance_count ==
+                                                                                      1,
+                                                                                    do: "",
+                                                                                    else: "s" %>
+              </span>
+            </div>
+          </div>
+          <.button phx-click={
+            show_modal("tickets-modal") |> JS.patch("/events/#{@event.masked_id}?show=tickets")
+          }>
+            Show tickets
+          </.button>
+        </div>
+      <% end %>
     </div>
   </div>
 </div>
+
+<.modal
+  id="tickets-modal"
+  show={@show_tickets_modal}
+  on_cancel={JS.patch("/events/#{@event.masked_id}")}
+>
+  <h2 class="pb-4 text-lg font-bold">Your tickets</h2>
+  <GitsWeb.EventComponents.customer_tickets_swiper
+    :if={@event.customer_has_tickets and is_list(@customer.scannable_instances)}
+    customer={@customer}
+  />
+</.modal>
 
 <.modal :if={@customer} id="summary-modal" on_cancel={JS.push("clear_basket")}>
   <%= if @basket != nil and @basket.state == :settled do %>

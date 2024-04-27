@@ -109,11 +109,14 @@ defmodule Gits.Storefront.Ticket do
               :integer,
               expr(customer_reserved_instance_count * price)
 
-    calculate :instance_count,
+    calculate :customer_secured_instance_count,
               :integer,
               expr(
                 count(instances,
-                  query: [filter: expr(customer.id == ^actor(:id) and state == :reserved)]
+                  query: [
+                    filter:
+                      expr(customer.id == ^actor(:id) and state in [:ready_to_scan, :scanned])
+                  ]
                 )
               )
   end
