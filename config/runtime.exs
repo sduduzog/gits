@@ -48,8 +48,6 @@ config :ex_aws, :s3,
   host: env!("AWS_S3_HOST", :string),
   port: env!("AWS_S3_PORT", :integer)
 
-config :branca, key: env!("BRANCA_KEY")
-
 if config_env() == :prod do
   database_url =
     System.get_env("DATABASE_URL") ||
