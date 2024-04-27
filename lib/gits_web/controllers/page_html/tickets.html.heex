@@ -92,7 +92,8 @@
         </div>
         <div class="blur-mdx grid justify-center">
           <%= raw(
-            "#{instance.id}"
+            Sqids.new!()
+            |> Sqids.encode!([instance.id])
             |> EQRCode.encode()
             |> EQRCode.svg(shape: "circle", color: "#475569", width: 256)
           ) %>
