@@ -79,8 +79,9 @@ defmodule GitsWeb.AuthLive.Form do
 
         {:noreply, socket}
 
-      {:error, _} ->
-        nil
+      {:error, error} ->
+        IO.inspect(error)
+        {:noreply, socket}
     end
   end
 end
