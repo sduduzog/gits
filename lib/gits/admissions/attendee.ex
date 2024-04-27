@@ -19,10 +19,12 @@ defmodule Gits.Admissions.Attendee do
     end
 
     belongs_to :event, Gits.Storefront.Event do
+      attribute_type :integer
       domain Gits.Storefront
     end
 
     belongs_to :instance, Gits.Storefront.TicketInstance do
+      attribute_type :integer
       domain Gits.Storefront
     end
   end
