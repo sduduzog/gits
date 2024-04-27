@@ -76,8 +76,8 @@ defmodule Gits.Auth.User do
       authorize_if always()
     end
 
-    policy always() do
-      forbid_if always()
+    policy action(:read) do
+      authorize_if actor_present()
     end
   end
 end

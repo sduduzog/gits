@@ -1,18 +1,18 @@
 <%= if @instance do %>
   <%= if @errors do %>
-    <div class="h-screen flex items-center">
-      <div class="mx-auto max-w-screen-sm space-y-8 flex flex-col items-center">
-        <div class="bg-amber-200 p-4 rounded-full">
-          <div class="bg-amber-400 rounded-full p-5 flex">
+    <div class="flex h-screen items-center">
+      <div class="mx-auto flex max-w-screen-sm flex-col items-center space-y-8">
+        <div class="rounded-full bg-amber-200 p-4">
+          <div class="flex rounded-full bg-amber-400 p-5">
             <.icon name="hero-exclamation-triangle" class="scale-150 text-white" />
           </div>
         </div>
-        <h1 class="font-bold text-3xl">Warning</h1>
+        <h1 class="text-3xl font-bold">Warning</h1>
         <span :for={error <- @errors}>Seat <%= error.message %></span>
         <div class="flex items-center justify-center">
           <.link
             href={
-              ~p"/accounts/#{@conn.params["account_id"]}/events/#{@conn.params["event_id"]}/attendees/scanner"
+              ~p"/attendees/scanner/#{@conn.params["account_id"]}/#{@conn.params["event_id"]}"
             }
             class="font-medium"
           >
@@ -22,18 +22,18 @@
       </div>
     </div>
   <% else %>
-    <div class="h-screen flex items-center">
-      <div class="mx-auto max-w-screen-sm space-y-8 flex flex-col items-center">
-        <div class="bg-green-200 p-4 rounded-full">
-          <div class="bg-green-400 rounded-full p-4 flex">
+    <div class="flex h-screen items-center">
+      <div class="mx-auto flex max-w-screen-sm flex-col items-center space-y-8">
+        <div class="rounded-full bg-green-200 p-4">
+          <div class="flex rounded-full bg-green-400 p-4">
             <.icon name="hero-check" class="scale-150 text-white" />
           </div>
         </div>
-        <h1 class="font-bold text-3xl">Success</h1>
+        <h1 class="text-3xl font-bold">Success</h1>
         <div class="flex items-center justify-center">
           <.link
             href={
-              ~p"/accounts/#{@conn.params["account_id"]}/events/#{@conn.params["event_id"]}/attendees/scanner"
+              ~p"/attendees/scanner/#{@conn.params["account_id"]}/#{@conn.params["event_id"]}"
             }
             class="font-medium"
           >
@@ -44,19 +44,17 @@
     </div>
   <% end %>
 <% else %>
-  <div class="h-screen flex items-center">
-    <div class="mx-auto max-w-screen-sm space-y-8 flex flex-col items-center">
-      <div class="bg-red-200 p-4 rounded-full">
-        <div class="bg-red-400 rounded-full p-5 flex">
+  <div class="flex h-screen items-center">
+    <div class="mx-auto flex max-w-screen-sm flex-col items-center space-y-8">
+      <div class="rounded-full bg-red-200 p-4">
+        <div class="flex rounded-full bg-red-400 p-5">
           <.icon name="hero-x-mark" class="scale-150 text-white" />
         </div>
       </div>
-      <h1 class="font-bold text-3xl">Not found</h1>
+      <h1 class="text-3xl font-bold">Not found</h1>
       <div class="flex items-center justify-center">
         <.link
-          href={
-            ~p"/accounts/#{@conn.params["account_id"]}/events/#{@conn.params["event_id"]}/attendees/scanner"
-          }
+          href={~p"/attendees/scanner/#{@conn.params["account_id"]}/#{@conn.params["event_id"]}"}
           class="font-medium"
         >
           Continue

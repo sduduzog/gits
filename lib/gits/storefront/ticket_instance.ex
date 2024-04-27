@@ -98,7 +98,9 @@ defmodule Gits.Storefront.TicketInstance do
     end
 
     policy action(:read) do
-      authorize_if expr(customer.id == ^actor(:id))
+      authorize_if expr(
+                     customer.id == ^actor(:id) or ticket.event.account.members.id == ^actor(:id)
+                   )
     end
 
     policy action(:read) do

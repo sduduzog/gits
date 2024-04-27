@@ -53,7 +53,6 @@ defmodule GitsWeb.PageController do
         Ash.Query.for_read(Customer, :read, %{}, actor: conn.assigns.current_user)
         |> Ash.Query.filter(user.id == ^conn.assigns.current_user.id)
         |> Ash.read_one!()
-        |> IO.inspect()
       else
         nil
       end

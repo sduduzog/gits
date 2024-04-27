@@ -1,5 +1,8 @@
 defmodule GitsWeb.AttendeeController do
+  alias Gits.Dashboard.Member
   alias Gits.Admissions.Attendee
+  alias Gits.Storefront.Event
+  alias Gits.Storefront.TicketInstance
   require Ash.Query
   use GitsWeb, :controller
 
@@ -28,28 +31,45 @@ defmodule GitsWeb.AttendeeController do
   end
 
   def index(conn, params) do
-    # attendees =
-    #   Ash.Query.filter(Attendee, event.id == ^params["event_id"])
-    #   |> Ash.read!()
+    member =
+      Ash.Query.for_read(Member, :read, %{}, actor: conn.assigns.current_user)
+      |> Ash.read_first!()
 
-    assign(conn, :attendees, [])
+    attendees =
+      Ash.Query.for_read(Attendee, :read, %{}, actor: member)
+      |> Ash.Query.filter(event.id == ^params["event_id"])
+      |> Ash.Query.load(:user)
+      |> Ash.read!()
+      |> IO.inspect()
+
+    assign(conn, :attendees, attendees)
     |> render(:index)
   end
 
   def new(conn, params) do
+    member =
+      Ash.Query.for_read(Member, :read, %{}, actor: conn.assigns.current_user)
+      |> Ash.read_first!()
+
+    event =
+      Ash.Query.for_read(Event, :read, %{}, actor: conn.assigns.current_user)
+      |> Ash.Query.filter(id: params["event_id"])
+      |> Ash.Query.load(:masked_id)
+      |> Ash.read_one!()
+
     instance =
-      Ash.Query.filter(TicketInstance, id: params["code"])
+      Ash.Query.for_read(TicketInstance, :read, %{}, actor: member)
+      |> Ash.Query.filter(id: params["code"])
       |> Ash.Query.filter(ticket.event.id == ^params["event_id"])
-      |> Ash.Query.load(:user)
+      |> Ash.Query.load(customer: [:user])
       |> Ash.read_one!()
 
     errors =
       if instance do
         Ash.Changeset.for_create(Attendee, :create, %{
-          name: instance.user.display_name,
-          email: instance.user.email,
-          event_id: params["event_id"],
-          instance_id: instance.id
+          user: instance.customer.user,
+          event: event,
+          instance: instance
         })
         |> Ash.create(actor: conn.assigns.current_user)
         |> case do

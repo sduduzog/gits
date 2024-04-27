@@ -33,6 +33,34 @@ defmodule Gits.Admissions.Attendee do
     identity :admission_identity, [:user_id, :event_id, :instance_id]
   end
 
+  actions do
+    defaults [:read, :destroy, update: :*]
+
+    create :create do
+      argument :user, :map do
+        allow_nil? false
+      end
+
+      argument :event, :map do
+        allow_nil? false
+      end
+
+      argument :instance, :map do
+        allow_nil? false
+      end
+
+      change manage_relationship(:user, type: :append)
+      change manage_relationship(:event, type: :append)
+      change manage_relationship(:instance, type: :append)
+    end
+  end
+
+  policies do
+    policy always() do
+      authorize_if actor_present()
+    end
+  end
+
   postgres do
     table "attendees"
     repo Gits.Repo
