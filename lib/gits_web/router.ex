@@ -21,6 +21,7 @@ defmodule GitsWeb.Router do
 
     resources "/accounts", AccountController do
       resources "/events", EventController do
+        resources "/attendees", AttendeeController
         resources "/tickets", TicketController
         get "/settings", EventController, :settings
         get "/upload/listing", EventController, :upload_listing_image
@@ -50,7 +51,6 @@ defmodule GitsWeb.Router do
 
     ash_authentication_live_session :authentication_required,
       on_mount: {GitsWeb.LiveUserAuth, :live_user_required} do
-      # live "/tickets", TicketsLive
       live "/accounts/:account_id/events/:event_id/address", EventAddressLive
       live "/accounts/:account_id/events/:event_id/attendees/scanner", ScanAttendeeLive
     end

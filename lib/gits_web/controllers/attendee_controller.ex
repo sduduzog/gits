@@ -40,7 +40,7 @@ defmodule GitsWeb.AttendeeController do
 
     errors =
       if instance do
-        Ash.Changeset.for_create(Attendee,:create, %{
+        Ash.Changeset.for_create(Attendee, :create, %{
           name: instance.user.display_name,
           email: instance.user.email,
           event_id: params["event_id"],
