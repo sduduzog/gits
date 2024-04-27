@@ -47,6 +47,8 @@ defmodule GitsWeb.AttendeeController do
   end
 
   def new(conn, params) do
+    [id] = Sqids.new!() |> Sqids.decode!(params["code"])
+
     member =
       Ash.Query.for_read(Member, :read, %{}, actor: conn.assigns.current_user)
       |> Ash.read_first!()
@@ -59,7 +61,7 @@ defmodule GitsWeb.AttendeeController do
 
     instance =
       Ash.Query.for_read(TicketInstance, :read, %{}, actor: member)
-      |> Ash.Query.filter(id: params["code"])
+      |> Ash.Query.filter(id: id)
       |> Ash.Query.filter(ticket.event.id == ^params["event_id"])
       |> Ash.Query.load(customer: [:user])
       |> Ash.read_one!()

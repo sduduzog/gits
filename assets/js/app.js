@@ -63,13 +63,13 @@ let liveSocket = new LiveSocket("/live", Socket, {
           formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
         });
         html5QrCode.start({ deviceId: cameraId }, scanConfig, (decodedText) => {
-          if (/\d+/.test(decodedText)) this.pushEvent("scanned", decodedText);
+          this.pushEvent("scanned", decodedText);
         });
 
         this.handleEvent("change_camera", async ({ id }) => {
           await html5QrCode.stop();
           html5QrCode.start(id, scanConfig, (decodedText, _) => {
-            if (/\d+/.test(decodedText)) this.pushEvent("scanned", decodedText);
+            this.pushEvent("scanned", decodedText);
           });
         });
       },
