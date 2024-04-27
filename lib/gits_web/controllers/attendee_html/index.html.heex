@@ -32,7 +32,6 @@
               no
             <% else %>
               at <%= attendee.user.confirmed_at
-              |> Timex.to_datetime(:local)
               |> Timex.format!("%e %b %Y, %R %p", :strftime) %>
             <% end %>
           </:col>
