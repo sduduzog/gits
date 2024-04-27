@@ -118,11 +118,11 @@ defmodule Gits.Storefront.Event do
     end
 
     policy action(:update) do
-      authorize_if Gits.Checks.CanUpdate
+      authorize_if actor_present()
     end
 
     policy action(:destroy) do
-      authorize_if Gits.Checks.CanDestroy
+      authorize_if actor_present()
     end
   end
 
