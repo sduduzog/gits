@@ -52,7 +52,7 @@ defmodule GitsWeb.Router do
     ash_authentication_live_session :authentication_required,
       on_mount: {GitsWeb.LiveUserAuth, :live_user_required} do
       live "/accounts/:account_id/events/:event_id/address", EventAddressLive
-      live "/accounts/:account_id/events/:event_id/attendees/scanner", ScanAttendeeLive
+      live "/attendees/scanner/:account_id/:event_id", ScanAttendeeLive
     end
 
     ash_authentication_live_session :authentication_forbidden,

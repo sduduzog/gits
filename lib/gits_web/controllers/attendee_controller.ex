@@ -1,8 +1,13 @@
 defmodule GitsWeb.AttendeeController do
-  alias Gits.Events.Attendee
-  alias Gits.Events.TicketInstance
+  alias Gits.Admissions.Attendee
   require Ash.Query
   use GitsWeb, :controller
+
+  plug :set_layout
+
+  defp set_layout(conn, _) do
+    put_layout(conn, html: :dashboard)
+  end
 
   plug :assign_params
 
@@ -23,12 +28,12 @@ defmodule GitsWeb.AttendeeController do
   end
 
   def index(conn, params) do
-    attendees =
-      Ash.Query.filter(Attendee, event.id == ^params["event_id"])
-      |> Ash.read!()
+    # attendees =
+    #   Ash.Query.filter(Attendee, event.id == ^params["event_id"])
+    #   |> Ash.read!()
 
-    assign(conn, :attendees, attendees)
-    |> render(:index, layout: {GitsWeb.Layouts, :event})
+    assign(conn, :attendees, [])
+    |> render(:index)
   end
 
   def new(conn, params) do

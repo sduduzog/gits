@@ -4,18 +4,25 @@ defmodule GitsWeb.ScanAttendeeLive do
   def mount(params, _session, socket) do
     socket =
       assign(socket, :cameras, [])
+      |> assign(:camera_id, nil)
       |> assign(:scan_results, nil)
       |> assign(:account_id, params["account_id"])
       |> assign(:event_id, params["event_id"])
 
-    {:ok, socket}
+    {:ok, socket, layout: false}
   end
 
   def handle_params(unsigned_params, _uri, socket) do
-    {:noreply, assign(socket, :scan_results, unsigned_params["code"])}
+    socket =
+      socket
+      |> assign(:scan_results, unsigned_params["code"])
+      |> assign(:camera_id, unsigned_params["camera_id"])
+
+    {:noreply, socket}
   end
 
   def handle_event("cameras", unsigned_params, socket) do
+    IO.inspect(unsigned_params)
     socket = assign(socket, :cameras, unsigned_params)
     {:noreply, socket}
   end

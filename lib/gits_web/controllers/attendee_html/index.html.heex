@@ -1,29 +1,39 @@
-<h1 class="font-poppins font-semibold text-3xl text-gray-900">Attendee List</h1>
+<.event_sidebar
+  back={~p"/accounts/#{@conn.params["account_id"]}/events"}
+  base={~p"/accounts/#{@conn.params["account_id"]}/events/#{@conn.params["event_id"]}"}
+  request_path={@conn.request_path}
+/>
 
-<div class="grid gap-4">
-  <div class="flex justify-between">
-    <h2 class="font-poppins text-2xl"></h2>
-    <.button phx-click={
-      JS.navigate(~p"/accounts/#{@account_id}/events/#{@event_id}/attendees/scanner")
-    }>
-      Create new
-    </.button>
-  </div>
-  <div class="border rounded-2xl overflow-hidden">
-    <div class="px-6 py-2 pt-4 overflow-x-auto">
-      <.table id="attendees" rows={@attendees}>
-        <:col :let={attendee} label="Name"><%= attendee.name %></:col>
-        <:col :let={attendee} label="Admitted at">
-          <%= attendee.created_at
-          |> Timex.to_datetime(:local)
-          |> Timex.format!("%e %b %Y, %R %p", :strftime) %>
-        </:col>
-        <:action>
-          <!-- <button> -->
+<.main>
+  <.main_header title="Attendees"></.main_header>
+
+  <div class="grid gap-4">
+    <div class="flex justify-between">
+      <h2 class="font-poppins text-2xl"></h2>
+      <.button phx-click={
+        JS.navigate(
+          ~p"/attendees/scanner/#{@conn.params["account_id"]}/#{@conn.params["event_id"]}"
+        )
+      }>
+        Create new
+      </.button>
+    </div>
+    <div class="overflow-hidden rounded-2xl border">
+      <div class="overflow-x-auto px-6 py-2 pt-4">
+        <.table id="attendees" rows={@attendees}>
+          <:col :let={attendee} label="Name"><%= attendee.name %></:col>
+          <:col :let={attendee} label="Admitted at">
+            <%= attendee.created_at
+            |> Timex.to_datetime(:local)
+            |> Timex.format!("%e %b %Y, %R %p", :strftime) %>
+          </:col>
+          <:action>
+            <!-- <button> -->
           <!--   <.icon name="hero-ellipsis-vertical-mini" /> -->
           <!-- </button> -->
-        </:action>
-      </.table>
+          </:action>
+        </.table>
+      </div>
     </div>
   </div>
-</div>
+</.main>

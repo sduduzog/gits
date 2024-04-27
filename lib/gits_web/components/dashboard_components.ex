@@ -53,6 +53,13 @@ defmodule GitsWeb.DashboardComponents do
         to={@base}
       />
       <.sidebar_item
+        label="Attendees"
+        icon="hero-users-mini"
+        request_path={@request_path}
+        to={@base <> "/attendees"}
+      />
+
+      <.sidebar_item
         label="Settings"
         icon="hero-cog-6-tooth-mini"
         request_path={@request_path}
