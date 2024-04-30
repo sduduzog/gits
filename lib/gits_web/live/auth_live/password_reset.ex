@@ -3,7 +3,7 @@ defmodule GitsWeb.AuthLive.PasswordReset do
   use PhoenixHTMLHelpers
 
   alias Gits.Accounts
-  alias Gits.Accounts.User
+  alias Gits.Auth.User
   alias AshPhoenix.Form
 
   def mount(%{"token" => token}, _, socket) do
