@@ -1,7 +1,6 @@
 defmodule GitsWeb.EventController do
   use GitsWeb, :controller
   require Ash.Query
-  alias Gits.Dashboard.Member
   alias Gits.Dashboard.Account
   alias Gits.Storefront.Event
   alias AshPhoenix.Form
@@ -96,15 +95,23 @@ defmodule GitsWeb.EventController do
   end
 
   def update(conn, params) do
-    event = Ash.get!(Event, params["id"], actor: conn.assigns.current_user)
+    user = conn.assigns.current_user
+    event = Ash.get!(Event, params["id"], actor: user)
+
+    IO.inspect(params["event"])
 
     form =
-      Form.for_update(event, :update, as: "event", actor: conn.assigns.current_user)
+      Form.for_update(event, :update, as: "event", actor: user, atomic_upgrade?: false)
       |> Form.validate(params["event"])
+      |> IO.inspect()
 
-    with true <- form.valid?, {:ok, event} <- Form.submit(form) do
+    with true <- form.valid? do
+      Ash.Changeset.for_update(event, :update, params["event"], actor: user)
+      |> Ash.update(atomic_upgrade?: false)
+      |> IO.inspect()
+
       assign(conn, :form, form)
-      |> redirect(to: ~p"/accounts/#{params["account_id"]}/events/#{event.id}/settings")
+      |> redirect(to: ~p"/accounts/#{params["account_id"]}/events/#{params["id"]}/settings")
     else
       _ ->
         assign(conn, :form, form)
