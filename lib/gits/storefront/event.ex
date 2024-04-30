@@ -22,8 +22,8 @@ defmodule Gits.Storefront.Event do
       default :private
     end
 
-    create_timestamp :created_at
-    update_timestamp :updated_at
+    create_timestamp :created_at, public?: true
+    update_timestamp :updated_at, public?: true
   end
 
   relationships do

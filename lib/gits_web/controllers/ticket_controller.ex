@@ -106,7 +106,6 @@ defmodule GitsWeb.TicketController do
 
     form =
       Form.for_update(ticket, :update,
-        api: Events,
         as: "ticket",
         actor: user
       )
