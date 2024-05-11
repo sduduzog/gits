@@ -4,12 +4,12 @@
     :ecto_sql,
     :phoenix,
     :ash,
-    :ash_state_machine,
     :ash_phoenix,
     :ash_postgres,
     :ash_authentication,
     :ash_authentication_phoenix,
-    :reactor
+    :ash_state_machine,
+    :ash_archival
   ],
   subdirectories: ["priv/*/migrations"],
   plugins: [TailwindFormatter, Phoenix.LiveView.HTMLFormatter],

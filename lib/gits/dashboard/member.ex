@@ -2,7 +2,7 @@ defmodule Gits.Dashboard.Member do
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     authorizers: [Ash.Policy.Authorizer],
-    extensions: [AshStateMachine],
+    extensions: [AshArchival.Resource, AshStateMachine],
     domain: Gits.Dashboard
 
   attributes do

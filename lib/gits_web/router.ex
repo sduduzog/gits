@@ -27,6 +27,10 @@ defmodule GitsWeb.Router do
         get "/upload/listing", EventController, :upload_listing_image
         get "/upload/feature", EventController, :upload_feature_image
       end
+
+      resources "/team", TeamMemberController, only: [:index]
+
+      resources "/invites", TeamInviteController
     end
   end
 

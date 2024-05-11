@@ -1,51 +1,30 @@
-<h1 class="font-poppins font-semibold text-3xl text-gray-900">Team</h1>
-
-<div class="grid gap-4">
-  <div class="flex justify-between">
-    <h2 class="font-poppins text-2xl">Members</h2>
+<.dashboard_sidebar
+  base={~p"/accounts/#{@conn.params["account_id"]}"}
+  request_path={@conn.request_path}
+/>
+<.main>
+  <.main_header title="Team"></.main_header>
+  <div class="px-4">
     <.button phx-click={JS.navigate(~p"/accounts/#{@conn.params["account_id"]}/invites/new")}>
-      Invite user
+      Invite a member
     </.button>
   </div>
-  <div class="border rounded-2xl overflow-hidden">
-    <div class="px-6 py-2 pt-4 overflow-x-auto">
-      <.table
-        id="events"
-        rows={@roles}
-        row_click={
-          fn row ->
-            JS.navigate(~p"/accounts/#{@conn.params["account_id"]}/events/#{row.account_id}")
-          end
-        }
-      >
-        <:col :let={role} label="Name"><%= role.user.display_name %></:col>
-        <:col :let={role} label="Role"><%= role.type %></:col>
-        <:action>
-          <!-- <button> -->
+  <div class="overflow-x-auto px-6 py-2 pt-4">
+    <.table
+      id="tickets"
+      rows={@roles}
+      row_click={
+        fn row ->
+          JS.navigate(~p"/accounts/#{@conn.params["account_id"]}/events/#{row.id}")
+        end
+      }
+    >
+      <:col :let={event} label="Name"><%= event.name %></:col>
+      <:action>
+        <!-- <button> -->
           <!--   <.icon name="hero-ellipsis-vertical-mini" /> -->
           <!-- </button> -->
-        </:action>
-      </.table>
-    </div>
+      </:action>
+    </.table>
   </div>
-</div>
-
-<div class="grid gap-4">
-  <h2 class="font-poppins text-2xl">Invites</h2>
-  <div class="border rounded-2xl overflow-hidden">
-    <div class="px-6 py-2 pt-4 overflow-x-auto">
-      <.table id="events" rows={@invites}>
-        <:col :let={invite} label="Email"><%= invite.email %></:col>
-        <:col :let={invite} label="Role"><%= invite.role %></:col>
-        <:action :let={invite}>
-          <.link
-            href={~p"/accounts/#{@conn.params["account_id"]}/invites/#{invite.id}"}
-            method="delete"
-          >
-            <.icon name="hero-x-mark-mini" />
-          </.link>
-        </:action>
-      </.table>
-    </div>
-  </div>
-</div>
+</.main>

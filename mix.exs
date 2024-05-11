@@ -60,13 +60,14 @@ defmodule Gits.MixProject do
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.2"},
-      {:ash, "~> 3.0.0-rc.38"},
+      {:ash, "~> 3.0"},
       {:picosat_elixir, "~> 0.2.0"},
-      {:ash_state_machine, "~> 0.2.3-rc.0"},
-      {:ash_phoenix, "~> 2.0.0-rc.8"},
-      {:ash_postgres, "~> 2.0.0-rc.14"},
-      {:ash_authentication, "~> 4.0.0-rc.6"},
-      {:ash_authentication_phoenix, "~> 2.0.0-rc.2"},
+      {:ash_phoenix, "~> 2.0"},
+      {:ash_postgres, "~> 2.0"},
+      {:ash_authentication, "~> 4.0"},
+      {:ash_authentication_phoenix, "~> 2.0"},
+      {:ash_state_machine, "~> 0.2.3"},
+      {:ash_archival, "~> 1.0"},
       {:phoenix_turnstile, "~> 1.1"},
       {:sqids, "~> 0.1.0"},
       {:slugify, "~> 1.3"},
@@ -81,7 +82,8 @@ defmodule Gits.MixProject do
       {:hackney, "~> 1.20"},
       {:sweet_xml, "~> 0.7.4"},
       {:phoenix_seo, "~> 0.1.9"},
-      {:mjml_eex, "~> 0.10.0"}
+      {:mjml_eex, "~> 0.10.0"},
+      {:oban, "~> 2.17"}
     ]
   end
 

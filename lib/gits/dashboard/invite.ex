@@ -3,8 +3,8 @@ defmodule Gits.Dashboard.Invite do
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
-    extensions: [AshArchival.Resource],
     authorizers: [Ash.Policy.Authorizer],
+    extensions: [AshArchival.Resource, AshStateMachine],
     domain: Gits.Dashboard
 
   attributes do
@@ -30,11 +30,33 @@ defmodule Gits.Dashboard.Invite do
     update_timestamp :updated_at, public?: true
   end
 
+  state_machine do
+    initial_states [:pending]
+    default_initial_state :pending
+
+    transitions do
+      transition :accept, from: :pending, to: :accepted
+      transition :reject, from: :pending, to: :rejected
+      transition :cancel, from: :pending, to: :cancelled
+    end
+  end
+
   actions do
-    defaults [:read, :update, :destroy]
+    defaults [:read, :update, :destroy, create: :*]
+
+    update :accept do
+    end
 
     update :reject do
-      change set_attribute(:status, :accepted)
+    end
+
+    update :cancel do
+    end
+  end
+
+  policies do
+    policy always() do
+      authorize_if AshStateMachine.Checks.ValidNextState
     end
   end
 

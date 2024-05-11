@@ -28,11 +28,18 @@ defmodule GitsWeb.DashboardComponents do
         to={@base}
         root={true}
       />
+
       <.sidebar_item
         label="Events"
         icon="hero-rectangle-group-mini"
         request_path={@request_path}
         to={@base <> "/events"}
+      />
+      <.sidebar_item
+        label="Team"
+        icon="hero-rectangle-group-mini"
+        request_path={@request_path}
+        to={@base <> "/team"}
       />
     </.sidebar>
     """

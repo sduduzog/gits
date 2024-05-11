@@ -2,10 +2,15 @@ defmodule GitsWeb.TeamInviteController do
   use GitsWeb, :controller
 
   require Ash.Query
-  alias Gits.Accounts
-  alias Gits.Accounts.Account
-  alias Gits.Accounts.Invite
+
+  alias Gits.Dashboard.Invite
   alias AshPhoenix.Form
+
+  plug :set_layout
+
+  defp set_layout(conn, _) do
+    put_layout(conn, html: :dashboard)
+  end
 
   def show(conn, params) do
     Ash.Query.for_read(Invite, :read)
@@ -75,13 +80,12 @@ defmodule GitsWeb.TeamInviteController do
     |> assign(
       :form,
       Form.for_create(Invite, :create,
-        api: Accounts,
         as: "invite",
         actor: conn.assigns.current_user
       )
     )
     |> assign(:action, ~p"/accounts/#{params["account_id"]}/invites")
-    |> render(:new, layout: {GitsWeb.Layouts, :account})
+    |> render(:new)
   end
 
   def create(conn, params) do

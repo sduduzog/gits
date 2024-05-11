@@ -1,12 +1,6 @@
 version: "3.7"
 
 services:
-  redis:
-    image: redis:7.2
-    volumes:
-      - rdata:/data
-    ports:
-      - "6379:6379"
   postgres:
     image: postgres:15
     volumes:
@@ -40,4 +34,3 @@ services:
 volumes:
   pgdata:
   mdata:
-  rdata:

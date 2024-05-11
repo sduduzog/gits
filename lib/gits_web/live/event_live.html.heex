@@ -128,7 +128,7 @@
 >
   <h2 class="pb-4 text-lg font-bold">Your tickets</h2>
   <GitsWeb.EventComponents.customer_tickets_swiper
-    :if={@event.customer_has_tickets and is_list(@customer.scannable_instances)}
+    :if={@event.customer_has_tickets == true and is_list(@customer.scannable_instances)}
     customer={@customer}
   />
 </.modal>

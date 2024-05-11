@@ -3,6 +3,6 @@ defmodule Gits.Repo do
     otp_app: :gits
 
   def installed_extensions do
-    ["citext"]
+    ["citext", "ash-functions"]
   end
 end
