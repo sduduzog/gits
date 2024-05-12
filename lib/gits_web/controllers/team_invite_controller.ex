@@ -4,6 +4,8 @@ defmodule GitsWeb.TeamInviteController do
   require Ash.Query
 
   alias Gits.Dashboard.Invite
+  alias Gits.Dashboard.Account
+  alias Gits.Dashboard.Member
   alias AshPhoenix.Form
 
   plug :set_layout
@@ -76,12 +78,18 @@ defmodule GitsWeb.TeamInviteController do
   end
 
   def new(conn, params) do
+    member =
+      Member
+      |> Ash.Query.for_read(:read, %{}, actor: conn.assigns.current_user)
+      |> Ash.Query.filter(account.id == ^params["account_id"])
+      |> Ash.read!()
+
     conn
     |> assign(
       :form,
       Form.for_create(Invite, :create,
         as: "invite",
-        actor: conn.assigns.current_user
+        actor: member
       )
     )
     |> assign(:action, ~p"/accounts/#{params["account_id"]}/invites")
@@ -89,17 +97,24 @@ defmodule GitsWeb.TeamInviteController do
   end
 
   def create(conn, params) do
+    member =
+      Member
+      |> Ash.Query.for_read(:read, %{}, actor: conn.assigns.current_user)
+      |> Ash.Query.filter(account.id == ^params["account_id"])
+      |> Ash.read!()
+
+    account =
+      Ash.Query.for_read(Account, :read)
+      |> Ash.Query.filter(id: params["account_id"])
+      |> Ash.read_one!()
+
     Form.for_create(Invite, :create,
-      api: Accounts,
       as: "invite",
-      actor: conn.assigns.current_user
+      actor: member
     )
     |> Form.validate(
       Map.merge(params["invite"], %{
-        "account" =>
-          Ash.Query.for_read(Account, :read)
-          |> Ash.Query.filter(id: params["account_id"])
-          |> Gits.Accounts.read_one!()
+        "account" => account
       })
     )
     |> case do
@@ -108,18 +123,20 @@ defmodule GitsWeb.TeamInviteController do
           conn
           |> redirect(to: ~p"/accounts/#{params["account_id"]}/team")
         else
-          _ ->
+          all ->
+            IO.inspect(all)
+
             conn
             |> assign(:form, form)
             |> assign(:action, ~p"/accounts/#{params["account_id"]}/invites")
-            |> render(:new, layout: {GitsWeb.Layouts, :account})
+            |> render(:new)
         end
 
       form ->
         conn
         |> assign(:form, form)
         |> assign(:action, ~p"/accounts/#{params["account_id"]}/invites")
-        |> render(:new, layout: {GitsWeb.Layouts, :account})
+        |> render(:new)
     end
   end
 end

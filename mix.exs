@@ -83,7 +83,8 @@ defmodule Gits.MixProject do
       {:sweet_xml, "~> 0.7.4"},
       {:phoenix_seo, "~> 0.1.9"},
       {:mjml_eex, "~> 0.10.0"},
-      {:oban, "~> 2.17"}
+      {:oban, "~> 2.17"},
+      {:oban_live_dashboard, "~> 0.1.0"}
     ]
   end
 

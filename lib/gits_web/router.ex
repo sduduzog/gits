@@ -91,7 +91,10 @@ defmodule GitsWeb.Router do
     scope "/dev" do
       pipe_through :browser
 
-      live_dashboard "/dashboard", metrics: GitsWeb.Telemetry
+      live_dashboard "/dashboard",
+        metrics: GitsWeb.Telemetry,
+        additional_pages: [oban: Oban.LiveDashboard]
+
       forward "/mailbox", Plug.Swoosh.MailboxPreview
 
       get "/email", GitsWeb.EmailController, :test

@@ -59,6 +59,10 @@ defmodule Gits.Dashboard.Member do
 
   policies do
     policy action(:read) do
+      authorize_if expr(user.id == ^actor(:id))
+    end
+
+    policy action(:read) do
       authorize_if always()
     end
 
