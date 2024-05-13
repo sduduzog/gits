@@ -25,6 +25,7 @@ defmodule Gits.Dashboard.Invite do
 
   relationships do
     belongs_to :account, Gits.Dashboard.Account
+    belongs_to :member, Gits.Dashboard.Member
   end
 
   state_machine do
@@ -52,7 +53,13 @@ defmodule Gits.Dashboard.Invite do
       change {Gits.Dashboard.Changes.SendInviteEmail, []}
     end
 
+    update :resend do
+      require_atomic? false
+      change {Gits.Dashboard.Changes.SendInviteEmail, []}
+    end
+
     update :accept do
+      change transition_state(:accepted)
     end
 
     update :reject do

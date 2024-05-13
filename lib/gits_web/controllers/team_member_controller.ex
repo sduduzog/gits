@@ -11,8 +11,6 @@ defmodule GitsWeb.TeamMemberController do
   end
 
   def index(conn, params) do
-    IO.inspect(params)
-
     member =
       Member
       |> Ash.Query.for_read(:read, %{}, actor: conn.assigns.current_user)
@@ -23,7 +21,6 @@ defmodule GitsWeb.TeamMemberController do
       Invite
       |> Ash.Query.for_read(:read, %{}, actor: member)
       |> Ash.read!()
-      |> IO.inspect()
 
     assign(
       conn,

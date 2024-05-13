@@ -17,8 +17,7 @@ defmodule GitsWeb.TeamInviteController do
   def show(conn, params) do
     Ash.Query.for_read(Invite, :read)
     |> Ash.Query.filter(id: params["id"])
-    |> Ash.Query.filter(status: :pending)
-    |> Gits.Accounts.read_one()
+    |> Ash.read_one()
     |> case do
       {:ok, invite} when not is_nil(invite) ->
         conn
@@ -33,27 +32,30 @@ defmodule GitsWeb.TeamInviteController do
     end
   end
 
-  def update(%{method: "PATCH"} = conn, params) do
-    IO.puts("patching")
-
-    conn
-    |> assign(
-      :invite,
-      Ash.Query.for_read(Invite, :read)
-      |> Ash.Query.filter(id: params["id"])
-      |> Gits.Accounts.read_one!()
-    )
-    |> render(:show, layout: false)
+  def update(%{method: "PATCH"} = conn, _params) do
+    conn |> render(:show, layout: false)
   end
 
   def update(%{method: "PUT"} = conn, params) do
-    Ash.Query.for_read(Invite, :read)
-    |> Ash.Query.filter(id: params["id"])
-    |> Gits.Accounts.read_one!()
-    |> Ash.Changeset.for_update(:accept)
-    |> Gits.Accounts.update!(actor: conn.assigns.current_user)
+    user = conn.assigns.current_user
 
-    redirect(conn, to: ~p"/accounts/#{params["account_id"]}")
+    account =
+      Account
+      |> Ash.get!(params["account_id"], actor: user)
+
+    invite =
+      Invite
+      |> Ash.get!(params["id"], actor: user)
+
+    Member
+    |> Ash.Changeset.for_create(
+      :accept_invitation,
+      %{account: account, user: user, invite: invite},
+      actor: user
+    )
+    |> IO.inspect()
+
+    conn |> render(:show, layout: false)
   end
 
   def update(conn, params) do
@@ -138,5 +140,16 @@ defmodule GitsWeb.TeamInviteController do
         |> assign(:action, ~p"/accounts/#{params["account_id"]}/invites")
         |> render(:new)
     end
+  end
+
+  def resend_invite(conn, params) do
+    Invite
+    |> Ash.get!(params["team_invite_id"])
+    |> Ash.Changeset.for_update(:resend, %{}, actor: nil)
+    |> Ash.update!()
+    |> IO.inspect()
+
+    IO.inspect(params)
+    conn |> redirect(to: ~p"/accounts/#{params["account_id"]}/team")
   end
 end

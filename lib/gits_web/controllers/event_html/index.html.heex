@@ -20,6 +20,9 @@
       }
     >
       <:col :let={event} label="Name"><%= event.name %></:col>
+      <:col :let={event} label="Created at">
+        <%= event.created_at |> Timex.local() |> Timex.format!("%e %b %Y, %R %p", :strftime) %>
+      </:col>
       <:action>
         <!-- <button> -->
           <!--   <.icon name="hero-ellipsis-vertical-mini" /> -->

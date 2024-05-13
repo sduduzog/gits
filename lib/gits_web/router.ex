@@ -37,7 +37,9 @@ defmodule GitsWeb.Router do
 
       resources "/team", TeamMemberController, only: [:index]
 
-      resources "/invites", TeamInviteController
+      resources "/invites", TeamInviteController do
+        post "/resend", TeamInviteController, :resend_invite
+      end
     end
   end
 
@@ -53,6 +55,7 @@ defmodule GitsWeb.Router do
     get "/search", PageController, :search
     get "/join-waitlist", PageController, :join_wailtist
     get "/faq", PageController, :faq
+    get "/healthz", PageController, :healthz
 
     ash_authentication_live_session :authentication_optional,
       on_mount: {GitsWeb.LiveUserAuth, :live_user_optional} do

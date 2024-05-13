@@ -31,10 +31,13 @@
     </div>
     <.table id="invites" rows={@invites}>
       <:col :let={invite} label="Email"><%= invite.email %></:col>
-      <:action>
-        <!-- <button> -->
-          <!--   <.icon name="hero-ellipsis-vertical-mini" /> -->
-          <!-- </button> -->
+      <:action :let={invite}>
+        <.link
+          href={~p"/accounts/#{@conn.params["account_id"]}/invites/#{invite.id}/resend"}
+          method="post"
+        >
+          <span>Resend invite</span>
+        </.link>
       </:action>
     </.table>
   </div>

@@ -30,6 +30,8 @@ defmodule Gits.Dashboard.Member do
     belongs_to :user, Gits.Auth.User do
       domain Gits.Auth
     end
+
+    has_one :invite, Gits.Dashboard.Invite
   end
 
   calculations do
@@ -47,6 +49,24 @@ defmodule Gits.Dashboard.Member do
       argument :user, :map
 
       change manage_relationship(:user, type: :append)
+    end
+
+    create :accept_invitation do
+      argument :account, :map do
+        allow_nil? false
+      end
+
+      argument :user, :map do
+        allow_nil? false
+      end
+
+      argument :invite, :map do
+        allow_nil? false
+      end
+
+      change manage_relationship(:account, type: :append)
+      change manage_relationship(:user, type: :append)
+      change manage_relationship(:invite, on_lookup: {:relate_and_update, :accept})
     end
 
     create :waitlist do
@@ -78,5 +98,11 @@ defmodule Gits.Dashboard.Member do
   postgres do
     table "members"
     repo Gits.Repo
+  end
+
+  identities do
+    identity :account_member, [:user_id, :account_id] do
+      eager_check_with Gits.Dashboard
+    end
   end
 end
