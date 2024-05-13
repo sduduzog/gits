@@ -10,16 +10,9 @@
     </.button>
   </div>
   <div class="overflow-x-auto px-6 py-2 pt-4">
-    <.table
-      id="tickets"
-      rows={@roles}
-      row_click={
-        fn row ->
-          JS.navigate(~p"/accounts/#{@conn.params["account_id"]}/events/#{row.id}")
-        end
-      }
-    >
-      <:col :let={event} label="Name"><%= event.name %></:col>
+    <.table id="tickets" rows={@members}>
+      <:col :let={member} label="Name"><%= member.user.display_name %></:col>
+      <:col :let={member} label="Role"><%= member.role %></:col>
       <:action>
         <!-- <button> -->
           <!--   <.icon name="hero-ellipsis-vertical-mini" /> -->

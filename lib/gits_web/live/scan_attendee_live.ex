@@ -22,7 +22,6 @@ defmodule GitsWeb.ScanAttendeeLive do
   end
 
   def handle_event("cameras", unsigned_params, socket) do
-    IO.inspect(unsigned_params)
     socket = assign(socket, :cameras, unsigned_params)
     {:noreply, socket}
   end

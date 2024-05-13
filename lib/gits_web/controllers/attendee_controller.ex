@@ -40,7 +40,6 @@ defmodule GitsWeb.AttendeeController do
       |> Ash.Query.filter(event.id == ^params["event_id"])
       |> Ash.Query.load(:user)
       |> Ash.read!()
-      |> IO.inspect()
 
     assign(conn, :attendees, attendees)
     |> render(:index)

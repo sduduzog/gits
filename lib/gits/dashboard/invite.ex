@@ -26,6 +26,13 @@ defmodule Gits.Dashboard.Invite do
   relationships do
     belongs_to :account, Gits.Dashboard.Account
     belongs_to :member, Gits.Dashboard.Member
+
+    belongs_to :user, Gits.Auth.User do
+      domain Gits.Auth
+      define_attribute? false
+      source_attribute :email
+      destination_attribute :email
+    end
   end
 
   state_machine do
@@ -59,17 +66,31 @@ defmodule Gits.Dashboard.Invite do
     end
 
     update :accept do
+      require_atomic? false
       change transition_state(:accepted)
     end
 
     update :reject do
+      change transition_state(:rejected)
     end
 
     update :cancel do
+      change transition_state(:cancelled)
     end
   end
 
   policies do
+    policy action(:read) do
+      authorize_if expr(
+                     exists(
+                       account,
+                       members.id == ^actor(:id) and members.role in [:owner, :admin]
+                     )
+                   )
+
+      authorize_if expr(user.id == ^actor(:id))
+    end
+
     policy always() do
       authorize_if always()
     end

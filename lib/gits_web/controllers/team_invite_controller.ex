@@ -15,24 +15,29 @@ defmodule GitsWeb.TeamInviteController do
   end
 
   def show(conn, params) do
-    Ash.Query.for_read(Invite, :read)
-    |> Ash.Query.filter(id: params["id"])
-    |> Ash.read_one()
-    |> case do
-      {:ok, invite} when not is_nil(invite) ->
-        conn
-        |> assign(
-          :invite,
-          invite
-        )
-        |> render(:show, layout: false)
+    user = conn.assigns.current_user
 
-      {:ok, nil} ->
-        raise GitsWeb.Exceptions.AccountNotFoundError, "no account found"
+    with {:ok, invite} <- Ash.get(Invite, params["id"], actor: user) do
+      conn
+      |> assign(
+        :invite,
+        invite
+      )
+      |> render(:show, layout: false)
+    else
+      {:error, err} ->
+        raise GitsWeb.Exceptions.NotFound, "no invite found"
     end
   end
 
-  def update(%{method: "PATCH"} = conn, _params) do
+  def update(%{method: "PATCH"} = conn, params) do
+    user = conn.assigns.current_user
+
+    Invite
+    |> Ash.get!(params["id"])
+    |> Ash.Changeset.for_update(:reject, %{}, actor: user)
+    |> Ash.update!()
+
     conn |> render(:show, layout: false)
   end
 
@@ -53,28 +58,22 @@ defmodule GitsWeb.TeamInviteController do
       %{account: account, user: user, invite: invite},
       actor: user
     )
-    |> IO.inspect()
+    |> Ash.create()
 
-    conn |> render(:show, layout: false)
+    conn
+    |> redirect(to: ~p"/accounts/#{params["account_id"]}")
   end
 
-  def update(conn, params) do
+  def update(conn, _params) do
     conn
-    |> assign(
-      :invite,
-      Ash.Query.for_read(Invite, :read)
-      |> Ash.Query.filter(id: params["id"])
-      |> Gits.Accounts.read_one!()
-    )
     |> render(:show, layout: false)
   end
 
   def delete(conn, params) do
-    Ash.Query.for_read(Invite, :read, actor: conn.assigns.current_user)
-    |> Ash.Query.filter(id: params["id"])
-    |> Gits.Accounts.read_one!()
-    |> Ash.Changeset.for_destroy(:destroy, actor: conn.assigns.current_user)
-    |> Gits.Accounts.destroy()
+    user = conn.assigns.current_user
+
+    Invite
+    |> Ash.get!(params["id"])
 
     redirect(conn, to: ~p"/accounts/#{params["account_id"]}/team")
   end
@@ -143,11 +142,18 @@ defmodule GitsWeb.TeamInviteController do
   end
 
   def resend_invite(conn, params) do
+    user = conn.assigns.current_user
+
+    member =
+      Member
+      |> Ash.Query.for_read(:read, %{}, actor: user)
+      |> Ash.Query.filter(account.id == ^params["account_id"] and user.id == ^user.id)
+      |> Ash.read_one!()
+
     Invite
-    |> Ash.get!(params["team_invite_id"])
-    |> Ash.Changeset.for_update(:resend, %{}, actor: nil)
+    |> Ash.get!(params["team_invite_id"], actor: member)
+    |> Ash.Changeset.for_update(:resend, %{}, actor: member)
     |> Ash.update!()
-    |> IO.inspect()
 
     IO.inspect(params)
     conn |> redirect(to: ~p"/accounts/#{params["account_id"]}/team")

@@ -64,6 +64,13 @@ defmodule Gits.Dashboard.Member do
         allow_nil? false
       end
 
+      change before_action(fn changeset, _ ->
+               invite =
+                 Ash.Changeset.get_argument(changeset, :invite)
+
+               Ash.Changeset.change_attribute(changeset, :role, invite.role)
+             end)
+
       change manage_relationship(:account, type: :append)
       change manage_relationship(:user, type: :append)
       change manage_relationship(:invite, on_lookup: {:relate_and_update, :accept})
@@ -79,6 +86,13 @@ defmodule Gits.Dashboard.Member do
 
   policies do
     policy action(:read) do
+      authorize_if expr(
+                     exists(
+                       account,
+                       members.id == ^actor(:id) and members.role in [:owner, :admin]
+                     )
+                   )
+
       authorize_if expr(user.id == ^actor(:id))
     end
 

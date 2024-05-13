@@ -98,12 +98,9 @@ defmodule GitsWeb.EventController do
     user = conn.assigns.current_user
     event = Ash.get!(Event, params["id"], actor: user)
 
-    IO.inspect(params["event"])
-
     form =
       Form.for_update(event, :update, as: "event", actor: user, atomic_upgrade?: false)
       |> Form.validate(params["event"])
-      |> IO.inspect()
 
     with true <- form.valid? do
       Ash.Changeset.for_update(event, :update, params["event"], actor: user)
