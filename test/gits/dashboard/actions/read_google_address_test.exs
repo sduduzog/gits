@@ -1,8 +1,6 @@
 defmodule Gits.Dashboard.Actions.ReadGoogleAddressTest do
   use PowerAssert
 
-  import Mock
-
   require Ash.Query
   alias Gits.Dashboard.Actions.ReadGoogleAddress
   alias Gits.Dashboard.Venue.GoogleAddress
