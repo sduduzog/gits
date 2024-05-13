@@ -34,6 +34,10 @@ config_dir_prefix =
 
 source!(["#{config_dir_prefix}.env", System.get_env()])
 
+config :gits, :google_api_options,
+  base_url: "https://places.googleapis.com",
+  headers: ["X-Goog-Api-Key": env!("GOOGLE_MAPS_API_KEY", :string)]
+
 config :gits, :google, maps_api_key: env!("GOOGLE_MAPS_API_KEY", :string)
 
 config :gits, :bucket_name, env!("BUCKET_NAME")

@@ -30,45 +30,7 @@ defmodule GitsWeb.EventAddressLive do
   end
 
   def handle_event("search", unsigned_params, socket) do
-    list = get_places(unsigned_params["query"])
-
-    {:noreply, assign(socket, :list, list)}
-  end
-
-  defp get_places(query) do
-    Cachex.fetch(:cache, query, fn key ->
-      config = Application.get_env(:gits, :google)
-
-      Req.new(base_url: "https://places.googleapis.com")
-      |> Req.Request.put_header("X-Goog-Api-Key", config[:maps_api_key])
-      |> Req.post!(
-        url: "/v1/places:autocomplete",
-        json: %{input: key, regionCode: "za"}
-      )
-      |> Map.get(:body)
-      |> Map.get("suggestions")
-      |> case do
-        suggestions when is_list(suggestions) ->
-          {:commit,
-           Enum.map(suggestions, fn
-             %{"placePrediction" => prediction} ->
-               structuredFormat = prediction["structuredFormat"]
-
-               %{
-                 place_id: prediction["placeId"],
-                 main_text: structuredFormat["mainText"]["text"],
-                 secondary_text: structuredFormat["secondaryText"]["text"]
-               }
-           end), ttl: :timer.hours(72)}
-
-        _ ->
-          {:ignore, []}
-      end
-    end)
-    |> case do
-      {:commit, list, _} -> list
-      {:ok, list} -> list
-      _ -> []
-    end
+    {:noreply,
+     assign(socket, :list, Gits.Dashboard.search_for_address!(unsigned_params["query"]))}
   end
 end

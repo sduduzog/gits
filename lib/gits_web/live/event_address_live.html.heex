@@ -21,7 +21,7 @@
         :for={item <- @list}
         class="rounded-lg p-4 text-left outline-none hover:bg-gray-50 focus-visible:ring-1 focus-visible:ring-zinc-400"
         phx-click="select_place"
-        phx-value-id={item.place_id}
+        phx-value-id={item.id}
       >
         <span><%= item.main_text %></span>
         <span><%= item.secondary_text %></span>

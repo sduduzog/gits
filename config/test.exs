@@ -36,3 +36,5 @@ config :ash, :disable_async?, true
 config :ash, :missed_notifications, :ignore
 
 config :gits, Oban, testing: :inline
+
+config :gits, :google_api_options, plug: {Req.Test, :google_api}

@@ -84,7 +84,9 @@ defmodule Gits.MixProject do
       {:phoenix_seo, "~> 0.1.9"},
       {:mjml_eex, "~> 0.10.0"},
       {:oban, "~> 2.17"},
-      {:oban_live_dashboard, "~> 0.1.0"}
+      {:oban_live_dashboard, "~> 0.1.0"},
+      {:mock, "~> 0.3.8", only: :test},
+      {:power_assert, "~> 0.3.0", only: :test}
     ]
   end
 

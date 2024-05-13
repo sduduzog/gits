@@ -16,8 +16,9 @@ defmodule GitsWeb.TeamMemberController do
     member =
       Member
       |> Ash.Query.for_read(:read, %{}, actor: user)
-      |> Ash.Query.filter(account.id == ^params["account_id"] and user.id == ^user.id)
+      |> Ash.Query.filter(account.id == ^params["account_id"])
       |> Ash.read_one!()
+      |> IO.inspect()
 
     members =
       Member

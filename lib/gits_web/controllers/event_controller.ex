@@ -2,6 +2,7 @@ defmodule GitsWeb.EventController do
   use GitsWeb, :controller
   require Ash.Query
   alias Gits.Dashboard.Account
+  alias Gits.Dashboard.Member
   alias Gits.Storefront.Event
   alias AshPhoenix.Form
 
@@ -11,9 +12,17 @@ defmodule GitsWeb.EventController do
     put_layout(conn, html: :dashboard)
   end
 
-  def index(conn, _params) do
+  def index(conn, params) do
+    user = conn.assigns.current_user
+
+    member =
+      Member
+      |> Ash.Query.for_read(:read, %{}, actor: user)
+      |> Ash.Query.filter(account.id == ^params["account_id"])
+      |> Ash.read_one!()
+
     events =
-      Ash.Query.for_read(Event, :read, %{}, actor: conn.assigns.current_user)
+      Ash.Query.for_read(Event, :read, %{}, actor: member)
       |> Ash.Query.sort(created_at: :desc)
       |> Ash.read!()
 
@@ -23,14 +32,22 @@ defmodule GitsWeb.EventController do
   end
 
   def show(conn, params) do
+    user = conn.assigns.current_user
+
+    member =
+      Member
+      |> Ash.Query.for_read(:read, %{}, actor: user)
+      |> Ash.Query.filter(account.id == ^params["account_id"])
+      |> Ash.read_one!()
+
     event =
-      Ash.Query.for_read(Event, :read, %{}, actor: conn.assigns.current_user)
+      Ash.Query.for_read(Event, :read, %{}, actor: member)
       |> Ash.Query.filter(id: params["id"])
       |> Ash.Query.load(:masked_id)
       |> Ash.read_one!()
 
     unless event do
-      raise GitsWeb.Exceptions.NotFound
+      raise GitsWeb.Exceptions.NotFound, "no event found"
     end
 
     conn
@@ -66,14 +83,22 @@ defmodule GitsWeb.EventController do
   end
 
   def settings(conn, params) do
+    user = conn.assigns.current_user
+
+    member =
+      Member
+      |> Ash.Query.for_read(:read, %{}, actor: user)
+      |> Ash.Query.filter(account.id == ^params["account_id"])
+      |> Ash.read_one!()
+
     event =
-      Ash.Query.for_read(Event, :read, %{}, actor: conn.assigns.current_user)
+      Ash.Query.for_read(Event, :read, %{}, actor: member)
       |> Ash.Query.filter(id: params["event_id"])
       |> Ash.Query.load(:address)
       |> Ash.read_one!()
 
     unless event do
-      raise GitsWeb.Exceptions.NotFound
+      raise GitsWeb.Exceptions.NotFound, "event not found"
     end
 
     listing_image = Gits.Bucket.get_listing_image_path(params["account_id"], params["event_id"])

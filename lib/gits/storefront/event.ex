@@ -96,8 +96,8 @@ defmodule Gits.Storefront.Event do
 
   policies do
     bypass action(:read) do
-      forbid_unless expr(account.members.user.id == ^actor(:id))
-      authorize_if expr(account.members.role in [:owner])
+      forbid_unless expr(account.members.id == ^actor(:id))
+      authorize_if expr(account.members.role in [:owner, :admin, :access_coordinator])
     end
 
     bypass action(:masked) do

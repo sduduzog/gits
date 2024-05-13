@@ -25,7 +25,7 @@ defmodule GitsWeb.TeamInviteController do
       )
       |> render(:show, layout: false)
     else
-      {:error, err} ->
+      {:error, _err} ->
         raise GitsWeb.Exceptions.NotFound, "no invite found"
     end
   end
@@ -70,7 +70,7 @@ defmodule GitsWeb.TeamInviteController do
   end
 
   def delete(conn, params) do
-    user = conn.assigns.current_user
+    # user = conn.assigns.current_user
 
     Invite
     |> Ash.get!(params["id"])
