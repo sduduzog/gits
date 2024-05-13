@@ -30,7 +30,11 @@ defmodule GitsWeb.EventAddressLive do
   end
 
   def handle_event("search", unsigned_params, socket) do
-    {:noreply,
-     assign(socket, :list, Gits.Dashboard.search_for_address!(unsigned_params["query"]))}
+    if unsigned_params["query"] == "" do
+      {:noreply, socket}
+    else
+      {:noreply,
+       assign(socket, :list, Gits.Dashboard.search_for_address!(unsigned_params["query"]))}
+    end
   end
 end
