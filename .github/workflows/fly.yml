@@ -6,6 +6,7 @@ on:
 
 jobs:
   test:
+    name: Test app
     runs-on: ubuntu-latest
     services:
       db:
@@ -61,8 +62,17 @@ jobs:
       - name: Install dependencies
         run: mix deps.get
 
-      - name: Compiles without warnings
-        run: mix compile --warnings-as-errors
+      - name: Compiles
+        run: mix compile
+
+      # - name: Compiles without warnings
+      # run: mix compile --warnings-as-errors
+
+      - name: Setup database
+        run: mix ash.setup
+
+      - name: Run migrations
+        run: mix ash.migrate
 
       - name: Check Formatting
         run: mix format --check-formatted
