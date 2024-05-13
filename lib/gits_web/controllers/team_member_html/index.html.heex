@@ -26,5 +26,16 @@
           <!-- </button> -->
       </:action>
     </.table>
+    <div class="py-8">
+      <h2 class="text-lg font-medium text-zinc-500">Invites</h2>
+    </div>
+    <.table id="invites" rows={@invites}>
+      <:col :let={invite} label="Email"><%= invite.email %></:col>
+      <:action>
+        <!-- <button> -->
+          <!--   <.icon name="hero-ellipsis-vertical-mini" /> -->
+          <!-- </button> -->
+      </:action>
+    </.table>
   </div>
 </.main>

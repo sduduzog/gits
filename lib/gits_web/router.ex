@@ -2,6 +2,9 @@ defmodule GitsWeb.Router do
   use GitsWeb, :router
   use AshAuthentication.Phoenix.Router
 
+  import Phoenix.LiveDashboard.Router
+  import Plug.BasicAuth
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -10,6 +13,10 @@ defmodule GitsWeb.Router do
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug :load_from_session
+  end
+
+  pipeline :office do
+    plug :basic_auth, username: "sdu", password: "cheese and onions"
   end
 
   pipeline :api do
@@ -79,6 +86,14 @@ defmodule GitsWeb.Router do
   #   pipe_through :api
   # end
 
+  scope "/office" do
+    pipe_through [:browser, :office]
+
+    live_dashboard "/dashboard",
+      metrics: GitsWeb.Telemetry,
+      additional_pages: [oban: Oban.LiveDashboard]
+  end
+
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:gits, :dev_routes) do
     # If you want to use the LiveDashboard in production, you should put
@@ -86,14 +101,13 @@ defmodule GitsWeb.Router do
     # If your application does not have an admins-only section yet,
     # you can use Plug.BasicAuth to set up some basic authentication
     # as long as you are also using SSL (which you should anyway).
-    import Phoenix.LiveDashboard.Router
 
     scope "/dev" do
       pipe_through :browser
 
-      live_dashboard "/dashboard",
-        metrics: GitsWeb.Telemetry,
-        additional_pages: [oban: Oban.LiveDashboard]
+      # live_dashboard "/dashboard",
+      #   metrics: GitsWeb.Telemetry,
+      #   additional_pages: [oban: Oban.LiveDashboard]
 
       forward "/mailbox", Plug.Swoosh.MailboxPreview
 

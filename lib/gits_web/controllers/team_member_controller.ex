@@ -19,10 +19,11 @@ defmodule GitsWeb.TeamMemberController do
       |> Ash.Query.filter(account.id == ^params["account_id"])
       |> Ash.read!()
 
-    Invite
-    |> Ash.Query.for_read(:read, %{}, actor: member)
-    |> Ash.read!()
-    |> IO.inspect()
+    invites =
+      Invite
+      |> Ash.Query.for_read(:read, %{}, actor: member)
+      |> Ash.read!()
+      |> IO.inspect()
 
     assign(
       conn,
@@ -31,7 +32,7 @@ defmodule GitsWeb.TeamMemberController do
     )
     |> assign(
       :invites,
-      []
+      invites
     )
     |> render(:index)
   end

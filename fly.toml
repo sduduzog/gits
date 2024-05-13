@@ -14,6 +14,7 @@ kill_signal = 'SIGTERM'
 
 [env]
   PORT = '8080'
+  TZ = 'Africa/Johannesburg'
 
 [http_service]
   internal_port = 8080
