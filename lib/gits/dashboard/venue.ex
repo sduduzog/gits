@@ -38,7 +38,8 @@ defmodule Gits.Dashboard.Venue do
 end
 
 defmodule Gits.Dashboard.Venue.GoogleAddress do
-  use Ash.Resource, domain: Gits.Dashboard
+  use Ash.Resource,
+    domain: Gits.Dashboard
 
   attributes do
     attribute :id, :string, allow_nil?: false, primary_key?: true, public?: true

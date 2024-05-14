@@ -18,13 +18,14 @@ defmodule Gits.Release do
     {:ok, _, _} = Ecto.Migrator.with_repo(repo, &Ecto.Migrator.run(&1, :down, to: version))
   end
 
-  defp repos do
+  def repos do
     domains()
     |> Enum.flat_map(fn domain ->
       domain
       |> Ash.Domain.Info.resources()
       |> Enum.map(&AshPostgres.DataLayer.Info.repo/1)
     end)
+    |> Enum.filter(fn repo -> not is_nil(repo) end)
     |> Enum.uniq()
   end
 
