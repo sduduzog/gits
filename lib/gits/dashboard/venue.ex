@@ -8,9 +8,9 @@ defmodule Gits.Dashboard.Venue do
   attributes do
     attribute :id, :string, primary_key?: true, allow_nil?: false, public?: true
     attribute :name, :string, allow_nil?: false, public?: true
-    attribute :address, :string, allow_nil?: false, public?: true
-    attribute :latitude, :float, allow_nil?: false, public?: true
-    attribute :longitude, :float, allow_nil?: false, public?: true
+    attribute :google_maps_uri, :string, allow_nil?: false, public?: true
+    attribute :formatted_address, :string, allow_nil?: false, public?: true
+    attribute :type, :string, public?: true
 
     create_timestamp :created_at
     update_timestamp :updated_at
@@ -23,21 +23,32 @@ defmodule Gits.Dashboard.Venue do
   actions do
     default_accept :*
     defaults [:read, :destroy, update: :*, create: :*]
-
-    read :fetch_from_api do
-      manual Gits.Dashboard.Actions.ReadGoogleAddress
-    end
-  end
-
-  policies do
-    policy action(:read) do
-      authorize_if always()
-    end
   end
 
   postgres do
     table "venues"
     repo Gits.Repo
+  end
+end
+
+defmodule Gits.Dashboard.Venue.DetailedGoogleAddress do
+  use Ash.Resource,
+    domain: Gits.Dashboard
+
+  attributes do
+    attribute :id, :string, primary_key?: true, allow_nil?: false, public?: true
+    attribute :name, :string, allow_nil?: false, public?: true
+    attribute :google_maps_uri, :string, allow_nil?: false, public?: true
+    attribute :formatted_address, :string, allow_nil?: false, public?: true
+    attribute :type, :string, public?: true
+  end
+
+  actions do
+    read :fetch_from_api do
+      argument :id, :string, allow_nil?: false
+
+      manual Gits.Dashboard.Actions.ReadGoogleAddress
+    end
   end
 end
 

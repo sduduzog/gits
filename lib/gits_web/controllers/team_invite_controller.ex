@@ -17,14 +17,15 @@ defmodule GitsWeb.TeamInviteController do
   def show(conn, params) do
     user = conn.assigns.current_user
 
-    with {:ok, invite} <- Ash.get(Invite, params["id"], actor: user) do
-      conn
-      |> assign(
-        :invite,
-        invite
-      )
-      |> render(:show, layout: false)
-    else
+    case Ash.get(Invite, params["id"], actor: user) do
+      {:ok, invite} ->
+        conn
+        |> assign(
+          :invite,
+          invite
+        )
+        |> render(:show, layout: false)
+
       {:error, _err} ->
         raise GitsWeb.Exceptions.NotFound, "no invite found"
     end
@@ -120,13 +121,12 @@ defmodule GitsWeb.TeamInviteController do
     )
     |> case do
       form when form.valid? ->
-        with {:ok, _} <- Form.submit(form) do
-          conn
-          |> redirect(to: ~p"/accounts/#{params["account_id"]}/team")
-        else
-          all ->
-            IO.inspect(all)
+        case Form.submit(form) do
+          {:ok, _} ->
+            conn
+            |> redirect(to: ~p"/accounts/#{params["account_id"]}/team")
 
+          _ ->
             conn
             |> assign(:form, form)
             |> assign(:action, ~p"/accounts/#{params["account_id"]}/invites")
@@ -155,7 +155,6 @@ defmodule GitsWeb.TeamInviteController do
     |> Ash.Changeset.for_update(:resend, %{}, actor: member)
     |> Ash.update!()
 
-    IO.inspect(params)
     conn |> redirect(to: ~p"/accounts/#{params["account_id"]}/team")
   end
 end

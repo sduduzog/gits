@@ -1,8 +1,8 @@
 defmodule GitsWeb.EventLive do
-  alias Gits.Storefront.TicketInstance
   alias Gits.Storefront.Basket
   alias Gits.Storefront.Customer
   alias Gits.Storefront.Ticket
+  alias Gits.Storefront.TicketInstance
   use GitsWeb, :live_view
   require Ash.Query
   alias Gits.Storefront.Event

@@ -1,10 +1,12 @@
 defmodule GitsWeb.EventController do
   use GitsWeb, :controller
   require Ash.Query
+  alias AshPhoenix.Form
   alias Gits.Dashboard.Account
   alias Gits.Dashboard.Member
   alias Gits.Storefront.Event
-  alias AshPhoenix.Form
+  alias GitsWeb.UploadFeatureLive
+  alias Phoenix.LiveView.Controller
 
   plug :set_layout
 
@@ -127,14 +129,14 @@ defmodule GitsWeb.EventController do
       Form.for_update(event, :update, as: "event", actor: user, atomic_upgrade?: false)
       |> Form.validate(params["event"])
 
-    with true <- form.valid? do
-      Ash.Changeset.for_update(event, :update, params["event"], actor: user)
-      |> Ash.update(atomic_upgrade?: false)
-      |> IO.inspect()
+    case form.valid? do
+      true ->
+        Ash.Changeset.for_update(event, :update, params["event"], actor: user)
+        |> Ash.update(atomic_upgrade?: false)
 
-      assign(conn, :form, form)
-      |> redirect(to: ~p"/accounts/#{params["account_id"]}/events/#{params["id"]}/settings")
-    else
+        assign(conn, :form, form)
+        |> redirect(to: ~p"/accounts/#{params["account_id"]}/events/#{params["id"]}/settings")
+
       _ ->
         assign(conn, :form, form)
         |> render(:edit)
@@ -144,7 +146,7 @@ defmodule GitsWeb.EventController do
   def address(conn, params) do
     conn
     |> put_layout(false)
-    |> Phoenix.LiveView.Controller.live_render(
+    |> Controller.live_render(
       GitsWeb.EventAddressLive,
       session: %{"params" => params}
     )
@@ -153,7 +155,7 @@ defmodule GitsWeb.EventController do
   def upload_listing_image(conn, params) do
     conn
     |> put_layout(false)
-    |> Phoenix.LiveView.Controller.live_render(
+    |> Controller.live_render(
       GitsWeb.UploadListingLive,
       session: %{"params" => params}
     )
@@ -162,8 +164,8 @@ defmodule GitsWeb.EventController do
   def upload_feature_image(conn, params) do
     conn
     |> put_layout(false)
-    |> Phoenix.LiveView.Controller.live_render(
-      GitsWeb.UploadFeatureLive,
+    |> Controller.live_render(
+      UploadFeatureLive,
       session: %{"params" => params}
     )
   end

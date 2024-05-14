@@ -2,6 +2,7 @@ defmodule GitsWeb.EventAddressLive do
   require Ash.Query
   use GitsWeb, :live_view
   import GitsWeb.DashboardComponents
+  alias Gits.Dashboard
 
   def mount(params, _session, socket) do
     socket =
@@ -16,6 +17,11 @@ defmodule GitsWeb.EventAddressLive do
   end
 
   def handle_params(unsigned_params, _uri, socket) do
+    unless is_nil(unsigned_params["place_id"]) do
+      Dashboard.fetch_from_api(unsigned_params["place_id"])
+      |> IO.inspect()
+    end
+
     {:noreply, assign(socket, :place_id, unsigned_params["place_id"])}
   end
 

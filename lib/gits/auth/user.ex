@@ -25,6 +25,7 @@ defmodule Gits.Auth.User do
     defaults [:read]
 
     update :send_confirmation_email do
+      require_atomic? false
       accept []
     end
   end

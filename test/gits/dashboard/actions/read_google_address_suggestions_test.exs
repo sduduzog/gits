@@ -1,5 +1,5 @@
 defmodule Gits.Dashboard.Actions.ReadGoogleAddressSuggestionsTest do
-  use PowerAssert
+  use ExUnit.Case
 
   require Ash.Query
   alias Gits.Dashboard.Actions.ReadGoogleAddressSuggestions
@@ -104,15 +104,6 @@ defmodule Gits.Dashboard.Actions.ReadGoogleAddressSuggestionsTest do
     end
 
     test "returns error tuple if request failed" do
-      fake_suggestion = %{
-        "placePrediction" => %{
-          "placeId" => "place_id",
-          "structuredFormat" => %{
-            "mainText" => %{"text" => "foo"}
-          }
-        }
-      }
-
       result =
         ReadGoogleAddressSuggestions.transform_response_to_google_addresses(
           {:ok, %Req.Response{body: %{"error" => %{"message" => "test message"}}}}

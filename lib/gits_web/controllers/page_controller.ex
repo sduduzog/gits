@@ -58,14 +58,14 @@ defmodule GitsWeb.PageController do
       end
 
     customer =
-      if not is_nil(customer) do
+      if is_nil(customer) do
+        nil
+      else
         customer
         |> Ash.load!(
           [scannable_instances: [:event_name, :ticket_name, :event_starts_at, :event_address]],
           actor: customer
         )
-      else
-        customer
       end
 
     conn |> assign(:customer, customer) |> render(:tickets)

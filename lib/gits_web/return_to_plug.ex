@@ -9,7 +9,7 @@ defmodule GitsWeb.ReturnToPlug do
     # return_to = conn.request_path
 
     conn.request_path
-    |> is_invalid_return_to()
+    |> invalid_return_to?()
     |> if do
       conn
     else
@@ -17,7 +17,7 @@ defmodule GitsWeb.ReturnToPlug do
     end
   end
 
-  defp is_invalid_return_to(path) do
+  defp invalid_return_to?(path) do
     @invalid_return_to
     |> Enum.map(fn invalid -> String.contains?(path, invalid) end)
     |> Enum.any?()

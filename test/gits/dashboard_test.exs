@@ -1,4 +1,6 @@
 defmodule Gits.DashboardTest do
+  alias Gits.Dashboard.Venue.DetailedGoogleAddress
+  alias Gits.Dashboard.Venue
   alias Gits.Dashboard.Venue.GoogleAddress
   # use PowerAssert
   use ExUnit.Case, async: true
@@ -42,6 +44,37 @@ defmodule Gits.DashboardTest do
                     __metadata__: %{selected: [:id, :main_text, :secondary_text]}
                   }
                 ]}
+    end
+  end
+
+  describe "fetch_from_api" do
+    test "returns a single record" do
+      Req.Test.stub(:google_api, fn conn ->
+        Req.Test.json(conn, %{
+          "displayName" => %{"languageCode" => "en", "text" => "A Streetbar Named Desire"},
+          "googleMapsUri" => "https://maps.google.com/?cid=7460301463055742669",
+          "id" => "abc",
+          "primaryType" => "bar",
+          "primaryTypeDisplayName" => %{"languageCode" => "en-US", "text" => "Bar"},
+          "shortFormattedAddress" => "144 Jan Smuts Ave, Parkwood, Randburg"
+        })
+      end)
+
+      assert {:ok, %DetailedGoogleAddress{}} =
+               Gits.Dashboard.fetch_from_api("abc")
+    end
+
+    test "returns record for address without primary type" do
+      Req.Test.stub(:google_api, fn conn ->
+        Req.Test.json(conn, %{
+          "displayName" => %{"languageCode" => "en", "text" => "Midrand"},
+          "googleMapsUri" => "https://maps.google.com/?cid=9777895728776740386",
+          "id" => "ChIJixllSf1xlR4RIv6LHFwQsoc",
+          "shortFormattedAddress" => "Midrand"
+        })
+
+        assert {:ok, %DetailedGoogleAddress{}} = Gits.Dashboard.fetch_from_api("abc")
+      end)
     end
   end
 end
