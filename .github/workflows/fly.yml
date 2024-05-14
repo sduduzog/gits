@@ -62,6 +62,9 @@ jobs:
       - name: Install dependencies
         run: mix deps.get
 
+      - name: Create test env file
+        run: cat .env.test >> .env
+
       # - name: Compiles
       # run: mix compile
 
@@ -69,10 +72,10 @@ jobs:
       # run: mix compile --warnings-as-errors
 
       - name: Prepare database
-        run: MIX_ENV=test mix ash.setup
+        run: mix ash.setup
 
       - name: Run migrations
-        run: MIX_ENV=test mix ash.migrate
+        run: mix ash.migrate
 
       # - name: Check Formatting
       #   run: mix format --check-formatted
