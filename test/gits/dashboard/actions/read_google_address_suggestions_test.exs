@@ -1,19 +1,19 @@
-defmodule Gits.Dashboard.Actions.ReadGoogleAddressTest do
+defmodule Gits.Dashboard.Actions.ReadGoogleAddressSuggestionsTest do
   use PowerAssert
 
   require Ash.Query
-  alias Gits.Dashboard.Actions.ReadGoogleAddress
+  alias Gits.Dashboard.Actions.ReadGoogleAddressSuggestions
   alias Gits.Dashboard.Venue.GoogleAddress
 
   describe "prepare_response_for_cache/1" do
     test "returns ignore tuple when input is ok" do
-      result = ReadGoogleAddress.prepare_response_for_cache({:ok, %{test: "foo"}})
+      result = ReadGoogleAddressSuggestions.prepare_response_for_cache({:ok, %{test: "foo"}})
 
       assert result == {:commit, %{test: "foo"}, ttl: :timer.hours(72)}
     end
 
     test "returns ignore tuple when input is error" do
-      result = ReadGoogleAddress.prepare_response_for_cache({:error, %{test: "bar"}})
+      result = ReadGoogleAddressSuggestions.prepare_response_for_cache({:error, %{test: "bar"}})
 
       assert result == {:ignore, %{test: "bar"}}
     end
@@ -21,32 +21,34 @@ defmodule Gits.Dashboard.Actions.ReadGoogleAddressTest do
 
   describe "prepare_response_from_cache/1" do
     test "should return ok and result from commit tuple" do
-      result = ReadGoogleAddress.prepare_response_from_cache({:commit, :test})
+      result = ReadGoogleAddressSuggestions.prepare_response_from_cache({:commit, :test})
 
       assert result == {:ok, :test}
     end
 
     test "should return ok and result from commit tuple with options" do
       result =
-        ReadGoogleAddress.prepare_response_from_cache({:commit, :test, ttl: :timer.hours(1)})
+        ReadGoogleAddressSuggestions.prepare_response_from_cache(
+          {:commit, :test, ttl: :timer.hours(1)}
+        )
 
       assert result == {:ok, :test}
     end
 
     test "should return ok and result from ok tuple" do
-      result = ReadGoogleAddress.prepare_response_from_cache({:ok, :test})
+      result = ReadGoogleAddressSuggestions.prepare_response_from_cache({:ok, :test})
 
       assert result == {:ok, :test}
     end
 
     test "should return error and result from ignore tuple" do
-      result = ReadGoogleAddress.prepare_response_from_cache({:ignore, :test})
+      result = ReadGoogleAddressSuggestions.prepare_response_from_cache({:ignore, :test})
 
       assert result == {:error, :test}
     end
 
     test "should passthrough error and result from error tuple" do
-      result = ReadGoogleAddress.prepare_response_from_cache({:error, :test})
+      result = ReadGoogleAddressSuggestions.prepare_response_from_cache({:error, :test})
 
       assert result == {:error, :test}
     end
@@ -65,7 +67,7 @@ defmodule Gits.Dashboard.Actions.ReadGoogleAddressTest do
       }
 
       result =
-        ReadGoogleAddress.transform_response_to_google_addresses(
+        ReadGoogleAddressSuggestions.transform_response_to_google_addresses(
           {:ok, %Req.Response{body: %{"suggestions" => [fake_suggestion]}}}
         )
 
@@ -84,7 +86,7 @@ defmodule Gits.Dashboard.Actions.ReadGoogleAddressTest do
       }
 
       result =
-        ReadGoogleAddress.transform_response_to_google_addresses(
+        ReadGoogleAddressSuggestions.transform_response_to_google_addresses(
           {:ok, %Req.Response{body: %{"suggestions" => [fake_suggestion]}}}
         )
 
@@ -93,7 +95,10 @@ defmodule Gits.Dashboard.Actions.ReadGoogleAddressTest do
     end
 
     test "returns error tuple with term when request failed" do
-      result = ReadGoogleAddress.transform_response_to_google_addresses({:error, %Req.Response{}})
+      result =
+        ReadGoogleAddressSuggestions.transform_response_to_google_addresses(
+          {:error, %Req.Response{}}
+        )
 
       assert result == {:error, :request_failed}
     end
@@ -109,7 +114,7 @@ defmodule Gits.Dashboard.Actions.ReadGoogleAddressTest do
       }
 
       result =
-        ReadGoogleAddress.transform_response_to_google_addresses(
+        ReadGoogleAddressSuggestions.transform_response_to_google_addresses(
           {:ok, %Req.Response{body: %{"error" => %{"message" => "test message"}}}}
         )
 

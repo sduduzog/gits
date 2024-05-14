@@ -23,6 +23,10 @@ defmodule Gits.Dashboard.Venue do
   actions do
     default_accept :*
     defaults [:read, :destroy, update: :*, create: :*]
+
+    read :fetch_from_api do
+      manual Gits.Dashboard.Actions.ReadGoogleAddress
+    end
   end
 
   policies do
@@ -53,7 +57,7 @@ defmodule Gits.Dashboard.Venue.GoogleAddress do
 
       argument :query, :string
 
-      manual Gits.Dashboard.Actions.ReadGoogleAddress
+      manual Gits.Dashboard.Actions.ReadGoogleAddressSuggestions
     end
   end
 end

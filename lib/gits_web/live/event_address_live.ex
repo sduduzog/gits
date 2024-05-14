@@ -1,31 +1,29 @@
 defmodule GitsWeb.EventAddressLive do
   require Ash.Query
-  alias Gits.Storefront.Event
   use GitsWeb, :live_view
   import GitsWeb.DashboardComponents
 
   def mount(params, _session, socket) do
     socket =
-      assign(socket, :account_id, params["account_id"])
-      |> assign(:event_id, params["event_id"])
+      socket
       |> assign(:list, [])
+      |> assign(:account_id, params["account_id"])
+      |> assign(:event_id, params["event_id"])
+      # |> assign(:place_id, nil)
       |> assign(:form, %{"query" => nil} |> to_form())
 
     {:ok, socket, layout: {GitsWeb.Layouts, :dashboard}}
   end
 
-  def handle_event("select_place", unsigned_params, socket) do
-    Ash.Query.for_read(Event, :read, %{}, actor: socket.assigns.current_user)
-    |> Ash.Query.filter(id: socket.assigns.event_id)
-    |> Ash.read_one!()
-    |> Ash.Changeset.for_update(:update_address, %{address_place_id: unsigned_params["id"]},
-      actor: socket.assigns.current_user
-    )
-    |> Ash.update!()
+  def handle_params(unsigned_params, _uri, socket) do
+    {:noreply, assign(socket, :place_id, unsigned_params["place_id"])}
+  end
 
+  def handle_event("select_address", unsigned_params, socket) do
     {:noreply,
-     redirect(socket,
-       to: ~p"/accounts/#{socket.assigns.account_id}/events/#{socket.assigns.event_id}/settings"
+     push_patch(socket,
+       to:
+         ~p"/accounts/#{socket.assigns.account_id}/events/#{socket.assigns.event_id}/address?place_id=#{unsigned_params["id"]}"
      )}
   end
 
