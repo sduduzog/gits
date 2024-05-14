@@ -34,9 +34,9 @@ config_dir_prefix =
 
 source!(["#{config_dir_prefix}.env", System.get_env()])
 
-config :gits, :google_api_options,
-  base_url: "https://places.googleapis.com",
-  headers: ["X-Goog-Api-Key": env!("GOOGLE_MAPS_API_KEY", :string)]
+config :gits, :google, maps_api_key: env!("GOOGLE_MAPS_API_KEY", :string)
+
+config :gits, :bucket_name, env!("BUCKET_NAME")
 
 config :ex_aws,
   access_key_id: env!("AWS_ACCESS_KEY_ID", :string),
@@ -47,12 +47,6 @@ config :ex_aws, :s3,
   scheme: env!("AWS_S3_SCHEME", :string),
   host: env!("AWS_S3_HOST", :string),
   port: env!("AWS_S3_PORT", :integer)
-
-config :gits, :bucket_name, env!("BUCKET_NAME")
-
-domain = env!("MAILGUN_DOMAIN", :string)
-
-config :gits, :sender_email, "hey@#{domain}"
 
 if config_env() == :prod do
   database_url =
@@ -151,6 +145,8 @@ if config_env() == :prod do
     api_key: api_key,
     domain: domain,
     base_url: "https://api.eu.mailgun.net/v3"
+
+  config :gits, :sender_email, "hey@#{domain}"
 
   #
   # For this example you need include a HTTP client required by Swoosh API client.
