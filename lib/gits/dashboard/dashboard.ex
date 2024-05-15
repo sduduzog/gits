@@ -9,7 +9,7 @@ defmodule Gits.Dashboard do
     resource Gits.Dashboard.Venue
 
     resource Gits.Dashboard.Venue.DetailedGoogleAddress do
-      define :fetch_from_api, args: [:id], action: :fetch_from_api, get?: true
+      define :fetch_address_from_api, args: [:id], action: :fetch_from_api, get?: true
     end
 
     resource Gits.Dashboard.Venue.GoogleAddress do

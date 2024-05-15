@@ -6,16 +6,16 @@ defmodule Gits.Dashboard.Actions.ReadGoogleAddressSuggestionsTest do
   alias Gits.Dashboard.Venue.GoogleAddress
 
   describe "prepare_response_for_cache/1" do
-    test "returns ignore tuple when input is ok" do
-      result = ReadGoogleAddressSuggestions.prepare_response_for_cache({:ok, %{test: "foo"}})
+    test "returns commit tuple when input is ok" do
+      ttl = :timer.hours(72)
 
-      assert result == {:commit, %{test: "foo"}, ttl: :timer.hours(72)}
+      assert {:commit, %{test: "foo"}, ttl: ttl} =
+               ReadGoogleAddressSuggestions.prepare_response_for_cache({:ok, %{test: "foo"}})
     end
 
     test "returns ignore tuple when input is error" do
-      result = ReadGoogleAddressSuggestions.prepare_response_for_cache({:error, %{test: "bar"}})
-
-      assert result == {:ignore, %{test: "bar"}}
+      assert {:ignore, %{test: "bar"}} =
+               ReadGoogleAddressSuggestions.prepare_response_for_cache({:error, %{test: "bar"}})
     end
   end
 
@@ -95,22 +95,17 @@ defmodule Gits.Dashboard.Actions.ReadGoogleAddressSuggestionsTest do
     end
 
     test "returns error tuple with term when request failed" do
-      result =
-        ReadGoogleAddressSuggestions.transform_response_to_google_addresses(
-          {:error, %Req.Response{}}
-        )
-
-      assert result == {:error, :request_failed}
+      assert {:error, :request_failed} =
+               ReadGoogleAddressSuggestions.transform_response_to_google_addresses(
+                 {:error, %Req.Response{}}
+               )
     end
 
     test "returns error tuple if request failed" do
-      result =
-        ReadGoogleAddressSuggestions.transform_response_to_google_addresses(
-          {:ok, %Req.Response{body: %{"error" => %{"message" => "test message"}}}}
-        )
-
-      assert result ==
-               {:error, :request_failed}
+      assert {:error, :request_failed} =
+               ReadGoogleAddressSuggestions.transform_response_to_google_addresses(
+                 {:ok, %Req.Response{body: %{"error" => %{"message" => "test message"}}}}
+               )
     end
   end
 end

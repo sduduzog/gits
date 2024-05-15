@@ -61,7 +61,7 @@ defmodule Gits.Dashboard.Actions.ReadGoogleAddress do
 
     venue =
       case body do
-        %{"primaryType" => type} -> venue |> Map.put(:type, type)
+        %{"primaryType" => type} -> %{venue | type: type}
         _ -> venue
       end
 

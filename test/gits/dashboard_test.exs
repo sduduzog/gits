@@ -1,6 +1,5 @@
 defmodule Gits.DashboardTest do
   alias Gits.Dashboard.Venue.DetailedGoogleAddress
-  alias Gits.Dashboard.Venue
   alias Gits.Dashboard.Venue.GoogleAddress
   # use PowerAssert
   use ExUnit.Case, async: true
@@ -61,7 +60,7 @@ defmodule Gits.DashboardTest do
       end)
 
       assert {:ok, %DetailedGoogleAddress{}} =
-               Gits.Dashboard.fetch_from_api("abc")
+               Gits.Dashboard.fetch_address_from_api("abc")
     end
 
     test "returns record for address without primary type" do
@@ -73,7 +72,7 @@ defmodule Gits.DashboardTest do
           "shortFormattedAddress" => "Midrand"
         })
 
-        assert {:ok, %DetailedGoogleAddress{}} = Gits.Dashboard.fetch_from_api("abc")
+        assert {:ok, %DetailedGoogleAddress{}} = Gits.Dashboard.fetch_address_from_api("abc")
       end)
     end
   end

@@ -17,12 +17,13 @@ defmodule GitsWeb.EventAddressLive do
   end
 
   def handle_params(unsigned_params, _uri, socket) do
-    unless is_nil(unsigned_params["place_id"]) do
-      Dashboard.fetch_from_api(unsigned_params["place_id"])
-      |> IO.inspect()
-    end
+    case Dashboard.fetch_address_from_api(unsigned_params["place_id"]) do
+      {:ok, address} ->
+        {:noreply, assign(socket, :address, address)}
 
-    {:noreply, assign(socket, :place_id, unsigned_params["place_id"])}
+      {:error, _} ->
+        {:noreply, assign(socket, :address, nil)}
+    end
   end
 
   def handle_event("select_address", unsigned_params, socket) do
