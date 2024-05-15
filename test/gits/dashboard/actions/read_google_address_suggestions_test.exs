@@ -9,7 +9,7 @@ defmodule Gits.Dashboard.Actions.ReadGoogleAddressSuggestionsTest do
     test "returns commit tuple when input is ok" do
       ttl = :timer.hours(72)
 
-      assert {:commit, %{test: "foo"}, ttl: ttl} =
+      assert {:commit, %{test: "foo"}, ttl: ^ttl} =
                ReadGoogleAddressSuggestions.prepare_response_for_cache({:ok, %{test: "foo"}})
     end
 
@@ -27,18 +27,14 @@ defmodule Gits.Dashboard.Actions.ReadGoogleAddressSuggestionsTest do
     end
 
     test "should return ok and result from commit tuple with options" do
-      result =
-        ReadGoogleAddressSuggestions.prepare_response_from_cache(
-          {:commit, :test, ttl: :timer.hours(1)}
-        )
-
-      assert result == {:ok, :test}
+      assert {:ok, :test} =
+               ReadGoogleAddressSuggestions.prepare_response_from_cache(
+                 {:commit, :test, ttl: :timer.hours(1)}
+               )
     end
 
     test "should return ok and result from ok tuple" do
-      result = ReadGoogleAddressSuggestions.prepare_response_from_cache({:ok, :test})
-
-      assert result == {:ok, :test}
+      assert {:ok, :test} = ReadGoogleAddressSuggestions.prepare_response_from_cache({:ok, :test})
     end
 
     test "should return error and result from ignore tuple" do

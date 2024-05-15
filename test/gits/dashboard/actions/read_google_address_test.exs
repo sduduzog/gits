@@ -3,9 +3,7 @@ defmodule Gits.Dashboard.Actions.ReadGoogleAddressTest do
 
   require Ash.Query
   alias Gits.Dashboard.Actions.ReadGoogleAddress
-  alias Gits.Dashboard.Actions.ReadGoogleAddressSuggestions
   alias Gits.Dashboard.Venue.DetailedGoogleAddress
-  alias Gits.Dashboard.Venue.GoogleAddress
 
   describe "details_response_to_address/1" do
     test "returns venue with primary type" do

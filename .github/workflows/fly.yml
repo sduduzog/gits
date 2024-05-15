@@ -77,11 +77,8 @@ jobs:
       - name: Run migrations
         run: mix ash.migrate
 
-      # - name: Check Formatting
-      #   run: mix format --check-formatted
-
       - name: Run tests
-        run: mix test
+        run: mix test --warnings-as-errors
   deploy:
     needs: [test]
     name: Deploy app
