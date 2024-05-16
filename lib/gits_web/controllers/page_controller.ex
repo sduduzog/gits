@@ -2,14 +2,14 @@ defmodule GitsWeb.PageController do
   use GitsWeb, :controller
 
   require Ash.Query
-  alias Gits.Storefront.Customer
   alias Gits.Dashboard.Member
+  alias Gits.Storefront.Customer
   alias Gits.Storefront.Event
 
   def home(conn, _params) do
     events =
       Ash.Query.for_read(Event, :masked, %{}, actor: conn.assigns.current_user)
-      |> Ash.Query.load([:minimum_ticket_price, :masked_id, :address, :ticket_price_varies])
+      |> Ash.Query.load([:minimum_ticket_price, :masked_id, :ticket_price_varies])
       |> Ash.read!()
 
     conn

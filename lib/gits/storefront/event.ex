@@ -13,7 +13,6 @@ defmodule Gits.Storefront.Event do
     attribute :name, :string, allow_nil?: false, public?: true
     attribute :description, :string, allow_nil?: false, public?: true
     attribute :starts_at, :naive_datetime, allow_nil?: false, public?: true
-    attribute :address_place_id, :string, allow_nil?: true
 
     attribute :visibility, :atom do
       allow_nil? false
@@ -28,6 +27,10 @@ defmodule Gits.Storefront.Event do
 
   relationships do
     belongs_to :account, Gits.Dashboard.Account do
+      domain Gits.Dashboard
+    end
+
+    belongs_to :venue, Gits.Dashboard.Venue do
       domain Gits.Dashboard
     end
 
@@ -87,10 +90,6 @@ defmodule Gits.Storefront.Event do
 
       argument :account, :map
       change manage_relationship(:account, type: :append)
-    end
-
-    update :update_address do
-      accept :address_place_id
     end
   end
 

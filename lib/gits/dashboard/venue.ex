@@ -6,7 +6,8 @@ defmodule Gits.Dashboard.Venue do
     domain: Gits.Dashboard
 
   attributes do
-    attribute :id, :string, primary_key?: true, allow_nil?: false, public?: true
+    uuid_primary_key :id
+    attribute :place_id, :string, allow_nil?: false, public?: true
     attribute :name, :string, allow_nil?: false, public?: true
     attribute :google_maps_uri, :string, allow_nil?: false, public?: true
     attribute :formatted_address, :string, allow_nil?: false, public?: true
@@ -18,16 +19,32 @@ defmodule Gits.Dashboard.Venue do
 
   relationships do
     belongs_to :account, Gits.Dashboard.Account
+
+    has_many :events, Gits.Storefront.Event do
+      domain Gits.Storefront
+    end
   end
 
   actions do
     default_accept :*
-    defaults [:read, :destroy, update: :*, create: :*]
+    defaults [:read, :destroy, update: :*]
+
+    create :create do
+      accept [:*]
+
+      argument :event, :map
+    end
   end
 
   postgres do
     table "venues"
     repo Gits.Repo
+  end
+
+  policies do
+    policy always() do
+      authorize_if always()
+    end
   end
 end
 

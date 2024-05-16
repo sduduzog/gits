@@ -96,7 +96,6 @@ defmodule GitsWeb.EventController do
     event =
       Ash.Query.for_read(Event, :read, %{}, actor: member)
       |> Ash.Query.filter(id: params["event_id"])
-      |> Ash.Query.load(:address)
       |> Ash.read_one!()
 
     unless event do

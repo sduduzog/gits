@@ -68,7 +68,7 @@
         <div class="py-6 sm:grid sm:grid-cols-3 sm:gap-4">
           <dt class="text-sm font-medium text-gray-900">Address</dt>
           <dd class="mt-1 grid flex-wrap gap-4 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0 sm:flex">
-            <%= if @event.address do %>
+            <%= if Map.has_key?(@event, :address) and Map.has_key?(@event.address, :name) do %>
               <div class="grid">
                 <span><%= @event.address.name %></span>
                 <span><%= @event.address.address %></span>

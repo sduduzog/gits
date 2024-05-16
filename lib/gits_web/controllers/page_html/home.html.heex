@@ -28,7 +28,7 @@
             <h3 class="line-clamp-2 text-sm font-semibold"><%= event.name %></h3>
             <div class="flex items-center justify-between gap-2">
               <span class="truncate text-sm text-gray-600">
-                <%= if event.address do %>
+                <%= if Map.has_key?(event, :address) and Map.has_key?(event.address, :name) do %>
                   <%= event.address.name %>
                 <% end %>
               </span>

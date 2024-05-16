@@ -26,6 +26,23 @@ defmodule GitsWeb.EventAddressLive do
     end
   end
 
+  def handle_event("confirm_address", _unsigned_params, socket) do
+    address = socket.assigns.address
+
+    event = Ash.get!(socket.assigns.event_id)
+
+    Dashboard.save_venue_for_event(
+      address.id,
+      address.name,
+      address.google_maps_uri,
+      address.formatted_address,
+      address.type,
+      event
+    )
+
+    {:noreply, socket}
+  end
+
   def handle_event("select_address", unsigned_params, socket) do
     {:noreply,
      push_patch(socket,
