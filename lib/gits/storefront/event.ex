@@ -30,9 +30,9 @@ defmodule Gits.Storefront.Event do
       domain Gits.Dashboard
     end
 
-    belongs_to :venue, Gits.Dashboard.Venue do
-      domain Gits.Dashboard
-    end
+    # belongs_to :venue, Gits.Dashboard.Venue do
+    #   domain Gits.Dashboard
+    # end
 
     has_many :tickets, Gits.Storefront.Ticket
     has_many :baskets, Gits.Storefront.Basket
