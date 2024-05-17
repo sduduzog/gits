@@ -1,6 +1,5 @@
 defmodule Gits.DashboardTest do
   alias Ecto.Adapters.SQL.Sandbox
-  alias Gits.Dashboard
   alias Gits.Dashboard.Venue.DetailedGoogleAddress
   alias Gits.Dashboard.Venue.GoogleAddress
   use ExUnit.Case, async: true

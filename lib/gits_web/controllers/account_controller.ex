@@ -102,6 +102,8 @@ defmodule GitsWeb.AccountController do
   end
 
   def next(conn, _) do
-    conn |> render()
-    end
+    conn
+    |> assign(:nav, ["Overview"])
+    |> render()
+  end
 end

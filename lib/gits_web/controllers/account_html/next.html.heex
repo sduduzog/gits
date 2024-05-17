@@ -3,13 +3,15 @@
     <div>
       <span class="text-2xl font-black italic">GiTS</span>
     </div>
-    <div class="flex grow items-center px-4">
-      <div>Overview</div>
+    <div class="hidden grow items-center justify-center px-4 sm:flex ">
+      <div>
+        <span :for={n <- @nav} class="text-sm font-medium"><%= n %></span>
+      </div>
     </div>
-    <div class="flex items-center">
+    <div class="flex grow items-center justify-end pl-4 sm:grow-0">
       <button class="flex items-center gap-2 rounded-xl bg-black p-1.5 px-2 text-sm text-white">
         <.icon name="hero-plus-mini" />
-        <span>Create</span>
+        <span class="hidden pr-2 font-medium sm:inline-flex">Create</span>
       </button>
     </div>
   </div>
