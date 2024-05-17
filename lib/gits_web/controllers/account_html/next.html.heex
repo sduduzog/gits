@@ -1,17 +1,38 @@
 <div class="w-full space-y-2 bg-zinc-50 p-2">
-  <div class="flex gap-4 divide-x px-2">
+  <div class="flex gap-4 px-2 sm:divide-x">
     <div>
       <span class="text-2xl font-black italic">GiTS</span>
     </div>
-    <div class="hidden grow items-center justify-center px-4 sm:flex ">
-      <div>
-        <span :for={n <- @nav} class="text-sm font-medium"><%= n %></span>
+    <div class=" flex grow items-center justify-between pl-4">
+      <div class="inline-flex items-center gap-2">
+        <span>Treehouse Inc</span>
+        <.icon name="hero-chevron-down-mini" />
+      </div>
+      <div class="hidden items-center gap-4 lg:inline-flex">
+        <span
+          :for={n <- @nav}
+          class="rounded-full p-1 px-2.5 text-sm font-medium first:border first:bg-white"
+        >
+          <%= n %>
+        </span>
+      </div>
+      <div class="hidden gap-2 lg:flex">
+        <button class="flex items-center gap-2 rounded-xl p-1.5 px-2 text-sm text-zinc-600">
+          <.icon name="hero-bell" />
+        </button>
+        <button class="flex items-center gap-2 rounded-xl p-1.5 px-2 text-sm text-zinc-600">
+          <.icon name="hero-cog-6-tooth" />
+        </button>
       </div>
     </div>
-    <div class="flex grow items-center justify-end pl-4 sm:grow-0">
-      <button class="flex items-center gap-2 rounded-xl bg-black p-1.5 px-2 text-sm text-white">
+    <div class="flex grow items-center justify-end gap-4 pl-4 sm:grow-0">
+      <button class="flex items-center gap-2 rounded-xl bg-black p-2 text-sm text-white">
         <.icon name="hero-plus-mini" />
-        <span class="hidden pr-2 font-medium sm:inline-flex">Create</span>
+        <span class="hidden pr-1.5 font-medium sm:inline-flex">Create</span>
+      </button>
+
+      <button class="flex items-center gap-2 rounded-xl p-1.5 px-2 text-sm text-zinc-600">
+        <.icon name="hero-bars-2" />
       </button>
     </div>
   </div>
