@@ -6,7 +6,8 @@ defmodule Gits.Dashboard.Venue do
     domain: Gits.Dashboard
 
   attributes do
-    attribute :place_id, :string, allow_nil?: false, public?: true, primary_key?: true
+    uuid_primary_key :id
+    attribute :place_id, :string, allow_nil?: false, public?: true
     attribute :name, :string, allow_nil?: false, public?: true
     attribute :google_maps_uri, :string, allow_nil?: false, public?: true
     attribute :formatted_address, :string, allow_nil?: false, public?: true
