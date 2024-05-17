@@ -2,9 +2,9 @@ defmodule GitsWeb.AccountController do
   use GitsWeb, :controller
 
   require Ash.Query
+  alias AshPhoenix.Form
   alias Gits.Dashboard.Member
   alias Gits.Storefront.Event
-  alias AshPhoenix.Form
 
   alias Gits.Dashboard.Account
 
@@ -101,36 +101,7 @@ defmodule GitsWeb.AccountController do
     end
   end
 
-  #
-  # def show(conn, params) do
-  #   account =
-  #     Ash.Query.filter(Account, id: params["account_id"])
-  #     |> Ash.read_one!(actor: conn.assigns.current_user)
-  #
-  #   events =
-  #     Ash.Query.filter(Event, account.id == ^account.id)
-  #     |> Ash.read!(actor: conn.assigns.current_user)
-  #
-  #   conn
-  #   |> assign(:events, events)
-  #   |> render(:show, layout: {GitsWeb.Layouts, :account})
-  # end
-  #
-  # def account_settings(conn, _) do
-  #   conn
-  #   |> render(:settings, layout: {GitsWeb.Layouts, :account})
-  # end
-  #
-  # def team(conn, params) do
-  #   conn
-  #   |> assign(
-  #     :account,
-  #     Account
-  #     |> Ash.Query.for_read(:read, actor: conn.assigns.current_user)
-  #     |> Ash.Query.filter(id: params["account_id"])
-  #     |> Ash.read_one!()
-  #     |> Ash.load!(roles: [:user])
-  #   )
-  #   |> render(:team, layout: {GitsWeb.Layouts, :account})
-  # end
+  def next(conn, _) do
+    conn |> render()
+    end
 end

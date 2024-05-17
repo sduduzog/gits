@@ -15,5 +15,3 @@ config :swoosh, local: false
 
 # Do not print debug messages in production
 config :logger, level: :info
-
-config :gits, Oban, engine: Oban.Engines.Basic, queues: [default: 1, mailers: 1], repo: Gits.Repo

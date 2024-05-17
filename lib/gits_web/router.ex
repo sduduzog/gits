@@ -40,6 +40,8 @@ defmodule GitsWeb.Router do
       resources "/invites", TeamInviteController do
         post "/resend", TeamInviteController, :resend_invite
       end
+
+      get "/next", AccountController, :next
     end
   end
 

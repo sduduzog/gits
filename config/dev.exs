@@ -85,10 +85,3 @@ config :swoosh, :api_client, false
 config :gits, :base_url, "http://localhost:4000"
 
 config :gits, :sender_email, "hey@gits.co.za"
-
-config :gits, Oban,
-  engine: Oban.Engines.Basic,
-  queues: [default: 1, mailers: 1],
-  repo: Gits.Repo
-
-# plugins: [{Oban.Plugins.Cron, crontab: [{"* * * * *", Gits.Workers.SweepWaitlist}]}]

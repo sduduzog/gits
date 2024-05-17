@@ -4,7 +4,6 @@ defmodule GitsWeb.EventAddressLive do
   import GitsWeb.DashboardComponents
 
   alias Gits.Dashboard
-  alias Gits.Dashboard.Member
   alias Gits.Storefront.Event
 
   def mount(params, _session, socket) do

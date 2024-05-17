@@ -23,6 +23,13 @@ config :ash, :policies, log_policy_breakdowns: :error
 
 # config :ash, :policies, log_successful_policy_breakdowns: :error
 
+config :gits, Oban,
+  engine: Oban.Engines.Basic,
+  queues: [default: 1, mailers: 1],
+  repo: Gits.Repo
+
+# plugins: [{Oban.Plugins.Cron, crontab: [{"* * * * *", Gits.Workers.SweepWaitlist}]}]
+
 # Configures the endpoint
 config :gits, GitsWeb.Endpoint,
   url: [host: "localhost"],

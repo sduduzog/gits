@@ -1,7 +1,6 @@
 defmodule Gits.DashboardTest do
   alias Ecto.Adapters.SQL.Sandbox
   alias Gits.Dashboard
-  alias Gits.Dashboard.Venue
   alias Gits.Dashboard.Venue.DetailedGoogleAddress
   alias Gits.Dashboard.Venue.GoogleAddress
   use ExUnit.Case, async: true
@@ -77,27 +76,6 @@ defmodule Gits.DashboardTest do
 
         assert {:ok, %DetailedGoogleAddress{}} = Gits.Dashboard.fetch_address_from_api("abc")
       end)
-    end
-  end
-
-  describe "save_venue_for_event" do
-    test "should do stuff" do
-      input = %{
-        id: "id",
-        name: "name",
-        google_maps_uri: "uri",
-        formatted_address: "addy",
-        type: "bar"
-      }
-
-      Dashboard.save_venue_for_event!(
-        input.id,
-        input.name,
-        input.google_maps_uri,
-        input.formatted_address,
-        "bar",
-        %{}
-      )
     end
   end
 end
