@@ -34,6 +34,14 @@ defmodule Gits.Dashboard.Account do
       change manage_relationship(:member, :members, type: :create)
       change manage_relationship(:event, :events, type: :create)
     end
+
+    create :create_from_waitlist do
+      accept :*
+
+      argument :member, :map
+
+      change manage_relationship(:member, :members, on_lookup: {:relate_and_update, :activate})
+    end
   end
 
   policies do
@@ -41,8 +49,12 @@ defmodule Gits.Dashboard.Account do
       authorize_if always()
     end
 
+    policy action(:create_from_waitlist) do
+      authorize_if Gits.Checks.ActorIsObanJob
+    end
+
     policy action(:create) do
-      authorize_if Gits.Checks.CanCreate
+      authorize_if actor_present()
     end
   end
 

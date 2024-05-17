@@ -2,9 +2,9 @@ defmodule GitsWeb.TicketController do
   use GitsWeb, :controller
 
   require Ash.Query
+  alias AshPhoenix.Form
   alias Gits.Storefront.Event
   alias Gits.Storefront.Ticket
-  alias AshPhoenix.Form
 
   plug :set_layout
 

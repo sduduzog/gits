@@ -1,8 +1,11 @@
 defmodule GitsWeb.EventAddressLive do
-  require Ash.Query
   use GitsWeb, :live_view
+  require Ash.Query
   import GitsWeb.DashboardComponents
+
   alias Gits.Dashboard
+  alias Gits.Dashboard.Member
+  alias Gits.Storefront.Event
 
   def mount(params, _session, socket) do
     socket =
@@ -10,7 +13,6 @@ defmodule GitsWeb.EventAddressLive do
       |> assign(:list, [])
       |> assign(:account_id, params["account_id"])
       |> assign(:event_id, params["event_id"])
-      # |> assign(:place_id, nil)
       |> assign(:form, %{"query" => nil} |> to_form())
 
     {:ok, socket, layout: {GitsWeb.Layouts, :dashboard}}
@@ -27,20 +29,29 @@ defmodule GitsWeb.EventAddressLive do
   end
 
   def handle_event("confirm_address", _unsigned_params, socket) do
+    user =
+      socket.assigns.current_user
+
     address = socket.assigns.address
 
-    event = Ash.get!(socket.assigns.event_id)
+    event =
+      Event
+      |> Ash.get!(socket.assigns.event_id, actor: user)
 
-    Dashboard.save_venue_for_event(
+    Dashboard.save_venue_for_event!(
       address.id,
       address.name,
       address.google_maps_uri,
       address.formatted_address,
       address.type,
-      event
+      event,
+      actor: user
     )
 
-    {:noreply, socket}
+    {:noreply,
+     redirect(socket,
+       to: ~p"/accounts/#{socket.assigns.account_id}/events/#{socket.assigns.event_id}/settings"
+     )}
   end
 
   def handle_event("select_address", unsigned_params, socket) do

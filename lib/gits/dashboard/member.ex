@@ -22,6 +22,10 @@ defmodule Gits.Dashboard.Member do
   state_machine do
     initial_states [:active, :waitlisted]
     default_initial_state :active
+
+    transitions do
+      transition :activate, from: :waitlisted, to: :active
+    end
   end
 
   relationships do
@@ -82,9 +86,17 @@ defmodule Gits.Dashboard.Member do
       change set_attribute(:state, :waitlisted)
       change manage_relationship(:user, type: :append)
     end
+
+    update :activate do
+      change transition_state(:active)
+    end
   end
 
   policies do
+    bypass action(:read) do
+      authorize_if Gits.Checks.ActorIsObanJob
+    end
+
     policy action(:read) do
       authorize_if expr(
                      exists(
@@ -102,6 +114,10 @@ defmodule Gits.Dashboard.Member do
 
     policy action(:create) do
       authorize_if always()
+    end
+
+    policy action(:activate) do
+      authorize_if Gits.Checks.ActorIsObanJob
     end
 
     policy always() do

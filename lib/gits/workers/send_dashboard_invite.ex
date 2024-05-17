@@ -1,5 +1,6 @@
 defmodule Gits.Workers.SendDashboardInvite do
   use Oban.Worker
+  alias Gits.Workers.DeliverEmail
 
   @impl Oban.Worker
   def perform(%Oban.Job{args: args}) do
@@ -11,7 +12,7 @@ defmodule Gits.Workers.SendDashboardInvite do
     """
 
     %{to: args["email"], subject: "Accept this invitation", body: body}
-    |> Gits.Workers.DeliverEmail.new()
+    |> DeliverEmail.new()
     |> Oban.insert()
   end
 end

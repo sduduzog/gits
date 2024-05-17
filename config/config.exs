@@ -21,8 +21,6 @@ config :ash, :policies, show_policy_breakdowns?: true
 
 config :ash, :policies, log_policy_breakdowns: :error
 
-config :gits, Oban, engine: Oban.Engines.Basic, queues: [default: 1, mailers: 1], repo: Gits.Repo
-
 # config :ash, :policies, log_successful_policy_breakdowns: :error
 
 # Configures the endpoint

@@ -8,7 +8,7 @@ config :gits, Gits.Repo,
   database: "gits_dev",
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
-  pool_size: 4
+  pool_size: 2
 
 # For development, we disable any cache and enable
 # debugging and code reloading.
@@ -85,3 +85,10 @@ config :swoosh, :api_client, false
 config :gits, :base_url, "http://localhost:4000"
 
 config :gits, :sender_email, "hey@gits.co.za"
+
+config :gits, Oban,
+  engine: Oban.Engines.Basic,
+  queues: [default: 1, mailers: 1],
+  repo: Gits.Repo
+
+# plugins: [{Oban.Plugins.Cron, crontab: [{"* * * * *", Gits.Workers.SweepWaitlist}]}]

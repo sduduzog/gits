@@ -73,7 +73,7 @@ if config_env() == :prod do
   config :gits, Gits.Repo,
     # ssl: true,
     url: database_url,
-    pool_size: env!("POOL_SIZE", :integer, 8),
+    pool_size: env!("POOL_SIZE", :integer, 2),
     socket_options: maybe_ipv6
 
   # The secret key base is used to sign/encrypt cookies and other secrets.

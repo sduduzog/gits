@@ -54,7 +54,7 @@ defmodule GitsWeb.EventLive do
     customer =
       socket.assigns.customer
       |> Ash.load!(
-        [scannable_instances: [:event_name, :ticket_name, :event_starts_at, :event_address]],
+        [scannable_instances: [:event_name, :ticket_name, :event_starts_at]],
         actor: socket.assigns.customer
       )
 
@@ -151,7 +151,7 @@ defmodule GitsWeb.EventLive do
       socket.assigns.event
       |> Ash.load!(
         [
-          :address,
+          :venue,
           :customer_has_tickets,
           :customer_reserved_instance_count,
           :customer_reserved_instance_total,

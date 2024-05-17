@@ -16,5 +16,4 @@ config :swoosh, local: false
 # Do not print debug messages in production
 config :logger, level: :info
 
-# Runtime production configuration, including reading
-# of environment variables, is done on config/runtime.exs.
+config :gits, Oban, engine: Oban.Engines.Basic, queues: [default: 1, mailers: 1], repo: Gits.Repo

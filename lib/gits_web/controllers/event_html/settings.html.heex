@@ -52,7 +52,7 @@
 
     <div class="rounded-2xl border p-4 lg:p-12">
       <div class="flex items-center justify-between">
-        <h2 class="font-poppins text-xl font-medium">Location</h2>
+        <h2 class="font-poppins text-xl font-medium">Venue</h2>
         <.link
           href={
             ~p"/accounts/#{@conn.params["account_id"]}/events/#{@conn.params["event_id"]}/address"
@@ -64,21 +64,29 @@
         </.link>
       </div>
 
-      <dl class="divide-y divide-gray-100">
-        <div class="py-6 sm:grid sm:grid-cols-3 sm:gap-4">
-          <dt class="text-sm font-medium text-gray-900">Address</dt>
-          <dd class="mt-1 grid flex-wrap gap-4 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0 sm:flex">
-            <%= if Map.has_key?(@event, :address) and Map.has_key?(@event.address, :name) do %>
+      <%= if Map.has_key?(@event, :venue) and not is_nil(@event.venue) do %>
+        <dl class="divide-y divide-gray-100">
+          <div class="py-6 sm:grid sm:grid-cols-3 sm:gap-4">
+            <dt class="text-sm font-medium text-gray-900">Name</dt>
+            <dd class="mt-1 grid flex-wrap gap-4 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0 sm:flex">
               <div class="grid">
-                <span><%= @event.address.name %></span>
-                <span><%= @event.address.address %></span>
+                <span><%= @event.venue.name %></span>
               </div>
-            <% else %>
-              <div>No address chosen</div>
-            <% end %>
-          </dd>
-        </div>
-      </dl>
+            </dd>
+          </div>
+
+          <div class="py-6 sm:grid sm:grid-cols-3 sm:gap-4">
+            <dt class="text-sm font-medium text-gray-900">Address</dt>
+            <dd class="mt-1 grid flex-wrap gap-4 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0 sm:flex">
+              <div class="grid">
+                <span><%= @event.venue.formatted_address %></span>
+              </div>
+            </dd>
+          </div>
+        </dl>
+      <% else %>
+        <div class="py-4">No address chosen</div>
+      <% end %>
     </div>
 
     <div class="rounded-2xl border p-4 lg:p-12">

@@ -26,8 +26,8 @@
       <div class="flex gap-6 p-2 px-3">
         <.icon name="hero-map-pin-mini" class="text-zinc-600 shrink-0" />
         <span class="line-clamp-2 px-1 text-sm text-zinc-500">
-          <%= if @event.address do %>
-            <%= @event.address.name %>, <%= @event.address.address %>
+          <%= if @event.venue do %>
+            <%= @event.venue.name %>, <%= @event.venue.formatted_address %>
           <% else %>
             Venue not confirmed
           <% end %>

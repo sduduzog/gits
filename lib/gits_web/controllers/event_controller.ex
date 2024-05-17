@@ -3,7 +3,6 @@ defmodule GitsWeb.EventController do
   require Ash.Query
   alias AshPhoenix.Form
   alias Gits.Dashboard.Account
-  alias Gits.Dashboard.Member
   alias Gits.Storefront.Event
   alias GitsWeb.UploadFeatureLive
   alias Phoenix.LiveView.Controller
@@ -14,17 +13,11 @@ defmodule GitsWeb.EventController do
     put_layout(conn, html: :dashboard)
   end
 
-  def index(conn, params) do
+  def index(conn, _params) do
     user = conn.assigns.current_user
 
-    member =
-      Member
-      |> Ash.Query.for_read(:read, %{}, actor: user)
-      |> Ash.Query.filter(account.id == ^params["account_id"])
-      |> Ash.read_one!()
-
     events =
-      Ash.Query.for_read(Event, :read, %{}, actor: member)
+      Ash.Query.for_read(Event, :read, %{}, actor: user)
       |> Ash.Query.sort(created_at: :desc)
       |> Ash.read!()
 
@@ -36,14 +29,8 @@ defmodule GitsWeb.EventController do
   def show(conn, params) do
     user = conn.assigns.current_user
 
-    member =
-      Member
-      |> Ash.Query.for_read(:read, %{}, actor: user)
-      |> Ash.Query.filter(account.id == ^params["account_id"])
-      |> Ash.read_one!()
-
     event =
-      Ash.Query.for_read(Event, :read, %{}, actor: member)
+      Ash.Query.for_read(Event, :read, %{}, actor: user)
       |> Ash.Query.filter(id: params["id"])
       |> Ash.Query.load(:masked_id)
       |> Ash.read_one!()
@@ -87,15 +74,10 @@ defmodule GitsWeb.EventController do
   def settings(conn, params) do
     user = conn.assigns.current_user
 
-    member =
-      Member
-      |> Ash.Query.for_read(:read, %{}, actor: user)
-      |> Ash.Query.filter(account.id == ^params["account_id"])
-      |> Ash.read_one!()
-
     event =
-      Ash.Query.for_read(Event, :read, %{}, actor: member)
+      Ash.Query.for_read(Event, :read, %{}, actor: user)
       |> Ash.Query.filter(id: params["event_id"])
+      |> Ash.Query.load(:venue)
       |> Ash.read_one!()
 
     unless event do
