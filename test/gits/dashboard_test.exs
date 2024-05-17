@@ -1,16 +1,16 @@
 defmodule Gits.DashboardTest do
+  alias Ecto.Adapters.SQL.Sandbox
   alias Gits.Dashboard
   alias Gits.Dashboard.Venue
   alias Gits.Dashboard.Venue.DetailedGoogleAddress
   alias Gits.Dashboard.Venue.GoogleAddress
-  # use PowerAssert
   use ExUnit.Case, async: true
   use ExUnitProperties
 
   import Mock
 
   setup_with_mocks([{Cachex, [], [fetch: fn _, key, callback -> callback.(key) end]}]) do
-    :ok
+    :ok = Sandbox.checkout(Gits.Repo)
   end
 
   describe "search_for_address" do

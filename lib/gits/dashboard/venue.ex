@@ -32,13 +32,22 @@ defmodule Gits.Dashboard.Venue do
     create :create do
       accept [:*]
 
+      upsert? true
+      upsert_identity :google_place_id
+
       argument :event, :map
+
+      change manage_relationship(:event, :events, type: :append)
     end
   end
 
   postgres do
     table "venues"
     repo Gits.Repo
+  end
+
+  identities do
+    identity :google_place_id, :place_id
   end
 
   policies do
