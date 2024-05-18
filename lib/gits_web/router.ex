@@ -68,6 +68,7 @@ defmodule GitsWeb.Router do
       live "/accounts/:account_id/events/:event_id/address", EventAddressLive
       live "/attendees/scanner/:account_id/:event_id", ScanAttendeeLive
       live "/accounts/:account_id/next", DashboardLive.Overview
+      live "/accounts/:account_id/next/settings", DashboardLive.Settings
     end
 
     ash_authentication_live_session :authentication_forbidden,
@@ -85,11 +86,6 @@ defmodule GitsWeb.Router do
     get "/bucket/*keys", PageController, :bucket
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", GitsWeb do
-  #   pipe_through :api
-  # end
-
   scope "/office" do
     pipe_through [:browser, :office]
 
@@ -98,20 +94,9 @@ defmodule GitsWeb.Router do
       additional_pages: [oban: Oban.LiveDashboard]
   end
 
-  # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:gits, :dev_routes) do
-    # If you want to use the LiveDashboard in production, you should put
-    # it behind authentication and allow only admins to access it.
-    # If your application does not have an admins-only section yet,
-    # you can use Plug.BasicAuth to set up some basic authentication
-    # as long as you are also using SSL (which you should anyway).
-
     scope "/dev" do
       pipe_through :browser
-
-      # live_dashboard "/dashboard",
-      #   metrics: GitsWeb.Telemetry,
-      #   additional_pages: [oban: Oban.LiveDashboard]
 
       forward "/mailbox", Plug.Swoosh.MailboxPreview
 
