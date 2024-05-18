@@ -36,16 +36,16 @@ defmodule GitsWeb.DashboardComponents do
         to={@base <> "/events"}
       />
       <.sidebar_item
-        label="Billing & Payouts"
+        label="Team"
         icon="hero-rectangle-group-mini"
         request_path={@request_path}
         to={@base <> "/team"}
       />
       <.sidebar_item
-        label="Team"
+        label="Next"
         icon="hero-rectangle-group-mini"
         request_path={@request_path}
-        to={@base <> "/team"}
+        to={@base <> "/next"}
       />
     </.sidebar>
     """

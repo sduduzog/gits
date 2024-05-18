@@ -40,8 +40,6 @@ defmodule GitsWeb.Router do
       resources "/invites", TeamInviteController do
         post "/resend", TeamInviteController, :resend_invite
       end
-
-      get "/next", AccountController, :next
     end
   end
 
@@ -69,6 +67,7 @@ defmodule GitsWeb.Router do
       on_mount: {GitsWeb.LiveUserAuth, :live_user_required} do
       live "/accounts/:account_id/events/:event_id/address", EventAddressLive
       live "/attendees/scanner/:account_id/:event_id", ScanAttendeeLive
+      live "/accounts/:account_id/next", DashboardLive.Overview
     end
 
     ash_authentication_live_session :authentication_forbidden,
