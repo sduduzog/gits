@@ -8,8 +8,8 @@
     path: "/accounts/#{@slug}"
   }
 ] %>
-<div class="min-h-dvh flex w-full flex-col space-y-2 bg-zinc-50 p-2">
-  <div class="flex items-center gap-4 px-2">
+<div class="min-h-dvh flex w-full flex-col gap-2 bg-zinc-50 p-2 2xl:gap-4 2xl:p-4">
+  <div class="flex items-center gap-4">
     <div>
       <span class="text-2xl font-black italic">GiTS</span>
     </div>
@@ -17,7 +17,7 @@
       <button
         id="account_selector"
         phx-click={
-          JS.toggle_class("absolute z-40")
+          JS.toggle_class("z-40")
           |> JS.toggle(
             to: "#account_selector_backdrop",
             in: {"transition-all transform ease-out duration-300", "opacity-0", "opacity-100"},
@@ -54,7 +54,7 @@
           <span><%= n.label %></span>
         </.link>
       </div>
-      <div class="hidden gap-2 lg:flex">
+      <div class="hidden gap-2 lg:flex 2xl:pr-2">
         <.link
           navigate={"/accounts/#{@slug}/next/settings"}
           class={[
@@ -75,7 +75,7 @@
         <span class="hidden pr-1.5 font-medium sm:inline-flex">Create</span>
       </button>
 
-      <div class="relative">
+      <div class="relative sm:hidden">
         <button
           class="flex items-center gap-2 rounded-xl p-1.5 px-2 text-sm text-zinc-600 lg:hidden"
           phx-click={
@@ -113,7 +113,7 @@
                      "translate-y-0 tranlate-x-0 scale-100 opacity-100",
                      "-translate-y-10 translate-x-6 scale-75 opacity-0"}
                 )
-                |> JS.navigate("/accounts/#{@slug}/settings")
+                |> JS.navigate("/accounts/#{@slug}/next/settings")
               }
             >
               <.icon name="hero-cog-6-tooth" />
@@ -140,7 +140,9 @@
     </div>
   </div>
 
-  <div class="grow space-y-8 rounded-lg bg-white p-4 py-16 shadow lg:p-16"></div>
+  <div class="mx-auto w-full max-w-screen-2xl grow space-y-8 rounded-lg bg-white p-4 py-20 shadow md:px-8">
+    <%= @inner_content %>
+  </div>
 </div>
 
 <div
