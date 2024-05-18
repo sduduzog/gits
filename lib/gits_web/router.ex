@@ -69,6 +69,7 @@ defmodule GitsWeb.Router do
       live "/attendees/scanner/:account_id/:event_id", ScanAttendeeLive
       live "/accounts/:slug/next", DashboardLive.Overview
       live "/accounts/:slug/next/events", DashboardLive.Events
+      live "/accounts/:slug/next/team", DashboardLive.Team
       live "/accounts/:slug/next/settings", DashboardLive.Settings
     end
 
