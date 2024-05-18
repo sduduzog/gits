@@ -60,7 +60,23 @@
   <div class="grow space-y-8 rounded-lg bg-white p-4 py-16 shadow lg:p-16"></div>
 </div>
 
-<div id="account_selector_backdrop" class="bg-black/10 fixed inset-0 z-30" style="display: none">
+<div
+  phx-click={
+    JS.hide(
+      to: "#account_selector_backdrop",
+      transition: {"transition-all transform ease-out duration-300", "opacity-100", "opacity-0"}
+    )
+    |> JS.hide(
+      to: "#account_selector_dropdown",
+      transition:
+        {"transition-all transform ease-out duration-150", "translate-y-0 scale-100 opacity-100",
+         "-translate-y-8 scale-90 opacity-0"}
+    )
+  }
+  id="account_selector_backdrop"
+  class="bg-black/10 fixed inset-0 z-30"
+  style="display: none"
+>
 </div>
 <div
   id="account_selector_dropdown"
