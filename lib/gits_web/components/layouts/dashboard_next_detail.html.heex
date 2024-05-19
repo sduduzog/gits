@@ -1,10 +1,3 @@
-<% navigation = [
-  %{
-    label: "Sign out",
-    icon: "hero-arrow-left-start-on-rectangle-mini",
-    path: "/accounts/#{@slug}"
-  }
-] %>
 <div class="h-dvh grid-rows-[auto_1fr] grid w-full flex-col gap-2 divide-y overflow-auto p-2 2xl:gap-4 2xl:p-4">
   <div class="flex items-center gap-4 divide-x">
     <div>
@@ -12,7 +5,7 @@
     </div>
     <div class="flex grow items-center gap-4 pl-4">
       <h2 class="grow text-lg font-semibold text-zinc-800"><%= @title %></h2>
-      <.link>
+      <.link class="p-1.5 flex">
         <.icon name="hero-question-mark-circle" />
         <span class="hidden sm:inline">Do you need help?</span>
       </.link>
@@ -21,5 +14,9 @@
       <!-- </button> -->
     </div>
   </div>
-  <div class="flex flex-col items-center justify-center">foo</div>
+  <div class="flex flex-col items-center justify-center p-2">
+    <div class="w-full max-w-screen-md space-y-8 py-8">
+      <%= @inner_content %>
+    </div>
+  </div>
 </div>

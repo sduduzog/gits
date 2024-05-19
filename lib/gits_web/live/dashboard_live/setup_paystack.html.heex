@@ -1,1 +1,35 @@
-<h1 class="text-4xl font-semibold">Do paystack stuff</h1>
+<!-- <h1 class="text-4xl font-semibold"><%= @title %></h1> -->
+<div class="grid max-w-3xl grid-cols-2 gap-4 text-sm">
+  <div class="col-span-full flex justify-between text-zinc-600">
+    <span>Name</span>
+    <span></span>
+  </div>
+
+  <label
+    :for={type <- [%{label: "Foo", value: "personal"}, %{label: "Bar", value: "business"}]}
+    class="grid max-w-3xl gap-2 rounded-md border p-4 has-[:checked]:border-zinc-500"
+  >
+    <span><%= type.label %></span>
+    <input name="account_type" type="radio" class="sr-only" value={type.value} />
+  </label>
+  <span>Pack</span>
+</div>
+
+<label class="grid max-w-3xl gap-2 text-sm">
+  <div class="flex justify-between text-zinc-600">
+    <span>Name</span>
+    <span></span>
+  </div>
+  <input
+    class="rounded-md border-zinc-200 p-4 text-sm outline-none focus:border-zinc-600 focus:outline-none focus:ring-zinc-600"
+    type="text"
+    value="Flu"
+  />
+  <span>Pack</span>
+</label>
+
+<div class="flex gap-6">
+  <.link class="font-medium" navigate={~p"/accounts/#{@slug}/next/settings"} replace>
+    Cancel
+  </.link>
+</div>
