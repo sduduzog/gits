@@ -72,6 +72,7 @@ defmodule GitsWeb.Router do
       live "/accounts/:slug/next/events/:event_id", DashboardLive.EventDetails
       live "/accounts/:slug/next/team", DashboardLive.Team
       live "/accounts/:slug/next/settings", DashboardLive.Settings
+      live "/accounts/:slug/next/settings/paystack", DashboardLive.SetupPaystack
     end
 
     ash_authentication_live_session :authentication_forbidden,

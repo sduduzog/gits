@@ -8,8 +8,52 @@
     path: "/accounts/#{@slug}"
   }
 ] %>
-<div class="min-h-dvh flex w-full flex-col gap-2 bg-zinc-50 p-2 2xl:gap-4 2xl:p-4">
-  <div class="flex items-center gap-4">
+<div
+  phx-click={
+    JS.remove_class("absolute z-40", to: "#account_selector")
+    |> JS.hide(
+      to: "#account_selector_backdrop",
+      transition: {"transition-all transform ease-out duration-300", "opacity-100", "opacity-0"}
+    )
+    |> JS.hide(
+      to: "#account_selector_dropdown",
+      transition:
+        {"transition-all transform ease-out duration-150", "translate-y-0 scale-100 opacity-100",
+         "-translate-y-8 scale-90 opacity-0"}
+    )
+  }
+  id="account_selector_backdrop"
+  class="bg-black/10 fixed inset-0 z-30"
+  style="display: none"
+>
+</div>
+<div
+  id="account_selector_dropdown"
+  class="fixed inset-x-2 top-12 z-40 grid gap-1 rounded-xl bg-white p-1 shadow-md sm:max-w-80 sm:w-full 2xl:top-16"
+  style="display: none"
+>
+  <div
+    phx-click={
+      JS.remove_class("absolute z-40", to: "#account_selector")
+      |> JS.hide(
+        to: "#account_selector_backdrop",
+        transition: {"transition-all transform ease-out duration-300", "opacity-100", "opacity-0"}
+      )
+      |> JS.hide(
+        to: "#account_selector_dropdown",
+        transition:
+          {"transition-all transform ease-out duration-150",
+           "translate-y-0 scale-100 opacity-100", "-translate-y-8 scale-90 opacity-0"}
+      )
+    }
+    class="rounded-md p-3 px-4 text-sm font-medium hover:bg-zinc-50"
+  >
+    Treehouse Inc
+  </div>
+</div>
+
+<div class="h-dvh flex w-full flex-col gap-2 overflow-auto bg-zinc-50 p-2 2xl:gap-4 2xl:p-4">
+  <div class="sticky top-0 flex items-center gap-4" id="header">
     <div>
       <span class="text-2xl font-black italic">GiTS</span>
     </div>
@@ -17,7 +61,7 @@
       <button
         id="account_selector"
         phx-click={
-          JS.toggle_class("z-40")
+          JS.toggle_class("bg-white z-40")
           |> JS.toggle(
             to: "#account_selector_backdrop",
             in: {"transition-all transform ease-out duration-300", "opacity-0", "opacity-100"},
@@ -54,14 +98,14 @@
           <span><%= n.label %></span>
         </.link>
       </div>
-      <div class="hidden gap-2 lg:flex 2xl:pr-2">
+      <div class="hidden gap-2 lg:flex 2xl:pr-6">
         <.link
           navigate={"/accounts/#{@slug}/next/settings"}
           class={[
             "flex items-center gap-2 border rounded-xl p-1.5 text-sm",
             if(@title == "Settings",
               do: "border-zinc-300 bg-white text-zinc-800",
-              else: "bg-zinc-100 border-zinc-50 text-zinc-500"
+              else: "bg-zinc-50 border-zinc-50 text-zinc-500"
             )
           ]}
         >
@@ -79,7 +123,8 @@
         <button
           class="flex items-center gap-2 rounded-xl p-1.5 px-2 text-sm text-zinc-600 lg:hidden"
           phx-click={
-            JS.show(
+            JS.add_class("z-20", to: "#header")
+            |> JS.show(
               to: "#menu_dropdown",
               transition:
                 {"transition-all transform ease-out duration-150",
@@ -91,14 +136,15 @@
         </button>
         <div
           phx-click-away={
-            JS.hide(
+            JS.remove_class("z-20", to: "#header")
+            |> JS.hide(
               to: "#menu_dropdown",
               transition:
                 {"transition-all transform ease-out duration-150", "",
                  "-translate-y-10 translate-x-6 scale-75 opacity-0"}
             )
           }
-          class="absolute top-10 right-0 space-y-1 rounded-lg border bg-white p-1 shadow-md"
+          class="absolute top-10 right-0 z-50 space-y-1 rounded-lg border bg-white p-1 shadow-md"
           id="menu_dropdown"
           style="display: none"
         >
@@ -106,7 +152,8 @@
             <button
               class="flex items-center gap-2 rounded-xl p-1 text-sm text-zinc-600 hover:bg-zinc-50"
               phx-click={
-                JS.hide(
+                JS.remove_class("z-20", to: "#header")
+                |> JS.hide(
                   to: "#menu_dropdown",
                   transition:
                     {"transition-all transform ease-out duration-150",
@@ -122,7 +169,8 @@
           <button
             :for={n <- navigation}
             phx-click={
-              JS.hide(
+              JS.remove_class("z-20", to: "#header")
+              |> JS.hide(
                 to: "#menu_dropdown",
                 transition:
                   {"transition-all transform ease-out duration-150",
@@ -140,51 +188,7 @@
     </div>
   </div>
 
-  <div class="mx-auto w-full max-w-screen-2xl grow space-y-8 rounded-lg bg-white p-4 py-20 shadow md:px-8">
+  <div class="z-10 mx-auto w-full max-w-screen-2xl grow space-y-10 rounded-lg bg-white p-4 py-20 shadow md:space-y-16 md:px-8">
     <%= @inner_content %>
-  </div>
-</div>
-
-<div
-  phx-click={
-    JS.remove_class("absolute z-40", to: "#account_selector")
-    |> JS.hide(
-      to: "#account_selector_backdrop",
-      transition: {"transition-all transform ease-out duration-300", "opacity-100", "opacity-0"}
-    )
-    |> JS.hide(
-      to: "#account_selector_dropdown",
-      transition:
-        {"transition-all transform ease-out duration-150", "translate-y-0 scale-100 opacity-100",
-         "-translate-y-8 scale-90 opacity-0"}
-    )
-  }
-  id="account_selector_backdrop"
-  class="bg-black/10 fixed inset-0 z-30"
-  style="display: none"
->
-</div>
-<div
-  id="account_selector_dropdown"
-  class="max-w-64 fixed top-12 left-24 z-40 grid w-full gap-1 rounded-xl bg-white p-1 shadow-md"
-  style="display: none"
->
-  <div
-    phx-click={
-      JS.remove_class("absolute z-40", to: "#account_selector")
-      |> JS.hide(
-        to: "#account_selector_backdrop",
-        transition: {"transition-all transform ease-out duration-300", "opacity-100", "opacity-0"}
-      )
-      |> JS.hide(
-        to: "#account_selector_dropdown",
-        transition:
-          {"transition-all transform ease-out duration-150",
-           "translate-y-0 scale-100 opacity-100", "-translate-y-8 scale-90 opacity-0"}
-      )
-    }
-    class="rounded-md p-3 px-4 text-sm font-medium hover:bg-zinc-50"
-  >
-    Treehouse Inc
   </div>
 </div>

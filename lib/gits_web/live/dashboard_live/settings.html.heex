@@ -1,17 +1,45 @@
 <h1 class="text-4xl font-semibold">Settings</h1>
-<div class="space-y-8 rounded-lg py-4 lg:py-8">
-  <h2 class="text-xl font-medium">Billing & Payouts</h2>
-  <div class="grid gap-4 md:grid-cols-2">
-    <span class="col-span-full font-medium">Select default payment provider</span>
-    <label
-      :for={provider <- ["Paystack", "Payfast"]}
-      class="rounded border p-4 text-sm has-[:checked]:border-zinc-800 md:rounded-md"
-    >
-      <span><%= provider %></span>
-      <input type="radio" name="payment-provider" class="peer sr-only" value={provider} />
+<div class="space-y-8 rounded-lg">
+  <h2 class="text-2xl font-medium">General</h2>
+  <div class="grid gap-4">
+    <h3 class="col-span-full text-lg font-medium">Account information</h3>
+    <label class="grid max-w-3xl gap-2 text-sm">
+      <div class="flex justify-between text-zinc-600">
+        <span>Name</span>
+        <span></span>
+      </div>
+      <input
+        class="rounded-md border-zinc-200 p-4 text-sm outline-none focus:border-zinc-600 focus:outline-none focus:ring-zinc-600"
+        type="text"
+        value="Hello"
+      />
+      <span></span>
     </label>
   </div>
   <div>
     <.link class="col-span-full text-sm font-medium">Setup paystack</.link>
+  </div>
+</div>
+
+<div class="space-y-8 rounded-lg">
+  <h2 class="text-2xl font-medium">Billing & Payouts</h2>
+  <div class="grid gap-4 md:grid-cols-2">
+    <h3 class="col-span-full text-lg font-medium">Select default payment provider</h3>
+    <label
+      :for={provider <- ["Paystack", "Payfast"]}
+      class="flex items-center justify-between rounded border p-4 text-sm has-[:checked]:bg-zinc-100/50 has-[:checked]:border-zinc-800 md:rounded-md"
+    >
+      <span><%= provider %></span>
+      <input type="radio" name="payment-provider" class="peer sr-only" value={provider} />
+      <.icon name="hero-check-circle-mini" class="peer-checked:inline-flex hidden" />
+    </label>
+  </div>
+  <div>
+    <.link
+      navigate={~p"/accounts/#{@slug}/next/settings/paystack"}
+      class="col-span-full text-sm font-medium"
+    >
+      Setup paystack
+    </.link>
   </div>
 </div>
