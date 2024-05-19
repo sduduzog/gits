@@ -206,11 +206,9 @@ defmodule GitsWeb.CoreComponents do
   def simple_form(assigns) do
     ~H"""
     <.form :let={f} for={@for} as={@as} {@rest}>
-      <div class="mt-10 space-y-8 bg-white">
-        <%= render_slot(@inner_block, f) %>
-        <div :for={action <- @actions} class="mt-2 flex items-center justify-between gap-6">
-          <%= render_slot(action, f) %>
-        </div>
+      <%= render_slot(@inner_block, f) %>
+      <div :for={action <- @actions} class="mt-2 flex items-center justify-between gap-6">
+        <%= render_slot(action, f) %>
       </div>
     </.form>
     """
@@ -404,6 +402,40 @@ defmodule GitsWeb.CoreComponents do
     <label for={@for} class="block text-sm font-semibold leading-6 text-zinc-800">
       <%= render_slot(@inner_block) %>
     </label>
+    """
+  end
+
+  attr :field, Phoenix.HTML.FormField, required: true
+  attr :label, :string
+
+  slot :radio, required: true do
+    attr :value, :string, required: true
+  end
+
+  def radio_group(assigns) do
+    ~H"""
+    <div class="grid max-w-3xl grid-cols-2 gap-4 text-sm">
+      <div class="col-span-full flex justify-between text-zinc-600">
+        <span><%= @label %></span>
+        <span></span>
+      </div>
+
+      <label
+        :for={{%{value: value} = rad, idx} <- Enum.with_index(@radio)}
+        for={"#{@field.id}-#{idx}"}
+        class="grid max-w-3xl gap-2 rounded-md border p-4 has-[:checked]:border-zinc-500"
+      >
+        <%= render_slot(rad) %>
+        <input
+          name={@field.name}
+          id={"#{@field.id}-#{idx}"}
+          type="radio"
+          class="sr-only"
+          value={value}
+        />
+      </label>
+      <span class="col-span-full">Pack</span>
+    </div>
     """
   end
 

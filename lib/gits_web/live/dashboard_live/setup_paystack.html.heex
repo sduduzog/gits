@@ -1,32 +1,47 @@
 <!-- <h1 class="text-4xl font-semibold"><%= @title %></h1> -->
-<div class="grid max-w-3xl grid-cols-2 gap-4 text-sm">
-  <div class="col-span-full flex justify-between text-zinc-600">
-    <span>Name</span>
+<.simple_form for={%{}} class="grid grid-cols-2 gap-8">
+  <label class="col-span-full grid max-w-3xl gap-2 text-sm">
+    <div class="flex w-full justify-between text-zinc-600">
+      <span>Business name</span>
+      <span></span>
+    </div>
+    <input
+      class="w-full rounded-md border-zinc-200 p-4 text-sm outline-none focus:border-zinc-600 focus:outline-none focus:ring-zinc-600"
+      type="text"
+      value="Flu"
+    />
     <span></span>
-  </div>
-
-  <label
-    :for={type <- [%{label: "Foo", value: "personal"}, %{label: "Bar", value: "business"}]}
-    class="grid max-w-3xl gap-2 rounded-md border p-4 has-[:checked]:border-zinc-500"
-  >
-    <span><%= type.label %></span>
-    <input name="account_type" type="radio" class="sr-only" value={type.value} />
   </label>
-  <span>Pack</span>
-</div>
 
-<label class="grid max-w-3xl gap-2 text-sm">
-  <div class="flex justify-between text-zinc-600">
-    <span>Name</span>
+  <label class="grid max-w-3xl gap-2 text-sm">
+    <div class="flex justify-between text-zinc-600">
+      <span>Bank</span>
+      <span></span>
+    </div>
+    <!-- <input -->
+    <!--   class="rounded-md border-zinc-200 p-4 text-sm outline-none focus:border-zinc-600 focus:outline-none focus:ring-zinc-600" -->
+    <!--   type="text" -->
+    <!--   value="Flu" -->
+    <!-- /> -->
+    <select class="w-full rounded-md border-zinc-200 p-4 text-sm outline-none focus:border-zinc-600 focus:outline-none focus:ring-zinc-600">
+      <%= Phoenix.HTML.Form.options_for_select(["Foo", "Bar", "Baz"], "") %>
+    </select>
+
     <span></span>
-  </div>
-  <input
-    class="rounded-md border-zinc-200 p-4 text-sm outline-none focus:border-zinc-600 focus:outline-none focus:ring-zinc-600"
-    type="text"
-    value="Flu"
-  />
-  <span>Pack</span>
-</label>
+  </label>
+
+  <label class="grid max-w-3xl gap-2 text-sm">
+    <div class="flex justify-between text-zinc-600">
+      <span>Account number</span>
+      <span></span>
+    </div>
+    <input
+      class="w-full rounded-md border-zinc-200 p-4 text-sm outline-none focus:border-zinc-600 focus:outline-none focus:ring-zinc-600"
+      type="text"
+    />
+    <span></span>
+  </label>
+</.simple_form>
 
 <div class="flex gap-6">
   <.link class="font-medium" navigate={~p"/accounts/#{@slug}/next/settings"} replace>
