@@ -36,31 +36,23 @@ source!(["#{config_dir_prefix}.env", System.get_env()])
 
 config :gits, :google_api_options,
   base_url: "https://places.googleapis.com",
-  headers: ["X-Goog-Api-Key": env!("GOOGLE_MAPS_API_KEY", :string)]
+  headers: ["X-Goog-Api-Key": env!("GOOGLE_MAPS_API_KEY")]
 
-config :gits, :paystack_api_options, base_url: "", auth: {:bearer, env!("PAYSTACK_SECRET_KEY")}
+config :gits, :paystack_api_options,
+  base_url: "",
+  auth: {:bearer, env!("PAYSTACK_SECRET_KEY")}
 
 config :ex_aws,
-  access_key_id: env!("AWS_ACCESS_KEY_ID", :string),
-  secret_access_key: env!("AWS_SECRET_ACCESS_KEY", :string),
-  region: env!("AWS_REGION", :string)
+  access_key_id: env!("AWS_ACCESS_KEY_ID"),
+  secret_access_key: env!("AWS_SECRET_ACCESS_KEY"),
+  region: env!("AWS_REGION")
 
 config :ex_aws, :s3,
-  scheme: env!("AWS_S3_SCHEME", :string),
-  host: env!("AWS_S3_HOST", :string),
+  scheme: env!("AWS_S3_SCHEME"),
+  host: env!("AWS_S3_HOST"),
   port: env!("AWS_S3_PORT", :integer)
 
 config :gits, :bucket_name, env!("BUCKET_NAME")
-
-config :ex_aws,
-  access_key_id: env!("AWS_ACCESS_KEY_ID", :string),
-  secret_access_key: env!("AWS_SECRET_ACCESS_KEY", :string),
-  region: env!("AWS_REGION", :string)
-
-config :ex_aws, :s3,
-  scheme: env!("AWS_S3_SCHEME", :string),
-  host: env!("AWS_S3_HOST", :string),
-  port: env!("AWS_S3_PORT", :integer)
 
 if config_env() == :prod do
   database_url =
