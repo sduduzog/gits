@@ -339,7 +339,7 @@ defmodule GitsWeb.CoreComponents do
       <select
         id={@id}
         name={@name}
-        class="w-full rounded-md border-zinc-300 p-4 text-sm outline-none focus:border-zinc-500 focus:outline-none focus:ring-zinc-500"
+        class="w-full rounded-md border-zinc-300 p-4 text-sm outline-none focus:border-transparent focus:outline-none focus:ring-zinc-500"
         multiple={@multiple}
         {@rest}
       >
@@ -380,8 +380,12 @@ defmodule GitsWeb.CoreComponents do
         <span></span>
       </div>
       <input
-        class="w-full rounded-md border-zinc-300 p-4 text-sm outline-none focus:border-zinc-500 focus:outline-none focus:ring-zinc-500"
-        type="text"
+        class="w-full rounded-md border-zinc-300 p-4 text-sm outline-none focus:border-transparent focus:outline-none focus:ring-zinc-500"
+        type={@type}
+        name={@name}
+        id={@id}
+        value={Phoenix.HTML.Form.normalize_value(@type, @value)}
+        {@rest}
       />
       <.error :for={msg <- @errors}><%= @label <> " " <> msg %></.error>
       <span></span>
