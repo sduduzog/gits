@@ -87,6 +87,11 @@ defmodule GitsWeb.Router do
     end
   end
 
+  scope "/my", GitsWeb do
+    pipe_through :browser
+    get "/events", UserController, :events
+  end
+
   scope "/office" do
     pipe_through [:browser, :office]
 

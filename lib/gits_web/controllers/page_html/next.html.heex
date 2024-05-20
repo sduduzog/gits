@@ -1,4 +1,4 @@
-<div class="h-dvh relative overflow-auto bg-slate-100">
+<div class="h-dvh relative overflow-auto bg-slate-100 dark:bg-zinc-900">
   <div class="size-72 absolute top-0 left-4 animate-pulse rounded-full bg-purple-300 opacity-50 mix-blend-multiply blur-3xl lg:size-96">
   </div>
   <div class="size-40 absolute top-0 right-12 animate-pulse rounded-full bg-yellow-300 opacity-50 mix-blend-multiply blur-3xl md:size-52 md:right-64 xl:size-80 xl:top-40 2xl:right-96 2xl:-translate-x-64">
@@ -8,39 +8,39 @@
 
   <div class="grid-cols-[1fr_minmax(min-content,max-content)_1fr] absolute inset-x-0 top-0 grid gap-4 p-2">
     <div class="justify-self-stretch">
-      <span class="text-2xl font-black italic">GiTS</span>
+      <span class="text-2xl font-black italic text-white">GiTS</span>
     </div>
     <div class="w-full max-w-screen-2xl"></div>
     <div class=""></div>
   </div>
 
   <div class="h-[calc(100dvh-theme(space.24))] relative sticky top-0 flex flex-col justify-center gap-8 overflow-hidden p-4 md:h-[calc(100dvh-theme(space.40))] md:p-16">
-    <h1 class="text-5xl font-medium leading-tight md:text-6xl">
+    <h1 class="text-5xl font-medium leading-tight dark:text-white md:text-6xl">
       Unlock Unforgettable Experiences
     </h1>
-    <p class="max-w-xl text-xl text-zinc-600">
+    <p class="max-w-xl text-xl text-zinc-600 dark:text-zinc-300">
       We offer better security, faster check-in, and lower costs, ensureing more  profit for you. Whether it’s concerts, conferences, festivals, or sports events, we’ve got you covered.
     </p>
     <div class="flex items-center gap-8 font-medium">
-      <!-- <.link class="border-2 rounded-lg border-zinc-600 p-2 px-4 hover:underline"> -->
-      <!--   Get started -->
-      <!-- </.link> -->
-      <!-- <.link class="hover:underline"> -->
-      <!--   Why choose <span class="font-black italic text-zinc-700">GiTS</span>? -->
-      <!-- </.link> -->
+      <.link class="border-2 rounded-lg border-zinc-600 dark:border-zinc-300 dark:text-zinc-100 p-2 px-4 hover:underline">
+        Get started
+      </.link>
+      <.link class="hover:underline dark:text-zinc-100">
+        Why choose <span class="font-black italic text-zinc-700 dark:text-zinc-200">GiTS</span>?
+      </.link>
     </div>
   </div>
 
   <div class="top-[calc(100svh-theme(space.28))] absolute inset-0 px-2 md:top-[calc(100dvh-theme(space.52))]">
-    <div class="mx-auto w-full max-w-screen-2xl rounded-lg bg-white p-4 shadow md:p-12">
+    <div class="mx-auto w-full max-w-screen-2xl rounded-lg bg-white p-4 shadow dark:bg-zinc-800 md:p-12">
       <div class="mx-auto flex max-w-screen-md items-center gap-2">
         <input
           type="search"
-          class="w-full rounded-md border-none bg-zinc-50 p-4 text-sm outline-none ring-1 ring-zinc-200 focus-visible:ring-zinc-400"
+          class="w-full rounded-md border-none bg-zinc-50 p-4 text-sm outline-none ring-1 ring-zinc-200 focus-visible:ring-zinc-400 dark:bg-zinc-700 dark:ring-zinc-600"
           placeholder="Search for an event, city, etc"
         />
-        <button class="flex rounded-lg p-3.5 outline-none hover:ring-1 hover:ring-zinc-200 focus-visible:ring-1 focus-visible:ring-zinc-400">
-          <.icon name="hero-magnifying-glass" />
+        <button class="flex rounded-lg p-3.5 outline-none hover:ring-1 hover:ring-zinc-200 focus-visible:ring-1 focus-visible:ring-zinc-400 dark:hover:ring-zinc-700">
+          <.icon name="hero-magnifying-glass" class="text-zinc-400" />
         </button>
       </div>
     </div>
