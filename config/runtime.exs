@@ -39,7 +39,7 @@ config :gits, :google_api_options,
   headers: ["X-Goog-Api-Key": env!("GOOGLE_MAPS_API_KEY")]
 
 config :gits, :paystack_api_options,
-  base_url: "",
+  base_url: "https://api.paystack.co",
   auth: {:bearer, env!("PAYSTACK_SECRET_KEY")}
 
 config :ex_aws,

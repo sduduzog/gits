@@ -17,6 +17,13 @@ defmodule GitsWeb.PageController do
     |> render(:home)
   end
 
+  def next(conn, _) do
+    conn
+    |> assign(:slug, "/next")
+    |> assign(:title, "/next")
+    |> render(:next, layout: false)
+  end
+
   def organizers(conn, _) do
     member =
       if conn.assigns.current_user do

@@ -24,7 +24,19 @@ defmodule GitsWeb.Router do
   end
 
   scope "/", GitsWeb do
-    pipe_through [:browser]
+    pipe_through :browser
+
+    sign_out_route AuthController
+    auth_routes_for Gits.Auth.User, to: AuthController
+
+    get "/", PageController, :home
+    get "/next", PageController, :next
+    get "/tickets", PageController, :tickets
+    get "/organizers", PageController, :organizers
+    get "/search", PageController, :search
+    get "/join-waitlist", PageController, :join_wailtist
+    get "/faq", PageController, :faq
+    get "/healthz", PageController, :healthz
 
     resources "/accounts", AccountController do
       resources "/events", EventController do
@@ -41,21 +53,15 @@ defmodule GitsWeb.Router do
         post "/resend", TeamInviteController, :resend_invite
       end
     end
-  end
 
-  scope "/", GitsWeb do
-    pipe_through :browser
-
+    get "/sign-in", AuthController, :sign_in
+    get "/register", AuthController, :register
+    get "/forgot-password", AuthController, :forgot_password
+    get "/resend-verification", AuthController, :resend_verification_email
     sign_out_route AuthController
     auth_routes_for Gits.Auth.User, to: AuthController
 
-    get "/", PageController, :home
-    get "/tickets", PageController, :tickets
-    get "/organizers", PageController, :organizers
-    get "/search", PageController, :search
-    get "/join-waitlist", PageController, :join_wailtist
-    get "/faq", PageController, :faq
-    get "/healthz", PageController, :healthz
+    get "/bucket/*keys", PageController, :bucket
 
     ash_authentication_live_session :authentication_optional,
       on_mount: {GitsWeb.LiveUserAuth, :live_user_optional} do
@@ -79,15 +85,6 @@ defmodule GitsWeb.Router do
       on_mount: {GitsWeb.LiveUserAuth, :live_no_user} do
       live "/password-reset/:token", AuthLive.PasswordReset
     end
-
-    get "/sign-in", AuthController, :sign_in
-    get "/register", AuthController, :register
-    get "/forgot-password", AuthController, :forgot_password
-    get "/resend-verification", AuthController, :resend_verification_email
-    sign_out_route AuthController
-    auth_routes_for Gits.Auth.User, to: AuthController
-
-    get "/bucket/*keys", PageController, :bucket
   end
 
   scope "/office" do

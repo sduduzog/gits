@@ -1,4 +1,5 @@
 defmodule GitsWeb.DashboardLive.SetupPaystack do
+  alias Gits.PaystackApi
   alias Gits.Dashboard.Account
   use GitsWeb, :live_view
 
@@ -13,5 +14,12 @@ defmodule GitsWeb.DashboardLive.SetupPaystack do
       |> assign(:rad, nil)
 
     {:ok, socket, layout: {GitsWeb.Layouts, :dashboard_next_detail}}
+  end
+
+  def handle_params(_unsigned_params, _uri, socket) do
+    PaystackApi.list_banks()
+    |> IO.inspect()
+
+    {:noreply, socket}
   end
 end
