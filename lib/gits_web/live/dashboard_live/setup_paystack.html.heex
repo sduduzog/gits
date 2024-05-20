@@ -1,46 +1,9 @@
 <!-- <h1 class="text-4xl font-semibold"><%= @title %></h1> -->
-<.simple_form for={%{}} class="grid grid-cols-2 gap-8">
-  <label class="col-span-full grid max-w-3xl gap-2 text-sm">
-    <div class="flex w-full justify-between text-zinc-600">
-      <span>Business name</span>
-      <span></span>
-    </div>
-    <input
-      class="w-full rounded-md border-zinc-200 p-4 text-sm outline-none focus:border-zinc-600 focus:outline-none focus:ring-zinc-600"
-      type="text"
-      value="Flu"
-    />
-    <span></span>
-  </label>
+<.simple_form :let={f} for={%{}} class="grid grid-cols-2 gap-8 items-start">
+  <.input type="text" label="Business name" field={f[:business_name]} class="col-span-full" />
 
-  <label class="grid max-w-3xl gap-2 text-sm">
-    <div class="flex justify-between text-zinc-600">
-      <span>Bank</span>
-      <span></span>
-    </div>
-    <!-- <input -->
-    <!--   class="rounded-md border-zinc-200 p-4 text-sm outline-none focus:border-zinc-600 focus:outline-none focus:ring-zinc-600" -->
-    <!--   type="text" -->
-    <!--   value="Flu" -->
-    <!-- /> -->
-    <select class="w-full rounded-md border-zinc-200 p-4 text-sm outline-none focus:border-zinc-600 focus:outline-none focus:ring-zinc-600">
-      <%= Phoenix.HTML.Form.options_for_select(["Foo", "Bar", "Baz"], "") %>
-    </select>
-
-    <span></span>
-  </label>
-
-  <label class="grid max-w-3xl gap-2 text-sm">
-    <div class="flex justify-between text-zinc-600">
-      <span>Account number</span>
-      <span></span>
-    </div>
-    <input
-      class="w-full rounded-md border-zinc-200 p-4 text-sm outline-none focus:border-zinc-600 focus:outline-none focus:ring-zinc-600"
-      type="text"
-    />
-    <span></span>
-  </label>
+  <.input type="select" label="Bank" field={f[:bank]} options={["Foo", "Bar", "Baz"]} />
+  <.input type="text" label="Account number" field={f[:account_number]} />
 </.simple_form>
 
 <div class="flex gap-6">

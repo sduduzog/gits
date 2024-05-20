@@ -207,9 +207,6 @@ defmodule GitsWeb.CoreComponents do
     ~H"""
     <.form :let={f} for={@for} as={@as} {@rest}>
       <%= render_slot(@inner_block, f) %>
-      <div :for={action <- @actions} class="mt-2 flex items-center justify-between gap-6">
-        <%= render_slot(action, f) %>
-      </div>
     </.form>
     """
   end
@@ -282,6 +279,8 @@ defmodule GitsWeb.CoreComponents do
   attr :field, Phoenix.HTML.FormField,
     doc: "a form field struct retrieved from the form, for example: @form[:email]"
 
+  attr :class, :string, default: ""
+
   attr :errors, :list, default: []
   attr :checked, :boolean, doc: "the checked flag for checkbox inputs"
   attr :prompt, :string, default: nil, doc: "the prompt for select inputs"
@@ -331,12 +330,16 @@ defmodule GitsWeb.CoreComponents do
 
   def input(%{type: "select"} = assigns) do
     ~H"""
-    <div phx-feedback-for={@name}>
-      <.label for={@id}><%= @label %></.label>
+    <div phx-feedback-for={@name} class={Twix.tw(["grid max-w-3xl gap-2 text-sm", @class])}>
+      <div class="flex justify-between text-zinc-600">
+        <.label for={@id}><%= @label %></.label>
+        <span></span>
+      </div>
+
       <select
         id={@id}
         name={@name}
-        class="mt-2 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-zinc-400 focus:ring-0 sm:text-sm"
+        class="w-full rounded-md border-zinc-300 p-4 text-sm outline-none focus:border-zinc-500 focus:outline-none focus:ring-zinc-500"
         multiple={@multiple}
         {@rest}
       >
@@ -371,7 +374,20 @@ defmodule GitsWeb.CoreComponents do
   # All other inputs text, datetime-local, url, password, etc. are handled here...
   def input(assigns) do
     ~H"""
-    <div phx-feedback-for={@name}>
+    <div class={Twix.tw(["grid max-w-3xl gap-2 text-sm", @class])}>
+      <div class="flex justify-between text-zinc-600">
+        <.label for={@id}><%= @label %></.label>
+        <span></span>
+      </div>
+      <input
+        class="w-full rounded-md border-zinc-300 p-4 text-sm outline-none focus:border-zinc-500 focus:outline-none focus:ring-zinc-500"
+        type="text"
+      />
+      <.error :for={msg <- @errors}><%= @label <> " " <> msg %></.error>
+      <span></span>
+    </div>
+
+    <div :if={false} phx-feedback-for={@name}>
       <.label for={@id}><%= @label %></.label>
       <input
         type={@type}
@@ -446,7 +462,7 @@ defmodule GitsWeb.CoreComponents do
 
   def error(assigns) do
     ~H"""
-    <p class="mt-3 flex gap-3 text-sm leading-6 text-rose-600 phx-no-feedback:hidden">
+    <p class="flex gap-3 text-sm leading-6 text-rose-600 phx-no-feedback:hidden">
       <.icon name="hero-exclamation-circle-mini" class="mt-0.5 h-5 w-5 flex-none" />
       <%= render_slot(@inner_block) %>
     </p>
