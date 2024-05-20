@@ -1,0 +1,69 @@
+<div class="h-dvh relative overflow-auto bg-slate-100 dark:bg-zinc-900">
+  <div class="size-72 fixed top-0 left-4 animate-pulse rounded-full bg-purple-300 opacity-50 mix-blend-multiply blur-3xl lg:size-96">
+  </div>
+  <div class="size-40 fixed top-0 right-12 animate-pulse rounded-full bg-yellow-300 opacity-50 mix-blend-multiply blur-3xl md:size-52 md:right-64 xl:size-80 xl:top-40 2xl:right-96 2xl:-translate-x-64">
+  </div>
+  <div class="size-72 fixed bottom-2 left-28 animate-pulse rounded-full bg-pink-300 opacity-50 mix-blend-multiply blur-3xl">
+  </div>
+
+  <div class="grid-cols-[1fr_minmax(min-content,max-content)_1fr] fixed inset-x-0 top-0 z-10 grid items-center gap-4 p-2 text-sm font-medium">
+    <div class="justify-self-stretch">
+      <span class="text-2xl font-black italic text-zinc-800 dark:text-white">GiTS</span>
+    </div>
+    <div class="flex w-full max-w-screen-2xl gap-6">
+      <%= if @current_user do %>
+        <.link href="/my/events">My Events</.link>
+        <.link href="/my/events">Profile</.link>
+      <% else %>
+        <.link href="/sign-in">Sign in</.link>
+      <% end %>
+    </div>
+    <div class="flex justify-end pr-2">
+      <.link class="flex items-center gap-2 text-zinc-700">
+        <.icon name="hero-question-mark-circle" />
+        <span class="hidden sm:inline-block">Do you need help?</span>
+      </.link>
+    </div>
+  </div>
+
+  <div class="h-[calc(100dvh-theme(space.24))] relative sticky top-0 flex flex-col justify-center gap-8 overflow-hidden p-4 md:h-[calc(100dvh-theme(space.40))] md:p-16">
+    <h1 class="text-5xl font-medium leading-tight dark:text-white md:text-6xl">
+      Unlock Unforgettable Experiences
+    </h1>
+    <p class="max-w-xl text-xl font-thin text-zinc-800 dark:text-zinc-200">
+      We offer better security, faster check-in, and lower costs, ensureing more  profit for you. Whether it’s concerts, conferences, festivals, or sports events, we’ve got you covered.
+    </p>
+    <div class="flex items-center gap-8 font-medium">
+      <.link class="border-2 rounded-lg border-zinc-600 dark:border-zinc-300 dark:text-zinc-100 p-2 px-4 hover:underline">
+        Get started
+      </.link>
+      <.link class="hover:underline dark:text-zinc-100">
+        Why choose <span class="font-black italic text-zinc-700 dark:text-zinc-200">GiTS</span>?
+      </.link>
+    </div>
+  </div>
+
+  <div class="top-[calc(100svh-theme(space.28))] absolute inset-0 z-20 px-2 md:top-[calc(100dvh-theme(space.52))]">
+    <div class="mx-auto w-full max-w-screen-2xl rounded-lg bg-white p-4 shadow dark:bg-zinc-800 md:p-12">
+      <.simple_form
+        action="/search"
+        for={%{}}
+        method="get"
+        class="mx-auto flex max-w-screen-md items-center gap-2"
+      >
+        <input
+          name="q"
+          type="search"
+          class="w-full rounded-md border-none bg-zinc-50 p-4 text-sm outline-none ring-1 ring-zinc-200 focus-visible:ring-zinc-400 dark:bg-zinc-700 dark:ring-zinc-600"
+          placeholder="Search for an event, city, etc"
+        />
+        <button class="flex rounded-lg p-3.5 outline-none hover:ring-1 hover:ring-zinc-200 focus-visible:ring-1 focus-visible:ring-zinc-400 dark:hover:ring-zinc-700">
+          <.icon name="hero-magnifying-glass" class="text-zinc-400" />
+        </button>
+      </.simple_form>
+    </div>
+    <div>
+      <!-- footer -->
+    </div>
+  </div>
+</div>
