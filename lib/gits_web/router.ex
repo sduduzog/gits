@@ -31,6 +31,7 @@ defmodule GitsWeb.Router do
 
     get "/", PageController, :home
     get "/next", PageController, :next
+    get "/events", PageController, :events
     get "/tickets", PageController, :tickets
     get "/organizers", PageController, :organizers
     get "/search", PageController, :search
@@ -90,7 +91,10 @@ defmodule GitsWeb.Router do
   scope "/my", GitsWeb do
     pipe_through :browser
     get "/events", UserController, :events
+    get "/profile", UserController, :settings
+    get "/profile/settings", UserController, :settings
     get "/tickets", UserController, :tickets
+    get "/tickets/:id", UserController, :ticket
   end
 
   scope "/office" do

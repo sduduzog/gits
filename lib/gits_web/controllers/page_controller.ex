@@ -24,6 +24,10 @@ defmodule GitsWeb.PageController do
     |> render(:next, layout: {GitsWeb.Layouts, :next})
   end
 
+  def events(conn, _) do
+    conn |> render(:events, layout: {GitsWeb.Layouts, :next})
+  end
+
   def organizers(conn, _) do
     member =
       if conn.assigns.current_user do

@@ -1,0 +1,21 @@
+<div class="fixed inset-0 bg-slate-100" role="none"></div>
+<div class="sticky top-0 z-10 space-y-8 px-2">
+  <div class="mx-auto w-full max-w-screen-2xl rounded-lg bg-white p-4 shadow dark:bg-zinc-800 md:p-12">
+    <.simple_form
+      action="/search"
+      for={%{}}
+      method="get"
+      class="mx-auto flex max-w-screen-md items-center gap-2"
+    >
+      <input
+        name="q"
+        type="search"
+        class="w-full rounded-md border-none bg-zinc-50 p-4 text-sm outline-none ring-1 ring-zinc-200 focus-visible:ring-zinc-400 dark:bg-zinc-700 dark:ring-zinc-600"
+        placeholder="Search for an event, city, etc"
+      />
+      <button class="flex rounded-lg p-3.5 outline-none hover:ring-1 hover:ring-zinc-200 focus-visible:ring-1 focus-visible:ring-zinc-400 dark:hover:ring-zinc-700">
+        <.icon name="hero-magnifying-glass" class="text-zinc-400" />
+      </button>
+    </.simple_form>
+  </div>
+</div>

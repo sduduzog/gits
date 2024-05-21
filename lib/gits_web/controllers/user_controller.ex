@@ -7,9 +7,27 @@ defmodule GitsWeb.UserController do
     |> render(:events)
   end
 
+  def ticket(conn, _) do
+    conn
+    |> put_layout(html: {GitsWeb.Layouts, :next})
+    |> render(:ticket)
+  end
+
   def tickets(conn, _) do
     conn
     |> put_layout(html: {GitsWeb.Layouts, :next})
-    |> render(:events)
+    |> render(:tickets)
+  end
+
+  def profile(conn, _) do
+    conn
+    |> put_layout(html: {GitsWeb.Layouts, :next})
+    |> render(:profile)
+  end
+
+  def settings(conn, _) do
+    conn
+    |> put_layout(html: {GitsWeb.Layouts, :next})
+    |> render(:settings)
   end
 end
