@@ -8,7 +8,7 @@
 </div>
 
 <div class="h-dvh relative overflow-auto pt-12 dark:bg-zinc-900">
-  <div class="grid-cols-[1fr_minmax(min-content,max-content)_1fr] fixed inset-x-0 top-0 z-10 grid items-center gap-4 p-2 text-sm font-medium">
+  <div class="grid-cols-[1fr_minmax(min-content,max-content)_1fr] fixed inset-x-0 top-0 z-10 grid items-center gap-4 p-2 px-4 text-sm font-medium">
     <div class="justify-self-stretch">
       <.link navigate="/next" class="text-2xl font-black italic text-zinc-800 dark:text-white">
         GiTS
@@ -29,7 +29,7 @@
         <.link href="/sign-in">Sign in</.link>
       <% end %>
     </div>
-    <div class="flex justify-end gap-4 pr-2">
+    <div class="flex justify-end gap-4">
       <.link class="flex items-center gap-2 text-zinc-700">
         <.icon name="hero-question-mark-circle" />
         <span class="hidden sm:inline-block">Do you need help?</span>
@@ -40,12 +40,6 @@
       </button>
     </div>
   </div>
-  <!-- <div class="fixed inset-0 bg-white">foo</div> -->
-  <div class="sticky top-0 border-t p-4 lg:p-20">
-    <h1 class="text-4xl">
-      Lorem ipsum dolor, sit amet consectetur adipisicing elit. Illo ullam iusto debitis! Ipsam earum, iusto voluptates ad porro perspiciatis officiis ipsum quo repellat ex, asperiores cumque natus, aspernatur perferendis impedit!
-    </h1>
-  </div>
 
-  <div class="absolute inset-x-0 bg-white p-20">float</div>
+  <%= @inner_content %>
 </div>

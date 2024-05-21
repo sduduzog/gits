@@ -21,7 +21,7 @@ defmodule GitsWeb.PageController do
     conn
     |> assign(:slug, "/next")
     |> assign(:title, "/next")
-    |> render(:next, layout: false)
+    |> render(:next, layout: {GitsWeb.Layouts, :next})
   end
 
   def organizers(conn, _) do
