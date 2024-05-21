@@ -1,8 +1,8 @@
-<div class="fixed inset-0 bg-slate-100" role="none"></div>
+<!-- <div class="fixed inset-0 bg-slate-100" role="none"></div> -->
 <div class="sticky top-0 z-10 space-y-8 px-2">
-  <div class="mx-auto w-full max-w-screen-2xl rounded-lg bg-white p-4 shadow dark:bg-zinc-800 md:p-12">
+  <div class="min-h-[calc(100dvh-theme(space.96))] mx-auto w-full max-w-screen-2xl rounded-lg bg-white p-4 shadow dark:bg-zinc-800">
     <.simple_form
-      action="/search"
+      action="/events"
       for={%{}}
       method="get"
       class="mx-auto flex max-w-screen-md items-center gap-2"
@@ -17,5 +17,9 @@
         <.icon name="hero-magnifying-glass" class="text-zinc-400" />
       </button>
     </.simple_form>
+
+    <div class="lg:p-20">
+      <span>Nothing to see here</span>
+    </div>
   </div>
 </div>

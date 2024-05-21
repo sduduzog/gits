@@ -20,13 +20,19 @@
           <.icon name="hero-ticket-mini" />
           <span class="hidden sm:inline-block">My Tickets</span>
         </.link>
-
         <.link href="/my/profile" class="flex items-center gap-1.5">
           <.icon name="hero-user-mini" />
           <span class="hidden sm:inline-block">Profile</span>
         </.link>
+        <.link href="/sign-out" class="flex items-center gap-1.5">
+          <.icon name="hero-arrow-right-start-on-rectangle-mini" />
+          <span class="hidden sm:inline-block">Sign Out</span>
+        </.link>
       <% else %>
-        <.link href="/sign-in">Sign in</.link>
+        <.link href="/sign-in" class="flex items-center gap-1.5">
+          <.icon name="hero-arrow-right-end-on-rectangle-mini" />
+          <span class="">Sign In</span>
+        </.link>
       <% end %>
     </div>
     <div class="flex justify-end gap-4">
@@ -34,10 +40,9 @@
         <.icon name="hero-question-mark-circle" />
         <span class="hidden sm:inline-block">Need help?</span>
       </.link>
-
-      <button class="flex flex items-center text-zinc-700 sm:hidden">
-        <.icon name="hero-bars-2" />
-      </button>
+      <!-- <button class="flex flex items-center text-zinc-700 sm:hidden"> -->
+      <!--   <.icon name="hero-bars-2" /> -->
+      <!-- </button> -->
     </div>
   </div>
 
