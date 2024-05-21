@@ -3,7 +3,13 @@ defmodule GitsWeb.UserController do
 
   def events(conn, _) do
     conn
-    |> put_layout({GitsWeb.Layouts, :next})
+    |> put_layout(html: {GitsWeb.Layouts, :next})
+    |> render(:events)
+  end
+
+  def tickets(conn, _) do
+    conn
+    |> put_layout(html: {GitsWeb.Layouts, :next})
     |> render(:events)
   end
 end
