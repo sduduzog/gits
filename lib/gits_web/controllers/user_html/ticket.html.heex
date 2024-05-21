@@ -1,15 +1,24 @@
-<!-- <div class="fixed inset-0 bg-slate-100" role="none"></div> -->
+<div class="fixed inset-0 bg-slate-100" role="none"></div>
 <div class="sticky top-0 z-10 space-y-8 px-2">
-  <div class="mx-auto flex max-w-screen-2xl flex-wrap rounded-xl bg-white p-4 shadow">
-    <div class="flex w-full max-w-sm justify-center">
+  <div class="mx-auto flex max-w-screen-2xl flex-wrap overflow-hidden rounded-xl bg-white pt-6 shadow">
+    <div class="size-80 flex w-full max-w-sm justify-center">
       <%= raw(
-        "Hello"
+        "Hello this is a test for a very very long code"
         |> EQRCode.encode()
         |> EQRCode.svg(viewbox: true, color: "#475569", width: 384)
       ) %>
     </div>
-    <div class="w-full px-6">
-      <div class="border px-6">f</div>
+    <div class="w-full p-4 py-4">
+      <div class="space-y-6 rounded-md border p-4 text-sm">
+        <div class="grid">
+          <span class="text-zinc-500">Date and Time</span>
+          <span class="font-medium">Monday, 26th October 2024</span>
+        </div>
+        <div class="grid">
+          <span class="text-zinc-500">Event Location</span>
+          <span class="font-medium">45 Somersault Street, Conevault Walk, Sandton</span>
+        </div>
+      </div>
     </div>
   </div>
 </div>
