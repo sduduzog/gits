@@ -29,7 +29,7 @@ defmodule GitsWeb.Router do
     sign_out_route AuthController
     auth_routes_for Gits.Auth.User, to: AuthController
 
-    get "/", PageController, :home
+    get "/", PageController, :next
     get "/next", PageController, :next
     get "/events", PageController, :events
     get "/tickets", PageController, :tickets
