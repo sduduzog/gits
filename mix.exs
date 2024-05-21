@@ -34,6 +34,7 @@ defmodule Gits.MixProject do
     [
       {:phoenix, "~> 1.7.11"},
       {:phoenix_ecto, "~> 4.4"},
+      {:phoenix_pubsub, "~> 2.1"},
       {:ecto_sql, "~> 3.10"},
       {:postgrex, ">= 0.0.0"},
       {:phoenix_html, "~> 4.0"},
@@ -88,7 +89,9 @@ defmodule Gits.MixProject do
       {:mock, "~> 0.3.8", only: :test},
       {:power_assert, "~> 0.3.0", only: :test},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
-      {:twix, "~> 0.3.0"}
+      {:twix, "~> 0.3.0"},
+      {:fun_with_flags, "~> 1.11"},
+      {:fun_with_flags_ui, "~> 1.0"}
     ]
   end
 

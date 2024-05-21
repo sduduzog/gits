@@ -30,6 +30,9 @@ config :gits, Oban,
 
 # plugins: [{Oban.Plugins.Cron, crontab: [{"* * * * *", Gits.Workers.SweepWaitlist}]}]
 
+config :fun_with_flags, :cache, enabled: false, ttl: 120
+config :fun_with_flags, :persistence, adapter: FunWithFlags.Store.Persistent.Ecto, repo: Gits.Repo
+
 # Configures the endpoint
 config :gits, GitsWeb.Endpoint,
   url: [host: "localhost"],
