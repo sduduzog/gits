@@ -18,6 +18,8 @@ defmodule GitsWeb.PageController do
   end
 
   def next(conn, _) do
+    FunWithFlags.all_flags() |> IO.inspect()
+
     conn
     |> assign(:slug, "/next")
     |> assign(:title, "/next")

@@ -105,6 +105,11 @@ defmodule GitsWeb.Router do
       additional_pages: [oban: Oban.LiveDashboard]
   end
 
+  scope "/feature-flags" do
+    pipe_through [:browser, :office]
+    forward "/", FunWithFlags.UI.Router, namespace: "feature-flags"
+  end
+
   if Application.compile_env(:gits, :dev_routes) do
     scope "/dev" do
       pipe_through :browser

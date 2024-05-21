@@ -14,13 +14,21 @@
         GiTS
       </.link>
     </div>
-    <div class="flex w-full max-w-screen-2xl gap-6 xl:gap-12">
+    <div class="flex w-full max-w-screen-2xl gap-8 xl:gap-12">
       <%= if @current_user do %>
-        <.link href="/my/tickets" class="flex items-center gap-1.5">
+        <.link
+          :if={FunWithFlags.enabled?(:my_tickets)}
+          href="/my/tickets"
+          class="flex items-center gap-1.5"
+        >
           <.icon name="hero-ticket-mini" />
           <span class="hidden sm:inline-block">My Tickets</span>
         </.link>
-        <.link href="/my/profile" class="flex items-center gap-1.5">
+        <.link
+          :if={FunWithFlags.enabled?(:profile)}
+          href="/my/profile"
+          class="flex items-center gap-1.5"
+        >
           <.icon name="hero-user-mini" />
           <span class="hidden sm:inline-block">Profile</span>
         </.link>
@@ -36,7 +44,7 @@
       <% end %>
     </div>
     <div class="flex justify-end gap-4">
-      <.link class="flex items-center gap-2 text-zinc-700">
+      <.link :if={FunWithFlags.enabled?(:need_help)} class="flex items-center gap-2 text-zinc-700">
         <.icon name="hero-question-mark-circle" />
         <span class="hidden sm:inline-block">Need help?</span>
       </.link>
