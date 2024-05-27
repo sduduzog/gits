@@ -92,7 +92,6 @@ defmodule Gits.MixProject do
       {:twix, "~> 0.3.0"},
       {:fun_with_flags, "~> 1.11"},
       {:fun_with_flags_ui, "~> 1.0"},
-      {:rsa_ex, "~> 0.4"},
       {:paseto, "~> 1.5"}
     ]
   end
