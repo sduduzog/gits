@@ -82,7 +82,7 @@ RUN mix release
 FROM ${BAR}
 
 RUN apt-get update -y && \
-  apt-get install -y libstdc++6 openssl libncurses5 locales ca-certificates \
+  apt-get install -y libstdc++6 openssl libncurses5 locales ca-certificates libsodium-dev \
   && apt-get clean && rm -f /var/lib/apt/lists/*_*
 
 # Set the locale
