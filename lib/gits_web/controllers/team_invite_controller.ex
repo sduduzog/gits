@@ -3,10 +3,10 @@ defmodule GitsWeb.TeamInviteController do
 
   require Ash.Query
 
-  alias Gits.Dashboard.Invite
-  alias Gits.Dashboard.Account
-  alias Gits.Dashboard.Member
   alias AshPhoenix.Form
+  alias Gits.Dashboard.Account
+  alias Gits.Dashboard.Invite
+  alias Gits.Dashboard.Member
 
   plug :set_layout
 

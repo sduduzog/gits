@@ -1,6 +1,7 @@
 defmodule Gits.Dashboard.Changes.SendInviteEmail do
   use GitsWeb, :verified_routes
   use Ash.Resource.Change
+  alias Gits.Workers.SendDashboardInvite
 
   def change(changeset, _opts, _context) do
     changeset
@@ -9,7 +10,7 @@ defmodule Gits.Dashboard.Changes.SendInviteEmail do
         url: url(~p"/accounts/#{result.account_id}/invites/#{result.id}"),
         email: result.email |> to_string
       }
-      |> Gits.Workers.SendDashboardInvite.new()
+      |> SendDashboardInvite.new()
       |> Oban.insert()
 
       {:ok, result}

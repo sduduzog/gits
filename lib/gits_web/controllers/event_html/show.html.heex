@@ -1,8 +1,5 @@
-<.event_sidebar
-  back={~p"/accounts/#{@conn.params["account_id"]}/events"}
-  base={~p"/accounts/#{@conn.params["account_id"]}/events/#{@conn.params["id"]}"}
-  request_path={@conn.request_path}
-/>
+<.event_sidebar back={~p"/accounts/#{@conn.params["account_id"]}/events"}
+  base={~p"/accounts/#{@conn.params["account_id"]}/events/#{@conn.params["id"]}"} request_path={@conn.request_path} />
 <.main>
   <.main_header title="Event overview"></.main_header>
   <!-- <div class="grid gap-4 px-4"> -->
@@ -15,7 +12,7 @@
   <!--   </div> -->
   <!-- </div> -->
   <div class="grid w-full items-start gap-4 px-4 align-top md:grid-cols-2">
-    <div :if={@current_user.confirmed_at == nil} class="flex gap-2 rounded-xl border p-6 shadow">
+    <div :if={@current_user.confirmed_at==nil} class="flex gap-2 rounded-xl border p-6 shadow">
       <.icon name="hero-exclamation-triangle" class="text-amber-500 shrink-0" />
       <div class="grid gap-2">
         <h2 class="font-medium">
@@ -33,15 +30,14 @@
       </div>
     </div>
 
-    <div :if={@event.visibility != :private} class="flex gap-2 rounded-xl border p-6 shadow">
+    <div :if={@event.visibility !=:private} class="flex gap-2 rounded-xl border p-6 shadow">
       <.icon name="hero-link" class="text-zinc-500 shrink-0" />
       <div class="grid gap-2">
         <h2 class="font-medium">
           Event preview
         </h2>
 
-        <span class="text-gray-700">
-        </span>
+        <span class="text-gray-700"></span>
 
         <.link href={~p"/events/#{@event.masked_id}"} target="_blank">
           <%= url(~p"/events/#{@event.masked_id}") %>
@@ -49,7 +45,7 @@
       </div>
     </div>
 
-    <div :if={@current_user.confirmed_at == nil} class="flex gap-2 rounded-xl border p-6 shadow">
+    <div :if={@current_user.confirmed_at==nil} class="flex gap-2 rounded-xl border p-6 shadow">
       <.icon name="hero-exclamation-triangle" class="text-amber-500 shrink-0" />
       <div class="grid gap-2">
         <h2 class="font-medium">

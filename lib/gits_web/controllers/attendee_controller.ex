@@ -1,6 +1,6 @@
 defmodule GitsWeb.AttendeeController do
-  alias Gits.Dashboard.Member
   alias Gits.Admissions.Attendee
+  alias Gits.Dashboard.Member
   alias Gits.Storefront.Event
   alias Gits.Storefront.TicketInstance
   require Ash.Query

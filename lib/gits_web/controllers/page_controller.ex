@@ -8,7 +8,8 @@ defmodule GitsWeb.PageController do
 
   def home(conn, _params) do
     events =
-      Ash.Query.for_read(Event, :masked, %{}, actor: conn.assigns.current_user)
+      Event
+      |> Ash.Query.for_read(:masked, %{}, actor: conn.assigns.current_user)
       |> Ash.Query.load([:minimum_ticket_price, :masked_id, :ticket_price_varies])
       |> Ash.read!()
 
@@ -18,8 +19,6 @@ defmodule GitsWeb.PageController do
   end
 
   def next(conn, _) do
-    FunWithFlags.all_flags() |> IO.inspect()
-
     conn
     |> assign(:slug, "/next")
     |> assign(:title, "/next")

@@ -2,6 +2,9 @@ defmodule GitsWeb.AuthController do
   use GitsWeb, :controller
   use AshAuthentication.Phoenix.Controller
 
+  alias AshAuthentication.AddOn.Confirmation
+  alias Gits.Auth.Senders.UserConfirmation
+
   def sign_in(conn, params) do
     with %Gits.Auth.User{} <- conn.assigns.current_user do
       redirect(conn, to: ~p"/")
@@ -87,13 +90,13 @@ defmodule GitsWeb.AuthController do
         AshAuthentication.Info.strategy!(conn.assigns.current_user, :confirm)
 
       {:ok, token} =
-        AshAuthentication.AddOn.Confirmation.confirmation_token(
+        Confirmation.confirmation_token(
           strategy,
           changeset,
           changeset.data
         )
 
-      Gits.Auth.Senders.UserConfirmation.send(changeset.data, token, [])
+      UserConfirmation.send(changeset.data, token, [])
     end
 
     conn |> put_layout(false) |> render(:email_sent)

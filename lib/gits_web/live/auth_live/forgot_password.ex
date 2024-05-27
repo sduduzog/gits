@@ -2,8 +2,8 @@ defmodule GitsWeb.AuthLive.ForgotPassword do
   use GitsWeb, :live_view
   use PhoenixHTMLHelpers
 
-  alias Gits.Auth.User
   alias AshPhoenix.Form
+  alias Gits.Auth.User
 
   def mount(_, _, socket) do
     remote_ip = get_connect_info(socket, :peer_data).address

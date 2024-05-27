@@ -1,7 +1,7 @@
 defmodule GitsWeb.TeamMemberController do
   require Ash.Query
-  alias Gits.Dashboard.Member
   alias Gits.Dashboard.Invite
+  alias Gits.Dashboard.Member
   use GitsWeb, :controller
 
   plug :set_layout

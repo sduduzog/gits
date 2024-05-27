@@ -1,9 +1,10 @@
 defmodule Gits.Auth.Senders.UserConfirmation do
   use AshAuthentication.Sender
   use GitsWeb, :verified_routes
+  alias Gits.Auth.Emails
 
   def send(user, token, _opts) do
-    case Gits.Auth.Emails.deliver_user_confirmation_link(
+    case Emails.deliver_user_confirmation_link(
            user,
            url(~p"/auth/user/confirm/?confirm=#{token}")
          ) do

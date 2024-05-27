@@ -1,122 +1,109 @@
-<% navigation = [] %>
-<header class="mx-auto flex max-w-screen-xl items-center gap-6 p-4 md:p-8">
-  <div>
-    <a href="/" class="font-poppins text-2xl font-black italic">GiTS</a>
-  </div>
-  <div role="none" class="flex grow items-center justify-center">
-    <nav class="hidden items-center text-sm lg:flex">
-      <.link :for={nav <- navigation} href={nav.to}><%= nav.label %></.link>
-    </nav>
-  </div>
-  <div>
-    <!-- <.link -->
-    <!--   href="/tickets" -->
-    <!--   class="text-sm hover:bg-gray-100 px-4 p-2 rounded-xl hover:bg-gray-50 focus-visible:ring-1 focus-visible:ring-gray-400" -->
-    <!-- > -->
-    <!--   Tickets -->
-    <!-- </.link> -->
-  </div>
-  <%= if @current_user do %>
-    <.link :if={false} href="/profile" class="text-sm bg-gray-100 px-4 p-2 rounded-lg ">
-      Tickets
-    </.link>
+<% navigation=[] %>
+  <header class="mx-auto flex max-w-screen-xl items-center gap-6 p-4 md:p-8">
+    <div>
+      <a href="/" class="font-poppins text-2xl font-black italic">GiTS</a>
+    </div>
+    <div role="none" class="flex grow items-center justify-center">
+      <nav class="hidden items-center text-sm lg:flex">
+        <.link :for={nav <- navigation} href={nav.to}>
+          <%= nav.label %>
+        </.link>
+      </nav>
+    </div>
+    <div>
+      <!-- <.link -->
+      <!--   href="/tickets" -->
+      <!--   class="text-sm hover:bg-gray-100 px-4 p-2 rounded-xl hover:bg-gray-50 focus-visible:ring-1 focus-visible:ring-gray-400" -->
+      <!-- > -->
+      <!--   Tickets -->
+      <!-- </.link> -->
+    </div>
+    <%= if @current_user do %>
+      <.link :if={false} href="/profile" class="text-sm bg-gray-100 px-4 p-2 rounded-lg ">
+        Tickets
+      </.link>
 
-    <div phx-click-away={JS.add_class("hidden", to: "#header-dropdown")} class="relative">
-      <button
-        id="header-dropdown-button"
-        class="flex shrink-0 rounded-xl p-2 text-sm hover:bg-gray-50 focus-visible:ring-1 focus-visible:ring-gray-400"
-        type="button"
-        phx-click={JS.toggle_class("hidden", to: "#header-dropdown")}
-      >
-        <.icon name="hero-bars-2" />
-      </button>
-      <div
-        id="header-dropdown"
-        class="absolute top-full right-2 z-10 hidden w-44 divide-y divide-gray-100 rounded-lg bg-white shadow dark:divide-gray-600 dark:bg-gray-700"
-      >
-        <%= if @current_user do %>
-          <div class="px-4 py-3 text-sm text-gray-900 dark:text-white">
-            <div>Signed in with</div>
-            <div class="truncate font-medium"><%= @current_user.email %></div>
-          </div>
-        <% else %>
-          <a
-            href={~p"/sign-in"}
-            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
-          >
-            Sign In
-          </a>
-        <% end %>
-        <ul
-          class="py-2 text-sm text-gray-700 dark:text-gray-200 lg:hidden"
-          aria-labelledby="dropdownUserAvatarButton"
-        >
-          <li>
-            <.link
-              :for={nav <- navigation}
-              class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-              href={nav.to}
-            >
-              <%= nav.label %>
-            </.link>
-          </li>
-        </ul>
-        <ul
-          :if={not is_nil(@current_user) and false}
-          class="py-2 text-sm text-gray-700 dark:text-gray-200"
-          aria-labelledby="dropdownUserAvatarButton"
-        >
-          <li>
-            <.link :for={nav <- navigation} href={nav.to}><%= nav.label %></.link>
-            <a
-              href={~p"/tickets"}
-              class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-            >
-              Tickets
-            </a>
-          </li>
-        </ul>
-        <div :if={@current_user} class="py-2">
-          <a
-            href={~p"/sign-out"}
-            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
-          >
-            Sign out
-          </a>
+      <div phx-click-away={JS.add_class("hidden", to: "#header-dropdown" )} class="relative">
+        <button id="header-dropdown-button"
+          class="flex shrink-0 rounded-xl p-2 text-sm hover:bg-gray-50 focus-visible:ring-1 focus-visible:ring-gray-400"
+          type="button" phx-click={JS.toggle_class("hidden", to: "#header-dropdown" )}>
+          <.icon name="hero-bars-2" />
+        </button>
+        <div id="header-dropdown"
+          class="absolute top-full right-2 z-10 hidden w-44 divide-y divide-gray-100 rounded-lg bg-white shadow dark:divide-gray-600 dark:bg-gray-700">
+          <%= if @current_user do %>
+            <div class="px-4 py-3 text-sm text-gray-900 dark:text-white">
+              <div>Signed in with</div>
+              <div class="truncate font-medium">
+                <%= @current_user.email %>
+              </div>
+            </div>
+            <% else %>
+              <a href={~p"/sign-in"}
+                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white">
+                Sign In
+              </a>
+              <% end %>
+                <ul class="py-2 text-sm text-gray-700 dark:text-gray-200 lg:hidden"
+                  aria-labelledby="dropdownUserAvatarButton">
+                  <li>
+                    <.link :for={nav <- navigation}
+                      class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                      href={nav.to}>
+                      <%= nav.label %>
+                    </.link>
+                  </li>
+                </ul>
+                <ul :if={not is_nil(@current_user) and false} class="py-2 text-sm text-gray-700 dark:text-gray-200"
+                  aria-labelledby="dropdownUserAvatarButton">
+                  <li>
+                    <.link :for={nav <- navigation} href={nav.to}>
+                      <%= nav.label %>
+                    </.link>
+                    <a href={~p"/tickets"}
+                      class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                      Tickets
+                    </a>
+                  </li>
+                </ul>
+                <div :if={@current_user} class="py-2">
+                  <a href={~p"/sign-out"}
+                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white">
+                    Sign out
+                  </a>
+                </div>
         </div>
       </div>
+      <% else %>
+        <.link href="/sign-in" class="text-sm bg-gray-100 px-4 p-2 rounded-lg">Sign in</.link>
+        <% end %>
+  </header>
+  <main class="mx-auto max-w-screen-xl space-y-4 p-4 md:space-y-8 md:p-8">
+    <%= @inner_content %>
+  </main>
+
+  <footer class="bg-white">
+    <div class="mx-auto max-w-7xl space-y-10 overflow-hidden px-6 py-20 sm:py-24 lg:px-8">
+      <nav class="-mb-6 columns-2 sm:flex sm:justify-center sm:space-x-12" aria-label="Footer">
+        <div class="pb-6">
+          <a href="/tickets" class="text-sm leading-6 text-gray-600 hover:text-gray-900">
+            Tickets
+          </a>
+        </div>
+
+        <div class="pb-6">
+          <a href="/organizers" class="text-sm leading-6 text-gray-600 hover:text-gray-900">
+            Organizers
+          </a>
+        </div>
+        <div class="pb-6">
+          <a href="/faq" class="text-sm leading-6 text-gray-600 hover:text-gray-900">
+            FAQ
+          </a>
+        </div>
+      </nav>
+      <p class="text-center text-xs leading-5 text-gray-500">
+        &copy; 2024
+      </p>
     </div>
-  <% else %>
-    <.link href="/sign-in" class="text-sm bg-gray-100 px-4 p-2 rounded-lg">Sign in</.link>
-  <% end %>
-</header>
-<main class="mx-auto max-w-screen-xl space-y-4 p-4 md:space-y-8 md:p-8">
-  <.flash_group flash={@flash} />
-  <%= @inner_content %>
-</main>
-
-<footer class="bg-white">
-  <div class="mx-auto max-w-7xl space-y-10 overflow-hidden px-6 py-20 sm:py-24 lg:px-8">
-    <nav class="-mb-6 columns-2 sm:flex sm:justify-center sm:space-x-12" aria-label="Footer">
-      <div class="pb-6">
-        <a href="/tickets" class="text-sm leading-6 text-gray-600 hover:text-gray-900">
-          Tickets
-        </a>
-      </div>
-
-      <div class="pb-6">
-        <a href="/organizers" class="text-sm leading-6 text-gray-600 hover:text-gray-900">
-          Organizers
-        </a>
-      </div>
-      <div class="pb-6">
-        <a href="/faq" class="text-sm leading-6 text-gray-600 hover:text-gray-900">
-          FAQ
-        </a>
-      </div>
-    </nav>
-    <p class="text-center text-xs leading-5 text-gray-500">
-      &copy; 2024
-    </p>
-  </div>
-</footer>
+  </footer>

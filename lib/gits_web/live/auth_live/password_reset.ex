@@ -2,9 +2,9 @@ defmodule GitsWeb.AuthLive.PasswordReset do
   use GitsWeb, :live_view
   use PhoenixHTMLHelpers
 
+  alias AshPhoenix.Form
   alias Gits.Accounts
   alias Gits.Auth.User
-  alias AshPhoenix.Form
 
   def mount(%{"token" => token}, _, socket) do
     remote_ip = get_connect_info(socket, :peer_data).address

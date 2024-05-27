@@ -1,6 +1,6 @@
 defmodule Gits.Auth.Emails do
-  alias Gits.EmailTemplates.UserConfirmation
   alias Gits.EmailTemplates.PasswordReset
+  alias Gits.EmailTemplates.UserConfirmation
   import Swoosh.Email
   use GitsWeb, :verified_routes
 
