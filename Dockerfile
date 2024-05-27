@@ -34,7 +34,7 @@ COPY assets assets
 FROM ${FOO} as builder
 
 # install build dependencies
-RUN apt-get update -y && apt-get install -y build-essential git \
+RUN apt-get update -y && apt-get install -y build-essential libsodium-dev git \
   && apt-get clean && rm -f /var/lib/apt/lists/*_*
 
 # prepare build dir
