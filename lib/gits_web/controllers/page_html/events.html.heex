@@ -16,9 +16,14 @@
         <.icon name="hero-magnifying-glass" class="text-zinc-400" />
       </button>
     </.simple_form>
-
-    <div class="p-8 p-28 text-center">
-      <span class="text-sm italic text-zinc-600">No results</span>
-    </div>
+    <%= if FunWithFlags.enabled?(:event_listing) do %>
+      <div class="flex flex-wrap">
+        <div>event 1</div>
+      </div>
+    <% else %>
+      <div class="p-8 p-28 text-center">
+        <span class="text-sm italic text-zinc-600">No results</span>
+      </div>
+    <% end %>
   </div>
 </div>

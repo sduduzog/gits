@@ -3,7 +3,6 @@ defmodule Gits.Storefront.Basket do
   require Ash.Resource.Change.Builtins
   require Ash.Resource.Change.Builtins
   require Ash.Resource.Change.Builtins
-  alias Gits.Storefront.TicketInstance
   require Ash.Resource.Change.Builtins
 
   use Ash.Resource,
@@ -23,12 +22,10 @@ defmodule Gits.Storefront.Basket do
   end
 
   state_machine do
-    initial_states [:open, :settled]
+    initial_states [:open]
     default_initial_state :open
 
     transitions do
-      transition :settle_free, from: :open, to: :settled
-      transition :abandon, from: :open, to: :abandoned
     end
   end
 
@@ -41,90 +38,41 @@ defmodule Gits.Storefront.Basket do
   end
 
   actions do
-    defaults [:read, :update, :destroy]
+    defaults [:read]
 
-    create :create do
-      accept [:amount]
-      primary? true
-
-      argument :event, :map do
-        allow_nil? false
-      end
-
-      argument :instances, {:array, :map} do
-        allow_nil? false
-      end
-
-      change manage_relationship(:event, type: :append)
-
-      change manage_relationship(:instances,
-               on_lookup: {:relate_and_update, :add_to_basket},
-               on_match: {:update, :add_to_basket}
-             )
+    create :open_basket do
     end
 
-    create :create_settled do
-      accept [:amount]
-
-      argument :event, :map do
-        allow_nil? false
-      end
-
-      argument :instances, {:array, :map} do
-        allow_nil? false
-      end
-
-      validate attribute_equals(:amount, 0)
-
-      change set_attribute(:state, :settled)
-
-      change manage_relationship(:event, type: :append)
-
-      change manage_relationship(:instances,
-               on_lookup: {:relate_and_update, :add_to_basket_ready},
-               on_match: {:update, :add_to_basket_ready}
-             )
+    update :add_ticket_to_basket do
+      transition_state(:refunded)
     end
 
-    update :settle_free do
-      require_atomic? false
-
-      validate attribute_equals(:amount, 0)
-      change transition_state(:settled)
-
-      change after_action(fn _, result, %{actor: actor} ->
-               TicketInstance
-               |> Ash.Query.for_read(:read, %{}, actor: actor)
-               |> Ash.Query.filter(basket.id == ^result.id)
-               |> Ash.read!()
-               |> Enum.each(fn instance ->
-                 instance
-                 |> Ash.Changeset.for_update(:ready_to_scan, %{}, actor: actor)
-                 |> Ash.update!()
-               end)
-
-               {:ok, result}
-             end)
+    update :remove_ticket_from_basket do
+      transition_state(:refunded)
     end
 
-    update :abandon do
-      require_atomic? false
+    update :package_tickets do
+      transition_state(:refunded)
+    end
 
-      change transition_state(:abandoned)
+    update :package_timeout do
+      transition_state(:refunded)
+    end
 
-      change after_action(fn _, result, %{actor: actor} ->
-               TicketInstance
-               |> Ash.Query.for_read(:read, %{}, actor: actor)
-               |> Ash.Query.filter(basket.id == ^result.id)
-               |> Ash.read!()
-               |> Enum.each(fn instance ->
-                 instance
-                 |> Ash.Changeset.for_update(:abandon, %{}, actor: actor)
-                 |> Ash.update!()
-               end)
+    update :settle_timeout do
+      transition_state(:refunded)
+    end
 
-               {:ok, result}
-             end)
+    update :settle_for_free do
+      transition_state(:refunded)
+    end
+
+    update :settle do
+      transition_state(:refunded)
+    end
+
+    update :refund do
+      transition_state(:refunded)
     end
   end
 

@@ -19,10 +19,12 @@
         <.link
           :if={FunWithFlags.enabled?(:my_tickets)}
           href="/my/tickets"
-          class="flex items-center gap-1.5"
+          class="flex items-center gap-1.5 relative"
         >
           <.icon name="hero-ticket-mini" />
           <span class="hidden sm:inline-block">My Tickets</span>
+          <span class="size-3 absolute -top-0.5 -left-0.5 rounded-full bg-orange-500 text-center text-xs">
+          </span>
         </.link>
         <.link
           :if={FunWithFlags.enabled?(:profile)}
