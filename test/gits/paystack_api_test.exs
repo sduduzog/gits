@@ -1,9 +1,10 @@
 defmodule Gits.PaystackApiTest do
   use ExUnit.Case, async: true
+  import Mock
 
-  describe "transform_list_banks_response/0" do
-    test "" do
-      Req.Test.stub(:google_api, fn conn ->
+  describe "list_banks/0" do
+    test "should list formatted banks from ok response" do
+      Req.Test.stub(:paystack_api, fn conn ->
         Req.Test.json(
           conn,
           %{
@@ -30,6 +31,56 @@ defmodule Gits.PaystackApiTest do
           }
         )
       end)
+
+      assert {:ok, [%{id: 140, name: "Absa Bank Limited, South Africa", code: "632005"}]} =
+               Gits.PaystackApi.list_banks()
+    end
+  end
+
+  describe "create_subaccount/3" do
+    test_with_mock "should create subaccount and return the new record",
+                   Gits.PaystackApi,
+                   [:passthrough],
+                   list_banks: fn -> {:ok, [%{id: 140, name: "test_bank", code: "123456"}]} end do
+      Req.Test.stub(:paystack_api, fn conn ->
+        Req.Test.json(
+          conn,
+          %{
+            "status" => true,
+            "message" => "Subaccount created",
+            "data" => %{
+              "account_number" => "23402352035",
+              "active" => true,
+              "bank" => 140,
+              "business_name" => "Test",
+              "createdAt" => "2024-05-30T03:43:56.248Z",
+              "currency" => "ZAR",
+              "domain" => "test",
+              "id" => 1_090_020,
+              "integration" => 1_189_131,
+              "is_verified" => false,
+              "managed_by_integration" => 1_189_131,
+              "migrate" => false,
+              "percentage_charge" => 99,
+              "product" => "collection",
+              "settlement_bank" => "Absa Bank Limited, South Africa",
+              "settlement_schedule" => "AUTO",
+              "subaccount_code" => "ACCT_wcifesxscsi3q1r",
+              "updatedAt" => "2024-05-30T03:43:56.248Z"
+            }
+          }
+        )
+      end)
+
+      assert {:ok,
+              %{
+                subaccount_code: "ACCT_wcifesxscsi3q1r",
+                account_number: "23402352035",
+                business_name: "Test",
+                settlement_bank: "123456",
+                percentage_charge: 99
+              }} =
+               Gits.PaystackApi.create_subaccount("", "", "")
     end
   end
 end

@@ -40,7 +40,13 @@
       </button>
     </.simple_form>
   </div>
-  <div>
+  <div class="bg-white/40 background-blur-xl flex justify-center p-4">
     <!-- footer -->
+    <nav class="flex flex-wrap justify-center gap-8 *:text-sm">
+      <span>About</span>
+      <.link href="/organizers">Business & Organizers</.link>
+      <.link :if={FunWithFlags.enabled?(:privacy)} href="/privacy">Privacy</.link>
+      <.link :if={FunWithFlags.enabled?(:terms)} href="/terms">Terms</.link>
+    </nav>
   </div>
 </div>

@@ -17,12 +17,18 @@
       <h2 class="text-xl font-medium tracking-tight text-gray-900">
         Host your event with us.
       </h2>
-      <div class="flex max-w-screen-2xl gap-4 overflow-x-auto lg:flex-wrap lg:gap-9 lg:overflow-visible xl:gap-14">
+      <div class="flex max-w-screen-2xl items-center gap-4 overflow-x-auto lg:flex-wrap lg:gap-9 lg:overflow-visible xl:gap-14">
         <.link
           href={~p"/join-waitlist"}
           class="border-2 border-zinc-900 font-medium py-2 px-4 rounded-xl"
         >
           Join the waiting list
+        </.link>
+        <.link
+          href={~p"/sign-in?return_to=/accounts"}
+          class="border-zinc-900 font-medium rounded-xl"
+        >
+          Sign in instead
         </.link>
       </div>
       <p class="text-sm text-zinc-700">
