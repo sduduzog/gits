@@ -26,33 +26,27 @@
   <%= if @account.billing_enabled? do %>
     <div class="grid gap-4 md:grid-cols-2">
       <h3 class="col-span-full text-lg font-medium">Select default payment provider</h3>
-      <label
-        :for={
-          provider <- [
-            %{name: "Paystack", status: "Not setup", disabled: false},
-            %{name: "Payfast", status: "Not ready yet", disabled: true}
-          ]
-        }
-        class="flex items-center justify-between rounded border p-4 text-sm has-[:checked]:bg-zinc-100/50 has-[:checked]:border-zinc-800 md:rounded-md"
-      >
-        <div class="grid gap-2">
-          <span class="font-medium"><%= provider.name %></span>
-          <span class="text-zinc-700"><%= provider.status %></span>
-        </div>
-        <input
-          type="radio"
-          name="payment-provider"
-          class="sr-only"
-          value={provider.name}
-          disabled={provider.disabled}
-        />
-        <.icon name="hero-check-circle-mini" class="peer-checked:inline-flex hidden" />
-      </label>
     </div>
-    <div>
+    <.simple_form :let={f} for={@form}>
+      <.radio_group field={f[:payout_provider]}>
+        <:radio value="paystack">
+          <div class="group flex justify-between last:*:hidden last:peer-checked/paystack:*:inline-flex">
+            <span>Paystack</span>
+            <.icon class="" name="hero-check-circle-mini" class="" />
+          </div>
+        </:radio>
+        <:radio value="payfast">
+          <div class="group flex justify-between last:*:hidden last:peer-checked/payfast:*:inline-flex">
+            <span>Payfast</span>
+            <.icon class="" name="hero-check-circle-mini" class="" />
+          </div>
+        </:radio>
+      </.radio_group>
+    </.simple_form>
+    <div class="flex gap-8">
       <.link
         navigate={~p"/accounts/#{@slug}/next/settings/paystack"}
-        class="col-span-full text-sm font-medium"
+        class="col-span-full text-sm font-medium hover:underline"
       >
         Setup paystack
       </.link>

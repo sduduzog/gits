@@ -18,9 +18,12 @@ defmodule GitsWeb.DashboardLive.Settings do
       |> assign(:title, "Settings")
       |> assign(:account, account)
 
-    # |> assign(:billing_enabled, account.billing_enabled)
-
     {:ok, socket, layout: {GitsWeb.Layouts, :dashboard_next}}
+  end
+
+  def handle_params(_unsigned_params, _uri, socket) do
+    socket = socket |> assign(:form, %{})
+    {:noreply, socket}
   end
 
   def handle_event("enable_billing", _unsigned_params, socket) do

@@ -426,7 +426,7 @@ defmodule GitsWeb.CoreComponents do
   end
 
   attr :field, Phoenix.HTML.FormField, required: true
-  attr :label, :string
+  attr :label, :string, required: false, default: nil
 
   slot :radio, required: true do
     attr :value, :string, required: true
@@ -435,7 +435,7 @@ defmodule GitsWeb.CoreComponents do
   def radio_group(assigns) do
     ~H"""
     <div class="grid max-w-3xl grid-cols-2 gap-4 text-sm">
-      <div class="col-span-full flex justify-between text-zinc-600">
+      <div :if={@label} class="col-span-full flex justify-between text-zinc-600">
         <span><%= @label %></span>
         <span></span>
       </div>
@@ -443,16 +443,17 @@ defmodule GitsWeb.CoreComponents do
       <label
         :for={{%{value: value} = rad, idx} <- Enum.with_index(@radio)}
         for={"#{@field.id}-#{idx}"}
-        class="grid max-w-3xl gap-2 rounded-md border p-4 has-[:checked]:border-zinc-500"
+        class="grid max-w-3xl gap-2 rounded-md p-4 ring-1 ring-zinc-200 has-[:checked]:ring-1 has-[:checked]:ring-zinc-500 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-zinc-500"
       >
-        <%= render_slot(rad) %>
         <input
           name={@field.name}
           id={"#{@field.id}-#{idx}"}
           type="radio"
-          class="sr-only"
+          class={"peer/#{value} sr-only"}
           value={value}
+          checked
         />
+        <%= render_slot(rad) %>
       </label>
       <span class="col-span-full">Pack</span>
     </div>
