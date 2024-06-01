@@ -7,7 +7,6 @@ defmodule Gits.Dashboard.Account do
   attributes do
     uuid_primary_key :id
     attribute :name, :string, allow_nil?: false, public?: true
-    attribute :paystack_subbaccount_code, :string, public?: true
     create_timestamp :created_at
     update_timestamp :updated_at
   end
@@ -18,6 +17,12 @@ defmodule Gits.Dashboard.Account do
     has_many :events, Gits.Storefront.Event do
       domain Gits.Storefront
     end
+
+    has_one :billing_settings, Gits.Dashboard.BillingSettings
+  end
+
+  calculations do
+    calculate :billing_enabled?, :boolean, expr(count(billing_settings) > 0)
   end
 
   actions do
@@ -44,31 +49,11 @@ defmodule Gits.Dashboard.Account do
       change manage_relationship(:member, :members, on_lookup: {:relate_and_update, :activate})
     end
 
-    update :create_paystack_subaccount do
+    update :enable_billing do
       require_atomic? false
+      argument :billing_settings, :map
 
-      argument :business_name, :string, allow_nil?: false
-      argument :account_number, :string, allow_nil?: false
-      argument :settlement_bank, :string, allow_nil?: false
-
-      change before_action(fn changeset, _ ->
-               Gits.PaystackApi.create_subaccount(
-                 Ash.Changeset.get_argument(changeset, :business_name),
-                 Ash.Changeset.get_argument(changeset, :account_number),
-                 Ash.Changeset.get_argument(changeset, :settlement_bank)
-               )
-               |> case do
-                 {:ok, account} ->
-                   Ash.Changeset.change_new_attribute(
-                     changeset,
-                     :paystack_subbaccount_code,
-                     account.subaccount_code
-                   )
-
-                 _ ->
-                   Ash.Changeset.add_error(changeset, field: :test, message: "test error message")
-               end
-             end)
+      change manage_relationship(:billing_settings, type: :create)
     end
   end
 
@@ -81,11 +66,11 @@ defmodule Gits.Dashboard.Account do
       authorize_if Gits.Checks.ActorIsObanJob
     end
 
-    policy action(:create_paystack_subaccount) do
-      authorize_if actor_present()
+    policy action(:enable_billing) do
+      authorize_if expr(members.user.id == ^actor(:id) and members.role in [:owner, :admin])
     end
 
-    policy action(:create) do
+    policy action([:create, :enable_billing]) do
       authorize_if actor_present()
     end
   end

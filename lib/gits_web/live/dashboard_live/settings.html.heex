@@ -23,37 +23,45 @@
 
 <div class="space-y-8 rounded-lg">
   <h2 class="text-2xl font-medium">Billing & Payouts</h2>
-  <div class="grid gap-4 md:grid-cols-2">
-    <h3 class="col-span-full text-lg font-medium">Select default payment provider</h3>
-    <label
-      :for={
-        provider <- [
-          %{name: "Paystack", status: "Not setup", disabled: false},
-          %{name: "Payfast", status: "Not ready yet", disabled: true}
-        ]
-      }
-      class="flex items-center justify-between rounded border p-4 text-sm has-[:checked]:bg-zinc-100/50 has-[:checked]:border-zinc-800 md:rounded-md"
-    >
-      <div class="grid gap-2">
-        <span class="font-medium"><%= provider.name %></span>
-        <span class="text-zinc-700"><%= provider.status %></span>
-      </div>
-      <input
-        type="radio"
-        name="payment-provider"
-        class="sr-only"
-        value={provider.name}
-        disabled={provider.disabled}
-      />
-      <.icon name="hero-check-circle-mini" class="peer-checked:inline-flex hidden" />
-    </label>
-  </div>
-  <div>
-    <.link
-      navigate={~p"/accounts/#{@slug}/next/settings/paystack"}
-      class="col-span-full text-sm font-medium"
-    >
-      Setup paystack
-    </.link>
-  </div>
+  <%= if @account.billing_enabled? do %>
+    <div class="grid gap-4 md:grid-cols-2">
+      <h3 class="col-span-full text-lg font-medium">Select default payment provider</h3>
+      <label
+        :for={
+          provider <- [
+            %{name: "Paystack", status: "Not setup", disabled: false},
+            %{name: "Payfast", status: "Not ready yet", disabled: true}
+          ]
+        }
+        class="flex items-center justify-between rounded border p-4 text-sm has-[:checked]:bg-zinc-100/50 has-[:checked]:border-zinc-800 md:rounded-md"
+      >
+        <div class="grid gap-2">
+          <span class="font-medium"><%= provider.name %></span>
+          <span class="text-zinc-700"><%= provider.status %></span>
+        </div>
+        <input
+          type="radio"
+          name="payment-provider"
+          class="sr-only"
+          value={provider.name}
+          disabled={provider.disabled}
+        />
+        <.icon name="hero-check-circle-mini" class="peer-checked:inline-flex hidden" />
+      </label>
+    </div>
+    <div>
+      <.link
+        navigate={~p"/accounts/#{@slug}/next/settings/paystack"}
+        class="col-span-full text-sm font-medium"
+      >
+        Setup paystack
+      </.link>
+    </div>
+  <% else %>
+    <div>
+      <button class="min-w-40 rounded-lg bg-zinc-50 p-4" phx-click="enable_billing">
+        Enable Billing &amp; Payouts
+      </button>
+    </div>
+  <% end %>
 </div>

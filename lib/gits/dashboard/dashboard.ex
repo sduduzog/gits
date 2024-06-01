@@ -10,6 +10,8 @@ defmodule Gits.Dashboard do
       define :create_account, args: [:name], action: :create
     end
 
+    resource Dashboard.BillingSettings
+
     resource Dashboard.Invite
 
     resource Dashboard.Venue do
