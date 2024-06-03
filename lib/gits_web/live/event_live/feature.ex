@@ -12,4 +12,8 @@ defmodule GitsWeb.EventLive.Feature do
 
     {:ok, assign(socket, :event, event), layout: {GitsWeb.Layouts, :next}}
   end
+
+  def handle_event("get_tickets", _unsigned_params, socket) do
+    {:noreply, socket}
+  end
 end
