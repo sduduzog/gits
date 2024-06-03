@@ -24,27 +24,19 @@
 <div class="space-y-8 rounded-lg">
   <h2 class="text-2xl font-medium">Billing & Payouts</h2>
   <%= if @account.billing_enabled? do %>
-    <div class="grid gap-4 md:grid-cols-2">
-      <h3 class="col-span-full text-lg font-medium">Select default payment provider</h3>
-    </div>
     <.simple_form :let={f} for={@form}>
-      <.radio_group field={f[:payout_provider]}>
+      <.radio_group field={f[:payout_provider]} label="Select default payout provider">
         <:radio value="paystack">
           <div class="group flex justify-between last:*:hidden last:peer-checked/paystack:*:inline-flex">
             <span>Paystack</span>
-            <.icon class="" name="hero-check-circle-mini" class="" />
-          </div>
-        </:radio>
-        <:radio value="payfast">
-          <div class="group flex justify-between last:*:hidden last:peer-checked/payfast:*:inline-flex">
-            <span>Payfast</span>
-            <.icon class="" name="hero-check-circle-mini" class="" />
+            <.icon class="" name="hero-check-circle-mini" />
           </div>
         </:radio>
       </.radio_group>
     </.simple_form>
     <div class="flex gap-8">
       <.link
+        :if={not @account.billing_settings.paystack_ready?}
         navigate={~p"/accounts/#{@slug}/next/settings/paystack"}
         class="col-span-full text-sm font-medium hover:underline"
       >

@@ -17,6 +17,10 @@ defmodule Gits.Dashboard.BillingSettings do
     belongs_to :account, Account
   end
 
+  calculations do
+    calculate :paystack_ready?, :boolean, expr(not is_nil(paystack_subbaccount_code))
+  end
+
   actions do
     defaults [:read, create: :*]
 
@@ -55,10 +59,8 @@ defmodule Gits.Dashboard.BillingSettings do
 
     policy action(:create_paystack_subaccount) do
       authorize_if expr(
-                     exists(
-                       account,
-                       members.user.id == ^actor(:id) and members.role in [:owner, :admin]
-                     )
+                     account.members.user.id == ^actor(:id) and
+                       account.members.role in [:owner, :admin]
                    )
     end
 

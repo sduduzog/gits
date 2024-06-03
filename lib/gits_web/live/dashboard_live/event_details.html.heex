@@ -1,26 +1,90 @@
-<div class="mx-auto max-w-screen-2xl space-y-4">
-  <div class="flex gap-2">
-    <span class="text-sm text-zinc-400">Events</span>
-    <span class="text-sm text-zinc-400">/</span>
-    <span class="text-sm text-zinc-700">Event Details</span>
-  </div>
-  <div class="flex items-start gap-2">
-    <div class="aspect-[4/5] h-20 bg-zinc-200"></div>
-    <div class="grid w-full gap-4">
-      <h1 class="text-2xl">The Ultimate Cheese Festival</h1>
-      <div class="flex justify-end gap-4 text-sm">
-        <button class="border bg-white p-1">Published</button>
-        <button class="border bg-white p-1">More</button>
+<div class="mx-auto max-w-screen-2xl space-y-8 *:pt-4 first:*:pt-0">
+  <div>
+    <div class="flex hidden items-center gap-2 py-2">
+      <span class="text-sm text-zinc-400">Events</span>
+      <span class="text-xs text-zinc-400">/</span>
+      <span class="text-sm text-zinc-700">Event Details</span>
+    </div>
+    <div class="flex items-start gap-2">
+      <div class="aspect-[4/5] h-20 bg-zinc-200"></div>
+      <div class="grid w-full gap-4">
+        <h1 class="text-2xl font-semibold"><%= @event.name %></h1>
+        <div class="flex justify-end gap-4 text-sm">
+          <button class="border bg-white p-1">Published</button>
+          <button class="border bg-white p-1">More</button>
+        </div>
       </div>
     </div>
   </div>
-  <div class="flex flex-wrap gap-4 border lg:flex-nowrap">
-    <div class="w-full border">
-      <div>summary</div>
-      <div>details</div>
-      <div>graphics</div>
-      <div>tickets</div>
+  <div>
+    <div class="grid gap-2">
+      <span class="text-sm text-zinc-400">Total Something</span>
+      <span class="text-4xl font-medium">0</span>
     </div>
-    <div class="hidden w-full max-w-lg border md:block">side</div>
+  </div>
+  <div class="">
+    <div class="flex items-center justify-between">
+      <h2 class="text-lg font-semibold">Details</h2>
+      <.link>Edit</.link>
+    </div>
+    <dl class="">
+      <div class="py-6 text-sm sm:grid sm:grid-cols-4 sm:gap-4">
+        <dt class="font-medium leading-6 text-zinc-900">Name</dt>
+        <dd class="leading-6 text-zinc-700 sm:col-span-3 sm:mt-0"><%= @event.name %></dd>
+      </div>
+    </dl>
+  </div>
+  <div class="space-y-4">
+    <div class="flex items-center justify-between">
+      <h2 class="text-lg font-semibold">Tickets</h2>
+      <.link class="text-sm flex items-center gap-2">
+        <.icon name="hero-plus-mini" />
+        <span>Add Ticket</span>
+      </.link>
+    </div>
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+      <div :for={ticket <- @event.tickets} class="grid gap-1 rounded-xl border p-4">
+        <div class="flex justify-between">
+          <span class="text-sm text-zinc-700"><%= ticket.name %></span>
+          <button
+            class="flex rounded-md p-1"
+            phx-hook="DropdownButton"
+            phx-click={JS.toggle_class("hidden", to: "##{ticket.id}-dropdown")}
+            phx-click-away={JS.add_class("hidden", to: "##{ticket.id}-dropdown")}
+            id={"ticket-#{ticket.id}-dropdown-button"}
+          >
+            <.icon name="hero-ellipsis-vertical-mini" />
+            <div
+              id={"#{ticket.id}-dropdown"}
+              class="absolute top-0 left-0 grid hidden max-w-max gap-1 rounded-md border bg-white p-1 shadow *:min-w-40 *:flex *:items-center *:gap-2 *:rounded-md *:p-2 *:text-left *:text-sm hover:*:bg-zinc-100"
+              data-dropdown
+            >
+              <div>
+                <.icon name="hero-pencil-square-mini" />
+                <span>Edit</span>
+              </div>
+              <div class="text-rose-600">
+                <.icon name="hero-trash-mini" />
+                <span>Delete</span>
+              </div>
+            </div>
+          </button>
+        </div>
+        <div class="flex grow items-center gap-0.5">
+          <span class="self-end text-3xl font-bold leading-8">0</span>
+          <span class="mt-1 text-sm font-semibold text-zinc-600">/</span>
+          <!-- <span class="self-end text-zinc-600">&infin;</span> -->
+          <span class="self-end text-zinc-600">100</span>
+        </div>
+        <div class="flex items-end justify-between">
+          <div class="flex items-center gap-1 text-sm text-zinc-500">
+            <span>Available 10:30 PM, 03 Jun</span>
+          </div>
+          <span class="inline-flex items-center gap-x-1.5 rounded-full px-2 py-1 text-xs font-medium text-gray-900 ring-1 ring-inset ring-gray-200">
+            R <%= ticket.price %>
+          </span>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

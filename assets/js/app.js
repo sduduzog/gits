@@ -23,6 +23,8 @@ import { LiveSocket } from "phoenix_live_view";
 import topbar from "../vendor/topbar";
 import { TurnstileHook } from "phoenix_turnstile";
 
+import { computePosition,flip, shift, autoUpdate } from '@floating-ui/dom'
+
 import { register as swiperRegister } from "swiper/element/bundle";
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
 import { confetti } from "@tsparticles/confetti";
@@ -44,6 +46,25 @@ let liveSocket = new LiveSocket("/live", Socket, {
   params: { _csrf_token: csrfToken },
   hooks: {
     Turnstile: TurnstileHook,
+    DropdownButton: {
+      mounted() {
+        const dropdown = this.el.querySelector("[data-dropdown]")
+        this.cleanup = autoUpdate(this.el, dropdown, () => {
+          computePosition(this.el, dropdown, {
+            placement: 'bottom-end',
+            middleware: [flip(), shift({padding: 5})]}
+          ).then(({x, y}) => {
+            Object.assign(dropdown.style, {
+              left: `${x}px`,
+              top: `${y}px`
+            })
+          })
+        })
+      },
+      destroyed() {
+        this.cleanup?.()
+      }
+    },
     Confetti: {
       async mounted() {
         setTimeout(() => confetti("confetti"), 200);

@@ -434,28 +434,28 @@ defmodule GitsWeb.CoreComponents do
 
   def radio_group(assigns) do
     ~H"""
-    <div class="grid max-w-3xl grid-cols-2 gap-4 text-sm">
+    <div class="grid max-w-3xl gap-2 text-sm">
       <div :if={@label} class="col-span-full flex justify-between text-zinc-600">
         <span><%= @label %></span>
         <span></span>
       </div>
-
-      <label
-        :for={{%{value: value} = rad, idx} <- Enum.with_index(@radio)}
-        for={"#{@field.id}-#{idx}"}
-        class="grid max-w-3xl gap-2 rounded-md p-4 ring-1 ring-zinc-200 has-[:checked]:ring-1 has-[:checked]:ring-zinc-500 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-zinc-500"
-      >
-        <input
-          name={@field.name}
-          id={"#{@field.id}-#{idx}"}
-          type="radio"
-          class={"peer/#{value} sr-only"}
-          value={value}
-          checked
-        />
-        <%= render_slot(rad) %>
-      </label>
-      <span class="col-span-full">Pack</span>
+      <div class="grid gap-4 md:grid-cols-2 lg:gap-8">
+        <label
+          :for={{%{value: value} = rad, idx} <- Enum.with_index(@radio)}
+          for={"#{@field.id}-#{idx}"}
+          class="grid max-w-3xl gap-2 rounded-md p-4 ring-1 ring-zinc-200 has-[:checked]:ring-1 has-[:checked]:ring-zinc-500 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-zinc-500"
+        >
+          <input
+            name={@field.name}
+            id={"#{@field.id}-#{idx}"}
+            type="radio"
+            class={"peer/#{value} sr-only"}
+            value={value}
+            checked
+          />
+          <%= render_slot(rad) %>
+        </label>
+      </div>
     </div>
     """
   end
@@ -535,7 +535,7 @@ defmodule GitsWeb.CoreComponents do
       <table class="w-[40rem] sm:w-full">
         <thead class="text-left text-sm leading-6 text-zinc-500">
           <tr>
-            <th :for={col <- @col} class="p-0 pr-6 pb-4 font-normal"><%= col[:label] %></th>
+            <th :for={col <- @col} class="p-0 py-4 pr-6 font-normal"><%= col[:label] %></th>
             <th :if={@action != []} class="relative p-0 pb-4">
               <span class="sr-only"><%= gettext("Actions") %></span>
             </th>

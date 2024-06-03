@@ -61,6 +61,18 @@ defmodule Gits.Storefront.Event do
     default_accept :*
     defaults [:read, :destroy, update: :*]
 
+    read :for_dashboard_event_list do
+      argument :account_id, :uuid, allow_nil?: false
+      filter expr(account.id == ^arg(:account_id))
+      prepare build(sort: [id: :desc])
+    end
+
+    read :for_dashboard_event_details do
+      argument :id, :integer, allow_nil?: false
+      filter expr(id == ^arg(:id))
+      prepare build(load: [:tickets])
+    end
+
     read :masked do
       argument :id, :string
 
@@ -94,6 +106,28 @@ defmodule Gits.Storefront.Event do
   end
 
   policies do
+    policy action(:for_dashboard_event_details) do
+      authorize_if expr(
+                     account.members.user.id == ^actor(:id) and
+                       account.members.role in [:owner, :admin]
+                   )
+    end
+
+    policy action(:for_dashboard_event_details) do
+      authorize_if actor_present()
+    end
+
+    policy action(:for_dashboard_event_list) do
+      authorize_if expr(
+                     account.members.user.id == ^actor(:id) and
+                       account.members.role in [:owner, :admin]
+                   )
+    end
+
+    policy action(:for_dashboard_event_list) do
+      authorize_if actor_present()
+    end
+
     bypass action(:read) do
       forbid_unless expr(
                       account.members.user.id == ^actor(:id) or

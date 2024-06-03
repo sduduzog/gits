@@ -9,8 +9,9 @@ defmodule GitsWeb.DashboardLive.Settings do
     account =
       Account
       |> Ash.Query.for_read(:read, %{}, actor: user)
-      |> Ash.Query.load(:billing_enabled?)
+      |> Ash.Query.load([:billing_enabled?, billing_settings: [:paystack_ready?]])
       |> Ash.read_one!()
+      |> IO.inspect()
 
     socket =
       socket
@@ -32,7 +33,7 @@ defmodule GitsWeb.DashboardLive.Settings do
        current_account
        |> Ash.Changeset.for_update(:enable_billing, %{billing_settings: %{}}, actor: user)
        |> Ash.update!()
-       |> Ash.load!(:billing_enabled?, actor: user)
+       |> Ash.load!([:billing_enabled?, billing_settings: [:paystack_ready?]], actor: user)
      end)}
   end
 end

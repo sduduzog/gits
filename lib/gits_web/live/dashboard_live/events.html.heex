@@ -1,2 +1,38 @@
 <h1 class="text-4xl font-semibold">Events</h1>
-<.link navigate={~p"/accounts/#{@slug}/next/events/1"}>event 1</.link>
+<div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+  <.link
+    :for={event <- @events}
+    navigate={~p"/accounts/#{@slug}/next/events/#{event.id}"}
+    class="border grid gap-4 p-4 rounded-2xl border-zinc-200"
+  >
+    <div class="flex items-center gap-2">
+      <.icon name="hero-calendar" />
+      <span class="mt-1 grow">
+        <%= event.starts_at |> Timex.local() |> Timex.format!("%e %b %Y, %R %p", :strftime) %>
+      </span>
+    </div>
+    <div class="line-clamp-3 flex h-24 items-center overflow-hidden">
+      <span class="py-8 text-2xl font-medium">
+        <%= event.name %>
+      </span>
+    </div>
+    <div class="flex items-center gap-2">
+      <.icon name="hero-map-pin" />
+      <span class="grow">
+        <%= event.starts_at %>
+      </span>
+    </div>
+    <div class="flex items-center gap-2">
+      <!-- <.icon name="hero-users" /> -->
+      <!-- <span class="grow text-sm">0 Attending</span> -->
+      <!-- <span class="grow text-sm">0 Attending</span> -->
+      <!-- <span>&bull;</span> -->
+      <span class="inline-flex items-center gap-x-1.5 rounded-full px-2 py-1 text-xs font-medium text-gray-900 ring-1 ring-inset ring-gray-200">
+        <svg class="h-1.5 w-1.5 fill-yellow-500" viewBox="0 0 6 6" aria-hidden="true">
+          <circle cx="3" cy="3" r="3" />
+        </svg>
+        Published
+      </span>
+    </div>
+  </.link>
+</div>

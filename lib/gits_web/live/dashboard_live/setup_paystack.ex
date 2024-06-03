@@ -15,8 +15,13 @@ defmodule GitsWeb.DashboardLive.SetupPaystack do
   end
 
   def handle_params(unsigned_params, _uri, socket) do
+    user = socket.assigns.current_user
+
     account =
-      get_account(unsigned_params["slug"])
+      Account
+      |> Ash.Query.for_read(:by_id, %{id: unsigned_params["slug"]}, actor: user)
+      |> Ash.Query.load(:billing_settings)
+      |> Ash.read_one!()
 
     banks =
       PaystackApi.list_banks()
@@ -27,7 +32,7 @@ defmodule GitsWeb.DashboardLive.SetupPaystack do
     user = socket.assigns.current_user
 
     form =
-      account
+      account.billing_settings
       |> AshPhoenix.Form.for_update(:create_paystack_subaccount, as: "paystack", actor: user)
 
     socket =
@@ -38,16 +43,15 @@ defmodule GitsWeb.DashboardLive.SetupPaystack do
     {:noreply, socket}
   end
 
-  defp get_account(slug) do
-    Account |> Ash.get!(slug)
-  end
-
   def handle_event("validate", %{"paystack" => params}, socket) do
     form = socket.assigns.form |> Form.validate(params, errors: false)
     {:noreply, assign(socket, form: form)}
   end
 
   def handle_event("submit", %{"paystack" => params}, socket) do
+    # user = socket.assigns.current_user
+    slug = socket.assigns.slug
+
     form =
       socket.assigns.form
       |> Form.validate(params)
@@ -58,7 +62,7 @@ defmodule GitsWeb.DashboardLive.SetupPaystack do
 
     socket =
       with true <- form.valid?, {:ok, _} <- Form.submit(form) do
-        socket
+        socket |> push_navigate(to: ~p"/accounts/#{slug}/next/settings")
       else
         {:error, errors} ->
           IO.inspect(errors)

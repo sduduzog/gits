@@ -29,6 +29,14 @@ defmodule Gits.Dashboard.Account do
     default_accept :*
     defaults [:read, :destroy, update: :*]
 
+    read :by_id do
+      argument :id, :uuid do
+        allow_nil? false
+      end
+
+      filter expr(id == ^arg(:id))
+    end
+
     create :create do
       primary? true
       accept :*
@@ -70,7 +78,7 @@ defmodule Gits.Dashboard.Account do
       authorize_if expr(members.user.id == ^actor(:id) and members.role in [:owner, :admin])
     end
 
-    policy action([:create, :enable_billing]) do
+    policy action([:by_id, :create, :enable_billing]) do
       authorize_if actor_present()
     end
   end
