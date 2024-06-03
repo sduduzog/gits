@@ -73,6 +73,29 @@ defmodule Gits.Storefront.Event do
       prepare build(load: [:tickets])
     end
 
+    read :for_feature do
+      argument :id, :string
+
+      prepare before_action(fn query, _ ->
+                argument = Ash.Query.get_argument(query, :id)
+
+                case argument do
+                  nil ->
+                    query
+
+                  input ->
+                    id =
+                      Sqids.new!()
+                      |> Sqids.decode!(input)
+                      |> hd()
+
+                    query |> Ash.Query.filter(id: id)
+                end
+              end)
+
+      prepare build(load: [:masked_id])
+    end
+
     read :masked do
       argument :id, :string
 
@@ -137,11 +160,11 @@ defmodule Gits.Storefront.Event do
       authorize_if expr(account.members.role in [:owner, :admin, :access_coordinator])
     end
 
-    bypass action(:masked) do
+    bypass action([:masked, :for_feature]) do
       authorize_if expr(visibility in [:protected, :public] and not is_nil(^arg(:id)))
     end
 
-    policy action([:masked, :read]) do
+    policy action([:masked, :read, :for_feature]) do
       forbid_unless expr(visibility == :public)
       authorize_if always()
     end

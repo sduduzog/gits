@@ -67,6 +67,7 @@ defmodule GitsWeb.Router do
     ash_authentication_live_session :authentication_optional,
       on_mount: {GitsWeb.LiveUserAuth, :live_user_optional} do
       live "/events/:id", EventLive
+      live "/events/:id/next", EventLive.Feature
       live "/events/:id/payment", EventLive.Payment
     end
 
