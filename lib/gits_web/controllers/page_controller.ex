@@ -22,7 +22,7 @@ defmodule GitsWeb.PageController do
     conn
     |> assign(:slug, "/next")
     |> assign(:title, "/next")
-    |> render(:next, layout: {GitsWeb.Layouts, :next})
+    |> render(:next, layout: false)
   end
 
   def events(conn, _) do

@@ -1,5 +1,5 @@
 <div class="fixed inset-0 bg-zinc-50">
-  <div class="size-72 fixed top-0 left-4 animate-pulse rounded-full bg-purple-300 opacity-50 mix-blend-multiply blur-3xl lg:size-96">
+  <div class="size-72 fixed top-0 left-4 -z-10 animate-pulse rounded-full bg-purple-300 opacity-50 mix-blend-multiply blur-3xl lg:size-96">
   </div>
   <div class="size-40 fixed top-0 right-12 animate-pulse rounded-full bg-yellow-300 opacity-50 mix-blend-multiply blur-3xl md:size-52 md:right-64 xl:size-80 xl:top-40 2xl:right-96 2xl:-translate-x-64">
   </div>
@@ -7,8 +7,8 @@
   </div>
 </div>
 
-<div class="h-dvh relative overflow-auto pt-12 dark:bg-zinc-900">
-  <div class="grid-cols-[1fr_minmax(min-content,max-content)_1fr] fixed inset-x-0 top-0 z-10 grid items-center gap-4 p-2 px-4 text-sm font-medium">
+<div class="h-dvh relative space-y-4 overflow-auto dark:bg-zinc-900 md:space-y-8">
+  <div class="grid-cols-[1fr_minmax(min-content,max-content)_1fr] grid items-center gap-4 p-2 px-4 text-sm font-medium">
     <div class="justify-self-stretch">
       <.link navigate="/next" class="text-2xl font-black italic text-zinc-800 dark:text-white">
         GiTS
@@ -23,8 +23,6 @@
         >
           <.icon name="hero-ticket-mini" />
           <span class="hidden sm:inline-block">My Tickets</span>
-          <span class="size-3 absolute -top-0.5 -left-0.5 rounded-full bg-orange-500 text-center text-xs">
-          </span>
         </.link>
         <.link
           :if={FunWithFlags.enabled?(:profile)}
@@ -50,11 +48,9 @@
         <.icon name="hero-question-mark-circle" />
         <span class="hidden sm:inline-block">Need help?</span>
       </.link>
-      <!-- <button class="flex flex items-center text-zinc-700 sm:hidden"> -->
-      <!--   <.icon name="hero-bars-2" /> -->
-      <!-- </button> -->
     </div>
   </div>
-
-  <%= @inner_content %>
+  <div class="mx-auto max-w-screen-lg space-y-6 p-2 md:space-y-12">
+    <%= @inner_content %>
+  </div>
 </div>

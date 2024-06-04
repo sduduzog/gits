@@ -12,8 +12,6 @@ defmodule Gits.Storefront.Customer do
 
   relationships do
     belongs_to :user, Gits.Auth.User do
-      attribute_public? true
-      attribute_writable? true
       domain Gits.Auth
     end
 
@@ -77,11 +75,16 @@ defmodule Gits.Storefront.Customer do
   end
 
   actions do
-    default_accept :*
     defaults [:read]
 
+    read :read_for_shopping do
+      filter expr(user.id == ^actor(:id))
+    end
+
     create :create do
-      accept :*
+      argument :user, :map, allow_nil?: false
+
+      change manage_relationship(:user, type: :append)
 
       upsert? true
       upsert_identity :unique_user_id
@@ -94,7 +97,19 @@ defmodule Gits.Storefront.Customer do
   end
 
   policies do
-    policy always() do
+    policy action(:read) do
+      authorize_if expr(user.id == ^actor(:id))
+    end
+
+    policy action(:read_for_shopping) do
+      authorize_if expr(user.id == ^actor(:id))
+    end
+
+    policy action([:read, :read_for_shopping]) do
+      authorize_if actor_present()
+    end
+
+    policy action(:create) do
       authorize_if always()
     end
   end

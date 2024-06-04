@@ -1,0 +1,48 @@
+<h1 class="col-span-full text-4xl font-light">Get Tickets</h1>
+<div class="mx-auto grid max-w-screen-lg gap-2 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
+  <div class="col-span-full rounded-2xl bg-white p-4 shadow-sm">
+    <h2 class="text-xl font-medium"><%= @event.name %></h2>
+
+    <div class="mt-4 flex items-center gap-2 text-zinc-700">
+      <.icon name="hero-map-pin-mini" />
+      <span>Artistry JHB</span>
+    </div>
+    <div class="mt-2 flex items-center gap-2 text-zinc-700">
+      <.icon name="hero-calendar-mini" />
+      <span>10:00 AM &bull; Thursday &bull; 26 Dec 2024</span>
+    </div>
+  </div>
+
+  <div :for={ticket <- @tickets} class="rounded-2xl bg-white p-4 shadow-sm">
+    <h3 class="text-lg font-medium"><%= ticket.name %></h3>
+    <span class="text-sm text-zinc-500">R <%= ticket.price %></span>
+    <div class="flex items-center justify-end gap-4">
+      <button
+        class="inline-flex rounded-lg p-2"
+        phx-click={JS.push("remove_ticket", value: %{id: ticket.id})}
+      >
+        <.icon name="hero-minus-mini" />
+      </button>
+      <span class="inline-flex w-5 justify-center tabular-nums">
+        <%= ticket.customer_reserved_instance_count %>
+      </span>
+      <button
+        class="inline-flex rounded-lg p-2"
+        phx-click={JS.push("add_ticket", value: %{id: ticket.id})}
+      >
+        <.icon name="hero-plus-mini" />
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="shadow-smx col-span-full flex items-center gap-6 rounded-2xl">
+  <button
+    phx-click="package_tickets"
+    class="min-w-40 rounded-2xl bg-zinc-800 p-4 text-sm font-medium text-white hover:bg-zinc-700"
+  >
+    Continue
+  </button>
+  <button class="rounded-lg p-2 text-sm font-medium">Cancel</button>
+  <span><%= @basket.amount %></span>
+</div>

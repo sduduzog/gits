@@ -32,7 +32,6 @@ defmodule GitsWeb.Router do
     get "/", PageController, :next
     get "/next", PageController, :next
     get "/events", PageController, :events
-    get "/tickets", PageController, :tickets
     get "/organizers", PageController, :organizers
     get "/search", PageController, :search
     get "/join-waitlist", PageController, :join_wailtist
@@ -66,8 +65,8 @@ defmodule GitsWeb.Router do
 
     ash_authentication_live_session :authentication_optional,
       on_mount: {GitsWeb.LiveUserAuth, :live_user_optional} do
-      live "/events/:id", EventLive
-      live "/events/:id/next", EventLive.Feature
+      live "/events/:id", EventLive.Feature
+      live "/events/:id/tickets/:basket_id", EventLive.Tickets
       live "/events/:id/payment", EventLive.Payment
     end
 

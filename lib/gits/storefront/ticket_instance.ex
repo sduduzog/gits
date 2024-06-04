@@ -5,6 +5,10 @@ defmodule Gits.Storefront.TicketInstance do
     extensions: [AshStateMachine],
     domain: Gits.Storefront
 
+  alias Gits.Storefront.Basket
+  alias Gits.Storefront.Customer
+  alias Gits.Storefront.Ticket
+
   attributes do
     integer_primary_key :id
 
@@ -18,8 +22,6 @@ defmodule Gits.Storefront.TicketInstance do
     default_initial_state :reserved
 
     transitions do
-      transition :add_to_basket, from: :reserved, to: :added_to_basket
-      transition :add_to_basket_ready, from: :reserved, to: :ready_to_scan
       transition :abandon, from: :added_to_basket, to: :abandoned
       transition :ready_to_scan, from: :added_to_basket, to: :ready_to_scan
       transition :scan, from: :ready_to_scan, to: :scanned
@@ -28,9 +30,17 @@ defmodule Gits.Storefront.TicketInstance do
   end
 
   relationships do
-    belongs_to :ticket, Gits.Storefront.Ticket
-    belongs_to :customer, Gits.Storefront.Customer
-    belongs_to :basket, Gits.Storefront.Basket
+    belongs_to :ticket, Ticket
+    belongs_to :customer, Customer
+    belongs_to :basket, Basket
+  end
+
+  calculations do
+    calculate :price, :decimal, expr(ticket.price)
+
+    calculate :ticket_name, :string, expr(ticket.name)
+    calculate :event_name, :string, expr(ticket.event.name)
+    calculate :event_starts_at, :naive_datetime, expr(ticket.event.starts_at)
   end
 
   actions do
@@ -39,24 +49,11 @@ defmodule Gits.Storefront.TicketInstance do
 
     create :create do
       primary? true
+      argument :ticket, :map, allow_nil?: false
+      argument :customer, :map, allow_nil?: false
 
-      argument :customer, :map do
-        allow_nil? false
-      end
-
+      change manage_relationship(:ticket, type: :append)
       change manage_relationship(:customer, type: :append)
-    end
-
-    update :add_to_basket do
-      require_atomic? false
-
-      change transition_state(:added_to_basket)
-    end
-
-    update :add_to_basket_ready do
-      require_atomic? false
-
-      change transition_state(:ready_to_scan)
     end
 
     update :abandon do
@@ -84,33 +81,22 @@ defmodule Gits.Storefront.TicketInstance do
     end
   end
 
-  calculations do
-    calculate :ticket_name, :string, expr(ticket.name)
-    calculate :event_name, :string, expr(ticket.event.name)
-    calculate :event_starts_at, :naive_datetime, expr(ticket.event.starts_at)
-  end
-
   policies do
     policy action(:create) do
       authorize_if actor_present()
     end
 
-    policy action(:read) do
-      authorize_if expr(
-                     customer.id == ^actor(:id) or ticket.event.account.members.id == ^actor(:id)
-                   )
+    policy [action(:destroy), accessing_from(Basket, :instances)] do
+      forbid_if expr(state != :reserved)
+      authorize_if expr(customer.user.id == ^actor(:id))
     end
 
-    policy action(:read) do
+    policy [action(:read), accessing_from(Ticket, :instances)] do
+      authorize_if expr(customer.user.id == ^actor(:id))
+    end
+
+    policy action([:read, :destroy]) do
       authorize_if actor_present()
-    end
-
-    policy action(:add_to_basket_ready) do
-      authorize_if expr(ticket.price == 0)
-    end
-
-    policy action(:add_to_basket_ready) do
-      authorize_if always()
     end
 
     policy action(:ready_to_scan) do

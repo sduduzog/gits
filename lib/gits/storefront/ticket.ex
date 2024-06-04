@@ -43,15 +43,45 @@ defmodule Gits.Storefront.Ticket do
     end
 
     has_many :instances, Gits.Storefront.TicketInstance
+  end
 
-    has_many :hot_instances, Gits.Storefront.TicketInstance do
-      filter expr(state in [:reserved, :added_to_basket, :ready_to_scan, :scanned])
+  calculations do
+    calculate :customer_reserved_instance_count,
+              :integer,
+              expr(
+                count(instances,
+                  query: [filter: expr(customer.user.id == ^actor(:id) and state == :reserved)]
+                )
+              )
+
+    calculate :customer_reserved_instances_amount,
+              :decimal,
+              expr(customer_reserved_instance_count * price)
+  end
+
+  aggregates do
+    first :first_reserved_instance_id, :instances, :id do
+      filter state: :reserved
+      sort [:id]
     end
   end
 
   actions do
     default_accept :*
     defaults [:read, :destroy]
+
+    read :for_customer do
+      argument :event_id, :integer, allow_nil?: false
+      filter expr(event.id == ^arg(:event_id))
+
+      prepare build(
+                load: [
+                  :customer_reserved_instances_amount,
+                  :customer_reserved_instance_count,
+                  :first_reserved_instance_id
+                ]
+              )
+    end
 
     create :create do
       accept :*
@@ -91,41 +121,15 @@ defmodule Gits.Storefront.Ticket do
     end
   end
 
-  calculations do
-    calculate :event_name, :string, expr(event.name)
-    calculate :event_starts_at, :naive_datetime, expr(event.starts_at)
-    calculate :event_address_place_id, :string, expr(event.address_place_id)
-    calculate :event_address, :map, Gits.Storefront.Ticket.Calculations.Address
-
-    calculate :customer_reserved_instance_count,
-              :integer,
-              expr(
-                count(instances,
-                  query: [filter: expr(customer.id == ^actor(:id) and state == :reserved)]
-                )
-              )
-
-    calculate :customer_reserved_instance_total,
-              :integer,
-              expr(customer_reserved_instance_count * price)
-
-    calculate :customer_secured_instance_count,
-              :integer,
-              expr(
-                count(instances,
-                  query: [
-                    filter:
-                      expr(customer.id == ^actor(:id) and state in [:ready_to_scan, :scanned])
-                  ]
-                )
-              )
-  end
-
   aggregates do
     first :instance_id, :instances, :id
   end
 
   policies do
+    policy action([:for_customer]) do
+      authorize_if actor_present()
+    end
+
     policy action(:add_instance) do
       authorize_if expr(count(hot_instances) < total_quantity)
     end

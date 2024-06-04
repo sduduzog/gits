@@ -54,6 +54,21 @@
   src: url("/fonts/Poppins-LightItalic.ttf") format("truetype");
 }
 
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 100;
+  src: url("/fonts/Poppins-Thin.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Poppins";
+  font-style: italic;
+  font-weight: 100;
+  src: url("/fonts/Poppins-ThinItalic.ttf") format("truetype");
+}
+
+
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";

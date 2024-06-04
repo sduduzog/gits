@@ -14,7 +14,7 @@ defmodule Gits.Storefront.Basket do
   attributes do
     uuid_primary_key :id
 
-    attribute :amount, :integer, allow_nil?: false, public?: true
+    attribute :amount, :decimal, allow_nil?: false, public?: true
 
     create_timestamp :created_at, public?: true
 
@@ -34,25 +34,60 @@ defmodule Gits.Storefront.Basket do
       attribute_type :integer
     end
 
+    belongs_to :customer, Gits.Storefront.Customer
+
     has_many :instances, Gits.Storefront.TicketInstance
+  end
+
+  aggregates do
+    sum :instances_total, :instances, :price
   end
 
   actions do
     defaults [:read]
 
+    read :read_for_shopping do
+      argument :id, :uuid, allow_nil?: false
+
+      filter expr(id == ^arg(:id))
+      filter expr(state == :open)
+    end
+
     create :open_basket do
+      argument :event, :map, allow_nil?: false
+      argument :customer, :map, allow_nil?: false
+
+      change set_attribute(:amount, 0)
+      change manage_relationship(:event, type: :append)
+      change manage_relationship(:customer, type: :append)
     end
 
     update :add_ticket_to_basket do
-      transition_state(:refunded)
+      require_atomic? false
+      argument :instance, :map, allow_nil?: false
+
+      change manage_relationship(:instance, :instances, type: :create)
     end
 
     update :remove_ticket_from_basket do
-      transition_state(:refunded)
+      require_atomic? false
+
+      argument :instance, :integer, allow_nil?: false
+
+      change manage_relationship(:instance, :instances,
+               on_no_match: :error,
+               on_match: {:destroy, :destroy}
+             )
     end
 
     update :package_tickets do
-      transition_state(:refunded)
+      require_atomic? false
+
+      change fn changeset, _ ->
+        Ash.Changeset.atomic_update(changeset, :amount, [expr(instances_total)])
+      end
+
+      transition_state(:packaged)
     end
 
     update :package_timeout do
@@ -77,8 +112,21 @@ defmodule Gits.Storefront.Basket do
   end
 
   policies do
-    policy always() do
-      authorize_if always()
+    policy action(:read_for_shopping) do
+      authorize_if expr(customer.user.id == ^actor(:id))
+    end
+
+    policy action([:add_ticket_to_basket, :remove_ticket_from_basket]) do
+      authorize_if expr(state == :open)
+    end
+
+    policy action([
+             :open_basket,
+             :read_for_shopping,
+             :add_ticket_to_basket,
+             :remove_ticket_from_basket
+           ]) do
+      authorize_if actor_present()
     end
   end
 

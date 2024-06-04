@@ -41,9 +41,7 @@ defmodule Gits.Storefront.Event do
   aggregates do
     min :minimum_ticket_price, :tickets, :price
     max :maximum_ticket_price, :tickets, :price
-    sum :customer_reserved_instance_count, :tickets, :customer_reserved_instance_count
-    sum :customer_reserved_instance_total, :tickets, :customer_reserved_instance_total
-    sum :customer_secured_instance_count, :tickets, :customer_secured_instance_count
+    sum :foo, :tickets, :customer_reserved_instances_amount
   end
 
   calculations do
@@ -93,7 +91,7 @@ defmodule Gits.Storefront.Event do
                 end
               end)
 
-      prepare build(load: [:masked_id])
+      prepare build(load: [:masked_id, :foo])
     end
 
     read :masked do
