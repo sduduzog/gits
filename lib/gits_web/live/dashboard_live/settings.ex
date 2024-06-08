@@ -19,7 +19,7 @@ defmodule GitsWeb.DashboardLive.Settings do
       |> assign(:title, "Settings")
       |> assign(:account, account)
 
-    {:ok, socket, layout: {GitsWeb.Layouts, :dashboard_next}}
+    {:ok, socket, layout: {GitsWeb.Layouts, :catalyst}}
   end
 
   def handle_params(_unsigned_params, _uri, socket) do

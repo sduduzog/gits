@@ -3,6 +3,6 @@ defmodule GitsWeb.DashboardLive.Team do
 
   def mount(params, _session, socket) do
     socket = socket |> assign(:slug, params["slug"]) |> assign(:title, "Team")
-    {:ok, socket, layout: {GitsWeb.Layouts, :dashboard_next}}
+    {:ok, socket, layout: {GitsWeb.Layouts, :catalyst}}
   end
 end

@@ -22,10 +22,7 @@ defmodule Gits.Storefront.TicketInstance do
     default_initial_state :reserved
 
     transitions do
-      transition :abandon, from: :added_to_basket, to: :abandoned
-      transition :ready_to_scan, from: :added_to_basket, to: :ready_to_scan
       transition :scan, from: :ready_to_scan, to: :scanned
-      transition :release, from: :reserved, to: :released
     end
   end
 
@@ -54,24 +51,6 @@ defmodule Gits.Storefront.TicketInstance do
 
       change manage_relationship(:ticket, type: :append)
       change manage_relationship(:customer, type: :append)
-    end
-
-    update :abandon do
-      require_atomic? false
-
-      change transition_state(:abandoned)
-    end
-
-    update :release do
-      require_atomic? false
-
-      change transition_state(:released)
-    end
-
-    update :ready_to_scan do
-      require_atomic? false
-
-      change transition_state(:ready_to_scan)
     end
 
     update :scan do

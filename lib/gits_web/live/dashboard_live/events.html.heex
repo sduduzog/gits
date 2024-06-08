@@ -1,38 +1,40 @@
-<h1 class="text-4xl font-semibold">Events</h1>
-<div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-  <.link
-    :for={event <- @events}
-    navigate={~p"/accounts/#{@slug}/next/events/#{event.id}"}
-    class="border grid gap-4 p-4 rounded-2xl border-zinc-200"
-  >
-    <div class="flex items-center gap-2">
-      <.icon name="hero-calendar" />
-      <span class="mt-1 grow">
-        <%= event.starts_at |> Timex.local() |> Timex.format!("%e %b %Y, %R %p", :strftime) %>
-      </span>
+<h1 class="text-xl font-semibold">Events</h1>
+<div class="flex">
+  <div class="grow"></div>
+  <button class="rounded-lg bg-black p-4 text-sm font-medium text-white">
+    Create event
+  </button>
+</div>
+<div class="space-y-4 divide-y divide-zinc-100">
+  <div :for={event <- @events} class="flex items-start gap-2 pt-4 lg:gap-6">
+    <div class="w-32 shrink-0 lg:w-36">
+      <img
+        src="/images/placeholder.png"
+        alt=""
+        class="aspect-[3/2] block w-full rounded-lg bg-red-400 object-cover"
+      />
     </div>
-    <div class="line-clamp-3 flex h-24 items-center overflow-hidden">
-      <span class="py-8 text-2xl font-medium">
+    <div class="grid grow gap-2 py-1">
+      <.link
+        navigate={~p"/accounts/#{@slug}/next/events/#{event.id}"}
+        class="truncate font-semibold"
+      >
         <%= event.name %>
+      </.link>
+      <span class="text-sm text-zinc-500">
+        <%= event.starts_at |> Timex.local() |> Timex.format!("%e %b %Y, at %R %p", :strftime) %> &bull; Artistry JHB
+      </span>
+      <span class="hidden text-sm text-zinc-500 lg:inline-flex">
+        0/0 tickets sold
       </span>
     </div>
-    <div class="flex items-center gap-2">
-      <.icon name="hero-map-pin" />
-      <span class="grow">
-        <%= event.starts_at %>
+    <div class="flex items-center gap-4 place-self-center">
+      <span class="ring-green-600/20 hidden items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset lg:inline-flex">
+        Badge
       </span>
+      <button class="flex rounded-lg p-2 hover:bg-zinc-100">
+        <.icon name="hero-ellipsis-vertical-mini" />
+      </button>
     </div>
-    <div class="flex items-center gap-2">
-      <!-- <.icon name="hero-users" /> -->
-      <!-- <span class="grow text-sm">0 Attending</span> -->
-      <!-- <span class="grow text-sm">0 Attending</span> -->
-      <!-- <span>&bull;</span> -->
-      <span class="inline-flex items-center gap-x-1.5 rounded-full px-2 py-1 text-xs font-medium text-gray-900 ring-1 ring-inset ring-gray-200">
-        <svg class="h-1.5 w-1.5 fill-yellow-500" viewBox="0 0 6 6" aria-hidden="true">
-          <circle cx="3" cy="3" r="3" />
-        </svg>
-        Published
-      </span>
-    </div>
-  </.link>
+  </div>
 </div>

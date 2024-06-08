@@ -26,6 +26,7 @@ defmodule Gits.Storefront.Basket do
     default_initial_state :open
 
     transitions do
+      transition :package_tickets, from: :open, to: :packaged
     end
   end
 
@@ -40,7 +41,8 @@ defmodule Gits.Storefront.Basket do
   end
 
   aggregates do
-    sum :instances_total, :instances, :price
+    count :count_of_instances, :instances
+    sum :sum_of_instance_prices, :instances, :price
   end
 
   actions do
@@ -51,6 +53,7 @@ defmodule Gits.Storefront.Basket do
 
       filter expr(id == ^arg(:id))
       filter expr(state == :open)
+      prepare build(load: [:count_of_instances, :sum_of_instance_prices, :instances])
     end
 
     create :open_basket do
@@ -84,7 +87,7 @@ defmodule Gits.Storefront.Basket do
       require_atomic? false
 
       change fn changeset, _ ->
-        Ash.Changeset.atomic_update(changeset, :amount, [expr(instances_total)])
+        Ash.Changeset.change_attribute(changeset, :amount, changeset.data.sum_of_instance_prices)
       end
 
       transition_state(:packaged)
@@ -122,6 +125,7 @@ defmodule Gits.Storefront.Basket do
 
     policy action([
              :open_basket,
+             :package_tickets,
              :read_for_shopping,
              :add_ticket_to_basket,
              :remove_ticket_from_basket

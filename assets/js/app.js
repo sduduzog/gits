@@ -51,7 +51,6 @@ let liveSocket = new LiveSocket("/live", Socket, {
         const dropdown = this.el.querySelector("[data-dropdown]")
         this.cleanup = autoUpdate(this.el, dropdown, () => {
           computePosition(this.el, dropdown, {
-            placement: 'bottom-end',
             middleware: [flip(), shift({padding: 5})]}
           ).then(({x, y}) => {
             Object.assign(dropdown.style, {

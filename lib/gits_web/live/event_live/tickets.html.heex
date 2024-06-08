@@ -13,9 +13,12 @@
     </div>
   </div>
 
-  <div :for={ticket <- @tickets} class="rounded-2xl bg-white p-4 shadow-sm">
-    <h3 class="text-lg font-medium"><%= ticket.name %></h3>
-    <span class="text-sm text-zinc-500">R <%= ticket.price %></span>
+  <div :for={ticket <- @tickets} class="space-y-2 rounded-2xl bg-white p-4 shadow-sm">
+    <div class="flex gap-2">
+      <h3 class="font-semibold"><%= ticket.name %></h3>
+      <span>&bull;</span>
+      <span class="text-zinc-500">R <%= ticket.price %></span>
+    </div>
     <div class="flex items-center justify-end gap-4">
       <button
         class="inline-flex rounded-lg p-2"
@@ -24,7 +27,7 @@
         <.icon name="hero-minus-mini" />
       </button>
       <span class="inline-flex w-5 justify-center tabular-nums">
-        <%= ticket.customer_reserved_instance_count %>
+        <%= ticket.customer_reserved_instance_count_for_basket %>
       </span>
       <button
         class="inline-flex rounded-lg p-2"
@@ -36,7 +39,15 @@
   </div>
 </div>
 
-<div class="shadow-smx col-span-full flex items-center gap-6 rounded-2xl">
+<div class="shadow-smx col-span-full flex flex-wrap items-center gap-6 rounded-2xl">
+  <div class="w-full p-2 text-sm font-medium">
+    <%= if @basket.count_of_instances > 0 do %>
+      <span>Total:</span>
+      <span>R <%= @basket.sum_of_instance_prices %></span>
+    <% else %>
+      <span>Go on! pick your tickets</span>
+    <% end %>
+  </div>
   <button
     phx-click="package_tickets"
     class="min-w-40 rounded-2xl bg-zinc-800 p-4 text-sm font-medium text-white hover:bg-zinc-700"
@@ -44,5 +55,4 @@
     Continue
   </button>
   <button class="rounded-lg p-2 text-sm font-medium">Cancel</button>
-  <span><%= @basket.amount %></span>
 </div>

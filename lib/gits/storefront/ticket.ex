@@ -46,39 +46,40 @@ defmodule Gits.Storefront.Ticket do
   end
 
   calculations do
-    calculate :customer_reserved_instance_count,
+    calculate :customer_reserved_instance_count_for_basket,
               :integer,
               expr(
                 count(instances,
-                  query: [filter: expr(customer.user.id == ^actor(:id) and state == :reserved)]
+                  query: [
+                    filter:
+                      expr(
+                        customer.user.id == ^actor(:id) and state == :reserved and
+                          basket.id == ^arg(:basket_id)
+                      )
+                  ]
                 )
-              )
+              ) do
+      argument :basket_id, :uuid, allow_nil?: false
+    end
 
     calculate :customer_reserved_instances_amount,
               :decimal,
-              expr(customer_reserved_instance_count * price)
-  end
-
-  aggregates do
-    first :first_reserved_instance_id, :instances, :id do
-      filter state: :reserved
-      sort [:id]
-    end
+              expr(price)
   end
 
   actions do
     default_accept :*
     defaults [:read, :destroy]
 
-    read :for_customer do
+    read :read_for_shopping do
       argument :event_id, :integer, allow_nil?: false
+      argument :basket_id, :uuid, allow_nil?: false
       filter expr(event.id == ^arg(:event_id))
 
       prepare build(
                 load: [
                   :customer_reserved_instances_amount,
-                  :customer_reserved_instance_count,
-                  :first_reserved_instance_id
+                  customer_reserved_instance_count_for_basket: [basket_id: arg(:basket_id)]
                 ]
               )
     end
@@ -126,7 +127,7 @@ defmodule Gits.Storefront.Ticket do
   end
 
   policies do
-    policy action([:for_customer]) do
+    policy action([:for_customer, :read_for_shopping]) do
       authorize_if actor_present()
     end
 

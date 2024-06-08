@@ -1,0 +1,138 @@
+<div class="h-dvh lg:grid-cols-[theme(space.64)_1fr] lg:grid lg:grid lg:p-2">
+  <div
+    role="none"
+    class="bg-black/20 fixed inset-0 z-10 hidden transition-all"
+    id="backdrop"
+    phx-click={
+      JS.remove_class("translate-x-72", to: "#sidebar")
+      |> JS.add_class("hidden", to: "#backdrop")
+    }
+  >
+  </div>
+  <div
+    class="fixed inset-y-0 -left-72 z-20 w-72 p-2 transition-all lg:static lg:w-auto lg:p-0"
+    id="sidebar"
+  >
+    <div class="flex h-full flex-col rounded-xl bg-white p-4 shadow-sm lg:bg-transparent lg:shadow-none">
+      <div class="pb-4 lg:hidden">
+        <button
+          phx-click={
+            JS.remove_class("translate-x-72", to: "#sidebar")
+            |> JS.add_class("hidden", to: "#backdrop")
+          }
+          class="rounded-xl p-2"
+        >
+          <.icon name="hero-x-mark-mini" />
+        </button>
+      </div>
+      <div
+        class="flex items-center rounded-lg p-2 px-4 hover:bg-zinc-50 lg:hover:bg-zinc-100"
+        phx-hook="DropdownButton"
+        phx-click={JS.toggle(to: "#account_dropdown_options")}
+        phx-click-away={JS.hide(to: "#account_dropdown_options")}
+        id="account_dropdown"
+      >
+        <span class="grow font-medium">Treehouse Inc</span>
+        <.icon name="hero-chevron-down-mini" />
+        <div
+          id="account_dropdown_options"
+          class="absolute z-30 grid gap-1 rounded-xl border bg-white p-1 text-sm *:flex *:w-72 *:items-center *:gap-2 *:rounded-lg *:p-2 hover:*:bg-zinc-50"
+          style="display: none;"
+          data-dropdown
+        >
+          <.link>
+            <img src="/images/placeholder.png" alt="" class="size-5 rounded-full object-cover " />
+            <span>Treehouse Inc</span>
+          </.link>
+          <.link class="text-zinc-700">
+            <.icon name="hero-plus-mini" />
+            <span>New organization...</span>
+          </.link>
+        </div>
+      </div>
+      <div
+        class="mt-4 grid gap-2 border-t pt-4 text-base font-medium *:flex *:items-center *:gap-3 *:rounded-lg *:p-2 *:text-zinc-700 hover:*:bg-zinc-50 lg:hover:*:bg-zinc-100"
+        phx-click={
+          JS.remove_class("translate-x-72", to: "#sidebar")
+          |> JS.add_class("hidden", to: "#backdrop")
+        }
+      >
+        <.link href={~p"/accounts/#{@slug}/next"}>
+          <.icon name="hero-home-solid" />
+          <span>Home</span>
+        </.link>
+        <.link href={~p"/accounts/#{@slug}/next/events"}>
+          <.icon name="hero-calendar-days-solid" />
+          <span>Events</span>
+        </.link>
+        <.link href={~p"/accounts/#{@slug}/next/team"}>
+          <.icon name="hero-user-group-solid" />
+          <span>Team</span>
+        </.link>
+      </div>
+      <div role="none" class="grow"></div>
+      <div
+        class="mt-4 grid gap-2 pt-4 text-base font-medium *:flex *:items-center *:gap-3 *:rounded-lg *:p-2 *:text-zinc-700 hover:*:bg-zinc-50 lg:hover:*:bg-zinc-100"
+        phx-click={
+          JS.remove_class("translate-x-72", to: "#sidebar")
+          |> JS.add_class("hidden", to: "#backdrop")
+        }
+      >
+        <.link href={~p"/accounts/#{@slug}/next/settings"}>
+          <.icon name="hero-cog-6-tooth-solid" />
+          <span>Settings</span>
+        </.link>
+      </div>
+    </div>
+  </div>
+  <div class="h-full bg-white shadow lg:rounded-lg">
+    <div class="flex items-center justify-between p-2 lg:hidden">
+      <button
+        class="flex rounded-xl p-2.5"
+        phx-click={
+          JS.add_class("translate-x-72", to: "#sidebar")
+          |> JS.remove_class("hidden", to: "#backdrop")
+        }
+      >
+        <.icon name="hero-bars-2-mini" />
+      </button>
+
+      <button
+        class="size-10 flex overflow-hidden p-1"
+        phx-hook="DropdownButton"
+        id="avatar_dropdown"
+        phx-click={JS.toggle(to: "#avatar_dropdown_options")}
+        phx-click-away={JS.hide(to: "#avatar_dropdown_options")}
+      >
+        <img
+          src="/images/placeholder.png"
+          alt="avatar"
+          class="h-full w-full rounded-xl object-cover"
+        />
+        <div
+          id="avatar_dropdown_options"
+          class="absolute z-30 grid gap-1 rounded-xl border bg-white p-1 shadow-lg *:flex *:w-52 *:items-center *:gap-2 *:rounded-lg *:p-2 hover:*:bg-zinc-50"
+          style="display: none;"
+          data-dropdown
+        >
+          <.link>
+            <.icon name="hero-user-mini" />
+            <span>My profile</span>
+          </.link>
+          <.link>
+            <.icon name="hero-question-mark-circle-mini" />
+            <span>Help &amp; feedback</span>
+          </.link>
+          <.link>
+            <.icon name="hero-arrow-right-start-on-rectangle-mini" />
+            <span>Sign out</span>
+          </.link>
+        </div>
+      </button>
+    </div>
+
+    <div class="mx-auto max-w-screen-xl space-y-6 px-2 pt-14">
+      <%= @inner_content %>
+    </div>
+  </div>
+</div>

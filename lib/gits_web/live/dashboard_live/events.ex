@@ -9,7 +9,7 @@ defmodule GitsWeb.DashboardLive.Events do
       |> assign(:slug, params["slug"])
       |> assign(:title, "Events")
 
-    {:ok, socket, layout: {GitsWeb.Layouts, :dashboard_next}}
+    {:ok, socket, layout: {GitsWeb.Layouts, :catalyst}}
   end
 
   def handle_params(unsigned_params, _uri, socket) do
