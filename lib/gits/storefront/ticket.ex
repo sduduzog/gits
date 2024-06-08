@@ -62,9 +62,38 @@ defmodule Gits.Storefront.Ticket do
       argument :basket_id, :uuid, allow_nil?: false
     end
 
-    calculate :customer_reserved_instances_amount,
-              :decimal,
-              expr(price)
+    calculate :customer_locked_instance_count_for_basket,
+              :integer,
+              expr(
+                count(instances,
+                  query: [
+                    filter:
+                      expr(
+                        customer.user.id == ^actor(:id) and state == :locked_for_checkout and
+                          basket.id == ^arg(:basket_id)
+                      )
+                  ]
+                )
+              ) do
+      argument :basket_id, :uuid, allow_nil?: false
+    end
+
+    calculate :customer_locked_instance_price_for_basket,
+              :integer,
+              expr(
+                price *
+                  count(instances,
+                    query: [
+                      filter:
+                        expr(
+                          customer.user.id == ^actor(:id) and state == :locked_for_checkout and
+                            basket.id == ^arg(:basket_id)
+                        )
+                    ]
+                  )
+              ) do
+      argument :basket_id, :uuid, allow_nil?: false
+    end
   end
 
   actions do
@@ -78,10 +107,26 @@ defmodule Gits.Storefront.Ticket do
 
       prepare build(
                 load: [
-                  :customer_reserved_instances_amount,
                   customer_reserved_instance_count_for_basket: [basket_id: arg(:basket_id)]
                 ]
               )
+
+      prepare build(sort: [created_at: :asc])
+    end
+
+    read :read_for_checkout_summary do
+      argument :event_id, :integer, allow_nil?: false
+      argument :basket_id, :uuid, allow_nil?: false
+      filter expr(event.id == ^arg(:event_id))
+
+      prepare build(
+                load: [
+                  customer_locked_instance_count_for_basket: [basket_id: arg(:basket_id)],
+                  customer_locked_instance_price_for_basket: [basket_id: arg(:basket_id)]
+                ]
+              )
+
+      prepare build(sort: [created_at: :asc])
     end
 
     create :create do
@@ -118,7 +163,7 @@ defmodule Gits.Storefront.Ticket do
         allow_nil? false
       end
 
-      change manage_relationship(:instance, :instances, on_match: {:update, :release})
+      change manage_relationship(:instance, :instances, on_match: {:destroy, :destroy})
     end
   end
 
@@ -127,22 +172,23 @@ defmodule Gits.Storefront.Ticket do
   end
 
   policies do
-    policy action([:for_customer, :read_for_shopping]) do
+    policy action([:read_for_shopping]) do
+      authorize_if actor_present()
+    end
+
+    policy action(:read_for_checkout_summary) do
       authorize_if actor_present()
     end
 
     policy action(:add_instance) do
-      authorize_if expr(count(hot_instances) < total_quantity)
-    end
+      forbid_unless expr(total_quantity == 0 or count(instances) < total_quantity)
 
-    policy action(:add_instance) do
-      authorize_if expr(
-                     count(hot_instances, query: [filter: expr(customer.id == ^actor(:id))]) <
-                       allowed_quantity_per_user
-                   )
-    end
+      forbid_unless expr(
+                      allowed_quantity_per_user == 0 or
+                        count(instances, query: [filter: expr(customer.user.id == ^actor(:id))]) <
+                          allowed_quantity_per_user
+                    )
 
-    policy action(:add_instance) do
       authorize_if actor_present()
     end
 
@@ -152,6 +198,10 @@ defmodule Gits.Storefront.Ticket do
 
     policy action(:read) do
       authorize_if always()
+    end
+
+    policy action(:update) do
+      authorize_if expr(count(instances) == 0)
     end
 
     policy action(:update) do

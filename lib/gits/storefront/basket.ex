@@ -26,7 +26,8 @@ defmodule Gits.Storefront.Basket do
     default_initial_state :open
 
     transitions do
-      transition :package_tickets, from: :open, to: :packaged
+      transition :lock_for_checkout, from: :open, to: :locked_for_checkout
+      transition :unlock_for_shopping, from: :locked_for_checkout, to: :open
     end
   end
 
@@ -50,9 +51,13 @@ defmodule Gits.Storefront.Basket do
 
     read :read_for_shopping do
       argument :id, :uuid, allow_nil?: false
-
       filter expr(id == ^arg(:id))
-      filter expr(state == :open)
+      prepare build(load: [:count_of_instances, :sum_of_instance_prices, :instances])
+    end
+
+    read :read_for_checkout_summary do
+      argument :id, :uuid, allow_nil?: false
+      filter expr(id == ^arg(:id))
       prepare build(load: [:count_of_instances, :sum_of_instance_prices, :instances])
     end
 
@@ -83,26 +88,40 @@ defmodule Gits.Storefront.Basket do
              )
     end
 
-    update :package_tickets do
+    update :lock_for_checkout do
       require_atomic? false
 
+      change transition_state(:locked_for_checkout)
+
       change fn changeset, _ ->
-        Ash.Changeset.change_attribute(changeset, :amount, changeset.data.sum_of_instance_prices)
+        changeset
+        |> Ash.Changeset.before_action(fn changeset ->
+          changeset
+          |> Ash.Changeset.manage_relationship(
+            :instances,
+            Enum.map(changeset.data.instances, & &1.id),
+            on_match: {:update, :lock_for_checkout}
+          )
+        end)
       end
-
-      transition_state(:packaged)
     end
 
-    update :package_timeout do
-      transition_state(:refunded)
-    end
+    update :unlock_for_shopping do
+      require_atomic? false
 
-    update :settle_timeout do
-      transition_state(:refunded)
-    end
+      change transition_state(:open)
 
-    update :settle_for_free do
-      transition_state(:refunded)
+      change fn changeset, _ ->
+        changeset
+        |> Ash.Changeset.before_action(fn changeset ->
+          changeset
+          |> Ash.Changeset.manage_relationship(
+            :instances,
+            Enum.map(changeset.data.instances, & &1.id),
+            on_match: {:update, :unlock_for_shopping}
+          )
+        end)
+      end
     end
 
     update :settle do
@@ -115,20 +134,36 @@ defmodule Gits.Storefront.Basket do
   end
 
   policies do
-    policy action(:read_for_shopping) do
+    policy action(:lock_for_checkout) do
+      forbid_unless expr(state == :open)
+      forbid_unless expr(count_of_instances > 0)
       authorize_if expr(customer.user.id == ^actor(:id))
     end
 
-    policy action([:add_ticket_to_basket, :remove_ticket_from_basket]) do
-      authorize_if expr(state == :open)
+    policy action(:unlock_for_shopping) do
+      forbid_unless expr(state == :locked_for_checkout)
+      authorize_if expr(customer.user.id == ^actor(:id))
+    end
+
+    policy action(:read_for_shopping) do
+      forbid_unless expr(state == :open)
+      forbid_unless expr(customer.user.id == ^actor(:id))
+      authorize_if actor_present()
+    end
+
+    policy action(:read_for_checkout_summary) do
+      forbid_unless expr(state == :locked_for_checkout)
+      authorize_if expr(customer.user.id == ^actor(:id))
+    end
+
+    policy action(:add_ticket_to_basket) do
+      authorize_if actor_present()
     end
 
     policy action([
              :open_basket,
-             :package_tickets,
-             :read_for_shopping,
-             :add_ticket_to_basket,
-             :remove_ticket_from_basket
+             :lock_for_checkout,
+             :unlock_for_shopping
            ]) do
       authorize_if actor_present()
     end

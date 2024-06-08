@@ -1,8 +1,11 @@
 <div class="space-y-4 md:space-y-8">
   <div class="grid gap-4 sm:grid-cols-[18rem_auto] lg:grid-cols-[30rem_auto] lg:gap-12">
     <div class="aspect-[3/2] overflow-hidden rounded-2xl">
-      <img src={@feature_image} alt="Feature image"
-        class="h-full w-full object-cover transition-transform duration-300 hover:scale-110" />
+      <img
+        src={@feature_image}
+        alt="Feature image"
+        class="h-full w-full object-cover transition-transform duration-300 hover:scale-110"
+      />
     </div>
     <div class="flex flex-col gap-2 lg:gap-4">
       <h1 class="text-2xl font-semibold lg:text-3xl">
@@ -29,9 +32,9 @@
         <span class="line-clamp-2 px-1 text-sm text-zinc-500">
           <%= if @event.venue do %>
             <%= @event.venue.name %>, <%= @event.venue.formatted_address %>
-                <% else %>
-                  Venue not confirmed
-                  <% end %>
+          <% else %>
+            Venue not confirmed
+          <% end %>
         </span>
       </div>
       <div class="rounded-xl border-gray-100 bg-gray-50 p-2 text-sm text-zinc-600">
@@ -56,35 +59,39 @@
           <span class=" text-sm text-gray-500">
             <%= if ticket.price> 0 do %>
               R <%= ticket.price %>
-                <% else %>
-                  FREE
-                  <% end %>
+            <% else %>
+              FREE
+            <% end %>
           </span>
         </div>
 
         <div class="flex h-9 items-center gap-2 rounded-md">
           <%= if ticket.customer_reserved_instance_count> 0 do %>
-            <button class="flex rounded-md bg-gray-100 p-2" phx-click={JS.push("remove_ticket", value: %{id:
-              ticket.id})}>
+            <button
+              class="flex rounded-md bg-gray-100 p-2"
+              phx-click={JS.push("remove_ticket", value: %{id: ticket.id})}
+            >
               <.icon name="hero-minus-mini" />
             </button>
 
             <span class="w-8 text-center tabular-nums">
               <%= ticket.customer_reserved_instance_count %>
             </span>
-            <% end %>
+          <% end %>
 
-              <button class="flex rounded-md bg-gray-100 p-2" phx-click={JS.push("add_ticket", value: %{id:
-                ticket.id})}>
-                <.icon name="hero-plus-mini" />
-              </button>
+          <button
+            class="flex rounded-md bg-gray-100 p-2"
+            phx-click={JS.push("add_ticket", value: %{id: ticket.id})}
+          >
+            <.icon name="hero-plus-mini" />
+          </button>
         </div>
       </div>
     </div>
-    <div :if={@event.customer_reserved_instance_count> 0 or @event.customer_has_tickets}
-      class="sticky bottom-3 col-span-full flex w-full grow justify-end gap-4 rounded-2xl border bg-white p-4 shadow-lg
-      lg:static lg:shadow-none"
-      >
+    <div
+      :if={@event.customer_reserved_instance_count > 0 or @event.customer_has_tickets}
+      class="sticky bottom-3 col-span-full flex w-full grow justify-end gap-4 rounded-2xl border bg-white p-4 shadow-lg lg:static lg:shadow-none"
+    >
       <%= if @event.customer_reserved_instance_count> 0 do %>
         <div class="grid grow grow text-sm">
           <div :if={@event.customer_has_tickets} class=""></div>
@@ -92,34 +99,50 @@
             <span>You have tickets</span>
           </div>
         </div>
-        <.button disabled={@event.customer_reserved_instance_count==0} phx-click={show_modal("summary-modal")}>
+        <.button
+          disabled={@event.customer_reserved_instance_count == 0}
+          phx-click={show_modal("summary-modal")}
+        >
           Continue
         </.button>
-        <% else %>
-          <div :if={@event.customer_has_tickets} class="flex grow">
-            <div class="grid grow grow text-sm">
-              <div :if={@event.customer_has_tickets} class=""></div>
-              <div :if={@event.customer_has_tickets} class="">
-                <span>
-                  You have <%= @event.customer_secured_instance_count %> ticket<%= if(
-                      @event.customer_secured_instance_count==1, do: "" , else: "s" ) %>
-                </span>
-              </div>
+      <% else %>
+        <div :if={@event.customer_has_tickets} class="flex grow">
+          <div class="grid grow grow text-sm">
+            <div :if={@event.customer_has_tickets} class=""></div>
+            <div :if={@event.customer_has_tickets} class="">
+              <span>
+                You have <%= @event.customer_secured_instance_count %> ticket<%= if(
+                  @event.customer_secured_instance_count == 1,
+                  do: "",
+                  else: "s"
+                ) %>
+              </span>
             </div>
-            <.button phx-click={ show_modal("tickets-modal") |> JS.patch("/events/#{@event.masked_id}?show=tickets")
-              }>
-              Show tickets
-            </.button>
           </div>
-          <% end %>
+          <.button phx-click={
+            show_modal("tickets-modal") |> JS.patch("/events/#{@event.masked_id}?show=tickets")
+          }>
+            Show tickets
+          </.button>
+        </div>
+      <% end %>
     </div>
   </div>
 </div>
 
-<.modal id="tickets-modal" show={@show_tickets_modal} on_cancel={JS.patch("/events/#{@event.masked_id}")}>
+<.modal
+  id="tickets-modal"
+  show={@show_tickets_modal}
+  on_cancel={JS.patch("/events/#{@event.masked_id}")}
+>
   <h2 class="pb-4 text-lg font-bold">Your tickets</h2>
-  <GitsWeb.EventComponents.customer_tickets_swiper :if={ @event.customer_has_tickets==true and
-    is_list(@customer.scannable_instances) } customer={@customer} />
+  <GitsWeb.EventComponents.customer_tickets_swiper
+    :if={
+      @event.customer_has_tickets == true and
+        is_list(@customer.scannable_instances)
+    }
+    customer={@customer}
+  />
 </.modal>
 
 <.modal :if={@customer} id="summary-modal" on_cancel={JS.push("clear_basket")}>
@@ -132,42 +155,45 @@
       </p>
       <p>See you there!</p>
     </div>
-    <% else %>
-      <%= if @customer.tickets_count> 0 do %>
-        <h3 class="font-medium">Summary</h3>
-        <div class="mt-4 rounded-lg border p-2 px-4">
-          <div :for={ ticket <- Enum.filter(@event.tickets, fn ticket ->
-            ticket.customer_reserved_instance_count > 0
-            end)
-            }
-            class="flex items-center justify-between"
-            >
-            <span class="text-sm">
-              <%= ticket.customer_reserved_instance_count %> &times; <%= ticket.name %>
-            </span>
-            <span class="text-gray-500">
-              <%= if ticket.customer_reserved_instance_total> 0 do %>
-                R <%= ticket.customer_reserved_instance_total %>
-                  <% else %>
-                    FREE
-                    <% end %>
-            </span>
-          </div>
-        </div>
-
-        <div class="flex justify-between p-2 px-4 font-semibold">
-          <span>Total</span>
-          <span class="">
-            <%= if @event.customer_reserved_instance_total> 0 do %>
-              R <%= @event.customer_reserved_instance_total %>
-                <% else %>
-                  FREE
-                  <% end %>
+  <% else %>
+    <%= if @customer.tickets_count> 0 do %>
+      <h3 class="font-medium">Summary</h3>
+      <div class="mt-4 rounded-lg border p-2 px-4">
+        <div
+          :for={
+            ticket <-
+              Enum.filter(@event.tickets, fn ticket ->
+                ticket.customer_reserved_instance_count > 0
+              end)
+          }
+          class="flex items-center justify-between"
+        >
+          <span class="text-sm">
+            <%= ticket.customer_reserved_instance_count %> &times; <%= ticket.name %>
+          </span>
+          <span class="text-gray-500">
+            <%= if ticket.customer_reserved_instance_total> 0 do %>
+              R <%= ticket.customer_reserved_instance_total %>
+            <% else %>
+              FREE
+            <% end %>
           </span>
         </div>
-        <div class="flex justify-end pt-4">
-          <.button phx-click="settle_basket">Finish</.button>
-        </div>
-        <% end %>
+      </div>
+
+      <div class="flex justify-between p-2 px-4 font-semibold">
+        <span>Total</span>
+        <span class="">
+          <%= if @event.customer_reserved_instance_total> 0 do %>
+            R <%= @event.customer_reserved_instance_total %>
+          <% else %>
+            FREE
           <% end %>
+        </span>
+      </div>
+      <div class="flex justify-end pt-4">
+        <.button phx-click="settle_basket">Finish</.button>
+      </div>
+    <% end %>
+  <% end %>
 </.modal>

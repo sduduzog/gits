@@ -25,18 +25,9 @@ defmodule GitsWeb.EventLive.Tickets do
       |> Ash.Query.for_read(:read_for_shopping, %{id: params["basket_id"]}, actor: user)
       |> Ash.read_one!()
 
-    socket =
-      assign(socket, :event, event)
-      |> assign(:customer, customer)
-      |> assign(:basket, basket)
-
-    {:ok, socket, layout: {GitsWeb.Layouts, :next}}
-  end
-
-  def handle_params(_unsigned_params, _uri, socket) do
-    user = socket.assigns.current_user
-    event = socket.assigns.event
-    basket = socket.assigns.basket
+    if is_nil(basket) do
+      raise GitsWeb.Exceptions.NotFound, "no basket"
+    end
 
     tickets =
       Ticket
@@ -45,9 +36,13 @@ defmodule GitsWeb.EventLive.Tickets do
       )
       |> Ash.read!()
 
-    socket = assign(socket, :tickets, tickets)
+    socket =
+      assign(socket, :event, event)
+      |> assign(:customer, customer)
+      |> assign(:basket, basket)
+      |> assign(:tickets, tickets)
 
-    {:noreply, socket}
+    {:ok, socket, layout: {GitsWeb.Layouts, :next}}
   end
 
   def handle_event("remove_ticket", unsigned_params, socket) do
@@ -66,14 +61,8 @@ defmodule GitsWeb.EventLive.Tickets do
     |> Enum.sort(&(&1.id < &2.id))
     |> case do
       [instance | _] ->
-        basket
-        |> Ash.Changeset.for_update(
-          :remove_ticket_from_basket,
-          %{
-            instance: instance.id
-          },
-          actor: user
-        )
+        ticket
+        |> Ash.Changeset.for_update(:remove_instance, %{instance: instance}, actor: user)
         |> Ash.update!()
 
       _ ->
@@ -107,18 +96,8 @@ defmodule GitsWeb.EventLive.Tickets do
       basket: basket
     } = socket.assigns
 
-    ticket =
-      Enum.find(tickets, fn ticket -> ticket.id == unsigned_params["id"] end)
-
-    basket
-    |> Ash.Changeset.for_update(
-      :add_ticket_to_basket,
-      %{
-        instance: %{
-          ticket: ticket,
-          customer: customer
-        }
-      },
+    Enum.find(tickets, fn ticket -> ticket.id == unsigned_params["id"] end)
+    |> Ash.Changeset.for_update(:add_instance, %{instance: %{customer: customer, basket: basket}},
       actor: user
     )
     |> Ash.update!()
@@ -139,12 +118,18 @@ defmodule GitsWeb.EventLive.Tickets do
     {:noreply, socket}
   end
 
-  def handle_event("package_tickets", _unsigned_params, socket) do
+  def handle_event("lock_basket", _unsigned_params, socket) do
+    %{
+      current_user: user,
+      basket: basket,
+      event: event
+    } = socket.assigns
+
+    basket
+    |> Ash.Changeset.for_update(:lock_for_checkout, %{}, actor: user)
+    |> Ash.update!()
+
     {:noreply,
-     update(socket, :basket, fn current_basket, %{current_user: user} ->
-       current_basket
-       |> Ash.Changeset.for_update(:package_tickets, %{}, actor: user)
-       |> Ash.update!()
-     end)}
+     push_navigate(socket, to: ~p"/events/#{event.masked_id}/tickets/#{basket.id}/summary")}
   end
 end

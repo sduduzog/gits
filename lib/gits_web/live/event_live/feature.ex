@@ -12,7 +12,22 @@ defmodule GitsWeb.EventLive.Feature do
       Ash.Query.for_read(Event, :for_feature, %{id: params["id"]}, actor: user)
       |> Ash.read_one!()
 
-    {:ok, assign(socket, :event, event), layout: {GitsWeb.Layouts, :next}}
+    local_starts_at =
+      event.starts_at
+      |> Timex.local()
+
+    starts_at_day = local_starts_at |> Timex.format!("%e", :strftime)
+    starts_at_month = local_starts_at |> Timex.format!("%b", :strftime)
+
+    socket =
+      socket
+      |> assign(:feature_image, Gits.Bucket.get_feature_image_path(event.account_id, event.id))
+      |> assign(:event, event)
+      |> assign(:event_name, event.name)
+      |> assign(:starts_at_day, starts_at_day)
+      |> assign(:starts_at_month, starts_at_month)
+
+    {:ok, socket, layout: {GitsWeb.Layouts, :next}}
   end
 
   def handle_event("get_tickets", _unsigned_params, socket) do
@@ -24,7 +39,7 @@ defmodule GitsWeb.EventLive.Feature do
     socket =
       if is_nil(user) do
         redirect(socket,
-          to: ~p"/sign-in" <> "?return_to=" <> ~p"/events/#{event.masked_id}/tickets"
+          to: ~p"/sign-in" <> "?return_to=" <> ~p"/events/#{event.masked_id}"
         )
       else
         socket |> open_basket()

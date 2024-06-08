@@ -22,6 +22,8 @@ defmodule Gits.Storefront.TicketInstance do
     default_initial_state :reserved
 
     transitions do
+      transition :lock_for_checkout, from: :reserved, to: :locked_for_checkout
+      transition :unlock_for_shopping, from: :locked_for_checkout, to: :reserved
       transition :scan, from: :ready_to_scan, to: :scanned
     end
   end
@@ -46,11 +48,21 @@ defmodule Gits.Storefront.TicketInstance do
 
     create :create do
       primary? true
-      argument :ticket, :map, allow_nil?: false
       argument :customer, :map, allow_nil?: false
+      argument :basket, :map, allow_nil?: false
 
-      change manage_relationship(:ticket, type: :append)
+      change manage_relationship(:basket, type: :append)
       change manage_relationship(:customer, type: :append)
+    end
+
+    update :lock_for_checkout do
+      require_atomic? false
+      change transition_state(:locked_for_checkout)
+    end
+
+    update :unlock_for_shopping do
+      require_atomic? false
+      change transition_state(:reserved)
     end
 
     update :scan do
@@ -62,11 +74,19 @@ defmodule Gits.Storefront.TicketInstance do
 
   policies do
     policy action(:create) do
-      authorize_if actor_present()
+      authorize_if accessing_from(Ticket, :instances)
     end
 
-    policy [action(:destroy), accessing_from(Basket, :instances)] do
-      forbid_if expr(state != :reserved)
+    policy [action([:lock_for_checkout, :destroy]), accessing_from(Basket, :instances)] do
+      authorize_if expr(state == :reserved)
+    end
+
+    policy [action([:read, :lock_for_checkout, :destroy]), accessing_from(Basket, :instances)] do
+      authorize_if expr(customer.user.id == ^actor(:id))
+    end
+
+    policy [action(:unlock_for_shopping), accessing_from(Basket, :instances)] do
+      forbid_unless expr(state == :locked_for_checkout)
       authorize_if expr(customer.user.id == ^actor(:id))
     end
 
@@ -74,7 +94,8 @@ defmodule Gits.Storefront.TicketInstance do
       authorize_if expr(customer.user.id == ^actor(:id))
     end
 
-    policy action([:read, :destroy]) do
+    policy action(:destroy) do
+      forbid_unless expr(state == :reserved)
       authorize_if actor_present()
     end
 
