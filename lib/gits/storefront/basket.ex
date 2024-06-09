@@ -18,8 +18,6 @@ defmodule Gits.Storefront.Basket do
   attributes do
     uuid_primary_key :id
 
-    attribute :amount, :decimal, allow_nil?: false, public?: true
-
     create_timestamp :created_at, public?: true
 
     update_timestamp :updated_at, public?: true
@@ -33,6 +31,7 @@ defmodule Gits.Storefront.Basket do
       transition :lock_for_checkout, from: :open, to: :locked_for_checkout
       transition :unlock_for_shopping, from: :locked_for_checkout, to: :open
       transition :cancel, from: [:open, :locked_for_checkout], to: :cancelled
+      transition :settle_for_free, from: :locked_for_checkout, to: :settled_for_free
     end
   end
 
@@ -70,7 +69,6 @@ defmodule Gits.Storefront.Basket do
       argument :event, :map, allow_nil?: false
       argument :customer, :map, allow_nil?: false
 
-      change set_attribute(:amount, 0)
       change manage_relationship(:event, type: :append)
       change manage_relationship(:customer, type: :append)
 
@@ -163,7 +161,8 @@ defmodule Gits.Storefront.Basket do
       change transition_state(:cancelled)
     end
 
-    update :settle do
+    update :settle_for_free do
+      change transition_state(:settled_for_free)
     end
 
     update :refund do

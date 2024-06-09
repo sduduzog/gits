@@ -1,28 +1,68 @@
 defmodule GitsWeb.EventLive.Payment do
   use GitsWeb, :live_view
 
-  def render(assigns) do
-    ~H"""
-    <div class="p-4">
-      <button class="text-gray-600 p-1" phx-click={JS.navigate(~p"/", replace: true)}>
-        <.icon name="hero-x-mark" />
-      </button>
-    </div>
-    <div class="py-4 flex flex-col pt-32 gap-12 items-center">
-      <div class="overflow-hidden rounded-full w-52 aspect-square p-4 bg-gray-300 mx-auto">
-        <img src="/images/order_complete.jpeg" class="rounded-full" />
-      </div>
-      <div class="w-64 space-y-2 text-center">
-        <h1 class="font-bold text-2xl">Order Complete</h1>
-        <p class="text-gray-600">Your order was successful! see you at the event</p>
-      </div>
-      <button
-        phx-click={JS.navigate(~p"/tickets")}
-        class="px-28 py-3.5 text-base font-medium text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-      >
-        View tickets
-      </button>
-    </div>
-    """
+  require Ash.Query
+  alias Gits.Storefront.Basket
+  alias Gits.Storefront.Event
+  alias Gits.Storefront.Ticket
+
+  def mount(params, _session, socket) do
+    user = socket.assigns.current_user
+
+    event =
+      Event
+      |> Ash.Query.for_read(:for_feature, %{id: params["id"]}, actor: user)
+      |> Ash.read_one!()
+
+    basket =
+      Basket
+      |> Ash.Query.for_read(:read_for_checkout_summary, %{id: params["basket_id"]}, actor: user)
+      |> Ash.read_one!()
+
+    tickets =
+      Ticket
+      |> Ash.Query.for_read(
+        :read_for_checkout_summary,
+        %{event_id: event.id, basket_id: basket.id},
+        actor: user
+      )
+      |> Ash.read!()
+
+    if is_nil(basket) do
+      raise GitsWeb.Exceptions.NotFound, "no basket"
+    end
+
+    socket =
+      assign(socket, :event, event)
+      |> assign(:basket, basket)
+      |> assign(:tickets, tickets)
+
+    GitsWeb.Endpoint.subscribe("basket:cancelled:#{basket.id}")
+
+    {:ok, socket, layout: {GitsWeb.Layouts, :next}}
+  end
+
+  def handle_event("continue_shopping", _unsigned_params, socket) do
+    %{
+      current_user: user,
+      basket: basket,
+      event: event
+    } = socket.assigns
+
+    basket
+    |> Ash.Changeset.for_update(:unlock_for_shopping, %{}, actor: user)
+    |> Ash.update!()
+
+    {:noreply, push_navigate(socket, to: ~p"/events/#{event.masked_id}/tickets/#{basket.id}")}
+  end
+
+  def handle_event("checkout", _unsigned_params, socket) do
+    {:noreply, socket}
+  end
+
+  def handle_info(_msg, socket) do
+    event = socket.assigns.event
+
+    {:noreply, push_navigate(socket, to: ~p"/events/#{event.masked_id}")}
   end
 end

@@ -72,6 +72,7 @@ defmodule GitsWeb.Router do
       on_mount: {GitsWeb.LiveUserAuth, :live_user_required} do
       live "/events/:id/tickets/:basket_id", EventLive.Tickets
       live "/events/:id/tickets/:basket_id/summary", EventLive.TicketsSummary
+      live "/events/:id/tickets/:basket_id/payment", EventLive.Payment
       live "/accounts/:account_id/events/:event_id/address", EventAddressLive
       live "/attendees/scanner/:account_id/:event_id", ScanAttendeeLive
       live "/accounts/:slug/next", DashboardLive.Overview

@@ -57,6 +57,22 @@ defmodule GitsWeb.EventLive.TicketsSummary do
   end
 
   def handle_event("checkout", _unsigned_params, socket) do
+    user = socket.assigns.current_user
+
+    basket =
+      socket.assigns.basket
+
+    action =
+      if basket.sum_of_instance_prices == Decimal.new(0) do
+        :settle_for_free
+      else
+        :settle_for_price
+      end
+
+    basket
+    |> Ash.Changeset.for_update(action, %{}, actor: user)
+    |> IO.inspect()
+
     {:noreply, socket}
   end
 
