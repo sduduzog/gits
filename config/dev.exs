@@ -85,3 +85,5 @@ config :swoosh, :api_client, false
 config :gits, :base_url, "http://localhost:4000"
 
 config :gits, :sender_email, "hey@gits.co.za"
+
+config :ash, :pub_sub, debug?: true

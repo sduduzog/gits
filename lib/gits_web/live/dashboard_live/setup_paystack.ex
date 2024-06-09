@@ -64,8 +64,7 @@ defmodule GitsWeb.DashboardLive.SetupPaystack do
       with true <- form.valid?, {:ok, _} <- Form.submit(form) do
         socket |> push_navigate(to: ~p"/accounts/#{slug}/next/settings")
       else
-        {:error, errors} ->
-          IO.inspect(errors)
+        {:error, _errors} ->
           socket
 
         false ->

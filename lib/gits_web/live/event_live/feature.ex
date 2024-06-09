@@ -38,7 +38,7 @@ defmodule GitsWeb.EventLive.Feature do
 
     socket =
       if is_nil(user) do
-        redirect(socket,
+        push_navigate(socket,
           to: ~p"/sign-in" <> "?return_to=" <> ~p"/events/#{event.masked_id}"
         )
       else
@@ -58,13 +58,12 @@ defmodule GitsWeb.EventLive.Feature do
       Customer
       |> Ash.Changeset.for_create(:create, %{user: user}, actor: user)
       |> Ash.create!()
-      |> IO.inspect()
 
     basket =
       Basket
       |> Ash.Changeset.for_create(:open_basket, %{event: event, customer: customer}, actor: user)
       |> Ash.create!()
 
-    redirect(socket, to: ~p"/events/#{event.masked_id}/tickets/#{basket.id}")
+    push_navigate(socket, to: ~p"/events/#{event.masked_id}/tickets/#{basket.id}")
   end
 end

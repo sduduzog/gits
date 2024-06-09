@@ -9,7 +9,11 @@ defmodule Gits.Storefront.Basket do
     data_layer: AshPostgres.DataLayer,
     authorizers: [Ash.Policy.Authorizer],
     extensions: [AshStateMachine],
-    domain: Gits.Storefront
+    domain: Gits.Storefront,
+    notifiers: [Ash.Notifier.PubSub]
+
+  alias Gits.Storefront.Notifiers.StartBasketJob
+  alias Gits.Storefront.TicketInstance
 
   attributes do
     uuid_primary_key :id
@@ -28,6 +32,7 @@ defmodule Gits.Storefront.Basket do
     transitions do
       transition :lock_for_checkout, from: :open, to: :locked_for_checkout
       transition :unlock_for_shopping, from: :locked_for_checkout, to: :open
+      transition :cancel, from: [:open, :locked_for_checkout], to: :cancelled
     end
   end
 
@@ -68,6 +73,8 @@ defmodule Gits.Storefront.Basket do
       change set_attribute(:amount, 0)
       change manage_relationship(:event, type: :append)
       change manage_relationship(:customer, type: :append)
+
+      notifiers [StartBasketJob]
     end
 
     update :add_ticket_to_basket do
@@ -124,8 +131,39 @@ defmodule Gits.Storefront.Basket do
       end
     end
 
+    update :cancel do
+      require_atomic? false
+
+      change fn changeset, %{actor: actor} ->
+        instances =
+          case actor do
+            %Oban.Job{} ->
+              TicketInstance
+              |> Ash.Query.for_read(:read, %{}, actor: actor)
+              |> Ash.Query.filter(basket.id == ^changeset.data.id)
+              |> Ash.read!()
+
+            _ ->
+              changeset.data
+              |> Ash.load!(:instances, actor: actor)
+              |> Map.get(:instances)
+          end
+
+        changeset
+        |> Ash.Changeset.before_action(fn changeset ->
+          changeset
+          |> Ash.Changeset.manage_relationship(
+            :instances,
+            Enum.map(instances, & &1.id),
+            on_match: {:update, :cancel}
+          )
+        end)
+      end
+
+      change transition_state(:cancelled)
+    end
+
     update :settle do
-      transition_state(:refunded)
     end
 
     update :refund do
@@ -133,15 +171,19 @@ defmodule Gits.Storefront.Basket do
     end
   end
 
+  pub_sub do
+    module GitsWeb.Endpoint
+    prefix "basket"
+    publish :cancel, ["cancelled", :id]
+  end
+
   policies do
     policy action(:lock_for_checkout) do
-      forbid_unless expr(state == :open)
       forbid_unless expr(count_of_instances > 0)
       authorize_if expr(customer.user.id == ^actor(:id))
     end
 
     policy action(:unlock_for_shopping) do
-      forbid_unless expr(state == :locked_for_checkout)
       authorize_if expr(customer.user.id == ^actor(:id))
     end
 
@@ -158,6 +200,19 @@ defmodule Gits.Storefront.Basket do
 
     policy action(:add_ticket_to_basket) do
       authorize_if actor_present()
+    end
+
+    bypass action(:cancel) do
+      authorize_if Gits.Checks.ActorIsObanJob
+    end
+
+    policy action(:cancel) do
+      forbid_unless expr(customer.user.id == ^actor(:id))
+      authorize_if actor_present()
+    end
+
+    policy action(:read) do
+      authorize_if Gits.Checks.ActorIsObanJob
     end
 
     policy action([

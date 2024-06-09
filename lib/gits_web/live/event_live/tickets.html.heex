@@ -42,7 +42,7 @@
   </div>
 </div>
 
-<div class="shadow-smx col-span-full flex flex-wrap items-center gap-6 rounded-2xl">
+<div class="shadow-smx col-span-full flex flex-wrap items-center gap-8 rounded-2xl">
   <div class="w-full p-2 text-sm font-medium">
     <%= if @basket.count_of_instances > 0 do %>
       <span>Total:</span>
@@ -56,5 +56,8 @@
     class="min-w-40 rounded-2xl bg-zinc-800 p-4 text-sm font-medium text-white hover:bg-zinc-700"
   >
     Continue
+  </button>
+  <button phx-click="cancel" class="rounded-2xl p-4 text-sm font-medium hover:bg-zinc-200">
+    Cancel
   </button>
 </div>

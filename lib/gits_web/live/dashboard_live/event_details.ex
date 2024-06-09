@@ -21,7 +21,6 @@ defmodule GitsWeb.DashboardLive.EventDetails do
         actor: user
       )
       |> Ash.read_one!()
-      |> IO.inspect()
 
     socket = assign(socket, :event, event)
 

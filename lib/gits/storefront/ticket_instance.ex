@@ -24,6 +24,7 @@ defmodule Gits.Storefront.TicketInstance do
     transitions do
       transition :lock_for_checkout, from: :reserved, to: :locked_for_checkout
       transition :unlock_for_shopping, from: :locked_for_checkout, to: :reserved
+      transition :cancel, from: [:reserved, :locked_for_checkout], to: :cancelled
       transition :scan, from: :ready_to_scan, to: :scanned
     end
   end
@@ -65,6 +66,12 @@ defmodule Gits.Storefront.TicketInstance do
       change transition_state(:reserved)
     end
 
+    update :cancel do
+      require_atomic? false
+
+      change transition_state(:cancelled)
+    end
+
     update :scan do
       require_atomic? false
 
@@ -73,6 +80,10 @@ defmodule Gits.Storefront.TicketInstance do
   end
 
   policies do
+    bypass action(:read) do
+      authorize_if Gits.Checks.ActorIsObanJob
+    end
+
     policy action(:create) do
       authorize_if accessing_from(Ticket, :instances)
     end
@@ -86,12 +97,15 @@ defmodule Gits.Storefront.TicketInstance do
     end
 
     policy [action(:unlock_for_shopping), accessing_from(Basket, :instances)] do
-      forbid_unless expr(state == :locked_for_checkout)
       authorize_if expr(customer.user.id == ^actor(:id))
     end
 
     policy [action(:read), accessing_from(Ticket, :instances)] do
       authorize_if expr(customer.user.id == ^actor(:id))
+    end
+
+    policy [action(:cancel), accessing_from(Basket, :instances)] do
+      authorize_if actor_present()
     end
 
     policy action(:destroy) do

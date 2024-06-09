@@ -11,7 +11,6 @@ defmodule GitsWeb.DashboardLive.Settings do
       |> Ash.Query.for_read(:read, %{}, actor: user)
       |> Ash.Query.load([:billing_enabled?, billing_settings: [:paystack_ready?]])
       |> Ash.read_one!()
-      |> IO.inspect()
 
     socket =
       socket

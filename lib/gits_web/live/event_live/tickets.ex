@@ -42,6 +42,8 @@ defmodule GitsWeb.EventLive.Tickets do
       |> assign(:basket, basket)
       |> assign(:tickets, tickets)
 
+    GitsWeb.Endpoint.subscribe("basket:cancelled:#{basket.id}")
+
     {:ok, socket, layout: {GitsWeb.Layouts, :next}}
   end
 
@@ -131,5 +133,25 @@ defmodule GitsWeb.EventLive.Tickets do
 
     {:noreply,
      push_navigate(socket, to: ~p"/events/#{event.masked_id}/tickets/#{basket.id}/summary")}
+  end
+
+  def handle_event("cancel", _unsigned_params, socket) do
+    %{
+      current_user: user,
+      basket: basket,
+      event: event
+    } = socket.assigns
+
+    basket
+    |> Ash.Changeset.for_update(:cancel, %{}, actor: user)
+    |> Ash.update!()
+
+    {:noreply, push_navigate(socket, to: ~p"/events/#{event.masked_id}")}
+  end
+
+  def handle_info(_msg, socket) do
+    event = socket.assigns.event
+
+    {:noreply, push_navigate(socket, to: ~p"/events/#{event.masked_id}")}
   end
 end

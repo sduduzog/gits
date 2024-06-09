@@ -18,7 +18,6 @@ defmodule GitsWeb.EventLive.TicketsSummary do
       Basket
       |> Ash.Query.for_read(:read_for_checkout_summary, %{id: params["basket_id"]}, actor: user)
       |> Ash.read_one!()
-      |> IO.inspect()
 
     tickets =
       Ticket
@@ -28,7 +27,6 @@ defmodule GitsWeb.EventLive.TicketsSummary do
         actor: user
       )
       |> Ash.read!()
-      |> IO.inspect()
 
     if is_nil(basket) do
       raise GitsWeb.Exceptions.NotFound, "no basket"
@@ -38,6 +36,8 @@ defmodule GitsWeb.EventLive.TicketsSummary do
       assign(socket, :event, event)
       |> assign(:basket, basket)
       |> assign(:tickets, tickets)
+
+    GitsWeb.Endpoint.subscribe("basket:cancelled:#{basket.id}")
 
     {:ok, socket, layout: {GitsWeb.Layouts, :next}}
   end
@@ -54,5 +54,15 @@ defmodule GitsWeb.EventLive.TicketsSummary do
     |> Ash.update!()
 
     {:noreply, push_navigate(socket, to: ~p"/events/#{event.masked_id}/tickets/#{basket.id}")}
+  end
+
+  def handle_event("checkout", _unsigned_params, socket) do
+    {:noreply, socket}
+  end
+
+  def handle_info(_msg, socket) do
+    event = socket.assigns.event
+
+    {:noreply, push_navigate(socket, to: ~p"/events/#{event.masked_id}")}
   end
 end

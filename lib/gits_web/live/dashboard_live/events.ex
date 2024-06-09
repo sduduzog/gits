@@ -13,7 +13,6 @@ defmodule GitsWeb.DashboardLive.Events do
   end
 
   def handle_params(unsigned_params, _uri, socket) do
-    IO.inspect(unsigned_params)
     user = socket.assigns.current_user
 
     events =
