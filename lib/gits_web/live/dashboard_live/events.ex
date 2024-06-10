@@ -8,6 +8,7 @@ defmodule GitsWeb.DashboardLive.Events do
       socket
       |> assign(:slug, params["slug"])
       |> assign(:title, "Events")
+      |> assign(:context_options, nil)
 
     {:ok, socket, layout: {GitsWeb.Layouts, :catalyst}}
   end
@@ -17,7 +18,7 @@ defmodule GitsWeb.DashboardLive.Events do
 
     events =
       Event
-      |> Ash.Query.for_read(:for_dashboard_event_list, %{account_id: unsigned_params["slug"]},
+      |> Ash.Query.for_read(:read_dashboard_events, %{account_id: unsigned_params["slug"]},
         actor: user
       )
       |> Ash.read!()

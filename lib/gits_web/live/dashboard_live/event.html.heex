@@ -1,0 +1,33 @@
+<div>
+  <.link navigate={~p"/accounts/#{@slug}/next/events"} class="text-sm flex gap-2 text-zinc-600">
+    <.icon name="hero-chevron-left-mini" />
+    <span>Events</span>
+  </.link>
+</div>
+<div class="flex flex-wrap gap-4">
+  <div class="aspect-[3/2] w-36 overflow-hidden rounded-xl bg-zinc-200"></div>
+  <div class="grid grow gap-2">
+    <div class="flex flex-wrap items-center gap-2">
+      <h1 class="w-full text-xl font-semibold md:w-auto"><%= @title %></h1>
+      <span class="ring-green-600/20 inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset">
+        Badge
+      </span>
+    </div>
+    <div class="flex flex-wrap items-center gap-2">
+      <span class="w-full grow text-sm text-zinc-500 md:w-auto">
+        May 20, 2024 at 10:30 PM &bull; Artistry JHB, Sandton Somewhere
+      </span>
+      <button class="min-w-20 rounded-xl bg-black p-4 text-sm font-medium text-white">
+        Publish
+      </button>
+
+      <button class="min-w-20 rounded-xl p-4 text-sm font-medium hover:bg-zinc-100">
+        Edit
+      </button>
+
+      <button class="min-w-20 rounded-xl p-4 text-sm font-medium text-rose-500 hover:bg-rose-100">
+        Delete
+      </button>
+    </div>
+  </div>
+</div>

@@ -6,6 +6,7 @@ defmodule GitsWeb.DashboardLive.Overview do
       socket
       |> assign(:slug, params["slug"])
       |> assign(:title, "Overview")
+      |> assign(:context_options, nil)
 
     {:ok, socket, layout: {GitsWeb.Layouts, :catalyst}}
   end

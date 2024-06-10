@@ -181,11 +181,20 @@ defmodule Gits.Storefront.Ticket do
     end
 
     policy action(:add_instance) do
-      forbid_unless expr(total_quantity == 0 or count(instances, query: [filter: expr(state not in [:cancelled])]) < total_quantity)
+      forbid_unless expr(
+                      total_quantity == 0 or
+                        count(instances, query: [filter: expr(state not in [:cancelled])]) <
+                          total_quantity
+                    )
 
       forbid_unless expr(
                       allowed_quantity_per_user == 0 or
-                        count(instances, query: [filter: expr(state not in [:cancelled] and customer.user.id == ^actor(:id))]) <
+                        count(instances,
+                          query: [
+                            filter:
+                              expr(state not in [:cancelled] and customer.user.id == ^actor(:id))
+                          ]
+                        ) <
                           allowed_quantity_per_user
                     )
 

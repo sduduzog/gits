@@ -65,6 +65,11 @@ defmodule Gits.Storefront.Basket do
       prepare build(load: [:count_of_instances, :sum_of_instance_prices, :instances])
     end
 
+    read :read_for_checkout do
+      argument :id, :uuid, allow_nil?: false
+      filter expr(id == ^arg(:id))
+    end
+
     create :open_basket do
       argument :event, :map, allow_nil?: false
       argument :customer, :map, allow_nil?: false
@@ -162,6 +167,25 @@ defmodule Gits.Storefront.Basket do
     end
 
     update :settle_for_free do
+      require_atomic? false
+
+      change fn changeset, %{actor: actor} ->
+        instances =
+          changeset.data
+          |> Ash.load!(:instances, actor: actor)
+          |> Map.get(:instances)
+
+        changeset
+        |> Ash.Changeset.before_action(fn changeset ->
+          changeset
+          |> Ash.Changeset.manage_relationship(
+            :instances,
+            Enum.map(instances, & &1.id),
+            on_match: {:update, :prepare_for_use}
+          )
+        end)
+      end
+
       change transition_state(:settled_for_free)
     end
 
@@ -177,6 +201,13 @@ defmodule Gits.Storefront.Basket do
   end
 
   policies do
+    policy action(:settle_for_free) do
+      forbid_unless expr(count_of_instances > 0)
+      forbid_unless expr(customer.user.id == ^actor(:id))
+      forbid_if expr(exists(instances, ticket.price > 0))
+      authorize_if actor_present()
+    end
+
     policy action(:lock_for_checkout) do
       forbid_unless expr(count_of_instances > 0)
       authorize_if expr(customer.user.id == ^actor(:id))
@@ -188,6 +219,12 @@ defmodule Gits.Storefront.Basket do
 
     policy action(:read_for_shopping) do
       forbid_unless expr(state == :open)
+      forbid_unless expr(customer.user.id == ^actor(:id))
+      authorize_if actor_present()
+    end
+
+    policy action(:read_for_checkout) do
+      forbid_unless expr(state in [:settled_for_free])
       forbid_unless expr(customer.user.id == ^actor(:id))
       authorize_if actor_present()
     end

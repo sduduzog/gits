@@ -1,4 +1,4 @@
-defmodule GitsWeb.EventLive.Payment do
+defmodule GitsWeb.EventLive.Checkout do
   use GitsWeb, :live_view
 
   require Ash.Query
@@ -16,7 +16,7 @@ defmodule GitsWeb.EventLive.Payment do
 
     basket =
       Basket
-      |> Ash.Query.for_read(:read_for_checkout_summary, %{id: params["basket_id"]}, actor: user)
+      |> Ash.Query.for_read(:read_for_checkout, %{id: params["basket_id"]}, actor: user)
       |> Ash.read_one!()
 
     tickets =
@@ -51,6 +51,7 @@ defmodule GitsWeb.EventLive.Payment do
 
     basket
     |> Ash.Changeset.for_update(:unlock_for_shopping, %{}, actor: user)
+    |> IO.inspect()
     |> Ash.update!()
 
     {:noreply, push_navigate(socket, to: ~p"/events/#{event.masked_id}/tickets/#{basket.id}")}

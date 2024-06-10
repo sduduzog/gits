@@ -16,6 +16,7 @@ defmodule GitsWeb.DashboardLive.Settings do
       socket
       |> assign(:slug, params["slug"])
       |> assign(:title, "Settings")
+      |> assign(:context_options, nil)
       |> assign(:account, account)
 
     {:ok, socket, layout: {GitsWeb.Layouts, :catalyst}}
