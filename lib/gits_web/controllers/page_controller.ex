@@ -4,25 +4,12 @@ defmodule GitsWeb.PageController do
   require Ash.Query
   alias Gits.Dashboard.Member
   alias Gits.Storefront.Customer
-  alias Gits.Storefront.Event
 
-  def home(conn, _params) do
-    events =
-      Event
-      |> Ash.Query.for_read(:masked, %{}, actor: conn.assigns.current_user)
-      |> Ash.Query.load([:minimum_ticket_price, :masked_id, :ticket_price_varies])
-      |> Ash.read!()
-
-    conn
-    |> assign(:events, events)
-    |> render(:home)
-  end
-
-  def next(conn, _) do
+  def home(conn, _) do
     conn
     |> assign(:slug, "/next")
     |> assign(:title, "/next")
-    |> render(:next, layout: false)
+    |> render(:home, layout: false)
   end
 
   def events(conn, _) do
@@ -49,7 +36,6 @@ defmodule GitsWeb.PageController do
       conn = assign(conn, :member, member)
 
       conn
-      |> put_layout(html: :thin)
       |> render(:organizers)
     end
   end

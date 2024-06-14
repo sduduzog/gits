@@ -1,4 +1,4 @@
-defmodule GitsWeb.DashboardLive.Overview do
+defmodule GitsWeb.DashboardLive.Home do
   use GitsWeb, :live_view
 
   def mount(params, _session, socket) do
@@ -8,6 +8,6 @@ defmodule GitsWeb.DashboardLive.Overview do
       |> assign(:title, "Overview")
       |> assign(:context_options, nil)
 
-    {:ok, socket, layout: {GitsWeb.Layouts, :catalyst}}
+    {:ok, socket, layout: {GitsWeb.Layouts, :dashboard}}
   end
 end

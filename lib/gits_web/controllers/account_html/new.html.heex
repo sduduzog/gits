@@ -1,4 +1,4 @@
-<div :if={true} class="flex h-screen items-center">
+<div :if={!FunWithFlags.enabled?(:organizers)} class="flex h-screen items-center">
   <div class="flex grow flex-col justify-center gap-6">
     <div>
       <a href="/" class="font-poppins text-3xl font-black italic">GiTS</a>
@@ -21,35 +21,14 @@
   </div>
 </div>
 
-<div :if={false} class="min-h-screen space-y-8 bg-white pt-32">
-  <a href="/" class="font-poppins text-3xl font-black italic">GiTS</a>
-  <h1 class="font-poppins text-3xl font-semibold text-gray-900">
-    Create your first event with us
-  </h1>
-
+<%= if FunWithFlags.enabled?(:organizers) do %>
   <.simple_form
-    :let={account_form}
+    :let={f}
     for={@form}
     action="/accounts"
     method="POST"
-    class="max-w-screen-lg"
+    class="max-w-screen-md w-full mx-auto"
   >
-    <.inputs_for :let={f} field={account_form[:event]}>
-      <div class="w-full sm:max-w-lg">
-        <.input type="text" label="What's the name of your event?" field={f[:name]} />
-      </div>
-      <.input
-        type="textarea"
-        label="Give us a little description for the event"
-        field={f[:description]}
-      />
-      <div class="max-w-60 w-full">
-        <.input type="datetime-local" label="When is the start date" field={f[:starts_at]} />
-      </div>
-    </.inputs_for>
-
-    <div class="flex items-center gap-6">
-      <.button>Create</.button>
-    </div>
+    <.input type="text" label="What's the name of your organization?" field={f[:name]} />
   </.simple_form>
-</div>
+<% end %>

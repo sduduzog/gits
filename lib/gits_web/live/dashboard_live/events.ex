@@ -10,7 +10,7 @@ defmodule GitsWeb.DashboardLive.Events do
       |> assign(:title, "Events")
       |> assign(:context_options, nil)
 
-    {:ok, socket, layout: {GitsWeb.Layouts, :catalyst}}
+    {:ok, socket, layout: {GitsWeb.Layouts, :dashboard}}
   end
 
   def handle_params(unsigned_params, _uri, socket) do

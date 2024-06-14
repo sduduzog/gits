@@ -20,6 +20,66 @@ defmodule GitsWeb.CoreComponents do
   alias Phoenix.LiveView.JS
   import GitsWeb.Gettext
 
+  attr :signed_in, :boolean, default: false
+
+  def header(assigns) do
+    ~H"""
+    <div
+      class="sticky top-0 z-10 mx-auto flex max-w-screen-xl items-center gap-4 bg-white bg-red-400 bg-opacity-0 p-2 text-sm font-medium transition-all"
+      id="homepage_header"
+    >
+      <div class="flex grow">
+        <.link navigate="/" class="text-2xl font-black italic text-zinc-800 dark:text-white">
+          GiTS
+        </.link>
+      </div>
+      <%= if @signed_in do %>
+        <button class="flex rounded-lg border p-1.5 lg:hidden">
+          <.icon name="hero-bars-2-mini" />
+        </button>
+
+        <div class="hidden max-w-screen-2xl gap-8 lg:flex xl:gap-12">
+          <.link
+            :if={FunWithFlags.enabled?(:my_tickets)}
+            href="/my/tickets"
+            class="flex items-center gap-1.5 relative"
+          >
+            <.icon name="hero-ticket-mini" />
+            <span class="hidden sm:inline-block">My Tickets</span>
+          </.link>
+          <.link href="/my/profile" class="flex items-center gap-1.5">
+            <.icon name="hero-user-mini" />
+            <span class="hidden sm:inline-block">Profile</span>
+          </.link>
+          <.link href="/sign-out" class="flex items-center gap-1.5">
+            <.icon name="hero-arrow-right-start-on-rectangle-mini" />
+            <span class="hidden sm:inline-block">Sign Out</span>
+          </.link>
+        </div>
+      <% else %>
+        <.link href="/sign-in" class="flex items-center gap-1.5">
+          <.icon name="hero-arrow-right-end-on-rectangle-mini" />
+          <span class="">Sign In</span>
+        </.link>
+      <% end %>
+    </div>
+    """
+  end
+
+  def footer(assigns) do
+    ~H"""
+    <div class="p-4">
+      <nav class="flex flex-wrap justify-center gap-8 *:text-sm">
+        <.link :if={FunWithFlags.enabled?(:organizers)} href="/organizers">
+          Business & Organizers
+        </.link>
+        <.link :if={FunWithFlags.enabled?(:privacy)} href="/privacy">Privacy</.link>
+        <.link :if={FunWithFlags.enabled?(:terms)} href="/terms">Terms</.link>
+      </nav>
+    </div>
+    """
+  end
+
   @doc """
   Renders a modal.
 
@@ -471,31 +531,6 @@ defmodule GitsWeb.CoreComponents do
       <.icon name="hero-exclamation-circle-mini" class="mt-0.5 h-5 w-5 flex-none" />
       <%= render_slot(@inner_block) %>
     </p>
-    """
-  end
-
-  @doc """
-  Renders a header with title.
-  """
-  attr :class, :string, default: nil
-
-  slot :inner_block, required: true
-  slot :subtitle
-  slot :actions
-
-  def header(assigns) do
-    ~H"""
-    <header class={[@actions != [] && "flex items-center justify-between gap-6", @class]}>
-      <div>
-        <h1 class="text-lg font-semibold leading-8 text-zinc-800">
-          <%= render_slot(@inner_block) %>
-        </h1>
-        <p :if={@subtitle != []} class="mt-2 text-sm leading-6 text-zinc-600">
-          <%= render_slot(@subtitle) %>
-        </p>
-      </div>
-      <div class="flex-none"><%= render_slot(@actions) %></div>
-    </header>
     """
   end
 

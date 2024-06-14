@@ -64,6 +64,22 @@ let liveSocket = new LiveSocket("/live", Socket, {
         this.cleanup?.()
       }
     },
+    HeaderOpacityOnScroll: {
+      mounted() {
+        document.addEventListener('scroll', function () {
+          if (window.scrollY > 20) {
+            const header = document.getElementById("homepage_header")
+            header.classList.add('bg-opacity-100')
+            header.classList.remove('bg-opacity-0')
+          } else {
+            const header = document.getElementById("homepage_header")
+            header.classList.add('bg-opacity-0')
+            header.classList.remove('bg-opacity-100')
+
+          }
+        })
+      }
+    },
     Confetti: {
       async mounted() {
         setTimeout(() => confetti("confetti"), 200);

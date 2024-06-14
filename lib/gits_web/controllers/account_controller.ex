@@ -4,7 +4,6 @@ defmodule GitsWeb.AccountController do
   require Ash.Query
   alias AshPhoenix.Form
   alias Gits.Dashboard.Member
-  alias Gits.Storefront.Event
 
   alias Gits.Dashboard.Account
 
@@ -28,13 +27,11 @@ defmodule GitsWeb.AccountController do
   def new(conn, _) do
     form =
       Form.for_create(Account, :create,
-        forms: [event: [resource: Event, create_action: :create]],
         as: "account",
         actor: conn.assigns.current_user
       )
-      |> Form.add_form(:event, validate?: false)
 
-    conn |> put_layout(html: :thin) |> assign(:form, form) |> render(:new)
+    conn |> put_layout(html: :app) |> assign(:form, form) |> render(:new)
   end
 
   def create(conn, params) do
@@ -43,18 +40,15 @@ defmodule GitsWeb.AccountController do
     form =
       Form.for_create(Account, :create,
         as: "account",
-        forms: [event: [resource: Event, create_action: :create]],
         actor: user
       )
-      |> Form.add_form(:event, validate?: false)
-      |> Form.validate(
-        Map.merge(params["account"], %{member: %{user: user}, name: user.display_name})
-      )
+      |> Form.validate(params["account"])
 
-    with true <- form.valid?, {:ok, %{events: [event]} = account} <- Form.submit(form) do
-      redirect(conn, to: ~p"/accounts/#{account.id}/events/#{event.id}/settings")
+    with true <- form.valid?, {:ok, account} <- Form.submit(form) do
+      redirect(conn, to: ~p"/accounts/#{account.id}")
     else
-      _ ->
+      error ->
+        IO.inspect(error)
         assign(conn, :form, form) |> render(:new, layout: false)
     end
   end

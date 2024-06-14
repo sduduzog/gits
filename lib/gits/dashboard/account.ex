@@ -39,14 +39,18 @@ defmodule Gits.Dashboard.Account do
 
     create :create do
       primary? true
-      accept :*
 
-      argument :member, :map
-
-      argument :event, :map
-
-      change manage_relationship(:member, :members, type: :create)
-      change manage_relationship(:event, :events, type: :create)
+      change fn changeset, %{actor: actor} ->
+        changeset
+        |> Ash.Changeset.before_action(fn changeset ->
+          changeset
+          |> Ash.Changeset.manage_relationship(
+            :members,
+            [%{user: actor}],
+            type: :create
+          )
+        end)
+      end
     end
 
     create :create_from_waitlist do
