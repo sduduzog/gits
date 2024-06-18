@@ -1,4 +1,9 @@
 defmodule Gits.PaystackApi do
+  def list_banks!() do
+    {:ok, banks} = list_banks()
+    banks
+  end
+
   def list_banks do
     options = Application.get_env(:gits, :paystack_api_options)
 

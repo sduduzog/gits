@@ -7,6 +7,7 @@ defmodule Gits.Dashboard.Account do
   attributes do
     uuid_primary_key :id
     attribute :name, :string, allow_nil?: false, public?: true
+    attribute :paystack_subbaccount_code, :string, public?: true
     create_timestamp :created_at
     update_timestamp :updated_at
   end
@@ -17,12 +18,6 @@ defmodule Gits.Dashboard.Account do
     has_many :events, Gits.Storefront.Event do
       domain Gits.Storefront
     end
-
-    has_one :billing_settings, Gits.Dashboard.BillingSettings
-  end
-
-  calculations do
-    calculate :billing_enabled?, :boolean, expr(count(billing_settings) > 0)
   end
 
   actions do
@@ -35,6 +30,22 @@ defmodule Gits.Dashboard.Account do
       end
 
       filter expr(id == ^arg(:id))
+    end
+
+    read :read_for_dashboard do
+      argument :id, :uuid do
+        allow_nil? false
+      end
+
+      filter expr(id == ^arg(:id))
+    end
+
+    read :list_for_dashboard do
+      argument :user_id, :uuid do
+        allow_nil? false
+      end
+
+      filter expr(members.user.id == ^arg(:user_id))
     end
 
     create :create do
@@ -61,11 +72,31 @@ defmodule Gits.Dashboard.Account do
       change manage_relationship(:member, :members, on_lookup: {:relate_and_update, :activate})
     end
 
-    update :enable_billing do
+    update :update_paystack_account do
       require_atomic? false
-      argument :billing_settings, :map
 
-      change manage_relationship(:billing_settings, type: :create)
+      argument :business_name, :string, allow_nil?: false
+      argument :account_number, :string, allow_nil?: false
+      argument :settlement_bank, :string, allow_nil?: false
+
+      change before_action(fn changeset, _ ->
+               Gits.PaystackApi.create_subaccount(
+                 Ash.Changeset.get_argument(changeset, :business_name),
+                 Ash.Changeset.get_argument(changeset, :account_number),
+                 Ash.Changeset.get_argument(changeset, :settlement_bank)
+               )
+               |> case do
+                 {:ok, account} ->
+                   Ash.Changeset.change_new_attribute(
+                     changeset,
+                     :paystack_subbaccount_code,
+                     account.subaccount_code
+                   )
+
+                 _ ->
+                   Ash.Changeset.add_error(changeset, field: :test, message: "test error message")
+               end
+             end)
     end
   end
 
@@ -74,12 +105,12 @@ defmodule Gits.Dashboard.Account do
       authorize_if always()
     end
 
-    policy action(:create_from_waitlist) do
-      authorize_if Gits.Checks.ActorIsObanJob
+    policy action([:read_for_dashboard, :list_for_dashboard]) do
+      authorize_if expr(members.user.id == ^actor(:id))
     end
 
-    policy action(:enable_billing) do
-      authorize_if expr(members.user.id == ^actor(:id) and members.role in [:owner, :admin])
+    policy action(:create_from_waitlist) do
+      authorize_if Gits.Checks.ActorIsObanJob
     end
 
     policy action([:by_id, :create, :enable_billing]) do

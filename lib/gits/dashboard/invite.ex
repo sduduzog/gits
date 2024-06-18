@@ -7,13 +7,15 @@ defmodule Gits.Dashboard.Invite do
     extensions: [AshArchival.Resource, AshStateMachine],
     domain: Gits.Dashboard
 
+  alias Gits.Dashboard.Member
+
   attributes do
     uuid_primary_key :id
 
     attribute :email, :ci_string, allow_nil?: false, public?: true
 
     attribute :role, :atom do
-      constraints one_of: [:admin, :editor, :access_coordinator]
+      constraints one_of: [:admin, :sales_manager, :attendee_support]
       allow_nil? false
       public? true
     end
@@ -49,6 +51,20 @@ defmodule Gits.Dashboard.Invite do
   actions do
     defaults [:read, :update, :destroy]
 
+    read :read_for_recipient do
+      argument :id, :uuid do
+        allow_nil? false
+      end
+
+      filter expr(id == ^arg(:id))
+
+      prepare build(load: [:account])
+    end
+
+    read :read_for_dashboard do
+      filter expr(state == :sent)
+    end
+
     create :create do
       accept [:email, :role]
 
@@ -56,13 +72,18 @@ defmodule Gits.Dashboard.Invite do
         allow_nil? false
       end
 
+      validate match(:email, ~r/(^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$)/) do
+        message "must be a valid email address"
+        where [changing(:email)]
+      end
+
       change manage_relationship(:account, type: :append)
-      change {Gits.Dashboard.Changes.SendInviteEmail, []}
+      change {Gits.Dashboard.Changes.SendDashboardInvite, []}
     end
 
     update :resend do
       require_atomic? false
-      change {Gits.Dashboard.Changes.SendInviteEmail, []}
+      change {Gits.Dashboard.Changes.SendDashboardInvite, []}
     end
 
     update :accept do
@@ -91,11 +112,19 @@ defmodule Gits.Dashboard.Invite do
       authorize_if expr(user.id == ^actor(:id))
     end
 
-    policy always() do
-      authorize_if always()
+    policy action(:read_for_dashboard) do
+      authorize_if expr(account.members.user.id == ^actor(:id))
     end
 
-    policy action_type([:create, :update, :destroy]) do
+    policy action(:read_for_recipient) do
+      authorize_if expr(user.id == ^actor(:id))
+    end
+
+    policy [action(:accept), accessing_from(Member, :invite)] do
+      authorize_if AshStateMachine.Checks.ValidNextState
+    end
+
+    policy action_type([:create, :destroy]) do
       authorize_if AshStateMachine.Checks.ValidNextState
     end
   end

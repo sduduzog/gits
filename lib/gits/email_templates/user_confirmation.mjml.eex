@@ -1,5 +1,9 @@
 <mj-text>Hey <%= @user_name %></mj-text>
 <mj-text>Thanks for registering an account with us, we just need to verify your email address by clicking the link below</mj-text>
-<mj-button border-radius="8px" padding="20px 0" align="left" background-color="#18181b" color="white" href="<%= @url %>">
-  Verify email address
+<mj-button padding="10px 0" background-color="#18181b" color="white" align="left" border-radius="10px" href="<%= @url %>">
+  Verify email
 </mj-button>
+<mj-text padding-bottom="20px">
+  The GiTS Team
+</mj-text>
+

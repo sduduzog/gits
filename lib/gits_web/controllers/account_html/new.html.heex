@@ -1,34 +1,14 @@
-<div :if={!FunWithFlags.enabled?(:organizers)} class="flex h-screen items-center">
-  <div class="flex grow flex-col justify-center gap-6">
-    <div>
-      <a href="/" class="font-poppins text-3xl font-black italic">GiTS</a>
-    </div>
-
-    <h2 class="text-xl font-medium tracking-tight text-gray-900">
-      Join the waitlist
-    </h2>
-    <!-- <div class="flex max-w-screen-2xl gap-4 overflow-x-auto lg:flex-wrap lg:gap-9 lg:overflow-visible xl:gap-14"> -->
-    <!--   <.link -->
-    <!--     href={~p"/sign-in?return_to=/tickets"} -->
-    <!--     class="border-2 border-zinc-900 font-medium py-2 px-4 rounded-xl" -->
-    <!--   > -->
-    <!--     Sign in -->
-    <!--   </.link> -->
-    <!-- </div> -->
-    <p class="text-sm text-zinc-700">
-      Otherwise, contact us on <a href="mailto:support@gits.co.za">support@gits.co.za</a>
-    </p>
+<.simple_form
+  :let={f}
+  for={@form}
+  action="/accounts"
+  method="POST"
+  class="w-full mx-auto space-y-8"
+>
+  <.input type="text" label="What's the name of your organization?" field={f[:name]} />
+  <div>
+    <button class="rounded-lg bg-zinc-900 p-3 px-4 font-medium text-white">
+      Create organization
+    </button>
   </div>
-</div>
-
-<%= if FunWithFlags.enabled?(:organizers) do %>
-  <.simple_form
-    :let={f}
-    for={@form}
-    action="/accounts"
-    method="POST"
-    class="max-w-screen-md w-full mx-auto"
-  >
-    <.input type="text" label="What's the name of your organization?" field={f[:name]} />
-  </.simple_form>
-<% end %>
+</.simple_form>

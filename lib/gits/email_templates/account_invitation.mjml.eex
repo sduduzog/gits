@@ -1,0 +1,16 @@
+<mj-text>
+<strong><%= @sender %></strong> would like you to join the <strong><%= @account_name %></strong> organization on GiTS with the <strong><%= @role |> Gits.role_to_readable_string() %></strong> role.
+</mj-text>
+<mj-text>
+  To join, <a href="<%= "#{@base_url}/sign-in" %>" style="color: #18181b; font-weight: 500; text-decoration-line: underline;">sign in</a> from your existing GiTS account or <a href="<%= "#{@base_url}/register" %>" style="color: #18181b; font-weight: 500; text-decoration-line: underline;">create a new one</a>. Then, click the button below to accept the invitation
+</mj-text>
+<mj-button padding="10px 0" color="white" align="left" border-radius="10px" href="<%= @url %>">
+  Accept invitation
+</mj-button>
+<mj-text color="#3f3f46">
+  Alternatively, you can join by visiting <a style="color: #18181b; font-weight: 500; text-decoration-line: underline;" href="<%= "#{@url}" %>"><%= "#{@url}" %></a>
+</mj-text>
+<mj-text padding-bottom="20px">
+  The GiTS Team
+</mj-text>
+

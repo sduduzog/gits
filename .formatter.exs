@@ -13,5 +13,5 @@
   ],
   subdirectories: ["priv/*/migrations"],
   plugins: [TailwindFormatter, Phoenix.LiveView.HTMLFormatter],
-  inputs: ["*.{heex,ex,exs}", "{config,lib,test}/**/*.{heex,ex,exs}", "priv/*/seeds.exs"]
+  inputs: ["*.{heex,eex,ex,exs}", "{config,lib,test}/**/*.{heex,ex,exs}", "priv/*/seeds.exs"]
 ]

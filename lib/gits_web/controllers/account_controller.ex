@@ -11,7 +11,7 @@ defmodule GitsWeb.AccountController do
   plug :set_layout
 
   defp set_layout(conn, _) do
-    put_layout(conn, html: :dashboard)
+    put_layout(conn,  html: :dashboard )
   end
 
   defp auth_guard(conn, _) do

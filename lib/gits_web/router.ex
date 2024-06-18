@@ -30,6 +30,7 @@ defmodule GitsWeb.Router do
     auth_routes_for Gits.Auth.User, to: AuthController
 
     get "/", PageController, :home
+    get "/events", PageController, :events
     get "/organizers", PageController, :organizers
     get "/healthz", PageController, :healthz
 
@@ -61,6 +62,8 @@ defmodule GitsWeb.Router do
       live "/accounts/:slug/events", DashboardLive.Events
       live "/accounts/:slug/events/:event_id", DashboardLive.Event
       live "/accounts/:slug/team", DashboardLive.Team
+      live "/accounts/:slug/team/invites/new", DashboardLive.TeamInviteNewMember
+      live "/accounts/:slug/team/invites/:invite_id", DashboardLive.TeamInvite
       live "/accounts/:slug/settings", DashboardLive.Settings
       live "/accounts/:slug/settings/paystack", DashboardLive.SetupPaystack
     end

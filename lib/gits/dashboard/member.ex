@@ -46,6 +46,10 @@ defmodule Gits.Dashboard.Member do
     default_accept :*
     defaults [:read, :destroy, update: :*]
 
+    read :read_for_dashboard do
+      prepare build(load: [:user])
+    end
+
     create :create do
       primary? true
       accept :*
@@ -106,6 +110,13 @@ defmodule Gits.Dashboard.Member do
                    )
 
       authorize_if expr(user.id == ^actor(:id))
+    end
+
+    policy action(:read_for_dashboard) do
+      authorize_if expr(
+                     account.members.user.id == ^actor(:id) and
+                       account.members.role in [:owner, :admin]
+                   )
     end
 
     policy action(:read) do

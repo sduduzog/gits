@@ -7,13 +7,13 @@ defmodule GitsWeb.PageController do
 
   def home(conn, _) do
     conn
-    |> assign(:slug, "/next")
-    |> assign(:title, "/next")
+    |> assign(:slug, "/")
+    |> assign(:title, "/")
     |> render(:home, layout: false)
   end
 
   def events(conn, _) do
-    conn |> render(:events, layout: {GitsWeb.Layouts, :next})
+    conn |> render(:events)
   end
 
   def organizers(conn, _) do

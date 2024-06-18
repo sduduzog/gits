@@ -32,7 +32,7 @@
         phx-click-away={JS.hide(to: "#account_dropdown_options")}
         id="account_dropdown"
       >
-        <span class="grow font-medium">Treehouse Inc</span>
+        <span class="grow font-medium"><%= @account_name %></span>
         <.icon name="hero-chevron-down-mini" />
         <div
           id="account_dropdown_options"
@@ -40,9 +40,9 @@
           style="display: none;"
           data-dropdown
         >
-          <.link>
+          <.link :for={account <- @accounts} navigate={~p"/accounts/#{account.id}"}>
             <img src="/images/placeholder.png" alt="" class="size-5 rounded-full object-cover " />
-            <span>Treehouse Inc</span>
+            <span><%= account.name %></span>
           </.link>
           <.link class="text-zinc-700">
             <.icon name="hero-plus-mini" />
@@ -120,14 +120,6 @@
             style="display: none;"
             data-dropdown
           >
-            <.link>
-              <.icon name="hero-user-mini" />
-              <span>My profile</span>
-            </.link>
-            <.link>
-              <.icon name="hero-question-mark-circle-mini" />
-              <span>Help &amp; feedback</span>
-            </.link>
             <.link navigate="/sign-out">
               <.icon name="hero-arrow-right-start-on-rectangle-mini" />
               <span>Sign out</span>
@@ -168,14 +160,6 @@
             style="display: none;"
             data-dropdown
           >
-            <.link>
-              <.icon name="hero-user-mini" />
-              <span>My profile</span>
-            </.link>
-            <.link>
-              <.icon name="hero-question-mark-circle-mini" />
-              <span>Help &amp; feedback</span>
-            </.link>
             <.link navigate="/sign-out">
               <.icon name="hero-arrow-right-start-on-rectangle-mini" />
               <span>Sign out</span>
@@ -184,7 +168,7 @@
         </button>
       </div>
 
-      <div class="mx-auto max-w-screen-xl space-y-6 pt-12">
+      <div class="mx-auto max-w-screen-xl space-y-8 p-4 pt-6 lg:pt-12">
         <%= @inner_content %>
       </div>
     </div>

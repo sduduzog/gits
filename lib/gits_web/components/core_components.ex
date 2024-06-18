@@ -289,11 +289,13 @@ defmodule GitsWeb.CoreComponents do
     ~H"""
     <button
       type={@type}
-      class={[
-        "rounded-lg bg-zinc-900 px-3 py-2 hover:bg-zinc-700 phx-submit-loading:opacity-75",
-        "text-sm font-semibold leading-6 text-white active:text-white/80",
-        @class
-      ]}
+      class={
+        Twix.tw([
+          "rounded-lg bg-zinc-900 px-3 py-2 hover:bg-zinc-700 phx-submit-loading:opacity-75",
+          "text-sm font-semibold leading-6 text-white active:text-white",
+          @class
+        ])
+      }
       {@rest}
     >
       <%= render_slot(@inner_block) %>
@@ -393,7 +395,6 @@ defmodule GitsWeb.CoreComponents do
     <div phx-feedback-for={@name} class={Twix.tw(["grid max-w-3xl gap-2 text-sm", @class])}>
       <div class="flex justify-between text-zinc-600">
         <.label for={@id}><%= @label %></.label>
-        <span></span>
       </div>
 
       <select
@@ -437,7 +438,6 @@ defmodule GitsWeb.CoreComponents do
     <div class={Twix.tw(["grid max-w-3xl gap-2 text-sm", @class])}>
       <div class="flex justify-between text-zinc-600">
         <.label for={@id}><%= @label %></.label>
-        <span></span>
       </div>
       <input
         class="w-full rounded-md border-zinc-300 p-4 text-sm outline-none focus:border-transparent focus:outline-none focus:ring-zinc-500"
@@ -448,7 +448,6 @@ defmodule GitsWeb.CoreComponents do
         {@rest}
       />
       <.error :for={msg <- @errors}><%= @label <> " " <> msg %></.error>
-      <span></span>
     </div>
 
     <div :if={false} phx-feedback-for={@name}>
@@ -475,11 +474,12 @@ defmodule GitsWeb.CoreComponents do
   Renders a label.
   """
   attr :for, :string, default: nil
+  attr :class, :string, default: ""
   slot :inner_block, required: true
 
   def label(assigns) do
     ~H"""
-    <label for={@for} class="block text-sm font-semibold leading-6 text-zinc-800">
+    <label for={@for} class={["block text-sm font-medium leading-6 text-zinc-600", @class]}>
       <%= render_slot(@inner_block) %>
     </label>
     """
@@ -487,15 +487,19 @@ defmodule GitsWeb.CoreComponents do
 
   attr :field, Phoenix.HTML.FormField, required: true
   attr :label, :string, required: false, default: nil
+  attr :class, :string, default: ""
 
   slot :radio, required: true do
-    attr :value, :string, required: true
+    attr :value, :atom, required: true
   end
 
   def radio_group(assigns) do
     ~H"""
-    <div class="grid max-w-3xl gap-2 text-sm">
-      <div :if={@label} class="col-span-full flex justify-between text-zinc-600">
+    <div class={Twix.tw(["grid max-w-3xl gap-2 text-sm", @class])}>
+      <div
+        :if={@label}
+        class="col-span-full flex justify-between text-sm font-medium leading-6 text-zinc-600"
+      >
         <span><%= @label %></span>
         <span></span>
       </div>
@@ -503,15 +507,14 @@ defmodule GitsWeb.CoreComponents do
         <label
           :for={{%{value: value} = rad, idx} <- Enum.with_index(@radio)}
           for={"#{@field.id}-#{idx}"}
-          class="grid max-w-3xl gap-2 rounded-md p-4 ring-1 ring-zinc-200 has-[:checked]:ring-1 has-[:checked]:ring-zinc-500 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-zinc-500"
+          class="flex max-w-3xl gap-4 rounded-md p-4 text-zinc-600 ring-1 ring-zinc-200 has-[:checked]:text-zinc-900 has-[:checked]:ring-1 has-[:checked]:ring-zinc-500 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-zinc-500"
         >
           <input
             name={@field.name}
             id={"#{@field.id}-#{idx}"}
             type="radio"
-            class={"peer/#{value} sr-only"}
+            class={"peer/#{value} mt-0.5 appearance-none text-zinc-700 focus:ring-zinc-700"}
             value={value}
-            checked
           />
           <%= render_slot(rad) %>
         </label>
