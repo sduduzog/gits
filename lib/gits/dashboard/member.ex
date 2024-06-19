@@ -11,7 +11,7 @@ defmodule Gits.Dashboard.Member do
     attribute :role, :atom do
       allow_nil? false
       public? true
-      constraints one_of: [:owner, :admin, :access_coordinator]
+      constraints one_of: [:owner, :admin, :sales_manager]
       default :owner
     end
 

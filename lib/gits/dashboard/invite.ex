@@ -102,14 +102,16 @@ defmodule Gits.Dashboard.Invite do
 
   policies do
     policy action(:read) do
+      authorize_if expr(user.id == ^actor(:id))
+    end
+
+    policy action(:resend) do
       authorize_if expr(
-                     exists(
-                       account,
-                       members.id == ^actor(:id) and members.role in [:owner, :admin]
-                     )
+                     account.members.user.id == ^actor(:id) and
+                       account.members.role in [:owner, :admin]
                    )
 
-      authorize_if expr(user.id == ^actor(:id))
+      authorize_if actor_present()
     end
 
     policy action(:read_for_dashboard) do
