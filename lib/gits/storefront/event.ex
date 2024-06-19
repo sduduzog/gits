@@ -158,6 +158,9 @@ defmodule Gits.Storefront.Event do
     end
 
     policy action(:publish) do
+      forbid_if expr(is_nil(starts_at))
+      forbid_if expr(is_nil(ends_at))
+      forbid_if expr(starts_at > ends_at)
       authorize_if actor_present()
     end
 

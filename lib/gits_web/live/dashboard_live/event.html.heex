@@ -30,3 +30,29 @@
     </button>
   </div>
 </div>
+
+<div class="grid gap-4">
+  <div class="flex items-center justify-between">
+    <h3 class="font-semibold">Tickets</h3>
+    <button class="rounded-md p-2 px-4 text-sm font-medium hover:bg-zinc-100">
+      Add ticket
+    </button>
+  </div>
+  <div class="grid gap-4 md:grid-cols-3 md:gap-6 lg:grid-cols-3 lg:gap-8">
+    <div :for={id <- ["General", "VIP", "VVIP"]} class="rounded-xl border border-zinc-200 p-2">
+      <div class="flex w-full items-center justify-between">
+        <span class="p-2 px-4 text-sm font-medium text-zinc-500">10 Jun, 2024</span>
+        <button class="inline-flex rounded-lg p-2 hover:bg-zinc-100">
+          <.icon name="hero-ellipsis-vertical-mini" />
+        </button>
+      </div>
+      <div class="p-2 px-4">
+        <h3 class="text-xl font-medium"><%= id %></h3>
+      </div>
+      <div class="flex p-2 px-4">
+        <span class="grow text-xs text-zinc-500">0/10 tickets sold</span>
+        <span class="text-xs text-zinc-500">R 100</span>
+      </div>
+    </div>
+  </div>
+</div>
