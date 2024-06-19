@@ -1,13 +1,13 @@
 <div class="flex items-center justify-between gap-4">
-  <h1 class="text-xl font-semibold">Events</h1>
+  <h1 class="text-xl font-semibold"><%= @account_name %>'s team</h1>
   <button
     class="rounded-xl bg-zinc-100 px-4 py-3 text-sm font-medium hover:bg-zinc-200"
-    phx-click={JS.navigate(~p"/accounts/#{@slug}/events/new")}
+    phx-click={JS.navigate(~p"/accounts/#{@slug}/team/invites/new")}
   >
-    Create event
+    Invite member
   </button>
 </div>
-<div :if={false} class="space-y-2">
+<div class="space-y-2">
   <div class="grid-cols-[6fr_2fr_1fr_0.5fr] grid gap-2 pb-2 text-sm text-zinc-500 md:border-b md:border-zinc-100">
     <span class="col-span-full md:col-span-1">Member</span>
     <span class="hidden md:inline-flex">Email</span>

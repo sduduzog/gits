@@ -13,6 +13,7 @@ defmodule Gits.Storefront.Event do
     attribute :name, :string, allow_nil?: false, public?: true
     attribute :description, :string, allow_nil?: false, public?: true
     attribute :starts_at, :naive_datetime, allow_nil?: false, public?: true
+    attribute :ends_at, :naive_datetime, allow_nil?: false, public?: true
 
     attribute :visibility, :atom do
       allow_nil? false
