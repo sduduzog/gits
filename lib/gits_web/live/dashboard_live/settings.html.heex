@@ -3,7 +3,7 @@
 <div class="mx-auto grid max-w-screen-lg gap-4 md:grid-cols-2 md:gap-8">
   <div class="flex flex-wrap justify-between gap-6 rounded-xl border p-4">
     <h3 class="font-semibold">Paystack</h3>
-    <div><button phx-click="toggle" class="text-sm">Setup</button></div>
+    <div><button phx-click="show_paystack_form" class="text-sm">Setup</button></div>
   </div>
   <div class="flex justify-between gap-6 rounded-xl border p-4">
     <h3 class="font-semibold">Payfast</h3>
@@ -12,10 +12,10 @@
 </div>
 
 <div
-  :if={@toggle}
+  :if={@show_paystack_form}
   class="!m-0 bg-zinc-500/50 fixed inset-0 z-20 flex justify-end lg:p-4"
   id="side-modal"
-  phx-click="toggle"
+  phx-click="toggle_paystack_editor"
 >
   <div
     data-modal
@@ -29,11 +29,11 @@
     }
   >
     <h3 class="font-semibold">Setup Paystack</h3>
-    <.simple_form :let={f} for={%{}} class="gap-6 grid">
+    <.simple_form :let={f} for={@paystack_form} class="gap-6 grid" phx-submit="submit">
       <.input field={f[:business_name]} label="Business name" />
       <.input field={f[:account_number]} label="Account number" />
-      <.input field={f[:bank]} type="select" options={@banks} label="Bank" />
-      <button type="button" class="rounded-lg bg-zinc-700 px-4 py-3 text-white">Save</button>
+      <.input field={f[:settlement_bank]} type="select" options={@banks} label="Bank" />
+      <button class="rounded-lg bg-zinc-700 px-4 py-3 text-white">Save</button>
       <button type="button" phx-click="toggle" class="rounded-lg px-4 py-3 hover:bg-zinc-100">
         Cancel
       </button>

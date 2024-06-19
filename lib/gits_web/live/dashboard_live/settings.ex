@@ -1,6 +1,7 @@
 defmodule GitsWeb.DashboardLive.Settings do
   use GitsWeb, :live_view
 
+  alias AshPhoenix.Form
   alias Gits.Dashboard.Account
   alias Gits.PaystackApi
 
@@ -11,7 +12,6 @@ defmodule GitsWeb.DashboardLive.Settings do
       Account
       |> Ash.Query.for_read(:list_for_dashboard, %{user_id: user.id}, actor: user)
       |> Ash.read!()
-      |> Enum.map(fn item -> %{id: item.id, name: item.name} end)
 
     account = Enum.find(accounts, fn item -> item.id == params["slug"] end)
 
@@ -28,7 +28,9 @@ defmodule GitsWeb.DashboardLive.Settings do
       |> assign(:account, account)
       |> assign(:account_name, account.name)
       |> assign(:banks, banks)
-      |> assign(:toggle, false)
+      |> assign(:show_paystack_form, false)
+      |> assign(:paystack_form, %{})
+      |> assign(:show_paystack_editor, false)
 
     {:ok, socket, layout: {GitsWeb.Layouts, :dashboard}}
   end
@@ -48,8 +50,40 @@ defmodule GitsWeb.DashboardLive.Settings do
      end)}
   end
 
-  def handle_event("toggle", _unsigned_params, socket) do
-    {:noreply, update(socket, :toggle, fn current_toggle, _ -> !current_toggle end)}
+  def handle_event("show_paystack_form", _unsigned_params, socket) do
+    socket =
+      socket
+      |> update(:paystack_form, fn _current_form, %{account: account, current_user: user} ->
+        account =
+          account
+          |> Ash.load!([:paystack_subaccount], actor: user)
+
+        account
+        |> Form.for_update(:update_paystack_account, as: "paystack", actor: user)
+        |> Form.validate(account.paystack_subaccount)
+      end)
+      |> update(:show_paystack_form, fn _, _ -> true end)
+
+    {:noreply, socket}
+  end
+
+  def handle_event("submit", %{"paystack" => params}, socket) do
+    form =
+      socket.assigns.paystack_form
+      |> Form.validate(params)
+
+    socket =
+      with true <- form.valid?, {:ok, account} <- Form.submit(form) do
+        socket
+        |> update(:account, fn _current_account, _assigns -> account end)
+        |> update(:show_paystack_form, &(!&1))
+      else
+        error ->
+          IO.inspect(error)
+          socket |> update(:show_paystack_form, &(!&1))
+      end
+
+    {:noreply, socket}
   end
 
   def handle_event(_, _unsigned_params, socket) do

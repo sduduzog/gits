@@ -41,6 +41,35 @@ defmodule Gits.PaystackApi do
     end
   end
 
+  def update_subaccount(subaccount_code, business_name, account_number, settlement_bank) do
+    options = Application.get_env(:gits, :paystack_api_options)
+
+    Req.new(options)
+    |> Req.put(
+      url: "/subaccount/#{subaccount_code}",
+      json: %{
+        business_name: business_name,
+        account_number: account_number,
+        settlement_bank: settlement_bank
+      }
+    )
+    |> case do
+      {:ok, %Req.Response{body: %{"data" => subaccount, "status" => true}}} ->
+        {:ok, extract_subaccount(subaccount)}
+    end
+  end
+
+  def fetch_subaccount(subaccount_code) do
+    options = Application.get_env(:gits, :paystack_api_options)
+
+    Req.new(options)
+    |> Req.request(url: "/subaccount/#{subaccount_code}")
+    |> case do
+      {:ok, %Req.Response{body: %{"data" => subaccount, "status" => true}}} ->
+        {:ok, extract_subaccount(subaccount)}
+    end
+  end
+
   defp extract_subaccount(subaccount) do
     %{
       business_name: subaccount["business_name"],

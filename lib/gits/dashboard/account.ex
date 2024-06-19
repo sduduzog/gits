@@ -7,7 +7,7 @@ defmodule Gits.Dashboard.Account do
   attributes do
     uuid_primary_key :id
     attribute :name, :string, allow_nil?: false, public?: true
-    attribute :paystack_subbaccount_code, :string, public?: true
+    attribute :paystack_subaccount_code, :string, public?: true
     create_timestamp :created_at
     update_timestamp :updated_at
   end
@@ -18,6 +18,10 @@ defmodule Gits.Dashboard.Account do
     has_many :events, Gits.Storefront.Event do
       domain Gits.Storefront
     end
+  end
+
+  calculations do
+    calculate :paystack_subaccount, :map, Gits.Dashboard.Calculations.PaystackSubaccount
   end
 
   actions do
@@ -79,30 +83,18 @@ defmodule Gits.Dashboard.Account do
       argument :account_number, :string, allow_nil?: false
       argument :settlement_bank, :string, allow_nil?: false
 
-      change before_action(fn changeset, _ ->
-               Gits.PaystackApi.create_subaccount(
-                 Ash.Changeset.get_argument(changeset, :business_name),
-                 Ash.Changeset.get_argument(changeset, :account_number),
-                 Ash.Changeset.get_argument(changeset, :settlement_bank)
-               )
-               |> case do
-                 {:ok, account} ->
-                   Ash.Changeset.change_new_attribute(
-                     changeset,
-                     :paystack_subbaccount_code,
-                     account.subaccount_code
-                   )
-
-                 _ ->
-                   Ash.Changeset.add_error(changeset, field: :test, message: "test error message")
-               end
-             end)
+      change Gits.Dashboard.Changes.UpdatePaystackSubaccount
     end
   end
 
   policies do
     policy action(:read) do
       authorize_if always()
+    end
+
+    policy action(:update_paystack_account) do
+      authorize_if expr(members.user.id == ^actor(:id) and members.role in [:owner, :admin])
+      authorize_if actor_present()
     end
 
     policy action([:read_for_dashboard, :list_for_dashboard]) do
