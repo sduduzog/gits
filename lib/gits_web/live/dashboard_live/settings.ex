@@ -62,8 +62,13 @@ defmodule GitsWeb.DashboardLive.Settings do
         |> Form.for_update(:update_paystack_account, as: "paystack", actor: user)
         |> Form.validate(account.paystack_subaccount)
       end)
-      |> update(:show_paystack_form, fn _, _ -> true end)
+      |> assign(:show_paystack_form, true)
 
+    {:noreply, socket}
+  end
+
+  def handle_event("hide_paystack_form", _unsigned_params, socket) do
+    socket = socket |> assign(:show_paystack_form, false)
     {:noreply, socket}
   end
 

@@ -15,12 +15,11 @@
   :if={@show_paystack_form}
   class="!m-0 bg-zinc-500/50 fixed inset-0 z-20 flex justify-end lg:p-4"
   id="side-modal"
-  phx-click="toggle_paystack_editor"
 >
   <div
     data-modal
     class="grid w-full max-w-xl content-start gap-10 bg-white p-4 lg:rounded-xl lg:p-8"
-    phx-click="fll"
+    phx-click-away="hide_paystack_form"
     phx-mounted={
       JS.transition(
         {"ease-out duration-100", "translate-y-10 lg:translate-y-0 lg:translate-x-20 opacity-95",
