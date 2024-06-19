@@ -1,4 +1,5 @@
 defmodule Gits.Storefront.Event do
+  require Ash.Resource.Preparation.Builtins
   require Ash.Query
   require Ash.Resource.Preparation.Builtins
 
@@ -14,11 +15,12 @@ defmodule Gits.Storefront.Event do
     attribute :description, :string, allow_nil?: false, public?: true
     attribute :starts_at, :naive_datetime, allow_nil?: false, public?: true
     attribute :ends_at, :naive_datetime, allow_nil?: false, public?: true
+    attribute :published_at, :datetime, public?: true
 
     attribute :visibility, :atom do
       allow_nil? false
       public? true
-      constraints one_of: [:private, :protected, :public]
+      constraints one_of: [:private, :public]
       default :private
     end
 
@@ -56,11 +58,31 @@ defmodule Gits.Storefront.Event do
   end
 
   actions do
-    defaults [:read, :destroy, update: :*]
+    defaults [:destroy, update: :*]
 
-    read :read_dashboard_event do
-      argument :id, :integer, allow_nil?: false
-      filter expr(id == ^arg(:id))
+    read :read do
+      primary? true
+
+      argument :id, :integer
+
+      prepare before_action(fn query, _ ->
+                id = query |> Ash.Query.get_argument(:id)
+
+                query =
+                  if is_nil(id) do
+                    query
+                  else
+                    query |> Ash.Query.filter(id: id)
+                  end
+
+                query
+              end)
+
+      prepare build(load: [:masked_id])
+      prepare build(sort: [id: :desc])
+    end
+
+    update :publish do
     end
 
     read :read_dashboard_events do
@@ -131,12 +153,11 @@ defmodule Gits.Storefront.Event do
   end
 
   policies do
-    policy action([:read_dashboard_events, :read_dashboard_event]) do
-      forbid_unless expr(
-                      account.members.user.id == ^actor(:id) and
-                        account.members.role in [:owner, :admin]
-                    )
+    policy action(:read) do
+      authorize_if always()
+    end
 
+    policy action(:publish) do
       authorize_if actor_present()
     end
 
@@ -160,22 +181,13 @@ defmodule Gits.Storefront.Event do
 
     policy action(:for_dashboard_event_list) do
       authorize_if actor_present()
-    end
-
-    bypass action(:read) do
-      forbid_unless expr(
-                      account.members.user.id == ^actor(:id) or
-                        baskets.instances.customer.id == ^actor(:id)
-                    )
-
-      authorize_if expr(account.members.role in [:owner, :admin, :access_coordinator])
     end
 
     bypass action([:masked, :for_feature]) do
       authorize_if expr(visibility in [:protected, :public] and not is_nil(^arg(:id)))
     end
 
-    policy action([:masked, :read, :for_feature]) do
+    policy action([:masked, :for_feature]) do
       forbid_unless expr(visibility == :public)
       authorize_if always()
     end

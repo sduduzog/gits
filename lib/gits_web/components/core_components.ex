@@ -440,7 +440,11 @@ defmodule GitsWeb.CoreComponents do
         <.label for={@id}><%= @label %></.label>
       </div>
       <input
-        class="w-full rounded-md border-zinc-300 p-4 text-sm outline-none focus:border-transparent focus:outline-none focus:ring-zinc-500"
+        class={[
+          "w-full rounded-md p-4 text-sm outline-none focus:border-transparent focus:outline-none ",
+          @errors == [] && "border-zinc-300 focus:ring-zinc-400",
+          @errors != [] && "border-rose-400 focus:border-rose-400"
+        ]}
         type={@type}
         name={@name}
         id={@id}
@@ -507,7 +511,7 @@ defmodule GitsWeb.CoreComponents do
         <label
           :for={{%{value: value} = rad, idx} <- Enum.with_index(@radio)}
           for={"#{@field.id}-#{idx}"}
-          class="flex max-w-3xl gap-4 rounded-md p-4 text-zinc-600 ring-1 ring-zinc-200 has-[:checked]:text-zinc-900 has-[:checked]:ring-1 has-[:checked]:ring-zinc-500 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-zinc-500"
+          class="flex max-w-3xl gap-4 rounded-md p-4 text-zinc-600 ring-1 ring-zinc-300 has-[:checked]:text-zinc-900 has-[:checked]:ring-1 has-[:checked]:ring-zinc-500 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-zinc-500"
         >
           <input
             name={@field.name}

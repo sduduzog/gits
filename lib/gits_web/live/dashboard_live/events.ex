@@ -15,6 +15,11 @@ defmodule GitsWeb.DashboardLive.Events do
 
     account = Enum.find(accounts, fn item -> item.id == params["slug"] end)
 
+    events =
+      Event
+      |> Ash.Query.for_read(:read, %{}, actor: user)
+      |> Ash.read!()
+
     socket =
       socket
       |> assign(:slug, params["slug"])
@@ -22,22 +27,8 @@ defmodule GitsWeb.DashboardLive.Events do
       |> assign(:context_options, nil)
       |> assign(:accounts, accounts)
       |> assign(:account_name, account.name)
+      |> assign(:events, events)
 
     {:ok, socket, layout: {GitsWeb.Layouts, :dashboard}}
-  end
-
-  def handle_params(unsigned_params, _uri, socket) do
-    user = socket.assigns.current_user
-
-    events =
-      Event
-      |> Ash.Query.for_read(:read_dashboard_events, %{account_id: unsigned_params["slug"]},
-        actor: user
-      )
-      |> Ash.read!()
-
-    socket = assign(socket, :events, events)
-
-    {:noreply, socket}
   end
 end
