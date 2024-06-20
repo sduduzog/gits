@@ -64,6 +64,7 @@ defmodule Gits.Storefront.Event do
       primary? true
 
       argument :id, :integer
+      argument :masked_id, :string
 
       prepare before_action(fn query, _ ->
                 id = query |> Ash.Query.get_argument(:id)
@@ -72,6 +73,17 @@ defmodule Gits.Storefront.Event do
                   if is_nil(id) do
                     query
                   else
+                    query |> Ash.Query.filter(id: id)
+                  end
+
+                masked_id = query |> Ash.Query.get_argument(:masked_id)
+
+                query =
+                  if is_nil(masked_id) do
+                    query
+                  else
+                    id = Sqids.new!() |> Sqids.decode!(masked_id) |> hd()
+
                     query |> Ash.Query.filter(id: id)
                   end
 

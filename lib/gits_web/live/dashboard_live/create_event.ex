@@ -53,21 +53,21 @@ defmodule GitsWeb.DashboardLive.CreateEvent do
     <div>
       <.link
         navigate={~p"/accounts/#{@slug}/events"}
-        class="text-sm max-w-screen-lg mx-auto flex gap-2 text-zinc-600"
+        class="text-sm max-w-screen-md mx-auto flex gap-2 text-zinc-600"
       >
         <.icon name="hero-chevron-left-mini" />
         <span>Events</span>
       </.link>
     </div>
 
-    <h1 class="mx-auto max-w-screen-lg text-xl font-semibold">Create a new event</h1>
+    <h1 class="mx-auto max-w-screen-md text-xl font-semibold">Create a new event</h1>
     <.simple_form
       :let={f}
       for={@form}
       phx-submit="submit"
-      class="flex flex-col gap-10 max-w-screen-lg mx-auto w-full md:rounded-2xl bg-white"
+      class="flex flex-col gap-10 max-w-screen-md mx-auto w-full md:rounded-2xl bg-white"
     >
-      <div class="grid grow content-start gap-4 sm:grid-cols-2 md:grid-cols-3 md:gap-8">
+      <div class="grid grow grid-cols-2 content-start gap-4 md:gap-8">
         <.input field={f[:name]} label="Name" class="col-span-full" />
         <.input type="textarea" field={f[:description]} label="Description" class="col-span-full" />
         <.input type="datetime-local" field={f[:starts_at]} label="Starts At" />

@@ -1,4 +1,4 @@
-<div class="mx-auto max-w-screen-lg space-y-4 md:space-y-8">
+<div class="w-full space-y-4 md:space-y-8">
   <div class="grid gap-4 md:grid-cols-[theme(space.80)_1fr] md:gap-6 lg:grid-cols-[theme(space.96)_1fr]">
     <div class="aspect-[3/2] overflow-hidden rounded-2xl bg-gray-400">
       <img
@@ -30,3 +30,4 @@
     <p><%= @event.description %></p>
   </div>
 </div>
+<.live_component :if={@basket_id} id={@basket_id} module={GitsWeb.BasketComponent} />

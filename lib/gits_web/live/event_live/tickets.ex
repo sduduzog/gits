@@ -12,7 +12,7 @@ defmodule GitsWeb.EventLive.Tickets do
 
     event =
       Event
-      |> Ash.Query.for_read(:for_feature, %{id: params["id"]}, actor: user)
+      |> Ash.Query.for_read(:read, %{masked_id: params["id"]}, actor: user)
       |> Ash.read_one!()
 
     customer =
@@ -44,7 +44,7 @@ defmodule GitsWeb.EventLive.Tickets do
 
     GitsWeb.Endpoint.subscribe("basket:cancelled:#{basket.id}")
 
-    {:ok, socket, layout: {GitsWeb.Layouts, :next}}
+    {:ok, socket}
   end
 
   def handle_event("remove_ticket", unsigned_params, socket) do

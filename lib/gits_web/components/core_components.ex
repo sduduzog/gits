@@ -507,17 +507,17 @@ defmodule GitsWeb.CoreComponents do
         <span><%= @label %></span>
         <span></span>
       </div>
-      <div class="grid gap-4 md:grid-cols-2 lg:gap-8">
+      <div class="relative grid w-full auto-cols-fr grid-flow-col -space-x-px rounded-md">
         <label
           :for={{%{value: value} = rad, idx} <- Enum.with_index(@radio)}
           for={"#{@field.id}-#{idx}"}
-          class="flex max-w-3xl gap-4 rounded-md p-4 text-zinc-600 ring-1 ring-zinc-300 has-[:checked]:text-zinc-900 has-[:checked]:ring-1 has-[:checked]:ring-zinc-500 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-zinc-500"
+          class="relative row-span-1 flex items-center gap-2 border border-zinc-300 px-3 py-4 has-[:checked]:z-10 has-[:checked]:border-zinc-600 has-[:checked]:bg-zinc-50 first:rounded-tl-md first:rounded-bl-md last:rounded-tr-md last:rounded-br-md focus:outline-none md:flex-row md:gap-4 md:p-4"
         >
           <input
             name={@field.name}
             id={"#{@field.id}-#{idx}"}
             type="radio"
-            class={"peer/#{value} mt-0.5 appearance-none text-zinc-700 focus:ring-zinc-700"}
+            class={"peer/#{value} size-4 appearance-none border-zinc-400 text-zinc-600 text-zinc-700 focus:ring-zinc-600 focus:ring-zinc-700 active:ring-2 active:ring-zinc-600 active:ring-offset-2"}
             value={value}
           />
           <%= render_slot(rad) %>

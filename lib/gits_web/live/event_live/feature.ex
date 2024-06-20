@@ -9,7 +9,8 @@ defmodule GitsWeb.EventLive.Feature do
     user = socket.assigns.current_user
 
     event =
-      Ash.Query.for_read(Event, :for_feature, %{id: params["id"]}, actor: user)
+      Event
+      |> Ash.Query.for_read(:read, %{masked_id: params["id"]}, actor: user)
       |> Ash.read_one!()
 
     local_starts_at =
@@ -26,8 +27,15 @@ defmodule GitsWeb.EventLive.Feature do
       |> assign(:event_name, event.name)
       |> assign(:starts_at_day, starts_at_day)
       |> assign(:starts_at_month, starts_at_month)
+      |> assign(:show_basket_modal, false)
+      |> assign(:basket_id, nil)
 
-    {:ok, socket, layout: {GitsWeb.Layouts, :next}}
+    {:ok, socket}
+  end
+
+  def handle_params(unsigned_params, _uri, socket) do
+    socket = socket |> assign(:basket_id, unsigned_params["basket"])
+    {:noreply, socket}
   end
 
   def handle_event("get_tickets", _unsigned_params, socket) do
@@ -48,6 +56,13 @@ defmodule GitsWeb.EventLive.Feature do
     {:noreply, socket}
   end
 
+  def handle_event("close_basket", _unsigned_params, socket) do
+    event = socket.assigns.event
+
+    socket = socket |> push_patch(to: ~p"/events/#{event.masked_id}")
+    {:noreply, socket}
+  end
+
   defp open_basket(socket) do
     user =
       socket.assigns.current_user
@@ -64,6 +79,6 @@ defmodule GitsWeb.EventLive.Feature do
       |> Ash.Changeset.for_create(:open_basket, %{event: event, customer: customer}, actor: user)
       |> Ash.create!()
 
-    push_navigate(socket, to: ~p"/events/#{event.masked_id}/tickets/#{basket.id}")
+    push_patch(socket, to: ~p"/events/#{event.masked_id}/?basket=#{basket.id}")
   end
 end

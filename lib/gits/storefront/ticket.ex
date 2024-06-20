@@ -1,4 +1,5 @@
 defmodule Gits.Storefront.Ticket do
+  alias Gits.Storefront.Event
   require Ash.Resource.Change.Builtins
 
   use Ash.Resource,
@@ -10,7 +11,7 @@ defmodule Gits.Storefront.Ticket do
     uuid_primary_key :id
     attribute :name, :string, allow_nil?: false, public?: true
 
-    attribute :price, :decimal do
+    attribute :price_in_cents, :decimal do
       allow_nil? false
       public? true
       constraints min: 0
@@ -32,6 +33,13 @@ defmodule Gits.Storefront.Ticket do
 
     attribute :sale_starts_at, :naive_datetime, public?: true
     attribute :sale_ends_at, :naive_datetime, public?: true
+
+    attribute :availability, :atom do
+      allow_nil? false
+      public? true
+      constraints one_of: [:open, :restricted]
+      default :open
+    end
 
     create_timestamp :created_at, public?: true
     update_timestamp :updated_at, public?: true
@@ -206,7 +214,7 @@ defmodule Gits.Storefront.Ticket do
     end
 
     policy action(:read) do
-      authorize_if always()
+      authorize_if accessing_from(Event, :tickets)
     end
 
     policy action(:update) do

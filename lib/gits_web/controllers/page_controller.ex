@@ -2,6 +2,7 @@ defmodule GitsWeb.PageController do
   use GitsWeb, :controller
 
   require Ash.Query
+  alias Gits.Storefront.Event
   alias Gits.Dashboard.Member
   alias Gits.Storefront.Customer
 
@@ -13,7 +14,14 @@ defmodule GitsWeb.PageController do
   end
 
   def events(conn, _) do
-    conn |> render(:events)
+    events =
+      Event
+      |> Ash.Query.for_read(:read, %{}, actor: conn.assigns.current_user)
+      |> Ash.read!()
+
+    conn
+    |> assign(:events, events)
+    |> render(:events)
   end
 
   def organizers(conn, _) do
