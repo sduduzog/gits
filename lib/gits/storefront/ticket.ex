@@ -1,4 +1,6 @@
 defmodule Gits.Storefront.Ticket do
+  require Ash.Resource.Change.Builtins
+  alias Ash.Type.Decimal
   alias Gits.Storefront.Event
   require Ash.Resource.Change.Builtins
 
@@ -11,7 +13,7 @@ defmodule Gits.Storefront.Ticket do
     uuid_primary_key :id
     attribute :name, :string, allow_nil?: false, public?: true
 
-    attribute :price_in_cents, :decimal do
+    attribute :price_in_cents, :integer do
       allow_nil? false
       public? true
       constraints min: 0
@@ -138,13 +140,33 @@ defmodule Gits.Storefront.Ticket do
     end
 
     create :create do
-      accept :*
+      accept [
+        :name,
+        :allowed_quantity_per_user,
+        :total_quantity,
+        :sale_starts_at,
+        :sale_ends_at,
+        :availability
+      ]
+
+      argument :price, :decimal do
+        allow_nil? false
+        constraints min: 0
+      end
 
       argument :event, :map do
         allow_nil? false
       end
 
-      validate compare(:price, greater_than_or_equal_to: 0)
+      change before_action(fn changeset, _ ->
+               price = changeset |> Ash.Changeset.get_argument(:price)
+
+               changeset
+               |> Ash.Changeset.change_attribute(
+                 :price_in_cents,
+                 Decimal.mult(price, 100) |> Decimal.to_integer()
+               )
+             end)
 
       change manage_relationship(:event, type: :append)
     end
