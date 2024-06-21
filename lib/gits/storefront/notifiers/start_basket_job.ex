@@ -5,7 +5,7 @@ defmodule Gits.Storefront.Notifiers.StartBasketJob do
   alias Gits.Workers.Basket
 
   def notify(%Ash.Notifier.Notification{data: data}) do
-    Basket.new(%{id: data.id}, schedule_in: 20 * 60)
+    Basket.new(%{id: data.id}, schedule_in: 30 * 60)
     |> Oban.insert()
 
     :ok

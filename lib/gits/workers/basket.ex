@@ -11,7 +11,7 @@ defmodule Gits.Workers.Basket do
       :ok
     else
       _ ->
-        :error
+        {:error, :the_thing_failed}
     end
   end
 end

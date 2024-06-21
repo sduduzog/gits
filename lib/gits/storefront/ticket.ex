@@ -6,6 +6,7 @@ defmodule Gits.Storefront.Ticket do
     authorizers: [Ash.Policy.Authorizer],
     domain: Gits.Storefront
 
+  alias Gits.Storefront.TicketInstance
   alias Gits.Storefront.Event
 
   attributes do
@@ -257,7 +258,9 @@ defmodule Gits.Storefront.Ticket do
     end
 
     policy action(:read) do
+      authorize_if accessing_from(TicketInstance, :ticket)
       authorize_if accessing_from(Event, :tickets)
+      authorize_if expr(event.baskets.customer.user.id == ^actor(:id))
     end
 
     policy action(:create) do

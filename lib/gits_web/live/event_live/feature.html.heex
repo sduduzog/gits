@@ -30,4 +30,9 @@
     <p><%= @event.description %></p>
   </div>
 </div>
-<.live_component :if={@basket_id} id={@basket_id} module={GitsWeb.BasketComponent} />
+<.live_component
+  :if={@basket_id}
+  id={@basket_id}
+  user={@current_user}
+  module={GitsWeb.BasketComponent}
+/>

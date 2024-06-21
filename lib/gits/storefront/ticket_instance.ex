@@ -1,4 +1,6 @@
 defmodule Gits.Storefront.TicketInstance do
+  require Ash.Query
+
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     authorizers: [Ash.Policy.Authorizer],
@@ -49,11 +51,19 @@ defmodule Gits.Storefront.TicketInstance do
 
     create :create do
       primary? true
-      argument :customer, :map, allow_nil?: false
       argument :basket, :map, allow_nil?: false
 
+      change before_action(fn changeset, %{actor: user} ->
+               customer =
+                 Customer
+                 |> Ash.Query.for_read(:read, %{}, actor: user)
+                 |> Ash.Query.filter(user.id == ^user.id)
+                 |> Ash.read_one!()
+
+               changeset |> Ash.Changeset.manage_relationship(:customer, customer, type: :append)
+             end)
+
       change manage_relationship(:basket, type: :append)
-      change manage_relationship(:customer, type: :append)
     end
 
     update :lock_for_checkout do
@@ -79,12 +89,10 @@ defmodule Gits.Storefront.TicketInstance do
   end
 
   policies do
-    bypass action(:read) do
+    policy action(:read) do
       authorize_if Gits.Checks.ActorIsObanJob
-    end
-
-    policy [action(:read), accessing_from(Basket, :instances)] do
-      authorize_if always()
+      authorize_if accessing_from(Basket, :instances)
+      authorize_if accessing_from(Ticket, :instances)
     end
 
     policy action(:create) do
@@ -104,10 +112,6 @@ defmodule Gits.Storefront.TicketInstance do
     end
 
     policy [action(:unlock_for_shopping), accessing_from(Basket, :instances)] do
-      authorize_if expr(customer.user.id == ^actor(:id))
-    end
-
-    policy [action(:read), accessing_from(Ticket, :instances)] do
       authorize_if expr(customer.user.id == ^actor(:id))
     end
 

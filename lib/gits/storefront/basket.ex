@@ -1,9 +1,5 @@
 defmodule Gits.Storefront.Basket do
   require Ash.Query
-  require Ash.Resource.Change.Builtins
-  require Ash.Resource.Change.Builtins
-  require Ash.Resource.Change.Builtins
-  require Ash.Resource.Change.Builtins
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
@@ -14,6 +10,7 @@ defmodule Gits.Storefront.Basket do
 
   alias Gits.Storefront.Notifiers.StartBasketJob
   alias Gits.Storefront.TicketInstance
+  alias Gits.Storefront.Calculations.SumOfInstancePrices
 
   attributes do
     uuid_primary_key :id
@@ -47,16 +44,18 @@ defmodule Gits.Storefront.Basket do
 
   aggregates do
     count :count_of_instances, :instances
-    sum :sum_of_instance_prices, :instances, :price
+  end
+
+  calculations do
+    calculate :event_name, :string, expr(event.name)
+    calculate :sum_of_instance_prices, :decimal, SumOfInstancePrices
   end
 
   actions do
-    defaults [:read]
+    read :read do
+      primary? true
 
-    read :read_for_shopping do
-      argument :id, :uuid, allow_nil?: false
-      filter expr(id == ^arg(:id))
-      prepare build(load: [:count_of_instances, :sum_of_instance_prices, :instances])
+      prepare build(load: [:event_name, :instances, :sum_of_instance_prices])
     end
 
     read :read_for_checkout_summary do
@@ -78,24 +77,6 @@ defmodule Gits.Storefront.Basket do
       change manage_relationship(:customer, type: :append)
 
       notifiers [StartBasketJob]
-    end
-
-    update :add_ticket_to_basket do
-      require_atomic? false
-      argument :instance, :map, allow_nil?: false
-
-      change manage_relationship(:instance, :instances, type: :create)
-    end
-
-    update :remove_ticket_from_basket do
-      require_atomic? false
-
-      argument :instance, :integer, allow_nil?: false
-
-      change manage_relationship(:instance, :instances,
-               on_no_match: :error,
-               on_match: {:destroy, :destroy}
-             )
     end
 
     update :lock_for_checkout do
@@ -201,6 +182,12 @@ defmodule Gits.Storefront.Basket do
   end
 
   policies do
+    policy action(:read) do
+      authorize_if Gits.Checks.ActorIsObanJob
+      authorize_if expr(customer.user.id == ^actor(:id))
+      authorize_if actor_present()
+    end
+
     policy action(:settle_for_free) do
       forbid_unless expr(count_of_instances > 0)
       forbid_unless expr(customer.user.id == ^actor(:id))
@@ -245,10 +232,6 @@ defmodule Gits.Storefront.Basket do
     policy action(:cancel) do
       forbid_unless expr(customer.user.id == ^actor(:id))
       authorize_if actor_present()
-    end
-
-    policy action(:read) do
-      authorize_if Gits.Checks.ActorIsObanJob
     end
 
     policy action([
