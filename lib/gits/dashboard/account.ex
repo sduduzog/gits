@@ -27,12 +27,20 @@ defmodule Gits.Dashboard.Account do
   end
 
   calculations do
+    calculate :paystack_ready, :boolean, expr(not is_nil(paystack_subaccount_code))
     calculate :paystack_subaccount, :map, Gits.Dashboard.Calculations.PaystackSubaccount
+    calculate :payfast_ready, :boolean, false
   end
 
   actions do
     default_accept :*
-    defaults [:read, :destroy, update: :*]
+    defaults [:destroy, update: :*]
+
+    read :read do
+      primary? true
+
+      prepare build(load: [:paystack_ready, :payfast_ready])
+    end
 
     read :by_id do
       argument :id, :uuid do
@@ -95,7 +103,7 @@ defmodule Gits.Dashboard.Account do
 
   policies do
     policy action(:read) do
-      authorize_if always()
+      authorize_if expr(members.user.id == ^actor(:id) and members.role in [:owner, :admin])
     end
 
     policy action(:update_paystack_account) do

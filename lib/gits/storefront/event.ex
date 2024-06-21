@@ -53,6 +53,7 @@ defmodule Gits.Storefront.Event do
 
   calculations do
     calculate :masked_id, :string, Gits.Storefront.Calculations.MaskId
+    calculate :resolved_payment_method, :atom, expr(payment_method or account.payment_method)
     calculate :address, :map, Gits.Storefront.Event.Calculations.Address
 
     calculate :ticket_price_varies,

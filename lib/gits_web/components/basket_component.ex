@@ -117,7 +117,6 @@ defmodule GitsWeb.BasketComponent do
     paid_basket? =
       basket.sum_of_instance_prices
       |> Decimal.gt?("0")
-      |> IO.inspect()
 
     socket =
       if paid_basket? do

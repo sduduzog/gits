@@ -8,12 +8,18 @@ defmodule Gits.Storefront.Basket do
     domain: Gits.Storefront,
     notifiers: [Ash.Notifier.PubSub]
 
+  require Ash.Resource.Change.Builtins
   alias Gits.Storefront.Notifiers.StartBasketJob
   alias Gits.Storefront.TicketInstance
   alias Gits.Storefront.Calculations.SumOfInstancePrices
 
   attributes do
     uuid_primary_key :id
+
+    attribute :payment_method, :atom do
+      public? true
+      constraints one_of: [:paystack, :payfast]
+    end
 
     create_timestamp :created_at, public?: true
 
@@ -26,6 +32,7 @@ defmodule Gits.Storefront.Basket do
 
     transitions do
       transition :settle_for_free, from: :open, to: :settled_for_free
+      transition :start_payment, from: :open, to: :payment_started
       transition :cancel, from: :open, to: :cancelled
     end
   end
@@ -64,6 +71,14 @@ defmodule Gits.Storefront.Basket do
       change manage_relationship(:customer, type: :append)
 
       notifiers [StartBasketJob]
+    end
+
+    update :start_payment do
+      require_atomic? false
+
+      change before_action(fn changeset, _ ->
+               changeset
+             end)
     end
 
     update :cancel do
