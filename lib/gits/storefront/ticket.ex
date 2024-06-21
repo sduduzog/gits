@@ -1,13 +1,12 @@
 defmodule Gits.Storefront.Ticket do
-  require Ash.Resource.Change.Builtins
-  alias Ash.Type.Decimal
-  alias Gits.Storefront.Event
-  require Ash.Resource.Change.Builtins
+  require Decimal
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     authorizers: [Ash.Policy.Authorizer],
     domain: Gits.Storefront
+
+  alias Gits.Storefront.Event
 
   attributes do
     uuid_primary_key :id
@@ -56,6 +55,8 @@ defmodule Gits.Storefront.Ticket do
   end
 
   calculations do
+    calculate :price, :decimal, expr(price_in_cents / 100)
+
     calculate :customer_reserved_instance_count_for_basket,
               :integer,
               expr(
@@ -108,7 +109,12 @@ defmodule Gits.Storefront.Ticket do
 
   actions do
     default_accept :*
-    defaults [:read, :destroy]
+    defaults [:destroy]
+
+    read :read do
+      primary? true
+      prepare build(load: [:price])
+    end
 
     read :read_for_shopping do
       argument :event_id, :integer, allow_nil?: false
@@ -164,7 +170,7 @@ defmodule Gits.Storefront.Ticket do
                changeset
                |> Ash.Changeset.change_attribute(
                  :price_in_cents,
-                 Decimal.mult(price, 100) |> Decimal.to_integer()
+                 price |> Decimal.mult(100) |> Decimal.to_integer()
                )
              end)
 
@@ -174,6 +180,21 @@ defmodule Gits.Storefront.Ticket do
     update :update do
       accept :*
       require_atomic? false
+
+      argument :price, :decimal do
+        allow_nil? false
+        constraints min: 0
+      end
+
+      change before_action(fn changeset, _ ->
+               price = changeset |> Ash.Changeset.get_argument(:price)
+
+               changeset
+               |> Ash.Changeset.change_attribute(
+                 :price_in_cents,
+                 price |> Decimal.mult(100) |> Decimal.to_integer()
+               )
+             end)
     end
 
     update :add_instance do
@@ -239,16 +260,30 @@ defmodule Gits.Storefront.Ticket do
       authorize_if accessing_from(Event, :tickets)
     end
 
+    policy action(:create) do
+      authorize_if expr(
+                     event.account.members.user.id == ^actor(:id) and
+                       event.account.members.role in [:owner]
+                   )
+
+      authorize_if actor_present()
+    end
+
+    policy action(:destroy) do
+      authorize_if expr(
+                     event.account.members.user.id == ^actor(:id) and
+                       event.account.members.role in [:owner]
+                   )
+
+      authorize_if actor_present()
+    end
+
     policy action(:update) do
       authorize_if expr(count(instances) == 0)
     end
 
     policy action(:update) do
       authorize_if expr(event.account.members.user.id == ^actor(:id))
-      authorize_if always()
-    end
-
-    policy action([:create, :destroy]) do
       authorize_if always()
     end
   end

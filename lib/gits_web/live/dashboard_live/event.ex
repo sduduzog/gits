@@ -43,7 +43,8 @@ defmodule GitsWeb.DashboardLive.Event do
   end
 
   def handle_params(%{"ticket" => "new"}, _uri, socket) do
-    form = Ticket |> Form.for_create(:create, as: "ticket", actor: socket.assigns.current_user)
+    form =
+      Ticket |> Form.for_create(:create, as: "create_ticket", actor: socket.assigns.current_user)
 
     socket =
       socket
@@ -62,20 +63,49 @@ defmodule GitsWeb.DashboardLive.Event do
     {:noreply, socket}
   end
 
-  def handle_event("submit", %{"ticket" => params}, socket) do
+  def handle_event("delete_ticket", %{"id" => id}, socket) do
+    socket =
+      socket
+      |> update(:event, fn current_event, %{current_user: user} ->
+        current_event.tickets
+        |> Enum.find(&(&1.id == id))
+        |> Ash.Changeset.for_destroy(:destroy, %{}, actor: user)
+        |> Ash.destroy()
+        |> case do
+          :ok ->
+            %Event{
+              current_event
+              | tickets: current_event.tickets |> Enum.filter(&(&1.id != id))
+            }
+
+          _ ->
+            current_event
+        end
+      end)
+
+    {:noreply, socket}
+  end
+
+  def handle_event("submit", %{"create_ticket" => params}, socket) do
+    user = socket.assigns.current_user
+    event = socket.assigns.event
+
     socket =
       socket.assigns.manage_ticket_form
-      |> Form.validate(Map.put(params, :event, socket.assigns.event))
+      |> Form.validate(Map.put(params, :event, event))
       |> Form.submit()
       |> case do
-        {:ok, _} ->
+        {:ok, ticket} ->
           socket
+          |> assign(:event, %Event{
+            event
+            | tickets: event.tickets ++ [ticket |> Ash.load!(:price, actor: user)]
+          })
           |> push_patch(
             to: ~p"/accounts/#{socket.assigns.slug}/events/#{socket.assigns.event.id}"
           )
 
         {:error, form} ->
-          IO.inspect(form)
           socket |> assign(:manage_ticket_form, form)
       end
 
