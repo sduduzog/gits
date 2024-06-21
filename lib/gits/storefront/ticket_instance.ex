@@ -24,10 +24,8 @@ defmodule Gits.Storefront.TicketInstance do
     default_initial_state :reserved
 
     transitions do
-      transition :lock_for_checkout, from: :reserved, to: :locked_for_checkout
-      transition :unlock_for_shopping, from: :locked_for_checkout, to: :reserved
+      transition :prepare_for_use, from: :reserved, to: :ready_for_use
       transition :cancel, from: [:reserved, :locked_for_checkout], to: :cancelled
-      transition :prepare_for_use, from: :locked_for_checkout, to: :ready_for_use
     end
   end
 
@@ -66,16 +64,6 @@ defmodule Gits.Storefront.TicketInstance do
       change manage_relationship(:basket, type: :append)
     end
 
-    update :lock_for_checkout do
-      require_atomic? false
-      change transition_state(:locked_for_checkout)
-    end
-
-    update :unlock_for_shopping do
-      require_atomic? false
-      change transition_state(:reserved)
-    end
-
     update :cancel do
       require_atomic? false
 
@@ -95,24 +83,12 @@ defmodule Gits.Storefront.TicketInstance do
       authorize_if accessing_from(Ticket, :instances)
     end
 
+    policy action(:prepare_for_use) do
+      authorize_if accessing_from(Basket, :instances)
+    end
+
     policy action(:create) do
       authorize_if accessing_from(Ticket, :instances)
-    end
-
-    policy [action([:prepare_for_use]), accessing_from(Basket, :instances)] do
-      authorize_if expr(state == :locked_for_checkout)
-    end
-
-    policy [action([:lock_for_checkout, :destroy]), accessing_from(Basket, :instances)] do
-      authorize_if expr(state == :reserved)
-    end
-
-    policy [action([:lock_for_checkout, :destroy]), accessing_from(Basket, :instances)] do
-      authorize_if expr(customer.user.id == ^actor(:id))
-    end
-
-    policy [action(:unlock_for_shopping), accessing_from(Basket, :instances)] do
-      authorize_if expr(customer.user.id == ^actor(:id))
     end
 
     policy [action(:cancel), accessing_from(Basket, :instances)] do

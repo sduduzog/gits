@@ -74,6 +74,26 @@ defmodule Gits.Storefront.Ticket do
       argument :basket_id, :uuid, allow_nil?: false
     end
 
+    calculate :customer_reserved_instance_price_for_basket,
+              :decimal,
+              expr(
+                round(
+                  price_in_cents *
+                    count(instances,
+                      query: [
+                        filter:
+                          expr(
+                            customer.user.id == ^actor(:id) and state == :reserved and
+                              basket.id == ^arg(:basket_id)
+                          )
+                      ]
+                    ) / 100,
+                  2
+                )
+              ) do
+      argument :basket_id, :uuid, allow_nil?: false
+    end
+
     calculate :customer_locked_instance_count_for_basket,
               :integer,
               expr(

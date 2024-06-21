@@ -25,10 +25,8 @@ defmodule Gits.Storefront.Basket do
     default_initial_state :open
 
     transitions do
-      transition :lock_for_checkout, from: :open, to: :locked_for_checkout
-      transition :unlock_for_shopping, from: :locked_for_checkout, to: :open
-      transition :cancel, from: [:open, :locked_for_checkout], to: :cancelled
-      transition :settle_for_free, from: :locked_for_checkout, to: :settled_for_free
+      transition :settle_for_free, from: :open, to: :settled_for_free
+      transition :cancel, from: :open, to: :cancelled
     end
   end
 
@@ -58,17 +56,6 @@ defmodule Gits.Storefront.Basket do
       prepare build(load: [:event_name, :instances, :sum_of_instance_prices])
     end
 
-    read :read_for_checkout_summary do
-      argument :id, :uuid, allow_nil?: false
-      filter expr(id == ^arg(:id))
-      prepare build(load: [:count_of_instances, :sum_of_instance_prices, :instances])
-    end
-
-    read :read_for_checkout do
-      argument :id, :uuid, allow_nil?: false
-      filter expr(id == ^arg(:id))
-    end
-
     create :open_basket do
       argument :event, :map, allow_nil?: false
       argument :customer, :map, allow_nil?: false
@@ -77,42 +64,6 @@ defmodule Gits.Storefront.Basket do
       change manage_relationship(:customer, type: :append)
 
       notifiers [StartBasketJob]
-    end
-
-    update :lock_for_checkout do
-      require_atomic? false
-
-      change transition_state(:locked_for_checkout)
-
-      change fn changeset, _ ->
-        changeset
-        |> Ash.Changeset.before_action(fn changeset ->
-          changeset
-          |> Ash.Changeset.manage_relationship(
-            :instances,
-            Enum.map(changeset.data.instances, & &1.id),
-            on_match: {:update, :lock_for_checkout}
-          )
-        end)
-      end
-    end
-
-    update :unlock_for_shopping do
-      require_atomic? false
-
-      change transition_state(:open)
-
-      change fn changeset, _ ->
-        changeset
-        |> Ash.Changeset.before_action(fn changeset ->
-          changeset
-          |> Ash.Changeset.manage_relationship(
-            :instances,
-            Enum.map(changeset.data.instances, & &1.id),
-            on_match: {:update, :unlock_for_shopping}
-          )
-        end)
-      end
     end
 
     update :cancel do

@@ -1,6 +1,7 @@
 defmodule GitsWeb.BasketComponent do
   use GitsWeb, :live_component
 
+  alias Gits.Currency
   alias Gits.Storefront.Basket
   alias Gits.Storefront.Ticket
 
@@ -12,7 +13,10 @@ defmodule GitsWeb.BasketComponent do
     tickets =
       Ticket
       |> Ash.Query.for_read(:read, %{}, actor: assigns.user)
-      |> Ash.Query.load(customer_reserved_instance_count_for_basket: [basket_id: basket.id])
+      |> Ash.Query.load(
+        customer_reserved_instance_count_for_basket: [basket_id: basket.id],
+        customer_reserved_instance_price_for_basket: [basket_id: basket.id]
+      )
       |> Ash.read!()
 
     socket =
@@ -25,14 +29,6 @@ defmodule GitsWeb.BasketComponent do
       |> assign(:step, basket.state)
 
     {:ok, socket}
-  end
-
-  def handle_event("checkout", _unsigned_params, socket) do
-    {:noreply, socket}
-  end
-
-  def handle_event("show_summary", _unsigned_params, socket) do
-    {:noreply, socket}
   end
 
   def handle_event("remove_ticket", unsigned_params, socket) do
@@ -57,7 +53,10 @@ defmodule GitsWeb.BasketComponent do
             |> Ash.Changeset.for_update(:remove_instance, %{instance: instance}, actor: user)
             |> Ash.update!()
             |> Ash.load!(
-              [customer_reserved_instance_count_for_basket: [basket_id: basket.id]],
+              [
+                customer_reserved_instance_count_for_basket: [basket_id: basket.id],
+                customer_reserved_instance_price_for_basket: [basket_id: basket.id]
+              ],
               actor: user
             )
 
@@ -91,7 +90,10 @@ defmodule GitsWeb.BasketComponent do
       |> Ash.Changeset.for_update(:add_instance, %{instance: %{basket: basket}}, actor: user)
       |> Ash.update!()
       |> Ash.load!(
-        [customer_reserved_instance_count_for_basket: [basket_id: basket.id]],
+        [
+          customer_reserved_instance_count_for_basket: [basket_id: basket.id],
+          customer_reserved_instance_price_for_basket: [basket_id: basket.id]
+        ],
         actor: user
       )
 
@@ -110,6 +112,34 @@ defmodule GitsWeb.BasketComponent do
     {:noreply, socket}
   end
 
+  def handle_event("checkout", _unsigned_params, socket) do
+    %{user: user, basket: basket} = socket.assigns
+
+    paid_basket? =
+      basket.sum_of_instance_prices
+      |> Decimal.gt?("0")
+      |> IO.inspect()
+
+    socket =
+      if paid_basket? do
+        socket
+      else
+        basket
+        |> Ash.Changeset.for_update(:settle_for_free, %{}, actor: user)
+        |> Ash.update()
+        |> case do
+          {:ok, updated_basket} ->
+            IO.inspect(updated_basket)
+            socket |> assign(:basket, updated_basket)
+
+          _ ->
+            socket
+        end
+      end
+
+    {:noreply, socket}
+  end
+
   def render(assigns) do
     ~H"""
     <div class="bg-zinc-500/50 fixed inset-0 z-20 flex justify-end md:p-2 lg:p-4">
@@ -118,11 +148,12 @@ defmodule GitsWeb.BasketComponent do
         <.ticket_selection
           :if={@basket.state == :open}
           event_name={@basket.event_name}
+          basket_total={@basket.sum_of_instance_prices}
           tickets={@tickets}
           myself={@myself}
         />
         <.payment :if={@step == :payment} />
-        <.order_completed :if={@step == :completed} />
+        <.order_completed :if={@basket.state == :settled_for_free} />
       </div>
     </div>
     """
@@ -166,7 +197,7 @@ defmodule GitsWeb.BasketComponent do
   def ticket_selection(assigns) do
     ~H"""
     <div class="flex flex-col overflow-auto bg-zinc-50 ">
-      <div class="sticky top-0 border-b md:hidden">
+      <div class="sticky top-0 shadow-sm md:hidden">
         <.basket_header event_name={@event_name} />
       </div>
       <div class="grid grow content-start gap-2 p-2">
@@ -202,9 +233,12 @@ defmodule GitsWeb.BasketComponent do
           </div>
         </div>
       </div>
-      <div class="sticky bottom-0 border-t bg-white md:hidden">
-        <button phx-click={JS.show(to: "#basket_summary", display: "flex")} class="p-2">
-          show summary
+      <div class="sticky bottom-0 grid grid-cols-2 gap-2 bg-white p-2 shadow-sm md:hidden">
+        <button
+          phx-click={JS.show(to: "#basket_summary", display: "flex")}
+          class="col-start-2 rounded-xl bg-zinc-900 px-4 py-3 text-sm font-medium text-white"
+        >
+          View summary
         </button>
       </div>
     </div>
@@ -212,14 +246,30 @@ defmodule GitsWeb.BasketComponent do
       class="absolute inset-0 hidden flex-col bg-white md:static md:flex md:border-r"
       id="basket_summary"
     >
-      <div class="md:block">
+      <div class="grow md:block">
         <.basket_header event_name={@event_name} />
       </div>
-      <.basket_summary />
-      <div class="grow"></div>
+      <.basket_summary
+        basket_total={@basket_total}
+        tickets={
+          @tickets
+          |> Enum.filter(fn ticket -> ticket.customer_reserved_instance_count_for_basket > 0 end)
+        }
+      />
       <div class="grid grid-cols-2 gap-2 p-2">
-        <button class="md:hidden" phx-click={JS.hide(to: "#basket_summary")}>go back</button>
-        <button class="col-start-2">Finish</button>
+        <button
+          class="rounded-xl px-4 py-3 text-sm font-medium ring-1 ring-zinc-200 md:hidden"
+          phx-click={JS.hide(to: "#basket_summary")}
+        >
+          Back to tickets
+        </button>
+        <button
+          class="col-start-2 rounded-xl bg-zinc-900 px-4 py-3 text-sm font-medium text-white"
+          phx-click="checkout"
+          phx-target={@myself}
+        >
+          Checkout
+        </button>
       </div>
     </div>
     """
@@ -259,7 +309,7 @@ defmodule GitsWeb.BasketComponent do
 
   def basket_header(assigns) do
     ~H"""
-    <div class="flex items-center justify-end bg-white p-4 pb-2">
+    <div class="flex items-center justify-end bg-white p-4">
       <div class="grid grow">
         <h1 class="text-xl font-semibold"><%= @event_name %></h1>
       </div>
@@ -272,7 +322,18 @@ defmodule GitsWeb.BasketComponent do
 
   def basket_summary(assigns) do
     ~H"""
-    <div>summary</div>
+    <div class="p-2 px-4 ">
+      <div :for={ticket <- @tickets} class="flex justify-between py-4 text-zinc-700 *:text-lg">
+        <span>R <%= ticket.customer_reserved_instance_price_for_basket |> Currency.format() %></span>
+        <span class="tabular-nums">
+          <%= ticket.name %> &times; <%= ticket.customer_reserved_instance_count_for_basket %>
+        </span>
+      </div>
+      <div class="flex justify-between border-t pt-4 *:text-lg *:font-medium">
+        <span>R <%= @basket_total |> Currency.format() %></span>
+        <span>Total</span>
+      </div>
+    </div>
     """
   end
 end
