@@ -43,7 +43,6 @@ defmodule GitsWeb.BasketComponent do
 
     socket =
       basket.instances
-      |> IO.inspect()
       |> Enum.filter(fn x -> x.ticket_id == ticket.id end)
       |> Enum.sort(&(&1.id < &2.id))
       |> case do

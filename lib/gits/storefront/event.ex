@@ -24,6 +24,11 @@ defmodule Gits.Storefront.Event do
       default :private
     end
 
+    attribute :payment_method, :atom do
+      public? true
+      constraints one_of: [:paystack, :payfast]
+    end
+
     create_timestamp :created_at, public?: true
     update_timestamp :updated_at, public?: true
   end

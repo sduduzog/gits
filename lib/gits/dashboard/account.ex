@@ -8,6 +8,12 @@ defmodule Gits.Dashboard.Account do
     uuid_primary_key :id
     attribute :name, :string, allow_nil?: false, public?: true
     attribute :paystack_subaccount_code, :string, public?: true
+
+    attribute :payment_method, :atom do
+      public? true
+      constraints one_of: [:paystack, :payfast]
+    end
+
     create_timestamp :created_at
     update_timestamp :updated_at
   end
