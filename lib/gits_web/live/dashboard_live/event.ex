@@ -54,6 +54,20 @@ defmodule GitsWeb.DashboardLive.Event do
     {:noreply, socket}
   end
 
+  def handle_params(%{"ticket" => id}, _uri, socket) do
+    socket =
+      socket
+      |> assign(:manage_ticket_title, "Edit ticket")
+      |> update(:manage_ticket_form, fn _, %{event: event, current_user: user} ->
+        event.tickets
+        |> IO.inspect()
+        |> Enum.find(&(&1.id == id))
+        |> Form.for_update(:update, as: "edit_ticket", actor: user)
+      end)
+
+    {:noreply, socket}
+  end
+
   def handle_params(_, _uri, socket) do
     socket =
       socket
@@ -82,6 +96,39 @@ defmodule GitsWeb.DashboardLive.Event do
             current_event
         end
       end)
+
+    {:noreply, socket}
+  end
+
+  def handle_event("submit", %{"edit_ticket" => params}, socket) do
+    user = socket.assigns.current_user
+    event = socket.assigns.event
+
+    socket =
+      socket.assigns.manage_ticket_form
+      |> Form.validate(params)
+      |> Form.submit()
+      |> case do
+        {:ok, updated_ticket} ->
+          socket
+          |> assign(:event, %Event{
+            event
+            | tickets:
+                event.tickets
+                |> Enum.map(fn ticket ->
+                  if(ticket.id == updated_ticket.id,
+                    do: updated_ticket |> Ash.load!(:price, actor: user),
+                    else: ticket
+                  )
+                end)
+          })
+          |> push_patch(
+            to: ~p"/accounts/#{socket.assigns.slug}/events/#{socket.assigns.event.id}"
+          )
+
+        {:error, form} ->
+          socket |> assign(:manage_ticket_form, form)
+      end
 
     {:noreply, socket}
   end

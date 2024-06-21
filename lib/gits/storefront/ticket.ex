@@ -55,7 +55,7 @@ defmodule Gits.Storefront.Ticket do
   end
 
   calculations do
-    calculate :price, :decimal, expr(price_in_cents / 100)
+    calculate :price, :decimal, expr(round(price_in_cents / 100, 2))
 
     calculate :customer_reserved_instance_count_for_basket,
               :integer,

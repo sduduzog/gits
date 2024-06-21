@@ -519,6 +519,7 @@ defmodule GitsWeb.CoreComponents do
             type="radio"
             class={"peer/#{value} size-4 appearance-none border-zinc-400 text-zinc-600 text-zinc-700 focus:ring-zinc-600 focus:ring-zinc-700 active:ring-2 active:ring-zinc-600 active:ring-offset-2"}
             value={value}
+            checked={value == @field.value}
           />
           <%= render_slot(rad) %>
         </label>

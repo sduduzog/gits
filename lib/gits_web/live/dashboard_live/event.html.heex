@@ -98,12 +98,12 @@
                 id="menu-item-0"
                 phx-click={
                   JS.hide(
-                    to: "#invite-dropdown-#{ticket.id}>div[data-dropdown]",
+                    to: "#ticket-#{ticket.id}>div[data-dropdown]",
                     transition:
                       {"transition ease-in duration-75", "transform opacity-100 scale-100",
                        "transform opacity-0 scale-95"}
                   )
-                  |> JS.push("resend_invite")
+                  |> JS.patch(~p"/accounts/#{@slug}/events/#{@event.id}?ticket=#{ticket.id}")
                 }
                 phx-value-id={ticket.id}
               >
@@ -112,9 +112,8 @@
             </div>
 
             <div class="w-56 py-1" role="none">
-              <a
-                href="#"
-                class="flex items-center gap-4 px-4 py-2 text-sm text-rose-600 hover:bg-rose-100 hover:text-rose-900"
+              <button
+                class="flex w-full items-center gap-4 px-4 py-2 text-left text-sm text-rose-600 hover:bg-rose-100 hover:text-rose-900"
                 role="menuitem"
                 tabindex="-1"
                 id="menu-item-1"
@@ -130,7 +129,7 @@
                 phx-value-id={ticket.id}
               >
                 <.icon name="hero-trash-mini" /> Delete
-              </a>
+              </button>
             </div>
           </div>
         </div>
@@ -163,12 +162,12 @@
 
       <div class="grid grow grid-cols-2 content-start gap-4">
         <.input field={f[:name]} label="Name" class="col-span-full" />
-        <.input field={f[:price]} label="Price" type="number" class="col-span-full" />
+        <.input field={f[:price]} label="Price" type="number" class="col-span-full" step="0.01" />
         <.input field={f[:allowed_quantity_per_user]} label="Limit per customer" type="number" />
         <.input field={f[:total_quantity]} label="Total ticket quantity" type="number" />
         <.input field={f[:sale_starts_at]} label="Sale starts at" type="datetime-local" />
         <.input field={f[:sale_ends_at]} label="Sale starts at" type="datetime-local" />
-        <.radio_group label="Availability" field={f[:available]} class="col-span-full">
+        <.radio_group label="Availability" field={f[:availability]} class="col-span-full">
           <:radio value={:open}>Open</:radio>
           <:radio value={:restricted}>Restricted</:radio>
         </.radio_group>
