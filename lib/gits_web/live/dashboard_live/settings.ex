@@ -63,7 +63,7 @@ defmodule GitsWeb.DashboardLive.Settings do
 
         account
         |> Form.for_update(:update_paystack_account, as: "paystack", actor: user)
-        |> Form.validate(account.paystack_subaccount)
+        |> Form.validate(account.paystack_subaccount, errors: false)
       end)
       |> assign(:show_paystack_form, true)
 
@@ -81,13 +81,14 @@ defmodule GitsWeb.DashboardLive.Settings do
       |> Form.validate(params)
 
     socket =
-      with true <- form.valid?, {:ok, account} <- Form.submit(form) do
+      with true <- form.valid?, {:ok, updated_account} <- Form.submit(form) do
         socket
-        |> update(:account, fn _current_account, _assigns -> account end)
+        |> update(:account, fn _current_account, %{current_user: user} ->
+          updated_account |> Ash.reload!(actor: user)
+        end)
         |> update(:show_paystack_form, &(!&1))
       else
-        error ->
-          IO.inspect(error)
+        _ ->
           socket |> update(:show_paystack_form, &(!&1))
       end
 

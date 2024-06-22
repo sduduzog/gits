@@ -165,6 +165,8 @@ defmodule Gits.Storefront.Event do
       primary? true
       accept :*
 
+      validate Gits.Storefront.Validations.EventDates
+
       argument :account, :map
       change manage_relationship(:account, type: :append)
     end
@@ -173,6 +175,10 @@ defmodule Gits.Storefront.Event do
   policies do
     policy action(:read) do
       authorize_if always()
+    end
+
+    policy action(:create) do
+      authorize_if actor_present()
     end
 
     policy action(:publish) do
@@ -214,10 +220,6 @@ defmodule Gits.Storefront.Event do
     end
 
     policy action(:update_address) do
-      authorize_if always()
-    end
-
-    policy action(:create) do
       authorize_if always()
     end
 

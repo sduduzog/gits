@@ -1,4 +1,5 @@
 defmodule GitsWeb.DashboardLive.Team do
+  require Ash.Query
   use GitsWeb, :live_view
 
   alias Gits.Dashboard.Account
@@ -23,8 +24,9 @@ defmodule GitsWeb.DashboardLive.Team do
 
     invites =
       Invite
-      |> Ash.Query.for_read(:read_for_dashboard, %{}, actor: user)
-      |> Ash.read!()
+      |> Ash.Query.for_read(:read)
+      |> Ash.Query.filter(state == :sent and account.id == ^account.id)
+      |> Ash.read!(actor: user)
 
     socket =
       socket

@@ -435,7 +435,7 @@ defmodule GitsWeb.CoreComponents do
   # All other inputs text, datetime-local, url, password, etc. are handled here...
   def input(assigns) do
     ~H"""
-    <div class={Twix.tw(["grid max-w-3xl gap-2 text-sm", @class])}>
+    <div class={Twix.tw(["max-w-3xl space-y-2 text-sm", @class])}>
       <div class="flex justify-between text-zinc-600">
         <.label for={@id}><%= @label %></.label>
       </div>
@@ -495,36 +495,33 @@ defmodule GitsWeb.CoreComponents do
 
   slot :radio, required: true do
     attr :value, :atom, required: true
+    attr :checked, :boolean
   end
 
   def radio_group(assigns) do
     ~H"""
-    <div class={Twix.tw(["grid max-w-3xl gap-2 text-sm", @class])}>
-      <div
-        :if={@label}
-        class="col-span-full flex justify-between text-sm font-medium leading-6 text-zinc-600"
-      >
-        <span><%= @label %></span>
-        <span></span>
-      </div>
-      <div class="relative grid w-full auto-cols-fr grid-flow-col -space-x-px rounded-md">
-        <label
-          :for={{%{value: value} = rad, idx} <- Enum.with_index(@radio)}
-          for={"#{@field.id}-#{idx}"}
-          class="relative row-span-1 flex items-center gap-2 border border-zinc-300 px-3 py-4 has-[:checked]:z-10 has-[:checked]:border-zinc-600 has-[:checked]:bg-zinc-50 first:rounded-tl-md first:rounded-bl-md last:rounded-tr-md last:rounded-br-md focus:outline-none md:flex-row md:gap-4 md:p-4"
-        >
+    <fieldset class={["", @class]}>
+      <legend class="text-sm font-medium leading-6 text-zinc-600"><%= @label %></legend>
+      <!-- <p class="mt-1 text-sm leading-6 text-gray-600">How do you prefer to receive notifications?</p> -->
+      <div class="mt-6 space-y-6 sm:flex sm:items-center sm:space-x-10 sm:space-y-0">
+        <div :for={{%{value: value} = rad, idx} <- Enum.with_index(@radio)} class="flex items-center">
           <input
             name={@field.name}
             id={"#{@field.id}-#{idx}"}
-            type="radio"
-            class={"peer/#{value} size-4 appearance-none border-zinc-400 text-zinc-600 text-zinc-700 focus:ring-zinc-600 focus:ring-zinc-700 active:ring-2 active:ring-zinc-600 active:ring-offset-2"}
             value={value}
             checked={value == @field.value}
+            type="radio"
+            class="h-4 w-4 border-gray-300 text-zinc-600 focus:ring-zinc-600"
           />
-          <%= render_slot(rad) %>
-        </label>
+          <label
+            for={"#{@field.id}-#{idx}"}
+            class="ml-3 block text-sm font-medium leading-6 text-zinc-900"
+          >
+            <%= render_slot(rad) %>
+          </label>
+        </div>
       </div>
-    </div>
+    </fieldset>
     """
   end
 

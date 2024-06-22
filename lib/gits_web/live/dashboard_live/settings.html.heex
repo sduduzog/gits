@@ -2,32 +2,16 @@
 <h2 class="mx-auto max-w-screen-md text-xl">Accepting payments</h2>
 <div class="mx-auto flex max-w-screen-md flex-wrap items-center justify-between gap-2 rounded-xl border p-4">
   <h3 class="font-semibold">Paystack</h3>
+  <span>&bull;</span>
   <%= if @account.paystack_ready do %>
-    <span>&bull;</span>
     <span class="grow text-sm text-zinc-500">Ready for payments</span>
+  <% else %>
+    <span class="grow text-sm text-zinc-500">Not setup</span>
   <% end %>
   <div>
     <button
       type="button"
       phx-click="show_paystack_form"
-      class="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-zinc-100"
-    >
-      <.icon name="hero-pencil-square-mini" />
-      <span>Edit</span>
-    </button>
-  </div>
-</div>
-
-<div class="mx-auto flex max-w-screen-md flex-wrap items-center justify-between gap-2 rounded-xl border p-4">
-  <h3 class="font-semibold">Payfast</h3>
-  <%= if @account.payfast_ready do %>
-    <span>&bull;</span>
-    <span class="grow text-sm text-zinc-500">Ready for payments</span>
-  <% end %>
-  <div>
-    <button
-      type="button"
-      phx-click="show_payfast_form"
       class="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-zinc-100"
     >
       <.icon name="hero-pencil-square-mini" />

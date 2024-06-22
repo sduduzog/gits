@@ -24,7 +24,8 @@
       </span>
     </.link>
     <.link
-      navigate={~p"/sign-in?return_to=/organizers"}
+      :if={@account.no_payment_method}
+      navigate={~p"/accounts/#{@slug}/settings"}
       class="h-40 block w-72 shrink-0 space-y-4 hover:shadow-md transition-all rounded-xl border p-6 *:block"
     >
       <span class="font-semibold">Prepare for payments</span>
@@ -33,7 +34,8 @@
       </span>
     </.link>
     <.link
-      navigate="/accounts/new"
+      :if={@account.no_event_yet}
+      navigate={~p"/accounts/#{@slug}/events/new"}
       class="block h-40 w-72 shrink-0 space-y-4 hover:shadow-md transition-all rounded-xl border p-6"
     >
       <span class="font-semibold">Create your first event</span>

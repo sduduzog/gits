@@ -22,7 +22,10 @@
     </div>
   </div>
   <div class="flex gap-4">
-    <button class="min-w-20 rounded-lg bg-zinc-700 px-4 py-3 text-sm font-medium text-white">
+    <button
+      class="min-w-20 rounded-lg bg-zinc-700 px-4 py-3 text-sm font-medium text-white"
+      phx-click="publish_event"
+    >
       Publish
     </button>
     <button class="min-w-20 rounded-lg bg-zinc-50 px-4 py-3 text-sm font-medium">
@@ -149,7 +152,7 @@
   :if={@manage_ticket_form}
   class="!m-0 bg-zinc-500/50 fixed inset-0 z-20 flex justify-end transition-all"
 >
-  <div class="flex h-full w-full max-w-xl gap-4 md:p-4">
+  <div class="flex h-full w-full max-w-2xl gap-4 md:p-4">
     <.simple_form
       :let={f}
       for={@manage_ticket_form}

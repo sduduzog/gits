@@ -10,9 +10,10 @@ defmodule GitsWeb.DashboardLive.Home do
       Account
       |> Ash.Query.for_read(:list_for_dashboard, %{user_id: user.id}, actor: user)
       |> Ash.read!()
-      |> Enum.map(fn item -> %{id: item.id, name: item.name} end)
 
-    account = Enum.find(accounts, fn item -> item.id == params["slug"] end)
+    account =
+      Enum.find(accounts, fn item -> item.id == params["slug"] end)
+      |> Ash.load!([:no_event_yet, :no_payment_method])
 
     socket =
       socket
@@ -20,6 +21,7 @@ defmodule GitsWeb.DashboardLive.Home do
       |> assign(:title, "Overview")
       |> assign(:context_options, nil)
       |> assign(:accounts, accounts)
+      |> assign(:account, account)
       |> assign(:account_name, account.name)
 
     {:ok, socket, layout: {GitsWeb.Layouts, :dashboard}}

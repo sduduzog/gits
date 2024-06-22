@@ -76,9 +76,9 @@ defmodule Gits.Storefront.Basket do
     update :start_payment do
       require_atomic? false
 
-      change before_action(fn changeset, _ ->
-               changeset
-             end)
+      change Gits.Storefront.Changes.SetPaymentMethodToBasket
+
+      # change transition_state(:payment_started)
     end
 
     update :cancel do
@@ -155,10 +155,19 @@ defmodule Gits.Storefront.Basket do
     end
 
     policy action(:settle_for_free) do
-      forbid_unless expr(count_of_instances > 0)
-      forbid_unless expr(customer.user.id == ^actor(:id))
-      forbid_if expr(exists(instances, ticket.price > 0))
-      authorize_if actor_present()
+      authorize_if expr(exists(instances, ticket.price == 0))
+    end
+
+    policy action(:settle_for_free) do
+      authorize_if expr(count_of_instances > 0)
+    end
+
+    policy action(:settle_for_free) do
+      authorize_if expr(customer.user.id == ^actor(:id))
+    end
+
+    policy action(:start_payment) do
+      authorize_if expr(not is_nil(event.account.paystack_subaccount_code))
     end
 
     policy action(:lock_for_checkout) do

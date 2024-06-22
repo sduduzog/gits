@@ -1,4 +1,4 @@
-defmodule GitsWeb.DashboardLive.CreateEvent do
+defmodule GitsWeb.DashboardLive.ManageEvent do
   use GitsWeb, :live_view
 
   alias AshPhoenix.Form
@@ -10,8 +10,8 @@ defmodule GitsWeb.DashboardLive.CreateEvent do
 
     accounts =
       Account
-      |> Ash.Query.for_read(:list_for_dashboard, %{user_id: user.id}, actor: user)
-      |> Ash.read!()
+      |> Ash.Query.for_read(:read)
+      |> Ash.read!(actor: user)
 
     account = Enum.find(accounts, fn item -> item.id == params["slug"] end)
 
@@ -32,14 +32,18 @@ defmodule GitsWeb.DashboardLive.CreateEvent do
 
   def handle_event("submit", unsigned_params, socket) do
     account = socket.assigns.account
-    form = socket.assigns.form |> Form.validate(unsigned_params["event"])
+
+    form =
+      socket.assigns.form |> Form.validate(Map.put(unsigned_params["event"], :account, account))
 
     socket =
       with true <- form.valid?, {:ok, event} <- Form.submit(form) do
         socket |> push_navigate(to: ~p"/accounts/#{account.id}/events/#{event.id}")
       else
-        error ->
-          IO.inspect(error)
+        {:error, %AshPhoenix.Form{} = form} ->
+          socket |> assign(:form, form)
+
+        _ ->
           socket
       end
 
@@ -75,6 +79,15 @@ defmodule GitsWeb.DashboardLive.CreateEvent do
         <.radio_group field={f[:visibility]} class="col-span-full md:col-span-2" label="Visibility">
           <:radio value={:private}>Private</:radio>
           <:radio value={:public}>Public</:radio>
+        </.radio_group>
+        <.radio_group
+          field={f[:payment_method]}
+          class="col-span-full md:col-span-2"
+          label="Payment method"
+        >
+          <:radio value={:none} checked>None</:radio>
+          <:radio value={:paystack}>Paystack</:radio>
+          <:radio value={:payfast}>Payfast</:radio>
         </.radio_group>
       </div>
       <div class="flex gap-8">

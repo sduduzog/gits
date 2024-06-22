@@ -84,7 +84,7 @@ defmodule Gits.PaystackApiTest do
     end
   end
 
-  describe "update_subaccount/3" do
+  describe "update_subaccount/4" do
     test_with_mock "should update subaccount and return the new record",
                    Gits.PaystackApi,
                    [:passthrough],
@@ -128,6 +128,66 @@ defmodule Gits.PaystackApiTest do
                 percentage_charge: 99
               }} =
                Gits.PaystackApi.update_subaccount("code", "", "", "")
+    end
+  end
+
+  describe "fetch_subaccount/1" do
+    test_with_mock "should return subaccount",
+                   Gits.PaystackApi,
+                   [:passthrough],
+                   list_banks: fn -> {:ok, [%{id: 140, name: "test_bank", code: "123456"}]} end do
+      Req.Test.stub(:paystack_api, fn conn ->
+        Req.Test.json(
+          conn,
+          %{
+            "status" => true,
+            "message" => "Subaccount updated",
+            "data" => %{
+              "account_number" => "23402352035",
+              "active" => true,
+              "bank" => 140,
+              "business_name" => "Test",
+              "createdAt" => "2024-05-30T03:43:56.248Z",
+              "currency" => "ZAR",
+              "domain" => "test",
+              "id" => 1_090_020,
+              "integration" => 1_189_131,
+              "is_verified" => false,
+              "managed_by_integration" => 1_189_131,
+              "migrate" => false,
+              "percentage_charge" => 99,
+              "product" => "collection",
+              "settlement_bank" => "Absa Bank Limited, South Africa",
+              "settlement_schedule" => "AUTO",
+              "subaccount_code" => "ACCT_wcifesxscsi3q1r",
+              "updatedAt" => "2024-05-30T03:43:56.248Z"
+            }
+          }
+        )
+      end)
+
+      assert {:ok,
+              %{
+                subaccount_code: "ACCT_wcifesxscsi3q1r",
+                account_number: "23402352035",
+                business_name: "Test",
+                settlement_bank: "123456",
+                percentage_charge: 99
+              }} =
+               Gits.PaystackApi.fetch_subaccount("code")
+    end
+
+    test "should return error, nil tuple when no code provided" do
+      Req.Test.stub(:paystack_api, fn conn ->
+        Req.Test.json(
+          conn,
+          %{
+            "status" => true
+          }
+        )
+      end)
+
+      assert {:error, :no_code_provided} = Gits.PaystackApi.fetch_subaccount(nil)
     end
   end
 end

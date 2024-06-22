@@ -118,21 +118,20 @@ defmodule GitsWeb.BasketComponent do
       basket.sum_of_instance_prices
       |> Decimal.gt?("0")
 
-    socket =
-      if paid_basket? do
-        socket
-      else
-        basket
-        |> Ash.Changeset.for_update(:settle_for_free, %{}, actor: user)
-        |> Ash.update()
-        |> case do
-          {:ok, updated_basket} ->
-            IO.inspect(updated_basket)
-            socket |> assign(:basket, updated_basket)
+    action = if(paid_basket?, do: :start_payment, else: :settle_for_free)
 
-          _ ->
-            socket
-        end
+    socket =
+      basket
+      |> Ash.load!([event: [:account]], actor: user)
+      |> IO.inspect()
+      |> Ash.Changeset.for_update(action, %{}, actor: user)
+      |> Ash.update()
+      |> case do
+        {:ok, updated_basket} ->
+          socket |> assign(:basket, updated_basket)
+
+        _ ->
+          socket
       end
 
     {:noreply, socket}
@@ -198,7 +197,7 @@ defmodule GitsWeb.BasketComponent do
       <div class="sticky top-0 shadow-sm md:hidden">
         <.basket_header event_name={@event_name} />
       </div>
-      <div class="grid grow content-start gap-2 p-2">
+      <div class="grid grow content-start gap-4 p-4">
         <div :for={ticket <- @tickets} class="">
           <div class="space-y-4 rounded-xl bg-white p-2 shadow-sm">
             <div class="flex justify-end">

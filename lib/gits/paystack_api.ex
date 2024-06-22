@@ -60,13 +60,17 @@ defmodule Gits.PaystackApi do
   end
 
   def fetch_subaccount(subaccount_code) do
-    options = Application.get_env(:gits, :paystack_api_options)
+    if is_nil(subaccount_code) do
+      {:error, :no_code_provided}
+    else
+      options = Application.get_env(:gits, :paystack_api_options)
 
-    Req.new(options)
-    |> Req.request(url: "/subaccount/#{subaccount_code}")
-    |> case do
-      {:ok, %Req.Response{body: %{"data" => subaccount, "status" => true}}} ->
-        {:ok, extract_subaccount(subaccount)}
+      Req.new(options)
+      |> Req.request(url: "/subaccount/#{subaccount_code}")
+      |> case do
+        {:ok, %Req.Response{body: %{"data" => subaccount, "status" => true}}} ->
+          {:ok, extract_subaccount(subaccount)}
+      end
     end
   end
 

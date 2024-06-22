@@ -1,5 +1,6 @@
 defmodule GitsWeb.DashboardLive.Event do
   use GitsWeb, :live_view
+  require Ash.Query
 
   alias AshPhoenix.Form
   alias Gits.Dashboard.Account
@@ -15,7 +16,8 @@ defmodule GitsWeb.DashboardLive.Event do
 
     accounts =
       Account
-      |> Ash.Query.for_read(:list_for_dashboard, %{user_id: user.id}, actor: user)
+      |> Ash.Query.for_read(:read, %{}, actor: user)
+      |> Ash.Query.filter(members.user.id == ^user.id)
       |> Ash.read!()
 
     account = Enum.find(accounts, fn item -> item.id == params["slug"] end)
@@ -23,7 +25,7 @@ defmodule GitsWeb.DashboardLive.Event do
     event =
       Event
       |> Ash.Query.for_read(:read, %{id: params["event_id"]}, actor: user)
-      |> Ash.Query.load(:tickets)
+      |> Ash.Query.load([:tickets, :account])
       |> Ash.read_one!()
 
     socket =
@@ -74,6 +76,12 @@ defmodule GitsWeb.DashboardLive.Event do
       |> assign(:manage_ticket_form, nil)
       |> assign(:manage_ticket_title, nil)
 
+    {:noreply, socket}
+  end
+
+  def handle_event("publish_event", _unsigned_params, socket) do
+    socket.assigns.account |> IO.inspect()
+    socket.assigns.event |> IO.inspect()
     {:noreply, socket}
   end
 

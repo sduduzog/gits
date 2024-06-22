@@ -27,9 +27,12 @@ defmodule Gits.Dashboard.Account do
   end
 
   calculations do
-    calculate :paystack_ready, :boolean, expr(not is_nil(paystack_subaccount_code))
     calculate :paystack_subaccount, :map, Gits.Dashboard.Calculations.PaystackSubaccount
-    calculate :payfast_ready, :boolean, false
+    calculate :paystack_ready, :boolean, expr(not is_nil(paystack_subaccount_code))
+    calculate :payments_ready, :boolean, expr(paystack_ready)
+    calculate :no_payment_method, :boolean, expr(payments_ready == false)
+    calculate :first_event_created, :boolean, expr(count(events) > 0)
+    calculate :no_event_yet, :boolean, expr(count(events) == 0)
   end
 
   actions do
@@ -39,7 +42,7 @@ defmodule Gits.Dashboard.Account do
     read :read do
       primary? true
 
-      prepare build(load: [:paystack_ready, :payfast_ready])
+      prepare build(load: [:paystack_ready, :events])
     end
 
     read :by_id do
@@ -102,26 +105,30 @@ defmodule Gits.Dashboard.Account do
   end
 
   policies do
-    policy action(:read) do
-      authorize_if expr(members.user.id == ^actor(:id) and members.role in [:owner, :admin])
+    # policy action(:read) do
+    #   authorize_if accessing_from(Event, :account)
+    #   authorize_if expr(members.user.id == ^actor(:id) and members.role in [:owner, :admin])
+    #   authorize_if actor_present()
+    # end
+    policy always() do
+      authorize_if always()
     end
 
-    policy action(:update_paystack_account) do
-      authorize_if expr(members.user.id == ^actor(:id) and members.role in [:owner, :admin])
-      authorize_if actor_present()
-    end
-
-    policy action([:read_for_dashboard, :list_for_dashboard]) do
-      authorize_if expr(members.user.id == ^actor(:id))
-    end
-
-    policy action(:create_from_waitlist) do
-      authorize_if Gits.Checks.ActorIsObanJob
-    end
-
-    policy action([:by_id, :create, :enable_billing]) do
-      authorize_if actor_present()
-    end
+    # policy action(:update_paystack_account) do
+    #   authorize_if expr(members.user.id == ^actor(:id) and members.role in [:owner, :admin])
+    # end
+    #
+    # policy action([:read_for_dashboard, :list_for_dashboard]) do
+    #   authorize_if expr(members.user.id == ^actor(:id))
+    # end
+    #
+    # policy action(:create_from_waitlist) do
+    #   authorize_if Gits.Checks.ActorIsObanJob
+    # end
+    #
+    # policy action([:by_id, :create, :enable_billing]) do
+    #   authorize_if actor_present()
+    # end
   end
 
   postgres do

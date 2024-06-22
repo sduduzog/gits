@@ -49,7 +49,13 @@ defmodule Gits.Dashboard.Invite do
   end
 
   actions do
-    defaults [:read, :update, :destroy]
+    defaults [:update, :destroy]
+
+    read :read do
+      primary? true
+
+      prepare build(load: [:account])
+    end
 
     read :read_for_recipient do
       argument :id, :uuid do
@@ -103,6 +109,11 @@ defmodule Gits.Dashboard.Invite do
   policies do
     policy action(:read) do
       authorize_if expr(user.id == ^actor(:id))
+
+      authorize_if expr(
+                     account.members.user.id == ^actor(:id) and
+                       account.members.role in [:owner, :admin]
+                   )
     end
 
     policy action(:resend) do
@@ -112,6 +123,13 @@ defmodule Gits.Dashboard.Invite do
                    )
 
       authorize_if actor_present()
+    end
+
+    policy action(:cancel) do
+      authorize_if expr(
+                     account.members.user.id == ^actor(:id) and
+                       account.members.role in [:owner, :admin]
+                   )
     end
 
     policy action(:read_for_dashboard) do
