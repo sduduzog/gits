@@ -19,6 +19,12 @@ defmodule Gits.Storefront.Changes.EvaluatePaystackTransaction do
           on_match: {:update, :prepare_for_use}
         )
 
+      {:ok, %{status: :declined}} ->
+        changeset
+
+      {:ok, %{status: :ongoing}} ->
+        changeset
+
       {:ok, %{status: :abandoned}} ->
         changeset
     end

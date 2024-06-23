@@ -208,7 +208,7 @@ defmodule Gits.PaystackApiTest do
       end)
 
       assert {:ok, %{authorization_url: "url", reference: "reference"}} =
-               Gits.PaystackApi.create_transaction("", "", "")
+               Gits.PaystackApi.create_transaction("", "", "", "")
     end
   end
 
@@ -244,6 +244,41 @@ defmodule Gits.PaystackApiTest do
       end)
 
       assert {:ok, %{status: :success}} =
+               Gits.PaystackApi.verify_transaction("")
+    end
+
+    test "returns transaction with failed status when declined" do
+      Req.Test.stub(:paystack_api, fn conn ->
+        Req.Test.json(
+          conn,
+          %{
+            "status" => true,
+            "data" => %{
+              "status" => "failed",
+              "gateway_response" => "Declined"
+            }
+          }
+        )
+      end)
+
+      assert {:ok, %{status: :declined}} =
+               Gits.PaystackApi.verify_transaction("")
+    end
+
+    test "returns transaction with ongoing status status" do
+      Req.Test.stub(:paystack_api, fn conn ->
+        Req.Test.json(
+          conn,
+          %{
+            "status" => true,
+            "data" => %{
+              "status" => "ongoing"
+            }
+          }
+        )
+      end)
+
+      assert {:ok, %{status: :ongoing}} =
                Gits.PaystackApi.verify_transaction("")
     end
   end

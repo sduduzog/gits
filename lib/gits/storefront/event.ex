@@ -82,13 +82,19 @@ defmodule Gits.Storefront.Event do
                     query |> Ash.Query.filter(id: id)
                   end
 
-                masked_id = query |> Ash.Query.get_argument(:masked_id)
+                masked_id =
+                  query
+                  |> Ash.Query.get_argument(:masked_id)
+                  |> IO.inspect()
 
                 query =
                   if is_nil(masked_id) do
                     query
                   else
-                    id = Sqids.new!() |> Sqids.decode!(masked_id) |> hd()
+                    id =
+                      Sqids.new!()
+                      |> Sqids.decode!(masked_id)
+                      |> hd()
 
                     query |> Ash.Query.filter(id: id)
                   end

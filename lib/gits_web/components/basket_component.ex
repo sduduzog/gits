@@ -283,9 +283,20 @@ defmodule GitsWeb.BasketComponent do
     assigns = assigns |> assign(:basket, basket)
 
     ~H"""
-    <div class="col-span-full flex flex-col items-center justify-center gap-8">
+    <div
+      phx-mounted={JS.navigate(@basket.paystack_authorization_url)}
+      class="col-span-full flex flex-col items-center justify-center gap-8"
+    >
       <span class="font-semibold">Starting payment process...</span>
-      <span class="text-sm text-zinc-500">If you were not redirected, click here</span>
+      <span class="text-sm text-zinc-500">
+        If you were not redirected,
+        <.link
+          class="font-medium underline text-zinc-900"
+          navigate={@basket.paystack_authorization_url}
+        >
+          click here
+        </.link>
+      </span>
     </div>
     """
   end
@@ -308,7 +319,6 @@ defmodule GitsWeb.BasketComponent do
         <.link
           class="font-medium underline text-zinc-900"
           navigate={@basket.paystack_authorization_url}
-          external={true}
         >
           click here
         </.link>

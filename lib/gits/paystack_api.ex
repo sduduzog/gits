@@ -110,6 +110,8 @@ defmodule Gits.PaystackApi do
       {:ok, %Req.Response{body: %{"data" => transaction, "status" => true}}} ->
         case transaction do
           %{"status" => "abandoned"} -> {:ok, %{status: :abandoned}}
+          %{"status" => "failed", "gateway_response" => "Declined"} -> {:ok, %{status: :declined}}
+          %{"status" => "ongoing"} -> {:ok, %{status: :ongoing}}
           %{"status" => "success"} -> {:ok, %{status: :success}}
         end
     end
