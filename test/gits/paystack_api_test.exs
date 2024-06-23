@@ -211,4 +211,40 @@ defmodule Gits.PaystackApiTest do
                Gits.PaystackApi.create_transaction("", "", "")
     end
   end
+
+  describe "verify_transaction/1" do
+    test "returns transaction with abandoned status" do
+      Req.Test.stub(:paystack_api, fn conn ->
+        Req.Test.json(
+          conn,
+          %{
+            "status" => true,
+            "data" => %{
+              "status" => "abandoned"
+            }
+          }
+        )
+      end)
+
+      assert {:ok, %{status: :abandoned}} =
+               Gits.PaystackApi.verify_transaction("")
+    end
+
+    test "returns transaction with success status" do
+      Req.Test.stub(:paystack_api, fn conn ->
+        Req.Test.json(
+          conn,
+          %{
+            "status" => true,
+            "data" => %{
+              "status" => "success"
+            }
+          }
+        )
+      end)
+
+      assert {:ok, %{status: :success}} =
+               Gits.PaystackApi.verify_transaction("")
+    end
+  end
 end

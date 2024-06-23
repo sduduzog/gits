@@ -36,6 +36,7 @@ defmodule Gits.Storefront.Basket do
     transitions do
       transition :settle_for_free, from: :open, to: :settled_for_free
       transition :start_payment, from: :open, to: :payment_started
+      transition :evaluate_paystack_transaction, from: :payment_started, to: :settled_for_payment
       transition :cancel, from: :open, to: :cancelled
     end
   end

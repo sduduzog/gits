@@ -1,5 +1,6 @@
 defmodule Gits.Storefront.Changes.StartPaystackTransaction do
   require Decimal
+  use GitsWeb, :verified_routes
   use Ash.Resource.Change
 
   alias Gits.PaystackApi
@@ -24,11 +25,14 @@ defmodule Gits.Storefront.Changes.StartPaystackTransaction do
         |> Decimal.to_integer()
         |> to_string()
 
+      callback_url = url(~p"/events/#{basket.event.masked_id}?basket=#{basket.id}")
+
       {:ok, transaction} =
         PaystackApi.create_transaction(
           subaccount_code,
           email,
-          amount
+          amount,
+          callback_url
         )
 
       changeset

@@ -38,6 +38,9 @@ defmodule Gits.PaystackApi do
     |> case do
       {:ok, %Req.Response{body: %{"data" => subaccount, "status" => true}}} ->
         {:ok, extract_subaccount(subaccount)}
+
+      _ ->
+        :error
     end
   end
 
@@ -74,7 +77,7 @@ defmodule Gits.PaystackApi do
     end
   end
 
-  def create_transaction(subaccount_code, customer_email, price_in_cents) do
+  def create_transaction(subaccount_code, customer_email, price_in_cents, callback_url) do
     options = Application.get_env(:gits, :paystack_api_options)
 
     Req.new(options)
@@ -84,6 +87,7 @@ defmodule Gits.PaystackApi do
         subaccount: subaccount_code,
         email: customer_email,
         amount: price_in_cents,
+        callback_url: callback_url,
         bearer: "subaccount"
       }
     )
@@ -94,6 +98,20 @@ defmodule Gits.PaystackApi do
            reference: transaction["reference"],
            authorization_url: transaction["authorization_url"]
          }}
+    end
+  end
+
+  def verify_transaction(reference) do
+    options = Application.get_env(:gits, :paystack_api_options)
+
+    Req.new(options)
+    |> Req.request(url: "/transaction/verify/#{reference}")
+    |> case do
+      {:ok, %Req.Response{body: %{"data" => transaction, "status" => true}}} ->
+        case transaction do
+          %{"status" => "abandoned"} -> {:ok, %{status: :abandoned}}
+          %{"status" => "success"} -> {:ok, %{status: :success}}
+        end
     end
   end
 

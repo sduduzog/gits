@@ -148,7 +148,9 @@ defmodule GitsWeb.BasketComponent do
           myself={@myself}
         />
         <.payment :if={@basket.state == :payment_started} basket={@basket} user={@user} />
-        <.order_completed :if={@basket.state == :settled_for_free} />
+        <.order_completed :if={
+          @basket.state == :settled_for_free or @basket.state == :settled_for_payment
+        } />
       </div>
     </div>
     """
@@ -301,7 +303,16 @@ defmodule GitsWeb.BasketComponent do
     ~H"""
     <div class="col-span-full flex flex-col items-center justify-center gap-8">
       <span class="font-semibold">Started payment process...</span>
-      <span class="text-sm text-zinc-500">If you were not redirected, click here</span>
+      <span class="text-sm text-zinc-500">
+        If you were not redirected,
+        <.link
+          class="font-medium underline text-zinc-900"
+          navigate={@basket.paystack_authorization_url}
+          external={true}
+        >
+          click here
+        </.link>
+      </span>
     </div>
     """
   end
