@@ -95,7 +95,7 @@
           |> JS.add_class("hidden", to: "#backdrop")
         }
       >
-        <.link href={~p"/accounts/#{@slug}/settings"}>
+        <.link navigate={~p"/accounts/#{@slug}/settings"}>
           <.icon name="hero-cog-6-tooth-solid" />
           <span>Settings</span>
         </.link>

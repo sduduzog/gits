@@ -28,7 +28,10 @@
     >
       Publish
     </button>
-    <button class="min-w-20 rounded-lg bg-zinc-50 px-4 py-3 text-sm font-medium">
+    <button
+      phx-click={JS.navigate(~p"/accounts/#{@slug}/events/#{@event.id}/edit")}
+      class="min-w-20 rounded-lg bg-zinc-50 px-4 py-3 text-sm font-medium"
+    >
       Edit
     </button>
   </div>

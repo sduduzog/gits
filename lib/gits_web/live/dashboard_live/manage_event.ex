@@ -1,5 +1,6 @@
 defmodule GitsWeb.DashboardLive.ManageEvent do
   use GitsWeb, :live_view
+  require Ash.Query
 
   alias AshPhoenix.Form
   alias Gits.Dashboard.Account
@@ -15,26 +16,80 @@ defmodule GitsWeb.DashboardLive.ManageEvent do
 
     account = Enum.find(accounts, fn item -> item.id == params["slug"] end)
 
-    form = Event |> Form.for_create(:create, as: "event", actor: user)
 
     socket =
       socket
       |> assign(:slug, params["slug"])
-      |> assign(:title, "Settings")
       |> assign(:context_options, nil)
       |> assign(:accounts, accounts)
       |> assign(:account, account)
       |> assign(:account_name, account.name)
-      |> assign(:form, form)
 
     {:ok, socket, layout: {GitsWeb.Layouts, :dashboard}}
   end
 
-  def handle_event("submit", unsigned_params, socket) do
+  def handle_params(%{"event_id" => id}, _uri, socket) do
+    user = socket.assigns.current_user
+
+    event =
+      Event
+      |> Ash.Query.for_read(:read)
+      |> Ash.Query.filter(id: id)
+      |> Ash.read_one!(actor: user)
+
+    form = event |> Form.for_update(:update, as: "edit_event", actor: user)
+
+    socket =
+      socket
+      |> assign(:form, form)
+      |> assign(:event, event)
+      |> assign(:title, "Edit event")
+      |> assign(:back_link, ~p"/accounts/#{socket.assigns.slug}/events/#{event.id}")
+
+    {:noreply, socket}
+  end
+
+  def handle_params(_, _, socket) do
+    user = socket.assigns.current_user
+    form = Event |> Form.for_create(:create, as: "create_event", actor: user)
+
+    socket =
+      socket
+      |> assign(:form, form)
+      |> assign(:event, nil)
+      |> assign(:title, "Create a new event")
+      |> assign(:back_link, ~p"/accounts/#{socket.assigns.slug}/events")
+
+    {:noreply, socket}
+  end
+
+  def handle_event("submit", %{"edit_event" => params}, socket) do
     account = socket.assigns.account
 
     form =
-      socket.assigns.form |> Form.validate(Map.put(unsigned_params["event"], :account, account))
+      socket.assigns.form |> Form.validate(params)
+
+    socket =
+      with true <- form.valid?, {:ok, event} <- Form.submit(form) do
+        socket |> push_navigate(to: ~p"/accounts/#{account.id}/events/#{event.id}")
+      else
+        {:error, %AshPhoenix.Form{} = form} ->
+          socket |> assign(:form, form)
+
+        _ ->
+          socket
+      end
+
+    socket = socket |> assign(:form, form)
+
+    {:noreply, socket}
+  end
+
+  def handle_event("submit", %{"create_event" => params}, socket) do
+    account = socket.assigns.account
+
+    form =
+      socket.assigns.form |> Form.validate(Map.put(params, :account, account))
 
     socket =
       with true <- form.valid?, {:ok, event} <- Form.submit(form) do
@@ -56,7 +111,7 @@ defmodule GitsWeb.DashboardLive.ManageEvent do
     ~H"""
     <div>
       <.link
-        navigate={~p"/accounts/#{@slug}/events"}
+        navigate={@back_link}
         class="text-sm max-w-screen-md mx-auto flex gap-2 text-zinc-600"
       >
         <.icon name="hero-chevron-left-mini" />
@@ -64,7 +119,7 @@ defmodule GitsWeb.DashboardLive.ManageEvent do
       </.link>
     </div>
 
-    <h1 class="mx-auto max-w-screen-md text-xl font-semibold">Create a new event</h1>
+    <h1 class="mx-auto max-w-screen-md text-xl font-semibold"><%= @title %></h1>
     <.simple_form
       :let={f}
       for={@form}
