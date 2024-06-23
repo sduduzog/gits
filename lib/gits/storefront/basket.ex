@@ -21,6 +21,9 @@ defmodule Gits.Storefront.Basket do
       constraints one_of: [:paystack, :payfast]
     end
 
+    attribute :paystack_authorization_url, :string
+    attribute :paystack_reference, :string
+
     create_timestamp :created_at, public?: true
 
     update_timestamp :updated_at, public?: true
@@ -136,6 +139,17 @@ defmodule Gits.Storefront.Basket do
       change transition_state(:settled_for_free)
     end
 
+    update :start_paystack_transaction do
+      require_atomic? false
+      change Gits.Storefront.Changes.StartPaystackTransaction
+    end
+
+    update :evaluate_paystack_transaction do
+      require_atomic? false
+
+      change Gits.Storefront.Changes.EvaluatePaystackTransaction
+    end
+
     update :refund do
       transition_state(:refunded)
     end
@@ -152,6 +166,18 @@ defmodule Gits.Storefront.Basket do
       authorize_if Gits.Checks.ActorIsObanJob
       authorize_if expr(customer.user.id == ^actor(:id))
       authorize_if actor_present()
+    end
+
+    policy action(:start_paystack_transaction) do
+      authorize_if expr(state == :payment_started)
+    end
+
+    policy action(:start_paystack_transaction) do
+      authorize_if expr(customer.user.id == ^actor(:id))
+    end
+
+    policy action(:evaluate_paystack_transaction) do
+      authorize_if expr(not is_nil(paystack_reference))
     end
 
     policy action(:settle_for_free) do

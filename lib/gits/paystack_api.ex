@@ -32,7 +32,7 @@ defmodule Gits.PaystackApi do
         business_name: business_name,
         account_number: account_number,
         settlement_bank: settlement_bank,
-        percentage_charge: 99
+        percentage_charge: 1
       }
     )
     |> case do
@@ -71,6 +71,29 @@ defmodule Gits.PaystackApi do
         {:ok, %Req.Response{body: %{"data" => subaccount, "status" => true}}} ->
           {:ok, extract_subaccount(subaccount)}
       end
+    end
+  end
+
+  def create_transaction(subaccount_code, customer_email, price_in_cents) do
+    options = Application.get_env(:gits, :paystack_api_options)
+
+    Req.new(options)
+    |> Req.post(
+      url: "/transaction/initialize",
+      json: %{
+        subaccount: subaccount_code,
+        email: customer_email,
+        amount: price_in_cents,
+        bearer: "subaccount"
+      }
+    )
+    |> case do
+      {:ok, %Req.Response{body: %{"data" => transaction, "status" => true}}} ->
+        {:ok,
+         %{
+           reference: transaction["reference"],
+           authorization_url: transaction["authorization_url"]
+         }}
     end
   end
 

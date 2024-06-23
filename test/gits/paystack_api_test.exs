@@ -190,4 +190,25 @@ defmodule Gits.PaystackApiTest do
       assert {:error, :no_code_provided} = Gits.PaystackApi.fetch_subaccount(nil)
     end
   end
+
+  describe "create_transaction/3" do
+    test "should create transaction and return" do
+      Req.Test.stub(:paystack_api, fn conn ->
+        Req.Test.json(
+          conn,
+          %{
+            "status" => true,
+            "data" => %{
+              "authorization_url" => "url",
+              "access_code" => "access_code",
+              "reference" => "reference"
+            }
+          }
+        )
+      end)
+
+      assert {:ok, %{authorization_url: "url", reference: "reference"}} =
+               Gits.PaystackApi.create_transaction("", "", "")
+    end
+  end
 end

@@ -1,16 +1,12 @@
 defmodule Gits.Storefront.Changes.SetPaymentMethodToBasket do
   use Ash.Resource.Change
 
-  def change(changeset, _opts, %{actor: _actor}) do
+  def change(changeset, _opts, _context) do
     changeset
     |> Ash.Changeset.before_action(fn changeset ->
       basket = changeset.data |> Ash.load!(:event)
 
-      event =
-        basket.event
-        |> IO.inspect()
-
-      changeset |> Ash.Changeset.change_attribute(:payment_method, event.payment_method)
+      changeset |> Ash.Changeset.change_attribute(:payment_method, basket.event.payment_method)
     end)
   end
 end

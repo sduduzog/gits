@@ -9,7 +9,6 @@ defmodule GitsWeb.BasketComponent do
     basket =
       Basket
       |> Ash.get!(assigns.id, actor: assigns.user)
-      |> IO.inspect()
 
     tickets =
       Ticket
@@ -148,7 +147,7 @@ defmodule GitsWeb.BasketComponent do
           tickets={@tickets}
           myself={@myself}
         />
-        <.payment :if={@basket.state == :payment_started} payment_method={@basket.payment_method} />
+        <.payment :if={@basket.state == :payment_started} basket={@basket} user={@user} />
         <.order_completed :if={@basket.state == :settled_for_free} />
       </div>
     </div>
@@ -271,9 +270,43 @@ defmodule GitsWeb.BasketComponent do
     """
   end
 
-  def payment(assigns) do
-    IO.inspect(assigns.basket)
+  def payment(%{basket: %{payment_method: :paystack, paystack_reference: nil} = basket} = assigns) do
+    user = assigns.user
 
+    basket =
+      basket
+      |> Ash.Changeset.for_update(:start_paystack_transaction, %{}, actor: user)
+      |> Ash.update!()
+
+    assigns = assigns |> assign(:basket, basket)
+
+    ~H"""
+    <div class="col-span-full flex flex-col items-center justify-center gap-8">
+      <span class="font-semibold">Starting payment process...</span>
+      <span class="text-sm text-zinc-500">If you were not redirected, click here</span>
+    </div>
+    """
+  end
+
+  def payment(%{basket: %{payment_method: :paystack} = basket} = assigns) do
+    user = assigns.user
+
+    basket =
+      basket
+      |> Ash.Changeset.for_update(:evaluate_paystack_transaction, %{}, actor: user)
+      |> Ash.update!()
+
+    assigns = assigns |> assign(:basket, basket)
+
+    ~H"""
+    <div class="col-span-full flex flex-col items-center justify-center gap-8">
+      <span class="font-semibold">Started payment process...</span>
+      <span class="text-sm text-zinc-500">If you were not redirected, click here</span>
+    </div>
+    """
+  end
+
+  def payment(assigns) do
     ~H"""
     <div class="col-span-full flex flex-col items-center justify-center gap-8">
       <span class="font-semibold">Starting payment process...</span>
