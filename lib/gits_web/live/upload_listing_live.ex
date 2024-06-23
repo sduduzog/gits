@@ -1,6 +1,5 @@
 defmodule GitsWeb.UploadListingLive do
   use GitsWeb, :live_view
-  import GitsWeb.DashboardComponents
 
   def mount(_, session, socket) do
     params = session["params"]

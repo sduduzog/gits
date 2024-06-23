@@ -70,7 +70,7 @@ defmodule GitsWeb.CoreComponents do
     ~H"""
     <div class="p-4">
       <nav class="flex flex-wrap justify-center gap-8 *:text-sm">
-        <.link :if={FunWithFlags.enabled?(:organizers)} href="/organizers">
+        <.link navigate="/organizers">
           Business & Organizers
         </.link>
         <.link :if={FunWithFlags.enabled?(:privacy)} href="/privacy">Privacy</.link>

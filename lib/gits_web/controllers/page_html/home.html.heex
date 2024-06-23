@@ -51,11 +51,5 @@
   </.simple_form>
 </div>
 <div class="relative bg-white p-6">
-  <nav class="flex flex-wrap justify-center gap-8 *:text-sm">
-    <.link :if={FunWithFlags.enabled?(:organizers)} href="/organizers">
-      Business & Organizers
-    </.link>
-    <.link :if={FunWithFlags.enabled?(:privacy)} href="/privacy">Privacy</.link>
-    <.link :if={FunWithFlags.enabled?(:terms)} href="/terms">Terms</.link>
-  </nav>
+  <.footer />
 </div>
