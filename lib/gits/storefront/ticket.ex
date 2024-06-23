@@ -253,6 +253,14 @@ defmodule Gits.Storefront.Ticket do
     end
 
     policy action(:add_instance) do
+      authorize_if Gits.Storefront.Checks.TicketSaleStartDateIsBefore
+    end
+
+    policy action(:add_instance) do
+      authorize_if Gits.Storefront.Checks.TicketSaleEndDateIsAhead
+    end
+
+    policy action(:add_instance) do
       forbid_unless expr(
                       total_quantity == 0 or
                         count(instances, query: [filter: expr(state not in [:cancelled])]) <
@@ -273,6 +281,27 @@ defmodule Gits.Storefront.Ticket do
       authorize_if actor_present()
     end
 
+    policy action(:add_instance) do
+      authorize_if expr(
+                     allowed_quantity_per_user == 0 or
+                       count(instances,
+                         query: [
+                           filter:
+                             expr(state not in [:cancelled] and customer.user.id == ^actor(:id))
+                         ]
+                       ) <
+                         allowed_quantity_per_user
+                   )
+    end
+
+    policy action(:add_instance) do
+      authorize_if expr(
+                     total_quantity == 0 or
+                       count(instances, query: [filter: expr(state not in [:cancelled])]) <
+                         total_quantity
+                   )
+    end
+
     policy action(:remove_instance) do
       authorize_if actor_present()
     end
@@ -284,11 +313,6 @@ defmodule Gits.Storefront.Ticket do
     end
 
     policy action(:create) do
-      authorize_if expr(
-                     event.account.members.user.id == ^actor(:id) and
-                       event.account.members.role in [:owner]
-                   )
-
       authorize_if actor_present()
     end
 

@@ -4,7 +4,13 @@ defmodule Gits.Storefront.Changes.SetPaymentMethodToBasket do
   def change(changeset, _opts, %{actor: _actor}) do
     changeset
     |> Ash.Changeset.before_action(fn changeset ->
-      changeset |> IO.inspect()
+      basket = changeset.data |> Ash.load!(:event)
+
+      event =
+        basket.event
+        |> IO.inspect()
+
+      changeset |> Ash.Changeset.change_attribute(:payment_method, event.payment_method)
     end)
   end
 end

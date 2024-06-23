@@ -16,7 +16,6 @@ defmodule GitsWeb.DashboardLive.ManageEvent do
 
     account = Enum.find(accounts, fn item -> item.id == params["slug"] end)
 
-
     socket =
       socket
       |> assign(:slug, params["slug"])
@@ -110,10 +109,7 @@ defmodule GitsWeb.DashboardLive.ManageEvent do
   def render(assigns) do
     ~H"""
     <div>
-      <.link
-        navigate={@back_link}
-        class="text-sm max-w-screen-md mx-auto flex gap-2 text-zinc-600"
-      >
+      <.link navigate={@back_link} class="text-sm max-w-screen-md mx-auto flex gap-2 text-zinc-600">
         <.icon name="hero-chevron-left-mini" />
         <span>Events</span>
       </.link>
@@ -141,8 +137,8 @@ defmodule GitsWeb.DashboardLive.ManageEvent do
           label="Payment method"
         >
           <:radio value={:none} checked>None</:radio>
-          <:radio value={:paystack}>Paystack</:radio>
-          <:radio value={:payfast}>Payfast</:radio>
+          <:radio :if={@account.paystack_ready} value={:paystack}>Paystack</:radio>
+          <:radio :if={@account.payfast_ready} value={:payfast}>Payfast</:radio>
         </.radio_group>
       </div>
       <div class="flex gap-8">

@@ -26,7 +26,7 @@ defmodule Gits.Storefront.Event do
 
     attribute :payment_method, :atom do
       public? true
-      constraints one_of: [:paystack, :payfast]
+      constraints one_of: [:none, :paystack, :payfast]
     end
 
     create_timestamp :created_at, public?: true
@@ -221,6 +221,10 @@ defmodule Gits.Storefront.Event do
 
     policy action(:update_address) do
       authorize_if always()
+    end
+
+    policy [action(:update), changing_attributes(payment_method: [to: :paystack])] do
+      authorize_if expr(account.paystack_ready)
     end
 
     policy action(:update) do

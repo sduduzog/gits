@@ -29,6 +29,7 @@ defmodule Gits.Dashboard.Account do
   calculations do
     calculate :paystack_subaccount, :map, Gits.Dashboard.Calculations.PaystackSubaccount
     calculate :paystack_ready, :boolean, expr(not is_nil(paystack_subaccount_code))
+    calculate :payfast_ready, :boolean, expr(false)
     calculate :payments_ready, :boolean, expr(paystack_ready)
     calculate :no_payment_method, :boolean, expr(payments_ready == false)
     calculate :first_event_created, :boolean, expr(count(events) > 0)
@@ -42,7 +43,7 @@ defmodule Gits.Dashboard.Account do
     read :read do
       primary? true
 
-      prepare build(load: [:paystack_ready, :events])
+      prepare build(load: [:paystack_ready, :payfast_ready])
     end
 
     read :by_id do

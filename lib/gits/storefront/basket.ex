@@ -78,7 +78,7 @@ defmodule Gits.Storefront.Basket do
 
       change Gits.Storefront.Changes.SetPaymentMethodToBasket
 
-      # change transition_state(:payment_started)
+      change transition_state(:payment_started)
     end
 
     update :cancel do

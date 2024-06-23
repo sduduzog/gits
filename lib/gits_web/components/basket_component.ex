@@ -9,6 +9,7 @@ defmodule GitsWeb.BasketComponent do
     basket =
       Basket
       |> Ash.get!(assigns.id, actor: assigns.user)
+      |> IO.inspect()
 
     tickets =
       Ticket
@@ -26,7 +27,6 @@ defmodule GitsWeb.BasketComponent do
       |> assign(:basket, basket)
       |> assign(:tickets, tickets)
       |> assign(:show_summary, false)
-      |> assign(:step, basket.state)
 
     {:ok, socket}
   end
@@ -123,7 +123,6 @@ defmodule GitsWeb.BasketComponent do
     socket =
       basket
       |> Ash.load!([event: [:account]], actor: user)
-      |> IO.inspect()
       |> Ash.Changeset.for_update(action, %{}, actor: user)
       |> Ash.update()
       |> case do
@@ -149,7 +148,7 @@ defmodule GitsWeb.BasketComponent do
           tickets={@tickets}
           myself={@myself}
         />
-        <.payment :if={@step == :payment} />
+        <.payment :if={@basket.state == :payment_started} payment_method={@basket.payment_method} />
         <.order_completed :if={@basket.state == :settled_for_free} />
       </div>
     </div>
@@ -273,6 +272,8 @@ defmodule GitsWeb.BasketComponent do
   end
 
   def payment(assigns) do
+    IO.inspect(assigns.basket)
+
     ~H"""
     <div class="col-span-full flex flex-col items-center justify-center gap-8">
       <span class="font-semibold">Starting payment process...</span>
