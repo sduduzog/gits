@@ -15,7 +15,9 @@ defmodule GitsWeb.CoreComponents do
   Icons are provided by [heroicons](https://heroicons.com). See `icon/1` for usage.
   """
   use Phoenix.Component
+  use GitsWeb, :verified_routes
 
+  alias Gits.Auth.User
   alias Phoenix.HTML.Form
   alias Phoenix.LiveView.JS
   import GitsWeb.Gettext
@@ -23,45 +25,108 @@ defmodule GitsWeb.CoreComponents do
   attr :signed_in, :boolean, default: false
 
   def header(assigns) do
+    user = assigns.user
+
+    assigns =
+      case user do
+        nil ->
+          assigns
+          |> assign(:signed_in, false)
+          |> assign(:menu, [
+            [
+              %{
+                label: "Register",
+                to: ~p"/register",
+                icon: "hero-arrow-right-end-on-rectangle-mini"
+              },
+              %{
+                label: "Sign in",
+                to: ~p"/sign-in",
+                icon: "hero-arrow-right-end-on-rectangle-mini"
+              }
+            ]
+          ])
+
+        %User{} = user ->
+          assigns
+          |> assign(:signed_in, true)
+          |> assign(:email, user.email)
+          |> assign(:menu, [
+            [
+              %{label: "My Tickets", to: ~p"/my/tickets", icon: "hero-ticket-mini"}
+              # %{label: "Profile", to: ~p"/my/profile", icon: "hero-user-mini"}
+            ],
+            [
+              %{
+                label: "Sign out",
+                to: ~p"/sign-out",
+                icon: "hero-arrow-left-start-on-rectangle-mini"
+              }
+            ]
+          ])
+      end
+
     ~H"""
     <div
-      class="sticky top-0 z-10 mx-auto flex max-w-screen-xl items-center gap-4 bg-white bg-red-400 bg-opacity-0 p-2 text-sm font-medium transition-all"
+      class="sticky top-0 z-20 bg-white bg-red-400 bg-opacity-0 p-2 text-sm font-medium transition-all"
+      phx-hook="HeaderOpacityOnScroll"
       id="homepage_header"
     >
-      <div class="flex grow">
-        <.link navigate="/" class="text-2xl font-black italic text-zinc-800 dark:text-white">
-          GiTS
-        </.link>
-      </div>
-      <%= if @signed_in do %>
-        <button class="flex rounded-lg border p-1.5 lg:hidden">
-          <.icon name="hero-bars-2-mini" />
-        </button>
-
-        <div class="hidden max-w-screen-2xl gap-8 lg:flex xl:gap-12">
-          <.link
-            :if={FunWithFlags.enabled?(:my_tickets)}
-            href="/my/tickets"
-            class="flex items-center gap-1.5 relative"
-          >
-            <.icon name="hero-ticket-mini" />
-            <span class="hidden sm:inline-block">My Tickets</span>
-          </.link>
-          <.link href="/my/profile" class="flex items-center gap-1.5">
-            <.icon name="hero-user-mini" />
-            <span class="hidden sm:inline-block">Profile</span>
-          </.link>
-          <.link href="/sign-out" class="flex items-center gap-1.5">
-            <.icon name="hero-arrow-right-start-on-rectangle-mini" />
-            <span class="hidden sm:inline-block">Sign Out</span>
+      <div class="mx-auto flex max-w-screen-xl items-center gap-4">
+        <div class="flex grow">
+          <.link navigate="/" class="text-2xl font-black italic text-zinc-800 dark:text-white">
+            GiTS
           </.link>
         </div>
-      <% else %>
-        <.link href="/sign-in" class="flex items-center gap-1.5">
-          <.icon name="hero-arrow-right-end-on-rectangle-mini" />
-          <span class="">Sign In</span>
-        </.link>
-      <% end %>
+        <div
+          class="relative inline-block text-left md:hidden"
+          id="header_menu"
+          phx-hook="Dropdown"
+          phx-click-away={JS.hide(to: "#header_menu>div[data-dropdown]")}
+        >
+          <button
+            class="flex rounded-lg p-1.5 hover:bg-zinc-200"
+            phx-click={JS.toggle(to: "#header_menu>div[data-dropdown]")}
+            data-dropdown
+          >
+            <.icon name="hero-bars-2-mini" />
+          </button>
+          <div
+            class="absolute top-0 right-0 z-20 hidden w-56 divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+            role="menu"
+            aria-orientation="vertical"
+            aria-labelledby="menu-button"
+            tabindex="-1"
+            data-dropdown
+          >
+            <div :if={@signed_in} class="px-4 py-3" role="none">
+              <p class="text-sm" role="none">Signed in as</p>
+              <p class="truncate text-sm font-medium text-gray-900" role="none"><%= @email %></p>
+            </div>
+            <div :for={group <- @menu} class="py-1" role="none">
+              <.link
+                :for={item <- group}
+                navigate={item.to}
+                class="block px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-100 hover:text-zinc-900"
+                role="menuitem"
+                tabindex="-1"
+              >
+                <%= item.label %>
+              </.link>
+            </div>
+          </div>
+        </div>
+        <div class="hidden max-w-screen-2xl gap-8 lg:flex xl:gap-12">
+          <.link
+            :for={item <- @menu |> Enum.flat_map(& &1)}
+            navigate={item.to}
+            class="flex items-center gap-1.5"
+          >
+            <.icon name={item.icon} />
+            <span class=""><%= item.label %></span>
+          </.link>
+        </div>
+      </div>
     </div>
     """
   end

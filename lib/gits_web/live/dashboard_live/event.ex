@@ -62,7 +62,6 @@ defmodule GitsWeb.DashboardLive.Event do
       |> assign(:manage_ticket_title, "Edit ticket")
       |> update(:manage_ticket_form, fn _, %{event: event, current_user: user} ->
         event.tickets
-        |> IO.inspect()
         |> Enum.find(&(&1.id == id))
         |> Form.for_update(:update, as: "edit_ticket", actor: user)
       end)
@@ -80,8 +79,6 @@ defmodule GitsWeb.DashboardLive.Event do
   end
 
   def handle_event("publish_event", _unsigned_params, socket) do
-    socket.assigns.account |> IO.inspect()
-    socket.assigns.event |> IO.inspect()
     {:noreply, socket}
   end
 

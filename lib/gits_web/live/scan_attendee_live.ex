@@ -32,7 +32,7 @@ defmodule GitsWeb.ScanAttendeeLive do
 
   def handle_event("scanned", unsigned_params, socket) do
     url =
-      ~p"/accounts/#{socket.assigns.account_id}/events/#{socket.assigns.event_id}/attendees/new?code=#{unsigned_params}"
+      "/accounts/#{socket.assigns.account_id}/events/#{socket.assigns.event_id}/attendees/new?code=#{unsigned_params}"
 
     {:noreply, push_navigate(socket, to: url)}
   end

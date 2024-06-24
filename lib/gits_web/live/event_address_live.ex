@@ -48,7 +48,7 @@ defmodule GitsWeb.EventAddressLive do
 
     {:noreply,
      redirect(socket,
-       to: ~p"/accounts/#{socket.assigns.account_id}/events/#{socket.assigns.event_id}/settings"
+       to: "/accounts/#{socket.assigns.account_id}/events/#{socket.assigns.event_id}/settings"
      )}
   end
 

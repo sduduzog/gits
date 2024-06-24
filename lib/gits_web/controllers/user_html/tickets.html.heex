@@ -1,42 +1,64 @@
-<!-- <div class="fixed inset-0 bg-slate-100" role="none"></div> -->
-<div class="sticky top-0 z-10 space-y-8 px-2 pb-2">
-  <div class="h-[calc(100dvh-theme(space.14))]x mx-auto grid max-w-screen-2xl flex-wrap flex-wrap gap-8 overflow-hidden rounded-xl bg-white shadow lg:p-16">
-    <div class="col-span-full w-full grow p-4">
-      <div class="grid grid-cols-2 gap-4 rounded-lg text-sm font-medium text-zinc-400 *:rounded-md *:p-2 *:text-center first:*:bg-zinc-100 first:*:text-zinc-900 sm:max-w-sm">
-        <span>Upcoming</span>
-        <span>Completed</span>
+<div class="min-h-dvh sticky top-0 z-10 mx-auto max-w-screen-sm bg-zinc-50">
+  <div class="flex items-center justify-between bg-white p-4">
+    <.link navigate={~p"/"} replace={true} class="flex rounded-lg hover:bg-zinc-100 p-2">
+      <.icon name="hero-arrow-left-mini" />
+    </.link>
+    <h1 class="font-semibold">Tickets</h1>
+    <.link navigate={~p"/my/tickets"} class="flex rounded-lg hover:bg-zinc-100 p-2">
+      <.icon name="hero-ellipsis-horizontal-mini" />
+    </.link>
+  </div>
+  <div class="grid grid-cols-2 gap-2 bg-white p-2 text-center *:rounded-xl *:p-3 first:*:bg-zinc-50">
+    <span class="text-sm">Upcoming</span>
+    <span class="text-sm">Past tickets</span>
+  </div>
+  <div>
+    <div class="grid items-center gap-0.5 pt-8 *:mx-auto *:flex *:w-72 *:gap-4 *:rounded-xl *:bg-white *:p-4 *:shadow-sm">
+      <div class="flex-wrap">
+        <div class="aspect-[3/2] w-full rounded-lg bg-zinc-200 p-4"></div>
+        <h2 class="text-lg font-semibold">The Ultimate Cheese Festival</h2>
+        <div class="w-full">
+          <div class="flex w-full justify-between text-xs font-medium text-zinc-500">
+            <span>Name</span>
+            <span>Ticket</span>
+          </div>
+          <div class="flex w-full justify-between text-sm font-medium">
+            <span><%= @current_user.display_name %></span>
+            <span>General</span>
+          </div>
+        </div>
+
+        <div class="w-full">
+          <div class="flex w-full justify-between text-xs font-medium text-zinc-500">
+            <span>Time</span>
+            <span>Date</span>
+          </div>
+          <div class="flex w-full justify-between text-sm font-medium">
+            <span>09:00 PM</span>
+            <span>Wednesday, 04 Dec 2024</span>
+          </div>
+        </div>
+        <div class="w-full">
+          <div class="flex w-full justify-between text-xs font-medium text-zinc-500">
+            <span>Place</span>
+          </div>
+          <div class="flex w-full justify-between text-sm font-medium">
+            <span>Artistry JHB</span>
+          </div>
+        </div>
       </div>
-    </div>
-    <div class="col-span-full grid md:grid-cols-2 lg:grid-cols-3 gap-12 p-4">
-      <.link href={~p"/my/tickets/#{ij}"} :for={ij <- 2..3} class="grid-cols-[6rem_1fr] grid gap-2">
-        <div class="aspect-[4/5] relative flex items-center gap-2 overflow-hidden rounded-xl">
-          <img src="/images/placeholder.png" alt="" class="h-full w-full object-cover" />
-          <div class="size-12 absolute top-2 left-2 flex flex-col items-center justify-center rounded-lg bg-zinc-100 *:leading-4">
-            <span class="text-xs">Jun</span>
-            <span class="text-lg font-bold">0<%= ij %></span>
-          </div>
-        </div>
-        <div class="flex w-full flex-col justify-between overflow-hidden py-2">
-          <h2 class="line-clamp-2 font-semibold">
-            The Ultimate Cheese Festival
-          </h2>
-          <div
-           class="inline-flex shrink-0 items-center gap-x-1.5 rounded-md px-2 self-start py-1 text-xs font-medium text-gray-900 ring-1 ring-inset ring-gray-200">
-            <.icon name="hero-ticket-mini" class="text-blue-700 shrink-0 -rotate-45" />
-            <span class="grow truncate font-semibold text-sm">General</span>
-          </div>
-          <div class="flex w-full items-center gap-2">
-            <.icon name="hero-map-pin-mini" class="text-zinc-500 shrink-0" />
-            <span class="grow truncate text-sm">Artistry JHB Artistry JHB</span>
-            <span class="inline-flex shrink-0 items-center gap-x-1.5 rounded-md px-2 py-1 hidden text-xs font-medium text-gray-900 ring-1 ring-inset ring-gray-200">
-              <svg class="h-1.5 w-1.5 fill-pink-500" viewBox="0 0 6 6" aria-hidden="true">
-                <circle cx="3" cy="3" r="3" />
-              </svg>
-              2 Tickets
-            </span>
-          </div>
-        </div>
-      </.link>
+      <div class="flex items-center">
+        <span class="grow text-xl">#1</span>
+        <button
+          class="flex rounded-md p-1 ring-1 ring-zinc-400 hover:bg-zinc-100"
+          phx-click={JS.navigate("/my/tickets/1")}
+        >
+          <.icon name="hero-qr-code" />
+        </button>
+        <button class="flex rounded-md p-1 hover:bg-zinc-100">
+          <.icon name="hero-ellipsis-vertical-mini" />
+        </button>
+      </div>
     </div>
   </div>
 </div>

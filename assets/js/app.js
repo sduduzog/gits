@@ -23,11 +23,16 @@ import { LiveSocket } from "phoenix_live_view";
 import topbar from "../vendor/topbar";
 import { TurnstileHook } from "phoenix_turnstile";
 
-import { computePosition,flip, shift, autoUpdate, offset } from '@floating-ui/dom'
+import {
+  computePosition,
+  flip,
+  shift,
+  autoUpdate,
+  offset,
+} from "@floating-ui/dom";
 
 import { register as swiperRegister } from "swiper/element/bundle";
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
-import { confetti } from "@tsparticles/confetti";
 
 swiperRegister();
 
@@ -45,8 +50,30 @@ let csrfToken = document
 const SideModal = {
   mounted() {
     // const modal = this.el.querySelector("div[data-modal]")
-  }
-}
+  },
+};
+
+const Dropdown = {
+  mounted() {
+    const dropdownButton = this.el.querySelector("button[data-dropdown]");
+    const dropdownOptions = this.el.querySelector("div[data-dropdown]");
+
+    this.cleanup = autoUpdate(dropdownButton, dropdownOptions, () => {
+      computePosition(this.el, dropdownOptions, {
+        placement: "bottom-end",
+        middleware: [flip(), offset(10), shift({ padding: 5 })],
+      }).then(({ x, y }) => {
+        Object.assign(dropdownOptions.style, {
+          left: `${x}px`,
+          top: `${y}px`,
+        });
+      });
+    });
+  },
+  destroyed() {
+    this.cleanup?.();
+  },
+};
 
 let liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
@@ -54,64 +81,39 @@ let liveSocket = new LiveSocket("/live", Socket, {
   hooks: {
     Turnstile: TurnstileHook,
     SideModal,
-    Dropdown: {
-      mounted() {
-        const dropdownButton = this.el.querySelector("button[data-dropdown]")
-        const dropdownOptions = this.el.querySelector("div[data-dropdown]")
+    Dropdown: Dropdown,
 
-        this.cleanup = autoUpdate(dropdownButton, dropdownOptions, () => {
-          computePosition(this.el, dropdownOptions, {
-            placement: 'bottom-end',
-            middleware: [flip(),offset(10), shift({padding: 5})]}
-          ).then(({x, y}) => {
-            Object.assign(dropdownOptions.style, {
-              left: `${x}px`,
-              top: `${y}px`
-            })
-          })
-        })
-      },
-      destroyed() {
-        this.cleanup?.()
-      }
-    },
     DropdownButton: {
       mounted() {
-        const dropdown = this.el.querySelector("[data-dropdown]")
+        const dropdown = this.el.querySelector("[data-dropdown]");
         this.cleanup = autoUpdate(this.el, dropdown, () => {
           computePosition(this.el, dropdown, {
-            middleware: [flip(), shift({padding: 5})]}
-          ).then(({x, y}) => {
+            middleware: [flip(), shift({ padding: 5 })],
+          }).then(({ x, y }) => {
             Object.assign(dropdown.style, {
               left: `${x}px`,
-              top: `${y}px`
-            })
-          })
-        })
+              top: `${y}px`,
+            });
+          });
+        });
       },
       destroyed() {
-        this.cleanup?.()
-      }
+        this.cleanup?.();
+      },
     },
     HeaderOpacityOnScroll: {
       mounted() {
-        document.addEventListener('scroll', function () {
+        document.addEventListener("scroll", function () {
           if (window.scrollY > 20) {
-            const header = document.getElementById("homepage_header")
-            header.classList.add('bg-opacity-100')
-            header.classList.remove('bg-opacity-0')
+            const header = document.getElementById("homepage_header");
+            header.classList.add("bg-opacity-100");
+            header.classList.remove("bg-opacity-0");
           } else {
-            const header = document.getElementById("homepage_header")
-            header.classList.add('bg-opacity-0')
-            header.classList.remove('bg-opacity-100')
-
+            const header = document.getElementById("homepage_header");
+            header.classList.add("bg-opacity-0");
+            header.classList.remove("bg-opacity-100");
           }
-        })
-      }
-    },
-    Confetti: {
-      async mounted() {
-        setTimeout(() => confetti("confetti"), 200);
+        });
       },
     },
     QrScannerInfo: {

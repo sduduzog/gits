@@ -1,8 +1,4 @@
-<div
-  class="fixed inset-0 overflow-hidden bg-zinc-50 blur-3xl"
-  phx-hook="HeaderOpacityOnScroll"
-  id="fancy_background"
->
+<div class="fixed inset-0 overflow-hidden bg-zinc-50 blur-3xl">
   <div class="size-72 fixed -top-16 -left-16 animate-pulse rounded-full bg-purple-300 opacity-50 mix-blend-multiply blur-3xl lg:size-[40rem]">
   </div>
   <div class="size-40 size-72 fixed top-4 left-48 animate-pulse rounded-full bg-yellow-300 opacity-50 mix-blend-multiply blur-3xl lg:left-[26rem] lg:top-96">
@@ -11,7 +7,7 @@
   </div>
 </div>
 
-<.header signed_in={@current_user} />
+<.header user={@current_user} />
 
 <div class="h-[calc(100dvh-theme(space.64))] relative mx-auto flex max-w-screen-xl flex-col justify-center gap-8 overflow-hidden p-4">
   <h1 class="text-5xl font-semibold leading-tight dark:text-white md:text-6xl">
