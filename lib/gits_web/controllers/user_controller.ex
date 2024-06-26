@@ -1,6 +1,9 @@
 defmodule GitsWeb.UserController do
   use GitsWeb, :controller
 
+  alias Gits.Storefront.Ticket
+  alias Gits.Storefront.TicketInstance
+
   def events(conn, _) do
     conn
     |> render(:events)
@@ -13,6 +16,17 @@ defmodule GitsWeb.UserController do
   end
 
   def tickets(conn, _) do
+    user = conn.assigns.current_user
+
+    conn =
+      TicketInstance
+      |> Ash.Query.for_read(:read, %{}, actor: user)
+      |> Ash.read()
+      |> case do
+        {:error, _} -> raise GitsWeb.Exceptions.NotFound, "no tickets"
+        {:ok, instances} -> conn |> assign(:instances, instances)
+      end
+
     conn
     |> put_layout(false)
     |> render(:tickets)

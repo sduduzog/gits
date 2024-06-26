@@ -14,7 +14,25 @@
   </div>
   <div>
     <div class="grid items-center gap-0.5 pt-8 *:mx-auto *:flex *:w-72 *:gap-4 *:rounded-xl *:bg-white *:p-4 *:shadow-sm">
-      <div class="flex-wrap">
+    </div>
+  </div>
+  <swiper-container
+    class="mt-2"
+    effect="coverflow"
+    grab-cursor="true"
+    centered-slides="true"
+    slides-per-view="auto"
+    coverflow-effect-rotate="45"
+    coverflow-effect-stretch="0"
+    coverflow-effect-depth="100"
+    coverflow-effect-modifier="1"
+    coverflow-effect-shadows="true"
+  >
+    <swiper-slide
+      :for={instance <- @instances}
+      class="grid w-72 gap-0.5 overflow-hidden rounded-xl"
+    >
+      <div class="flex-wrap rounded-xl bg-white p-4 shadow-sm">
         <div class="aspect-[3/2] w-full rounded-lg bg-zinc-200 p-4"></div>
         <h2 class="text-lg font-semibold">The Ultimate Cheese Festival</h2>
         <div class="w-full">
@@ -47,8 +65,9 @@
           </div>
         </div>
       </div>
-      <div class="flex items-center">
-        <span class="grow text-xl">#1</span>
+
+      <div class="flex items-center gap-4 rounded-xl bg-white p-4 shadow-sm">
+        <span class="grow text-xl">#<%= instance.id %></span>
         <button
           class="flex rounded-md p-1 ring-1 ring-zinc-400 hover:bg-zinc-100"
           phx-click={JS.navigate("/my/tickets/1")}
@@ -59,6 +78,6 @@
           <.icon name="hero-ellipsis-vertical-mini" />
         </button>
       </div>
-    </div>
-  </div>
+    </swiper-slide>
+  </swiper-container>
 </div>
