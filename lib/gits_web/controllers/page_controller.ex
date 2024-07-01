@@ -69,7 +69,7 @@ defmodule GitsWeb.PageController do
       else
         customer
         |> Ash.load!(
-          [scannable_instances: [:event_name, :ticket_name, :event_starts_at, :event_address]],
+          [scannable_instances: [:event_name, :ticket_name, :event_starts_at]],
           actor: customer
         )
       end

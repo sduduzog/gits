@@ -78,7 +78,6 @@ defmodule GitsWeb.Router do
 
   scope "/my", GitsWeb do
     pipe_through :browser
-    get "/events", UserController, :events
     get "/profile", UserController, :settings
     get "/profile/settings", UserController, :settings
     get "/tickets", UserController, :tickets

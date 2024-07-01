@@ -18,7 +18,7 @@ defmodule Gits.Storefront.Customer do
     has_many :instances, Gits.Storefront.TicketInstance
 
     has_many :scannable_instances, Gits.Storefront.TicketInstance do
-      filter expr(state in [:ready_to_scan])
+      filter expr(state in [:ready_for_use])
     end
 
     many_to_many :tickets, Gits.Storefront.Ticket do
@@ -45,21 +45,6 @@ defmodule Gits.Storefront.Customer do
                     count(tickets,
                       query: [
                         filter: expr(event.id == ^arg(:event_id) and instances.state == :reserved)
-                      ]
-                    )
-                  )
-
-      argument :event_id, :integer do
-        allow_nil? false
-      end
-    end
-
-    calculate :ready_tickets_count, :integer do
-      calculation expr(
-                    count(tickets,
-                      query: [
-                        filter:
-                          expr(event.id == ^arg(:event_id) and instances.state == :ready_to_scan)
                       ]
                     )
                   )
