@@ -31,13 +31,15 @@ defmodule GitsWeb.DashboardLive.Event do
     socket =
       socket
       |> assign(:slug, params["slug"])
-      |> assign(:title, "Settings")
       |> assign(:accounts, accounts)
       |> assign(:account, account)
       |> assign(:account_name, account.name)
       |> assign(:event, event)
       |> assign(:title, event.name)
-      |> assign(:context_options, [%{label: "Tickets"}])
+      |> assign(:context_options, [
+        %{label: "Scan ticket", icon: "hero-qr-code"},
+        %{label: "Attendees", icon: "hero-users"}
+      ])
       |> assign(:manage_ticket_form, nil)
       |> assign(:manage_ticket_title, nil)
 

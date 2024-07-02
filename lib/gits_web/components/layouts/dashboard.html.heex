@@ -83,6 +83,7 @@
           }
         >
           <.link :for={option <- @context_options} navigate={~p"/accounts/#{@slug}"}>
+            <.icon name={option.icon} />
             <span><%= option.label %></span>
           </.link>
         </div>

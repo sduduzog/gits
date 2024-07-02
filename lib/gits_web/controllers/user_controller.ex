@@ -29,11 +29,13 @@ defmodule GitsWeb.UserController do
   end
 
   def tickets(conn, _) do
-    user = conn.assigns.current_user
+    user =
+      conn.assigns.current_user
 
     conn =
       TicketInstance
       |> Ash.Query.for_read(:read, %{}, actor: user)
+      |> Ash.Query.filter(state == :ready_for_use)
       |> Ash.Query.load([:event_name, :ticket_name, :event_starts_at])
       |> Ash.Query.sort(id: :asc)
       |> Ash.read()
