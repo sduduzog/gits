@@ -82,7 +82,7 @@
             |> JS.add_class("hidden", to: "#backdrop")
           }
         >
-          <.link :for={option <- @context_options} navigate={~p"/accounts/#{@slug}"}>
+          <.link :for={option <- @context_options} navigate={option.to}>
             <.icon name={option.icon} />
             <span><%= option.label %></span>
           </.link>

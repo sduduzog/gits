@@ -37,8 +37,16 @@ defmodule GitsWeb.DashboardLive.Event do
       |> assign(:event, event)
       |> assign(:title, event.name)
       |> assign(:context_options, [
-        %{label: "Scan ticket", icon: "hero-qr-code"},
-        %{label: "Attendees", icon: "hero-users"}
+        %{
+          to: ~p"/accounts/#{params["slug"]}/events/#{event.id}/scan",
+          label: "Scan ticket",
+          icon: "hero-qr-code"
+        },
+        %{
+          to: ~p"/accounts/#{params["slug"]}/events/#{event.id}/scan",
+          label: "Attendees",
+          icon: "hero-users"
+        }
       ])
       |> assign(:manage_ticket_form, nil)
       |> assign(:manage_ticket_title, nil)

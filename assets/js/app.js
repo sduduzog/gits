@@ -125,19 +125,11 @@ let liveSocket = new LiveSocket("/live", Socket, {
     },
     QrScanner: {
       mounted() {
-        const cameraId = this.el.getAttribute("camera-id");
         html5QrCode = new Html5Qrcode("scanner", {
           formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
         });
-        html5QrCode.start({ deviceId: cameraId }, scanConfig, (decodedText) => {
+        html5QrCode.start({ facingMode: 'environment' }, scanConfig, (decodedText) => {
           this.pushEvent("scanned", decodedText);
-        });
-
-        this.handleEvent("change_camera", async ({ id }) => {
-          await html5QrCode.stop();
-          html5QrCode.start(id, scanConfig, (decodedText, _) => {
-            this.pushEvent("scanned", decodedText);
-          });
         });
       },
     },
