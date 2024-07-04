@@ -8,6 +8,7 @@ defmodule Gits.Storefront.TicketInstance do
     domain: Gits.Storefront
 
   alias Gits.Storefront.Basket
+  alias Gits.Storefront.Calculations.TicketInstanceCode
   alias Gits.Storefront.Customer
   alias Gits.Storefront.Ticket
 
@@ -41,6 +42,8 @@ defmodule Gits.Storefront.TicketInstance do
     calculate :ticket_name, :string, expr(ticket.name)
     calculate :event_name, :string, expr(ticket.event.name)
     calculate :event_starts_at, :naive_datetime, expr(ticket.event.starts_at)
+
+    calculate :qr_code, :string, TicketInstanceCode
   end
 
   actions do

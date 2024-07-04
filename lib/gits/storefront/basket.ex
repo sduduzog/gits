@@ -9,9 +9,9 @@ defmodule Gits.Storefront.Basket do
     notifiers: [Ash.Notifier.PubSub]
 
   require Ash.Resource.Change.Builtins
+  alias Gits.Storefront.Calculations.SumOfInstancePrices
   alias Gits.Storefront.Notifiers.StartBasketJob
   alias Gits.Storefront.TicketInstance
-  alias Gits.Storefront.Calculations.SumOfInstancePrices
 
   attributes do
     uuid_primary_key :id

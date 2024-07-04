@@ -15,7 +15,7 @@ defmodule GitsWeb.UserController do
     conn =
       TicketInstance
       |> Ash.Query.for_read(:read, %{}, actor: user)
-      |> Ash.Query.load([:event_name, :ticket_name, :event_starts_at])
+      |> Ash.Query.load([:event_name, :ticket_name, :event_starts_at, :qr_code])
       |> Ash.Query.filter(id: params["id"])
       |> Ash.read_one()
       |> case do

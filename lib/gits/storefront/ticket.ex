@@ -6,8 +6,8 @@ defmodule Gits.Storefront.Ticket do
     authorizers: [Ash.Policy.Authorizer],
     domain: Gits.Storefront
 
-  alias Gits.Storefront.TicketInstance
   alias Gits.Storefront.Event
+  alias Gits.Storefront.TicketInstance
 
   attributes do
     uuid_primary_key :id
