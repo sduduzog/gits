@@ -40,12 +40,12 @@ defmodule GitsWeb.DashboardLive.Event do
         %{
           to: ~p"/accounts/#{params["slug"]}/events/#{event.id}/scan",
           label: "Scan ticket",
-          icon: "hero-qr-code"
+          icon: "hero-qr-code-mini"
         },
         %{
           to: ~p"/accounts/#{params["slug"]}/events/#{event.id}/scan",
           label: "Attendees",
-          icon: "hero-users"
+          icon: "hero-users-mini"
         }
       ])
       |> assign(:manage_ticket_form, nil)

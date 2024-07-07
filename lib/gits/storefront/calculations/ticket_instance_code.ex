@@ -9,7 +9,7 @@ defmodule Gits.Storefront.Calculations.TicketInstanceCode do
   def calculate(records, _opts, _context) do
     records
     |> Enum.map(fn record ->
-      Paseto.V2.encrypt("test", record.basket.id |> String.replace("-", ""))
+      Paseto.V2.encrypt(record.id, record.basket.id |> String.replace("-", ""))
     end)
   end
 end
