@@ -6,7 +6,7 @@ defmodule Gits.Storefront.Calculations.MaskId do
   end
 
   def calculate(records, _opts, _context) do
-    Enum.map(records, &encode/1)
+    Enum.map(records, fn record -> encode(record.id) end)
   end
 
   def encode(id) do

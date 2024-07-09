@@ -13,20 +13,14 @@ defmodule GitsWeb.UserController do
   def ticket(conn, params) do
     user = conn.assigns.current_user
 
-    event =
+    conn =
       Event
       |> Ash.Query.for_read(:read, %{masked_id: params["id"]}, actor: user)
-      |> Ash.read_one!()
-      |> IO.inspect()
-
-    # conn =
-    #   Event
-    #   |> Ash.Query.for_read(:read, %{masked_id: params["id"]}, actor: user)
-    #   |> Ash.read_one()
-    #   |> case do
-    #     {:error, _} -> raise GitsWeb.Exceptions.NotFound, "no tickets"
-    #     {:ok, event} -> conn |> assign(:event, event)
-    #   end
+      |> Ash.read_one()
+      |> case do
+        {:error, _} -> raise GitsWeb.Exceptions.NotFound, "no tickets"
+        {:ok, event} -> conn |> assign(:event, event)
+      end
 
     conn
     |> put_layout(false)

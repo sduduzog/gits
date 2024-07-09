@@ -44,6 +44,7 @@ defmodule Gits.Storefront.Event do
 
     has_many :tickets, Gits.Storefront.Ticket
     has_many :baskets, Gits.Storefront.Basket
+    has_one :keypair, Gits.Storefront.Keypair
   end
 
   aggregates do
