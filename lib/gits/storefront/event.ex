@@ -85,7 +85,6 @@ defmodule Gits.Storefront.Event do
                 masked_id =
                   query
                   |> Ash.Query.get_argument(:masked_id)
-                  |> IO.inspect()
 
                 query =
                   if is_nil(masked_id) do

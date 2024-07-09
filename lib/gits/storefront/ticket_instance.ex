@@ -39,8 +39,9 @@ defmodule Gits.Storefront.TicketInstance do
   calculations do
     calculate :price, :decimal, expr(ticket.price)
 
-    calculate :ticket_name, :string, expr(ticket.name)
+    calculate :event_id, :integer, expr(ticket.event.id)
     calculate :event_name, :string, expr(ticket.event.name)
+    calculate :ticket_name, :string, expr(ticket.name)
     calculate :event_starts_at, :naive_datetime, expr(ticket.event.starts_at)
 
     calculate :qr_code, :string, TicketInstanceCode

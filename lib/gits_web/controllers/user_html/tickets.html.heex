@@ -67,10 +67,17 @@
       </div>
 
       <div class="flex items-center gap-4 rounded-xl bg-white p-4 shadow-sm">
-        <span class="grow text-xl">#<%= instance.id %></span>
+        <span class="ring-green-600/20 inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset">
+          Available
+        </span>
+        <div role="none" class="grow"></div>
         <button
           class="flex rounded-md p-1 ring-1 ring-zinc-400 hover:bg-zinc-100"
-          phx-click={JS.navigate(~p"/my/tickets/#{instance.id}")}
+          phx-click={
+            JS.navigate(
+              ~p"/my/tickets/#{instance.event_id |> Gits.Storefront.Calculations.MaskId.encode()}"
+            )
+          }
         >
           <.icon name="hero-qr-code" />
         </button>

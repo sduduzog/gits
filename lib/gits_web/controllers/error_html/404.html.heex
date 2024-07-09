@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>403 | Not found</title>
+    <title>404 | Not found</title>
     <link rel="stylesheet" href="/assets/app.css" />
     <script defer type="text/javascript" src="/assets/app.js">
     </script>
@@ -12,18 +12,15 @@
     <div class="flex h-screen items-center">
       <div class="flex grow flex-col justify-center gap-6 px-6 lg:px-8">
         <div>
-          <span class="text-7xl font-light">403</span>
+          <span class="text-7xl font-light">404</span>
         </div>
 
         <h2 class="text-xl font-medium tracking-tight text-gray-900">
-          You aren't supposed to be here
+          This page or resource might not exist... or does it?
         </h2>
 
         <div class="flex max-w-screen-2xl gap-4 overflow-x-auto lg:flex-wrap lg:gap-9 lg:overflow-visible xl:gap-14">
-          <.link
-            href={~p"/accounts/new"}
-            class="border-2 border-zinc-900 font-medium py-2 px-4 rounded-xl"
-          >
+          <.link href={~p"/"} class="border-2 border-zinc-900 font-medium py-2 px-4 rounded-xl">
             Go home
           </.link>
         </div>

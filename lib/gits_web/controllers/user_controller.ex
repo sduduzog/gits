@@ -2,6 +2,7 @@ defmodule GitsWeb.UserController do
   use GitsWeb, :controller
   require Ash.Query
 
+  alias Gits.Storefront.Event
   alias Gits.Storefront.TicketInstance
 
   def events(conn, _) do
@@ -12,16 +13,20 @@ defmodule GitsWeb.UserController do
   def ticket(conn, params) do
     user = conn.assigns.current_user
 
-    conn =
-      TicketInstance
-      |> Ash.Query.for_read(:read, %{}, actor: user)
-      |> Ash.Query.load([:event_name, :ticket_name, :event_starts_at, :qr_code])
-      |> Ash.Query.filter(id: params["id"])
-      |> Ash.read_one()
-      |> case do
-        {:error, _} -> raise GitsWeb.Exceptions.NotFound, "no tickets"
-        {:ok, instance} -> conn |> assign(:instance, instance)
-      end
+    event =
+      Event
+      |> Ash.Query.for_read(:read, %{masked_id: params["id"]}, actor: user)
+      |> Ash.read_one!()
+      |> IO.inspect()
+
+    # conn =
+    #   Event
+    #   |> Ash.Query.for_read(:read, %{masked_id: params["id"]}, actor: user)
+    #   |> Ash.read_one()
+    #   |> case do
+    #     {:error, _} -> raise GitsWeb.Exceptions.NotFound, "no tickets"
+    #     {:ok, event} -> conn |> assign(:event, event)
+    #   end
 
     conn
     |> put_layout(false)
@@ -36,7 +41,7 @@ defmodule GitsWeb.UserController do
       TicketInstance
       |> Ash.Query.for_read(:read, %{}, actor: user)
       |> Ash.Query.filter(state == :ready_for_use)
-      |> Ash.Query.load([:event_name, :ticket_name, :event_starts_at])
+      |> Ash.Query.load([:event_id, :event_name, :ticket_name, :event_starts_at])
       |> Ash.Query.sort(id: :asc)
       |> Ash.read()
       |> case do
