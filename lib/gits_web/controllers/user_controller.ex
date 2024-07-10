@@ -16,10 +16,21 @@ defmodule GitsWeb.UserController do
     conn =
       Event
       |> Ash.Query.for_read(:read, %{masked_id: params["id"]}, actor: user)
+      |> Ash.Query.load(:keypair)
       |> Ash.read_one()
       |> case do
-        {:error, _} -> raise GitsWeb.Exceptions.NotFound, "no tickets"
-        {:ok, event} -> conn |> assign(:event, event)
+        {:error, _} ->
+          raise GitsWeb.Exceptions.NotFound, "no tickets"
+
+        {:ok, event} ->
+          code =
+            event.keypair.private_key
+            # Paseto.V2.encrypt(user.id, event.keypair.private_key)
+            |> IO.inspect()
+
+          conn
+          |> assign(:code, code)
+          |> assign(:event, event)
       end
 
     conn

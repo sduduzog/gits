@@ -99,8 +99,7 @@ defmodule GitsWeb.DashboardLive.Event do
         {:ok, event} ->
           socket |> assign(:event, event)
 
-        fooo ->
-          fooo |> IO.inspect()
+        {:error, _} ->
           socket
       end
 

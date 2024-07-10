@@ -9,6 +9,8 @@ defmodule Gits.Storefront.Keypair do
     attribute :private_key, :string, allow_nil?: false, public?: true
 
     attribute :public_key, :string, allow_nil?: false, public?: true
+    attribute :pk, :binary, allow_nil?: false, public?: true
+    attribute :sk, :binary, allow_nil?: false, public?: true
 
     create_timestamp :created_at, public?: true
     update_timestamp :updated_at, public?: true
@@ -37,12 +39,9 @@ defmodule Gits.Storefront.Keypair do
           {:ok, pk, sk} =
             Ed25519.keypair()
 
-          encoded_public_key = pk |> Base.encode16(case: :lower)
-          encoded_secret_key = sk |> Base.encode16(case: :lower)
-
           changeset
-          |> Ash.Changeset.change_attribute(:public_key, encoded_public_key)
-          |> Ash.Changeset.change_attribute(:private_key, encoded_secret_key)
+          |> Ash.Changeset.change_attribute(:public_key, pk)
+          |> Ash.Changeset.change_attribute(:secret_key, sk)
         end)
       end
     end
