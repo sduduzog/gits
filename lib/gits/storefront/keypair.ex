@@ -6,11 +6,8 @@ defmodule Gits.Storefront.Keypair do
     domain: Gits.Storefront
 
   attributes do
-    attribute :private_key, :string, allow_nil?: false, public?: true
-
-    attribute :public_key, :string, allow_nil?: false, public?: true
-    attribute :pk, :binary, allow_nil?: false, public?: true
-    attribute :sk, :binary, allow_nil?: false, public?: true
+    attribute :public_key, :binary, allow_nil?: false, public?: true
+    attribute :secret_key, :binary, allow_nil?: false, public?: true
 
     create_timestamp :created_at, public?: true
     update_timestamp :updated_at, public?: true

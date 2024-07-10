@@ -24,9 +24,7 @@ defmodule GitsWeb.UserController do
 
         {:ok, event} ->
           code =
-            event.keypair.private_key
-            # Paseto.V2.encrypt(user.id, event.keypair.private_key)
-            |> IO.inspect()
+            Paseto.generate_token("v2", "public", user.id, event.keypair.secret_key)
 
           conn
           |> assign(:code, code)
