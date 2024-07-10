@@ -107,6 +107,21 @@ defmodule Gits.Storefront.Event do
     end
 
     update :publish do
+      require_atomic? false
+
+      change set_attribute(:published_at, &DateTime.utc_now/0)
+
+      change fn changeset, %{actor: actor} ->
+        changeset
+        |> Ash.Changeset.before_action(fn changeset ->
+          changeset
+          |> Ash.Changeset.manage_relationship(
+            :keypair,
+            %{},
+            type: :create
+          )
+        end)
+      end
     end
 
     read :read_dashboard_events do

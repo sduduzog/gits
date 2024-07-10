@@ -1,4 +1,6 @@
 defmodule Gits.Storefront.Keypair do
+  alias Salty.Sign.Ed25519
+
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     domain: Gits.Storefront
@@ -24,7 +26,26 @@ defmodule Gits.Storefront.Keypair do
   end
 
   actions do
-    defaults [:read, :destroy, create: :*, update: :*]
+    defaults [:read, :destroy, update: :*]
+
+    create :create do
+      primary? true
+
+      change fn changeset, %{actor: actor} ->
+        changeset
+        |> Ash.Changeset.before_action(fn changeset ->
+          {:ok, pk, sk} =
+            Ed25519.keypair()
+
+          encoded_public_key = pk |> Base.encode16(case: :lower)
+          encoded_secret_key = sk |> Base.encode16(case: :lower)
+
+          changeset
+          |> Ash.Changeset.change_attribute(:public_key, encoded_public_key)
+          |> Ash.Changeset.change_attribute(:private_key, encoded_secret_key)
+        end)
+      end
+    end
   end
 
   postgres do

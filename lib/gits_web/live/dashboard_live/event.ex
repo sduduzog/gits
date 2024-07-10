@@ -89,6 +89,21 @@ defmodule GitsWeb.DashboardLive.Event do
   end
 
   def handle_event("publish_event", _unsigned_params, socket) do
+    %{event: event, current_user: user} = socket.assigns
+
+    socket =
+      event
+      |> Ash.Changeset.for_update(:publish, %{}, actor: user)
+      |> Ash.update()
+      |> case do
+        {:ok, event} ->
+          socket |> assign(:event, event)
+
+        fooo ->
+          fooo |> IO.inspect()
+          socket
+      end
+
     {:noreply, socket}
   end
 

@@ -23,6 +23,7 @@
   </div>
   <div class="flex gap-4">
     <button
+      :if={is_nil(@event.published_at)}
       class="min-w-20 rounded-lg bg-zinc-700 px-4 py-3 text-sm font-medium text-white"
       phx-click="publish_event"
     >
