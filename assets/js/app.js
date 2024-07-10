@@ -35,12 +35,12 @@ import { register as swiperRegister } from "swiper/element/bundle";
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
 
 swiperRegister();
-
+const scanSize = 290
 let html5QrCode;
 const scanConfig = {
   fps: 2,
   rememberLastUserCamera: true,
-  qrbox: { width: 200, height: 200 },
+  qrbox: { width: scanSize, height: scanSize },
 };
 
 let csrfToken = document
