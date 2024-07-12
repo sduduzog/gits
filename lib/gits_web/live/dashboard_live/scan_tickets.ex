@@ -30,7 +30,7 @@ defmodule GitsWeb.DashboardLive.ScanTickets do
       |> assign(:account, account)
       |> assign(:event, event)
       |> assign(:payload, nil)
-      |> assign(:admitted, false)
+      |> assign(:admitted, true)
 
     {:ok, socket, layout: false}
   end
@@ -118,7 +118,7 @@ defmodule GitsWeb.DashboardLive.ScanTickets do
             <div class="flex rounded-full bg-green-100 p-2 text-green-400">
               <.icon name="hero-check-circle-mini" />
             </div>
-            <span class="text-sm font-medium text-green-600">Admitted</span>
+            <span class="font-medium text-green-600">12 General admissions</span>
           </div>
         </div>
       <% end %>
