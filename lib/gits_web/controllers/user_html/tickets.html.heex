@@ -23,13 +23,12 @@
     coverflow-effect-depth="100"
     coverflow-effect-shadows="true"
   >
-    <swiper-slide
-      :for={instance <- @instances}
-      class="grid w-72 gap-0.5 overflow-hidden rounded-xl"
-    >
+    <swiper-slide :for={ticket <- @tickets} class="grid w-72 gap-0.5 overflow-hidden rounded-xl">
       <div class="flex flex-wrap gap-4 rounded-xl bg-white p-4 shadow-sm">
-        <div class="aspect-[3/2] w-full rounded-lg bg-zinc-200 p-4"></div>
-        <h2 class="text-lg font-semibold"><%= instance.event_name %></h2>
+        <div class="aspect-[3/2] w-full overflow-hidden rounded-lg bg-zinc-200">
+          <img src="/images/placeholder.png" alt="" class="object-cover" />
+        </div>
+        <h2 class="text-lg font-semibold"><%= ticket.event.name %></h2>
         <div class="w-full">
           <div class="flex w-full justify-between text-xs font-medium text-zinc-500">
             <span>Name</span>
@@ -37,7 +36,7 @@
           </div>
           <div class="flex w-full justify-between text-sm font-medium">
             <span><%= @current_user.display_name %></span>
-            <span><%= instance.ticket_name %></span>
+            <span><%= ticket.name %></span>
           </div>
         </div>
 
@@ -48,10 +47,10 @@
           </div>
           <div class="flex w-full justify-between text-sm font-medium">
             <span>
-              <%= instance.event_starts_at |> Timex.format!("%H:%M %p", :strftime) %>
+              <%= ticket.event.starts_at |> Timex.format!("%H:%M %p", :strftime) %>
             </span>
             <span>
-              <%= instance.event_starts_at
+              <%= ticket.event.starts_at
               |> Timex.format!("%A, %e %b %Y", :strftime) %>
             </span>
           </div>
@@ -67,17 +66,17 @@
       </div>
 
       <div class="flex items-center gap-4 rounded-xl bg-white p-4 shadow-sm">
+        <div class="flex items-center gap-1">
+          <.icon name="hero-users-micro" class="text-zinc-500" />
+          <span class="text-sm">1</span>
+        </div>
         <span class="ring-green-600/20 inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset">
           Available
         </span>
         <div role="none" class="grow"></div>
         <button
           class="flex rounded-md p-1 ring-1 ring-zinc-400 hover:bg-zinc-100"
-          phx-click={
-            JS.navigate(
-              ~p"/my/tickets/#{instance.event_id |> Gits.Storefront.Calculations.MaskId.encode()}"
-            )
-          }
+          phx-click={JS.navigate(~p"/my/tickets/#{ticket.token}")}
         >
           <.icon name="hero-qr-code" />
         </button>

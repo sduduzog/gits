@@ -30,7 +30,7 @@ defmodule GitsWeb.DashboardLive.ScanTickets do
       |> assign(:account, account)
       |> assign(:event, event)
       |> assign(:payload, nil)
-      |> assign(:admitted, true)
+      |> assign(:admitted, false)
 
     {:ok, socket, layout: false}
   end
@@ -54,7 +54,7 @@ defmodule GitsWeb.DashboardLive.ScanTickets do
   def render(assigns) do
     ~H"""
     <div class="h-dvh relative w-screen">
-      <%= if not is_nil(@payload) do %>
+      <%= if is_nil(@payload) do %>
         <div phx-hook="QrScanner" id="scanner" class="absolute inset-0 z-10 flex h-full"></div>
         <div class="absolute inset-0 z-20 flex h-full w-full items-center justify-center">
           <div class="size-[22rem] ring-[1000px] rounded-2xl ring-zinc-50"></div>

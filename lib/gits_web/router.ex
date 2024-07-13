@@ -83,7 +83,7 @@ defmodule GitsWeb.Router do
     get "/profile/settings", UserController, :settings
     get "/tickets", UserController, :tickets
     get "/tickets/past", UserController, :past_tickets
-    get "/tickets/:id", UserController, :ticket
+    get "/tickets/:token", UserController, :ticket
   end
 
   scope "/admin" do

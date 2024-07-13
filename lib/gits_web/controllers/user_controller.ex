@@ -2,7 +2,7 @@ defmodule GitsWeb.UserController do
   use GitsWeb, :controller
   require Ash.Query
 
-  alias Gits.Storefront.Event
+  alias Gits.Storefront.Ticket
   alias Gits.Storefront.TicketInstance
 
   def events(conn, _) do
@@ -14,21 +14,12 @@ defmodule GitsWeb.UserController do
     user = conn.assigns.current_user
 
     conn =
-      Event
-      |> Ash.Query.for_read(:read, %{masked_id: params["id"]}, actor: user)
-      |> Ash.Query.load(:keypair)
+      Ticket
+      |> Ash.Query.for_read(:with_token, %{token: params["token"]}, actor: user)
       |> Ash.read_one()
       |> case do
-        {:error, _} ->
-          raise GitsWeb.Exceptions.NotFound, "no tickets"
-
-        {:ok, event} ->
-          code =
-            Paseto.generate_token("v2", "public", user.id, event.keypair.secret_key)
-
-          conn
-          |> assign(:code, code)
-          |> assign(:event, event)
+        {:ok, ticket} ->
+          conn |> assign(:event, ticket.event) |> assign(:token, params["token"])
       end
 
     conn
@@ -39,6 +30,15 @@ defmodule GitsWeb.UserController do
   def tickets(conn, _) do
     user =
       conn.assigns.current_user
+
+    tickets =
+      Ticket
+      |> Ash.Query.for_read(:read, %{}, actor: user)
+      |> Ash.Query.filter(
+        instances.customer.user.id == ^user.id and instances.state in [:ready_for_use]
+      )
+      |> Ash.Query.load([:event, :token])
+      |> Ash.read!()
 
     conn =
       TicketInstance
@@ -54,6 +54,7 @@ defmodule GitsWeb.UserController do
 
     conn
     |> put_layout(false)
+    |> assign(:tickets, tickets)
     |> render(:tickets)
   end
 

@@ -345,7 +345,10 @@ defmodule GitsWeb.BasketComponent do
       <span class="font-semibold">Order successful</span>
       <span class="text-sm text-zinc-500">This is a story of how you got this tickets</span>
       <div class="grid grid-cols-2 gap-4">
-        <button class="min-w-32 rounded-xl bg-zinc-100 p-4 text-sm font-medium hover:bg-zinc-200">
+        <button
+          phx-click={JS.navigate(~p"/my/tickets")}
+          class="min-w-32 rounded-xl bg-zinc-100 p-4 text-sm font-medium hover:bg-zinc-200"
+        >
           View tickets
         </button>
         <button

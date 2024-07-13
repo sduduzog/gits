@@ -1,5 +1,6 @@
 defmodule Gits.Storefront.Ticket do
   require Decimal
+  require Ash.Query
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
@@ -8,6 +9,8 @@ defmodule Gits.Storefront.Ticket do
 
   alias Gits.Storefront.Event
   alias Gits.Storefront.TicketInstance
+  alias Gits.Storefront.Calculations.TicketCode
+  alias Gits.Storefront.Calculations.TicketToken
 
   attributes do
     uuid_primary_key :id
@@ -126,6 +129,9 @@ defmodule Gits.Storefront.Ticket do
               ) do
       argument :basket_id, :uuid, allow_nil?: false
     end
+
+    calculate :qr_code, :string, TicketCode
+    calculate :token, :string, TicketToken
   end
 
   actions do
@@ -164,6 +170,24 @@ defmodule Gits.Storefront.Ticket do
               )
 
       prepare build(sort: [created_at: :asc])
+    end
+
+    read :with_token do
+      argument :token, :string, allow_nil?: false
+
+      prepare before_action(fn query, _ ->
+                token =
+                  query
+                  |> Ash.Query.get_argument(:token)
+
+                [ticket_id, user_id] =
+                  Paseto.peek(token)
+                  |> String.split(":")
+
+                query |> Ash.Query.filter(id: ticket_id)
+              end)
+
+      prepare build(load: [:event])
     end
 
     create :create do
@@ -249,6 +273,10 @@ defmodule Gits.Storefront.Ticket do
     end
 
     policy action(:read_for_checkout_summary) do
+      authorize_if actor_present()
+    end
+
+    policy action(:with_token) do
       authorize_if actor_present()
     end
 

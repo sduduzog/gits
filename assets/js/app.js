@@ -35,7 +35,7 @@ import { register as swiperRegister } from "swiper/element/bundle";
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
 
 swiperRegister();
-const scanSize = 290
+const scanSize = 340
 let html5QrCode;
 const scanConfig = {
   fps: 2,

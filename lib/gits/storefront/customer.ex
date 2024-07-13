@@ -20,10 +20,6 @@ defmodule Gits.Storefront.Customer do
     has_many :scannable_instances, Gits.Storefront.TicketInstance do
       filter expr(state in [:ready_for_use])
     end
-
-    many_to_many :tickets, Gits.Storefront.Ticket do
-      through Gits.Storefront.TicketInstance
-    end
   end
 
   calculations do
