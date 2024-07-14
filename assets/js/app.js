@@ -35,11 +35,10 @@ import { register as swiperRegister } from "swiper/element/bundle";
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
 
 swiperRegister();
-const scanSize = 340
+const scanSize = 260
 let html5QrCode;
 const scanConfig = {
   fps: 2,
-  rememberLastUserCamera: true,
   qrbox: { width: scanSize, height: scanSize },
 };
 
@@ -117,18 +116,26 @@ let liveSocket = new LiveSocket("/live", Socket, {
       },
     },
     QrScannerInfo: {
-      mounted() {
-        Html5Qrcode.getCameras().then((cameras) => {
-          this.pushEvent("cameras", cameras);
-        });
-      },
+      async mounted() {
+        const slug = this.el.getAttribute("data-slug")
+        const eventId = this.el.getAttribute("data-event-id")
+        const cameras = await Html5Qrcode.getCameras(true)
+        cameras.forEach(camera => {
+          const a = document.createElement("a")
+          a.href = `/accounts/${slug}/events/${eventId}/scan?camera_id=${camera.id}`
+          a.innerText = camera.label
+          this.el.appendChild(a)
+        })
+              },
     },
     QrScanner: {
-      mounted() {
+     async mounted() {
+        const cameraId = this.el.getAttribute("data-id")
+        
         html5QrCode = new Html5Qrcode("scanner", {
           formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
         });
-        html5QrCode.start({ facingMode: 'environment' }, scanConfig, (decodedText) => {
+        html5QrCode.start({ deviceId: cameraId }, scanConfig, (decodedText) => {
           this.pushEvent("scanned", decodedText);
         });
       },
