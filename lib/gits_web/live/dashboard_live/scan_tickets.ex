@@ -31,18 +31,8 @@ defmodule GitsWeb.DashboardLive.ScanTickets do
       |> assign(:event, event)
       |> assign(:payload, nil)
       |> assign(:admitted, false)
-      |> assign(:camera_id, nil)
 
     {:ok, socket, layout: false}
-  end
-
-  def handle_params(%{"camera_id" => camera_id}, _uri, socket) do
-    socket = socket |> assign(:camera_id, camera_id)
-    {:noreply, socket}
-  end
-
-  def handle_params(_unsigned_params, _uri, socket) do
-    {:noreply, socket}
   end
 
   def handle_event("scanned", unsigned_params, socket) do
@@ -65,23 +55,9 @@ defmodule GitsWeb.DashboardLive.ScanTickets do
     ~H"""
     <div class="h-dvh relative w-screen">
       <%= if is_nil(@payload) do %>
-        <div
-          phx-hook="QrScanner"
-          data-id={@camera_id}
-          id="scanner"
-          class="absolute inset-0 z-10 flex h-full"
-        >
-        </div>
+        <div phx-hook="QrScanner" id="scanner" class="absolute inset-0 z-10 flex h-full"></div>
         <div class="absolute inset-0 z-20 flex h-full w-full items-center justify-center">
           <div class="size-[22rem] ring-[1000px] rounded-2xl ring-zinc-50"></div>
-        </div>
-        <div
-          class="absolute inset-x-2 bottom-2 z-30 grid gap-2 bg-white p-4"
-          data-slug={@slug}
-          data-event-id={@event.id}
-          phx-hook="QrScannerInfo"
-          id="device_chooser"
-        >
         </div>
       <% else %>
         <div class="absolute inset-0 flex w-full flex-col items-center justify-center gap-4 bg-zinc-50">

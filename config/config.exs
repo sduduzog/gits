@@ -11,8 +11,6 @@ config :gits,
   ash_domains: [Gits.Support, Gits.Auth, Gits.Dashboard, Gits.Storefront, Gits.Admissions],
   ecto_repos: [Gits.Repo]
 
-config :branca, key: "supersecretkeyyoushouldnotcommit"
-
 config :ash, :utc_datetime_type, :datetime
 
 config :ash, :compatible_foreign_key_types, [

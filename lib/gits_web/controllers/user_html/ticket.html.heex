@@ -29,20 +29,20 @@
           </div>
         </div>
       </div>
-      <div class="mx-auto flex grid w-80 gap-4 rounded-3xl bg-white p-6 shadow-sm">
-        <div class="size-64 mx-auto flex max-w-sm justify-center">
+      <div class="mx-auto flex grid w-80 justify-center gap-4 rounded-3xl bg-white p-2 shadow-sm">
+        <div class="size-72 mx-auto flex max-w-sm justify-center">
           <%= raw(
             @token
             |> EQRCode.encode()
             |> EQRCode.svg(
-              viewbox: true,
+              shape: "circle",
               color: "#3f3f46",
               background_color: :transparent,
-              width: 256
+              width: 300
             )
           ) %>
         </div>
-        <div :if={true} class="max-w-80 mx-auto rounded-xl bg-blue-50 p-4">
+        <div :if={true} class="max-w-80 mx-auto rounded-2xl bg-blue-50 p-4">
           <div class="flex">
             <div class="flex-shrink-0">
               <.icon name="hero-information-circle-mini" class="bg-blue-500" />

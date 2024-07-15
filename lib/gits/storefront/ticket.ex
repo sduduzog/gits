@@ -181,7 +181,7 @@ defmodule Gits.Storefront.Ticket do
                   |> Ash.Query.get_argument(:token)
 
                 [ticket_id, user_id] =
-                  Paseto.peek(token)
+                  ExBase58.decode!(token)
                   |> String.split(":")
 
                 query |> Ash.Query.filter(id: ticket_id)
