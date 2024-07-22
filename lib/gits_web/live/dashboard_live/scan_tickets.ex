@@ -36,18 +36,21 @@ defmodule GitsWeb.DashboardLive.ScanTickets do
   end
 
   def handle_event("scanned", unsigned_params, socket) do
-    event = socket.assigns.event
-
     socket =
-      Paseto.parse_token(unsigned_params, event.keypair.public_key)
+      ExBase58.decode(unsigned_params)
       |> case do
-        {:ok, token} ->
-          socket |> assign(:payload, token.payload)
+        {:ok, payload} ->
+          socket |> assign(:payload, payload)
 
         _ ->
           socket
       end
 
+    {:noreply, socket}
+  end
+
+  def handle_event("admit", unsigned_params, socket) do
+    IO.inspect(unsigned_params)
     {:noreply, socket}
   end
 
@@ -107,7 +110,12 @@ defmodule GitsWeb.DashboardLive.ScanTickets do
                 <span class="text-center text-sm font-medium text-gray-900">Jane Cooper</span>
               </div>
             </div>
-            <.simple_form :let={f} for={%{}} class="p-2 gap-4 grid grid-cols-[4fr_1fr]">
+            <.simple_form
+              :let={f}
+              phx-submit="admit"
+              for={%{}}
+              class="p-2 gap-4 grid grid-cols-[4fr_1fr]"
+            >
               <button class="mb-0.5 grow self-end rounded-md bg-zinc-900 p-4 text-sm font-semibold text-white">
                 Admit
               </button>

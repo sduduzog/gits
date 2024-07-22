@@ -119,7 +119,8 @@ let liveSocket = new LiveSocket("/live", Socket, {
         html5QrCode = new Html5Qrcode("scanner", {
           formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
         });
-        html5QrCode.start({ facingMode: "environment" }, scanConfig, (decodedText) => {
+        html5QrCode.start({ facingMode: "environment" }, scanConfig, async (decodedText) => {
+          await html5QrCode.stop()
           this.pushEvent("scanned", decodedText);
         });
       },
