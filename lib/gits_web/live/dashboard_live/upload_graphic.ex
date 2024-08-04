@@ -76,7 +76,12 @@ defmodule GitsWeb.DashboardLive.UploadGraphic do
 
   def render(assigns) do
     ~H"""
-    <div>
+    <div class="flex gap-2">
+      <.link navigate={~p"/accounts/#{@slug}/events"} class="text-sm flex gap-2 text-zinc-600">
+        <.icon name="hero-chevron-left-mini" />
+        <span>Events</span>
+      </.link>
+
       <.link navigate={~p"/accounts/#{@slug}/events"} class="text-sm flex gap-2 text-zinc-600">
         <.icon name="hero-chevron-left-mini" />
         <span>Events</span>
@@ -101,7 +106,11 @@ defmodule GitsWeb.DashboardLive.UploadGraphic do
         </button>
       </div>
       <div class="aspect-[3/2] w-64 border *:h-full *:w-full *:object-cover">
-        <img :if={[] == @uploads.feature_image.entries} src="/images/placeholder.png" alt="" />
+        <img
+          :if={[] == @uploads.feature_image.entries}
+          src={Gits.Bucket.get_feature_image_path(@account_id, @event_id)}
+          alt=""
+        />
         <%= for entry <- @uploads.feature_image.entries do %>
           <.live_img_preview entry={entry} />
         <% end %>
@@ -125,12 +134,18 @@ defmodule GitsWeb.DashboardLive.UploadGraphic do
         </button>
       </div>
       <div class="aspect-[4/5] w-52 border *:h-full *:w-full *:object-cover">
-        <img :if={[] == @uploads.listing_image.entries} src="/images/placeholder.png" alt="" />
+        <img
+          :if={[] == @uploads.listing_image.entries}
+          src={Gits.Bucket.get_listing_image_path(@account_id, @event_id)}
+          alt=""
+        />
         <%= for entry <- @uploads.listing_image.entries do %>
           <.live_img_preview entry={entry} />
         <% end %>
       </div>
     </.form>
+
+    <%= Gits.Bucket.get_feature_image_path(@account_id, @event_id) %>
     """
   end
 end

@@ -27,9 +27,9 @@ defmodule Gits.Bucket do
     get_image(account_id, event_id, "feature")
   end
 
-  defp get_image(account_id, event_id, type) do
+  defp get_image(account_id, event_id, name) do
     bucket_name = Application.get_env(:gits, :bucket_name)
-    filename = "#{account_id}/#{event_id}/#{type}.jpg"
+    filename = "#{account_id}/#{event_id}/#{name}.jpg"
 
     ExAws.S3.head_object(bucket_name, filename)
     |> ExAws.request()
