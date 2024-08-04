@@ -10,6 +10,7 @@ defmodule GitsWeb.PageController do
     events =
       Event
       |> Ash.Query.for_read(:read)
+      |> Ash.Query.filter(starts_at > fragment("now()"))
       |> Ash.read!()
 
     conn
