@@ -5,7 +5,14 @@
   </.link>
 </div>
 <div class="flex flex-wrap items-center gap-2 md:gap-4">
-  <div class="aspect-[3/2] w-32 overflow-hidden rounded-xl bg-zinc-200"></div>
+  <div class="aspect-[3/2] relative w-32 overflow-hidden rounded-xl bg-zinc-200">
+    <button
+      phx-click={JS.navigate(~p"/accounts/#{@slug}/events/#{@event.id}/upload-graphics")}
+      class="bg-black/10 absolute top-2 right-2 flex rounded-md p-1.5 text-zinc-500"
+    >
+      <.icon name="hero-pencil-square-mini" />
+    </button>
+  </div>
   <div class="grid grow gap-2">
     <div class="flex flex-wrap items-center gap-2">
       <h1 class="w-full text-xl font-semibold md:w-auto"><%= @title %></h1>
@@ -15,7 +22,10 @@
     </div>
     <div class="flex flex-wrap items-center gap-4">
       <div class="w-full grow gap-2 text-sm text-zinc-500 md:w-auto">
-        <span>May 20, 2024 at 10:30 PM</span>
+        <span>
+          <%= @event.starts_at
+          |> Timex.format!("%b %e, %Y at %H:%M %p", :strftime) %>
+        </span>
         <span class="inline-flex px-0.5">&bull;</span>
         <span>Artistry JHB, Sandton Somewhere</span>
       </div>

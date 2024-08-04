@@ -32,14 +32,15 @@ defmodule Gits.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.7.11"},
+      {:phoenix_live_view, "~> 0.20"},
+      {:phoenix, "~> 1.0"},
+      {:ash, "~> 3.0"},
       {:phoenix_ecto, "~> 4.4"},
       {:phoenix_pubsub, "~> 2.1"},
       {:ecto_sql, "~> 3.10"},
       {:postgrex, ">= 0.0.0"},
       {:phoenix_html, "~> 4.0"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:phoenix_live_view, "~> 0.20.2"},
       {:floki, ">= 0.30.0", only: :test},
       {:phoenix_live_dashboard, "~> 0.8.3"},
       {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
@@ -60,7 +61,6 @@ defmodule Gits.MixProject do
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.2"},
-      {:ash, "~> 3.2"},
       {:picosat_elixir, "~> 0.2.0"},
       {:ash_phoenix, "~> 2.0"},
       {:ash_postgres, "~> 2.1"},
@@ -92,7 +92,8 @@ defmodule Gits.MixProject do
       {:twix, "~> 0.3.0"},
       {:fun_with_flags, "~> 1.11"},
       {:fun_with_flags_ui, "~> 1.0"},
-      {:ex_base58, "~> 0.6"}
+      {:ex_base58, "~> 0.6"},
+      {:igniter, "~> 0.1"}
     ]
   end
 

@@ -53,8 +53,7 @@ defmodule GitsWeb.DashboardLive.TeamInviteNewMember do
       slug = socket.assigns.slug
       {:noreply, push_navigate(socket, to: ~p"/accounts/#{slug}/team")}
     else
-      all ->
-        IO.inspect(all)
+      _all ->
         {:noreply, socket}
     end
   end
