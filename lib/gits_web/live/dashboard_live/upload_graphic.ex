@@ -2,7 +2,7 @@ defmodule GitsWeb.DashboardLive.UploadGraphic do
   require Ash.Query
   use GitsWeb, :live_view
 
-  alias Gits.Dashboard.{Account, Invite, Member}
+  alias Gits.Dashboard.{Account, Member}
   alias Gits.Storefront.Event
 
   def mount(params, _session, socket) do
@@ -37,6 +37,7 @@ defmodule GitsWeb.DashboardLive.UploadGraphic do
       |> assign(:account_id, account.id)
       |> assign(:account_name, account.name)
       |> assign(:event_id, event.id)
+      |> assign(:event_name, event.name) 
       |> assign(:members, members)
       |> allow_upload(:feature_image, accept: ~w(.jpg .jpeg .png), max_entries: 1)
       |> allow_upload(:listing_image, accept: ~w(.jpg .jpeg .png), max_entries: 1)
@@ -87,7 +88,7 @@ defmodule GitsWeb.DashboardLive.UploadGraphic do
         class="text-sm flex gap-2 text-zinc-600"
       >
         <.icon name="hero-slash-mini" />
-        <span>Events</span>
+        <span><%= @event_name %></span>
       </.link>
     </div>
     <h1 class="px-4 text-xl font-semibold">Upload graphics</h1>
@@ -147,8 +148,6 @@ defmodule GitsWeb.DashboardLive.UploadGraphic do
         <% end %>
       </div>
     </.form>
-
-    <%= Gits.Bucket.get_feature_image_path(@account_id, @event_id) %>
     """
   end
 end

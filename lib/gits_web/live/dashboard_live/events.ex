@@ -1,5 +1,6 @@
 defmodule GitsWeb.DashboardLive.Events do
   use GitsWeb, :live_view
+  require Ash.Query
 
   alias Gits.Dashboard.Account
   alias Gits.Storefront.Event
@@ -18,6 +19,7 @@ defmodule GitsWeb.DashboardLive.Events do
     events =
       Event
       |> Ash.Query.for_read(:read, %{}, actor: user)
+      |> Ash.Query.filter(account.id == ^account.id)
       |> Ash.read!()
 
     socket =
@@ -26,6 +28,7 @@ defmodule GitsWeb.DashboardLive.Events do
       |> assign(:title, "Events")
       |> assign(:context_options, nil)
       |> assign(:accounts, accounts)
+      |> assign(:account_id, account.id)
       |> assign(:account_name, account.name)
       |> assign(:events, events)
 

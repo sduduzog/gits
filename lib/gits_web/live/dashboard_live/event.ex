@@ -33,6 +33,7 @@ defmodule GitsWeb.DashboardLive.Event do
       |> assign(:slug, params["slug"])
       |> assign(:accounts, accounts)
       |> assign(:account, account)
+      |> assign(:account_id, account.id)
       |> assign(:account_name, account.name)
       |> assign(:event, event)
       |> assign(:title, event.name)

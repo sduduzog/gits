@@ -2,14 +2,20 @@ defmodule GitsWeb.PageController do
   use GitsWeb, :controller
 
   require Ash.Query
-  alias Gits.Storefront.Event
   alias Gits.Dashboard.Member
   alias Gits.Storefront.Customer
+  alias Gits.Storefront.Event
 
   def home(conn, _) do
+    events =
+      Event
+      |> Ash.Query.for_read(:read)
+      |> Ash.read!()
+
     conn
     |> assign(:slug, "/")
     |> assign(:title, "/")
+    |> assign(:events, events)
     |> render(:home, layout: false)
   end
 

@@ -11,7 +11,9 @@
 
 <div class="grid gap-4 divide-y divide-zinc-100 md:gap-6">
   <div :for={event <- @events} class="flex items-center gap-2 pt-4 md:gap-6 md:pt-6">
-    <div class="aspect-[3/2] w-32 shrink-0 overflow-hidden rounded-xl bg-zinc-200"></div>
+    <div class="aspect-[3/2] w-32 shrink-0 overflow-hidden rounded-xl bg-zinc-200">
+      <img src={Gits.Bucket.get_feature_image_path(@account_id, event.id)} alt="" />
+    </div>
     <div class="line-clamp-3 grid grow gap-1 md:gap-2">
       <h1 class="w-full text-base font-semibold md:w-auto">
         <.link navigate={~p"/accounts/#{@slug}/events/#{event.id}"}><%= event.name %></.link>

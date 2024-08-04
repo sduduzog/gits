@@ -6,11 +6,12 @@
 </div>
 <div class="flex flex-wrap items-center gap-2 md:gap-4">
   <div class="aspect-[3/2] relative w-32 overflow-hidden rounded-xl bg-zinc-200">
+    <img src={Gits.Bucket.get_feature_image_path(@account_id, @event.id)} alt="" />
     <button
       phx-click={JS.navigate(~p"/accounts/#{@slug}/events/#{@event.id}/upload-graphics")}
-      class="bg-black/10 absolute top-2 right-2 flex rounded-md p-1.5 text-zinc-500"
+      class="bg-black/5 flex items-center justify-center text-white/50 absolute inset-0 flex rounded-xl p-1.5 hover:bg-black/10 hover:text-white"
     >
-      <.icon name="hero-pencil-square-mini" />
+      <.icon name="hero-pencil-square" />
     </button>
   </div>
   <div class="grid grow gap-2">
