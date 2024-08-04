@@ -1,35 +1,39 @@
-<div class="w-full space-y-4 md:space-y-8">
-  <div class="grid gap-4 md:grid-cols-[theme(space.80)_1fr] md:gap-6 lg:grid-cols-[theme(space.96)_1fr]">
-    <div class="aspect-[3/2] overflow-hidden rounded-2xl bg-gray-400">
-      <img
-        src={@feature_image}
-        alt=""
-        class="size-full object-cover transition-transform duration-300 hover:scale-110"
-      />
+<div class="mx-auto min-h-screen w-full max-w-screen-lg items-start gap-4 space-y-4 p-2 md:flex md:gap-12 md:space-y-0 md:p-0 md:pt-20">
+  <div class="aspect-[3/2] relative shrink-0 overflow-hidden rounded-2xl md:w-96 md:rounded-3xl">
+    <div class="size-12 absolute top-2 left-2 flex shrink-0 flex-col items-center justify-center rounded-xl bg-white opacity-90 *:leading-4 md:top-4 md:left-4">
+      <span class="text-base font-semibold"><%= @starts_at_day %></span>
+      <span class="text-xs"><%= @starts_at_month %></span>
     </div>
-    <div class="flex flex-col gap-4">
-      <div class="flex grow gap-2">
-        <div class="size-10 flex shrink-0 flex-col items-center justify-center rounded-xl border border-zinc-400 *:leading-3">
-          <span class="text-base font-semibold"><%= @starts_at_day %></span>
-          <span class="text-xs"><%= @starts_at_month %></span>
-        </div>
-        <h1 class="text-3xl font-medium"><%= @event.name %></h1>
-      </div>
-      <div>
-        <button
-          phx-click="get_tickets"
-          class="rounded-2xl border bg-white p-4 text-sm font-medium"
-        >
-          Get Tickets
-        </button>
-      </div>
-    </div>
+
+    <img
+      src={@feature_image}
+      alt="Event's featured image"
+      class="size-full object-cover transition-transform duration-300 hover:scale-110"
+    />
   </div>
-  <div class="space-y-2 rounded-2xl bg-white p-4 text-sm shadow-sm">
-    <h2 class="font-medium text-zinc-500">About this event</h2>
-    <p><%= @event.description %></p>
+  <div class="grid grow gap-6">
+    <h1 class="line-clamp-2 text-2xl font-semibold">
+      <%= @event.name %>
+    </h1>
+
+    <div class="flex">
+      <div class="grow"></div>
+      <button
+        phx-click="get_tickets"
+        class="rounded-xl bg-zinc-700 p-3 px-4 font-medium text-white"
+      >
+        Get Tickets
+      </button>
+    </div>
+    <div class="space-y-2 rounded-2xl bg-white text-sm">
+      <h2 class="font-medium text-zinc-500">About this event</h2>
+      <p class="max-w-screen-md whitespace-pre-line">
+        <%= @event.description %>
+      </p>
+    </div>
   </div>
 </div>
+
 <.live_component
   :if={@basket_id}
   id={@basket_id}

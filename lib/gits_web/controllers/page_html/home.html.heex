@@ -12,7 +12,7 @@
 
   <div class="relative grid gap-8 p-4 pt-8 text-center lg:pt-40">
     <h1 class="text-5xl font-semibold leading-tight dark:text-white md:text-6xl">
-      Unlock Unforgettable Experiences
+      <span class="hidden md:inline-block">Unlock</span> Unforgettable Experiences
     </h1>
     <p class="mx-auto max-w-xl text-xl font-light text-zinc-800 dark:text-zinc-200">
       We offer better security, faster check-in, and lower costs. Whether it’s concerts, conferences, festivals, or sports events, we’ve got you covered.
@@ -51,9 +51,10 @@
     <div class="min-h-96 mx-auto max-w-screen-lg pt-8">
       <h2 :if={Enum.any?(@events)} class="px-4 text-xl font-medium">Coming up</h2>
       <div class="flex gap-8 overflow-x-auto p-4">
-        <div
+        <.link
           :for={event <- @events}
-          class="aspect-[4/5] group relative w-52 shrink-0 overflow-hidden rounded-2xl shadow-sm lg:w-56"
+          navigate={~p"/events/#{event.masked_id}"}
+          class="aspect-[4/5] group relative shrink-0 overflow-hidden rounded-2xl shadow-sm w-56"
         >
           <img
             src={Gits.Bucket.get_listing_image_path(event.account_id, event.id)}
@@ -71,17 +72,23 @@
           </div>
           <div class="absolute inset-x-2 bottom-2 space-y-1.5 rounded-xl bg-white p-2 px-2.5 shadow-md">
             <span class="p0.5 line-clamp-2 text-sm font-medium"><%= event.name %></span>
-            <div class="flex items-center justify-between">
+            <div class="flex items-center justify-between gap-1">
               <span class="flex items-center gap-1 truncate text-sm">
-                <.icon name="hero-map-pin-micro" class="shrink-0" />
+                <.icon name="hero-map-pin-micro" class="shrink-0 opacity-50" />
                 <span class="truncate">
                   A Streetbar called desire
                 </span>
               </span>
-              <span class="rounded-lg border p-1 px-1.5 text-sm">FREE+</span>
+              <span class="block whitespace-nowrap rounded-lg border p-1 px-1.5 text-sm font-medium">
+                <%= if Decimal.gt?(event.minimum_ticket_price, 0) do %>
+                  R <%= event.minimum_ticket_price |> Gits.Currency.format() %>
+                <% else %>
+                  FREE+
+                <% end %>
+              </span>
             </div>
           </div>
-        </div>
+        </.link>
       </div>
     </div>
   </div>

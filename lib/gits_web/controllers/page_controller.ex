@@ -11,6 +11,8 @@ defmodule GitsWeb.PageController do
       Event
       |> Ash.Query.for_read(:read)
       |> Ash.Query.filter(starts_at > fragment("now()"))
+      |> Ash.Query.filter(count(tickets) > 0)
+      |> Ash.Query.load(:minimum_ticket_price)
       |> Ash.read!()
 
     conn
