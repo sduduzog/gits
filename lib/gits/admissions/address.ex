@@ -29,7 +29,7 @@ defmodule Gits.Admissions.Address do
   end
 
   postgres do
-    table "attendees"
+    table "addresses"
     repo Gits.Repo
   end
 end

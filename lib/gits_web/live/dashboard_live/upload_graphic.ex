@@ -61,7 +61,7 @@ defmodule GitsWeb.DashboardLive.UploadGraphic do
 
   def render(assigns) do
     ~H"""
-    <div class="flex gap-2">
+    <div class="flex flex-col items-start gap-2 md:flex-row">
       <.link
         navigate={~p"/accounts/#{@slug}/events"}
         class="text-sm flex gap-2 text-zinc-400 hover:text-zinc-700"
@@ -87,7 +87,7 @@ defmodule GitsWeb.DashboardLive.UploadGraphic do
 
     <.form
       for={%{}}
-      class="border justify-between flex relative p-4 rounded-xl"
+      class="border justify-between flex-wrap gap-4 flex relative p-4 rounded-xl"
       phx-change="validate"
       phx-submit="save_feature_image"
     >
@@ -95,7 +95,7 @@ defmodule GitsWeb.DashboardLive.UploadGraphic do
         <h2 class="text-lg font-medium">Feature image</h2>
         <.live_file_input
           upload={@uploads.feature_image}
-          class="file:p-2 file:bg-zinc-100 file:px-4 file:rounded-2xl file:border-0"
+          class="file:p-2 file:bg-zinc-100 file:px-4 w-full file:rounded-2xl file:border-0"
         />
         <button class="rounded-2xl bg-zinc-100 p-2 px-4">
           Upload
@@ -115,15 +115,15 @@ defmodule GitsWeb.DashboardLive.UploadGraphic do
 
     <.form
       for={%{}}
-      class="border justify-between flex relative p-4 rounded-xl"
+      class="border justify-between flex gap-4 flex-wrap relative p-4 rounded-xl"
       phx-change="validate"
       phx-submit="save_listing_image"
     >
-      <div class="flex flex-col items-start gap-4">
+      <div class=" flex flex-col items-start gap-4">
         <h2 class="text-lg font-medium">Listing image</h2>
         <.live_file_input
           upload={@uploads.listing_image}
-          class="file:p-2 file:bg-zinc-100 file:px-4 file:rounded-2xl file:border-0"
+          class="file:p-2 file:bg-zinc-100 file:px-4 w-full file:rounded-2xl file:border-0"
         />
         <button class="rounded-2xl bg-zinc-100 p-2 px-4">
           Upload
