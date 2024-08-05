@@ -15,3 +15,7 @@ config :swoosh, local: false
 
 # Do not print debug messages in production
 config :logger, level: :info
+
+config :gits, :presigned_url_options,
+  virtual_host: true,
+  bucket_as_host: true

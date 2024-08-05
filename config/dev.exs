@@ -87,3 +87,7 @@ config :gits, :base_url, "http://localhost:4000"
 config :gits, :sender_email, "hey@gits.co.za"
 
 config :ash, :pub_sub, debug?: true
+
+config :gits, :presigned_url_options,
+  virtual_host: false,
+  bucket_as_host: false

@@ -39,13 +39,14 @@ defmodule Gits.Bucket do
   end
 
   defp get_event_image(account_id, event_id, type) do
+    presigned_url_options = Application.get_env(:gits, :presigned_url_options)
     bucket_name = Application.get_env(:gits, :bucket_name)
     filename = get_event_filename(account_id, event_id, type) <> ".jpg"
 
     with {:ok, _} <- ExAws.S3.head_object(bucket_name, filename) |> ExAws.request(),
          {:ok, url} <-
            ExAws.Config.new(:s3)
-           |> ExAws.S3.presigned_url(:get, bucket_name, filename, bucket_as_host: true) do
+           |> ExAws.S3.presigned_url(:get, bucket_name, filename, presigned_url_options) do
       url
     else
       _ ->
