@@ -44,7 +44,8 @@ defmodule Gits.Bucket do
 
     with {:ok, _} <- ExAws.S3.head_object(bucket_name, filename) |> ExAws.request(),
          {:ok, url} <-
-           ExAws.Config.new(:s3) |> ExAws.S3.presigned_url(:get, bucket_name, filename, []) do
+           ExAws.Config.new(:s3)
+           |> ExAws.S3.presigned_url(:get, bucket_name, filename, bucket_as_host: true) do
       url
     else
       _ ->
