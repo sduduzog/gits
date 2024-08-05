@@ -10,22 +10,22 @@
 <div class="flex min-h-screen flex-col">
   <.header user={@current_user} />
 
-  <div class="relative grid gap-8 p-4 pt-8 text-center lg:pt-40">
+  <div class="relative grid gap-8 p-4 pt-8 md:text-center lg:pt-40">
     <h1 class="text-5xl font-semibold leading-tight dark:text-white md:text-6xl">
-      <span class="hidden md:inline-block">Unlock</span> Unforgettable Experiences
+      Unlock Unforgettable Experiences
     </h1>
-    <p class="mx-auto max-w-xl text-xl font-light text-zinc-800 dark:text-zinc-200">
+    <p class="mx-auto max-w-xl font-light text-zinc-800 dark:text-zinc-200 lg:text-xl">
       We offer better security, faster check-in, and lower costs. Whether it’s concerts, conferences, festivals, or sports events, we’ve got you covered.
     </p>
-    <div class="mx-auto flex items-center justify-center gap-8 font-medium">
+    <div class="flex items-center gap-8 font-medium md:mx-auto md:justify-center">
       <.link
-        :if={FunWithFlags.enabled?(:get_started_button)}
+        :if={FunWithFlags.enabled?(:get_started_button) or true}
         class="border-2 rounded-lg border-zinc-600 dark:border-zinc-300 dark:text-zinc-100 p-2 px-4 hover:underline"
       >
         Get started
       </.link>
       <.link
-        :if={FunWithFlags.enabled?(:why_choose_button)}
+        :if={FunWithFlags.enabled?(:why_choose_button) or true}
         class="hover:underline dark:text-zinc-100"
       >
         Why choose <span class="font-black italic text-zinc-700 dark:text-zinc-200">GiTS</span>?
