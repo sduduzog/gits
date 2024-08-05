@@ -55,8 +55,8 @@ defmodule Gits.Bucket do
              filename,
              presigned_url_options ++
                [
-                 start_datetime:
-                   {{datetime.year, datetime.month, datetime.day}, {datetime.hour, 0, 0}}
+                 # start_datetime:
+                 #   {{datetime.year, datetime.month, datetime.day}, {datetime.hour, 0, 0}}
                ]
            ) do
       # [url, _] = signed_url |> String.split("?")
