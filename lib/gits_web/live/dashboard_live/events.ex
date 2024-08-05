@@ -63,10 +63,10 @@ defmodule GitsWeb.DashboardLive.Events do
       <div :for={event <- @events} class="flex items-center gap-2 pt-4 md:gap-6 md:pt-6">
         <div class="aspect-[3/2] w-32 shrink-0 overflow-hidden rounded-xl bg-zinc-200">
           <img
-            phx-hook="ImgSrcFallback"
             src={Gits.Bucket.get_feature_image_path(@account.id, event.id)}
             alt="event image"
             id={"event-image-#{event.id}"}
+            phx-hook="ImgSrcFallback"
           />
         </div>
         <div class="line-clamp-3 grid grow gap-1 md:gap-2">

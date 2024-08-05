@@ -34,7 +34,7 @@ defmodule GitsWeb.DashboardLive.UploadGraphic do
       Image.open!(path)
       |> Image.thumbnail!("480x320", fit: :cover)
       |> Image.stream!(suffix: ".jpg", buffer_size: 5_242_880, quality: 100)
-      |> Gits.Bucket.upload_feature_image(socket.assigns.account_id, socket.assigns.event_id)
+      |> Gits.Bucket.upload_feature_image(socket.assigns.account.id, socket.assigns.event_id)
 
       {:ok, nil}
     end)
@@ -47,7 +47,7 @@ defmodule GitsWeb.DashboardLive.UploadGraphic do
       Image.open!(path)
       |> Image.thumbnail!("256x320", fit: :cover)
       |> Image.stream!(suffix: ".jpg", buffer_size: 5_242_880, quality: 100)
-      |> Gits.Bucket.upload_listing_image(socket.assigns.account_id, socket.assigns.event_id)
+      |> Gits.Bucket.upload_listing_image(socket.assigns.account.id, socket.assigns.event_id)
 
       {:ok, nil}
     end)
@@ -106,6 +106,8 @@ defmodule GitsWeb.DashboardLive.UploadGraphic do
           :if={[] == @uploads.feature_image.entries}
           src={Gits.Bucket.get_feature_image_path(@account.id, @event_id)}
           alt=""
+          id={"event-feature-image-#{@event_id}"}
+          phx-hook="ImgSrcFallback"
         />
         <%= for entry <- @uploads.feature_image.entries do %>
           <.live_img_preview entry={entry} />
@@ -134,6 +136,8 @@ defmodule GitsWeb.DashboardLive.UploadGraphic do
           :if={[] == @uploads.listing_image.entries}
           src={Gits.Bucket.get_listing_image_path(@account.id, @event_id)}
           alt=""
+          id={"event-listing-image-#{@event_id}"}
+          phx-hook="ImgSrcFallback"
         />
         <%= for entry <- @uploads.listing_image.entries do %>
           <.live_img_preview entry={entry} />
