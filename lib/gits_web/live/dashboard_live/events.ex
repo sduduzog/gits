@@ -10,9 +10,9 @@ defmodule GitsWeb.DashboardLive.Events do
 
     accounts =
       Account
-      |> Ash.Query.for_read(:list_for_dashboard, %{user_id: user.id}, actor: user)
+      |> Ash.Query.for_read(:read, %{}, actor: user)
+      |> Ash.Query.filter(members.user.id == ^user.id)
       |> Ash.read!()
-      |> Enum.map(fn item -> %{id: item.id, name: item.name} end)
 
     account = Enum.find(accounts, fn item -> item.id == params["slug"] end)
 

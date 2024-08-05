@@ -35,7 +35,9 @@ defmodule GitsWeb.DashboardLive.Event do
       |> assign(:account, account)
       |> assign(:account_id, account.id)
       |> assign(:account_name, account.name)
+      |> assign(:event_id, event.id)
       |> assign(:event, event)
+      |> assign(:event_name, event.name)
       |> assign(:title, event.name)
       |> assign(:context_options, [
         %{

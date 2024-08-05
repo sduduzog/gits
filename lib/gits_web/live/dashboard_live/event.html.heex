@@ -1,15 +1,23 @@
-<div>
-  <.link navigate={~p"/accounts/#{@slug}/events"} class="text-sm flex gap-2 text-zinc-600">
+<div class="flex gap-2">
+  <.link
+    navigate={~p"/accounts/#{@slug}/events"}
+    class="text-sm flex gap-2 text-zinc-400 hover:text-zinc-700"
+  >
     <.icon name="hero-chevron-left-mini" />
     <span>Events</span>
   </.link>
+
+  <div class="flex gap-2 text-sm text-zinc-600">
+    <.icon name="hero-slash-mini" />
+    <span><%= @event_name %></span>
+  </div>
 </div>
 <div class="flex flex-wrap items-center gap-2 md:gap-4">
   <div class="aspect-[3/2] relative w-32 overflow-hidden rounded-xl bg-zinc-200">
     <img src={Gits.Bucket.get_feature_image_path(@account_id, @event.id)} alt="" />
     <button
       phx-click={JS.navigate(~p"/accounts/#{@slug}/events/#{@event.id}/upload-graphics")}
-      class="bg-black/5 flex items-center justify-center text-white/50 absolute inset-0 flex rounded-xl p-1.5 hover:bg-black/10 hover:text-white"
+      class="bg-black/5 text-white/50 absolute inset-0 flex flex items-center justify-center rounded-xl p-1.5 hover:bg-black/10 hover:text-white"
     >
       <.icon name="hero-pencil-square" />
     </button>
@@ -18,8 +26,11 @@
     <div class="flex flex-wrap items-center gap-2">
       <h1 class="w-full text-xl font-semibold md:w-auto"><%= @title %></h1>
       <span class="ring-green-600/20 inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset">
-        Badge
+        <%= @event.visibility %>
       </span>
+      <.link navigate={~p"/events/#{@event.masked_id}"} class="lg:opacity-40 hover:opacity-100">
+        <.icon name="hero-link-mini" />
+      </.link>
     </div>
     <div class="flex flex-wrap items-center gap-4">
       <div class="w-full grow gap-2 text-sm text-zinc-500 md:w-auto">

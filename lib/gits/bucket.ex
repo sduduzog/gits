@@ -25,7 +25,8 @@ defmodule Gits.Bucket do
       image,
       bucket_name,
       "#{filename}.jpg",
-      content_type: "image/jpeg"
+      content_type: "image/jpeg",
+      cache_control: "public,max-age=3600"
     )
     |> ExAws.request!()
   end
@@ -58,9 +59,10 @@ defmodule Gits.Bucket do
                    {{datetime.year, datetime.month, datetime.day}, {datetime.hour, 0, 0}}
                ]
            ) do
-      [url, _] = signed_url |> String.split("?")
+      # [url, _] = signed_url |> String.split("?")
 
-      url
+      # url
+      signed_url
     else
       _ ->
         "/images/placeholder.png"

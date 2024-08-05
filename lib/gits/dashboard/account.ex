@@ -106,30 +106,9 @@ defmodule Gits.Dashboard.Account do
   end
 
   policies do
-    # policy action(:read) do
-    #   authorize_if accessing_from(Event, :account)
-    #   authorize_if expr(members.user.id == ^actor(:id) and members.role in [:owner, :admin])
-    #   authorize_if actor_present()
-    # end
     policy always() do
       authorize_if always()
     end
-
-    # policy action(:update_paystack_account) do
-    #   authorize_if expr(members.user.id == ^actor(:id) and members.role in [:owner, :admin])
-    # end
-    #
-    # policy action([:read_for_dashboard, :list_for_dashboard]) do
-    #   authorize_if expr(members.user.id == ^actor(:id))
-    # end
-    #
-    # policy action(:create_from_waitlist) do
-    #   authorize_if Gits.Checks.ActorIsObanJob
-    # end
-    #
-    # policy action([:by_id, :create, :enable_billing]) do
-    #   authorize_if actor_present()
-    # end
   end
 
   postgres do

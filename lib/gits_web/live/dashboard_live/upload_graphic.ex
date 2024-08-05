@@ -78,18 +78,26 @@ defmodule GitsWeb.DashboardLive.UploadGraphic do
   def render(assigns) do
     ~H"""
     <div class="flex gap-2">
-      <.link navigate={~p"/accounts/#{@slug}/events"} class="text-sm flex gap-2 text-zinc-400">
+      <.link
+        navigate={~p"/accounts/#{@slug}/events"}
+        class="text-sm flex gap-2 text-zinc-400 hover:text-zinc-700"
+      >
         <.icon name="hero-chevron-left-mini" />
         <span>Events</span>
       </.link>
 
       <.link
         navigate={~p"/accounts/#{@slug}/events/#{@event_id}"}
-        class="text-sm flex gap-2 text-zinc-600"
+        class="flex gap-2 text-sm text-zinc-400 hover:text-zinc-700"
       >
         <.icon name="hero-slash-mini" />
         <span><%= @event_name %></span>
       </.link>
+
+      <div class="flex gap-2 text-sm text-zinc-600">
+        <.icon name="hero-slash-mini" />
+        <span>Upload graphics</span>
+      </div>
     </div>
     <h1 class="px-4 text-xl font-semibold">Upload graphics</h1>
 
