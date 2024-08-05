@@ -58,13 +58,12 @@ defmodule GitsWeb.BasketComponent do
               actor: user
             )
 
+          updated_tickets = tickets |> swap_stale_ticket_in_list(updated_ticket)
+
           socket
           |> assign(
             :tickets,
-            tickets
-            |> Enum.map(fn ticket ->
-              if(ticket.id == updated_ticket.id, do: updated_ticket, else: ticket)
-            end)
+            updated_tickets
           )
 
         _ ->
@@ -74,6 +73,13 @@ defmodule GitsWeb.BasketComponent do
     socket = socket |> assign(:basket, basket |> Ash.reload!(actor: user))
 
     {:noreply, socket}
+  end
+
+  defp swap_stale_ticket_in_list(tickets, updated_ticket) do
+    tickets
+    |> Enum.map(fn ticket ->
+      if(ticket.id == updated_ticket.id, do: updated_ticket, else: ticket)
+    end)
   end
 
   def handle_event("add_ticket", unsigned_params, socket) do
@@ -95,15 +101,13 @@ defmodule GitsWeb.BasketComponent do
         actor: user
       )
 
-    socket =
-      socket
-      |> assign(
-        :tickets,
-        tickets
-        |> Enum.map(fn ticket ->
-          if(ticket.id == updated_ticket.id, do: updated_ticket, else: ticket)
-        end)
-      )
+    updated_tickets = tickets |> swap_stale_ticket_in_list(updated_ticket)
+
+    socket
+    |> assign(
+      :tickets,
+      updated_tickets
+    )
 
     socket = socket |> assign(:basket, basket |> Ash.reload!(actor: user))
 

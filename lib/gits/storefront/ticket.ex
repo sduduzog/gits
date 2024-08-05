@@ -7,8 +7,8 @@ defmodule Gits.Storefront.Ticket do
     authorizers: [Ash.Policy.Authorizer],
     domain: Gits.Storefront
 
+  alias Gits.Storefront.Calculations.TicketToken
   alias Gits.Storefront.{Event, TicketInstance}
-  alias Gits.Storefront.Calculations.{TicketCode, TicketToken}
 
   attributes do
     uuid_primary_key :id
@@ -128,7 +128,6 @@ defmodule Gits.Storefront.Ticket do
       argument :basket_id, :uuid, allow_nil?: false
     end
 
-    calculate :qr_code, :string, TicketCode
     calculate :token, :string, TicketToken
   end
 

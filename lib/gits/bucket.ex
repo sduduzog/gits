@@ -44,9 +44,22 @@ defmodule Gits.Bucket do
     filename = get_event_filename(account_id, event_id, type) <> ".jpg"
 
     with {:ok, _} <- ExAws.S3.head_object(bucket_name, filename) |> ExAws.request(),
-         {:ok, url} <-
+         datetime <-
+           DateTime.now!("Etc/UTC"),
+         {:ok, signed_url} <-
            ExAws.Config.new(:s3)
-           |> ExAws.S3.presigned_url(:get, bucket_name, filename, presigned_url_options) do
+           |> ExAws.S3.presigned_url(
+             :get,
+             bucket_name,
+             filename,
+             presigned_url_options ++
+               [
+                 start_datetime:
+                   {{datetime.year, datetime.month, datetime.day}, {datetime.hour, 0, 0}}
+               ]
+           ) do
+      [url, _] = signed_url |> String.split("?")
+
       url
     else
       _ ->

@@ -10,10 +10,10 @@ defmodule GitsWeb.PageController do
     events =
       Event
       |> Ash.Query.for_read(:read)
-      |> Ash.Query.filter(starts_at > fragment("now()"))
+      |> Ash.Query.filter(published_at <= fragment("now()") and starts_at >= fragment("now()"))
       |> Ash.Query.filter(count(tickets) > 0)
       |> Ash.Query.filter(visibility == :public)
-      |> Ash.Query.load(:minimum_ticket_price)
+      |> Ash.Query.load([:minimum_ticket_price, :maximum_ticket_price])
       |> Ash.read!()
 
     conn
