@@ -130,33 +130,6 @@ defmodule GitsWeb.PageController do
     redirect(conn, to: "/organizers")
   end
 
-  def bucket(conn, params) do
-    filename = Enum.join(params["keys"], "/")
-
-    with {:ok, _} <-
-           check_for_object(filename),
-         {:ok, url} <- get_presigned_url(filename) do
-      redirect(conn, external: url)
-    else
-      {:error, _} ->
-        nil
-    end
-  end
-
-  defp check_for_object(filename) do
-    bucket_name = Application.get_env(:gits, :bucket_name)
-
-    ExAws.S3.head_object(bucket_name, filename)
-    |> ExAws.request()
-  end
-
-  defp get_presigned_url(filename) do
-    bucket_name = Application.get_env(:gits, :bucket_name)
-
-    ExAws.Config.new(:s3)
-    |> ExAws.S3.presigned_url(:get, bucket_name, filename, [])
-  end
-
   def healthz(conn, _) do
     conn |> json(%{})
   end

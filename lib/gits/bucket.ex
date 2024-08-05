@@ -1,13 +1,24 @@
 defmodule Gits.Bucket do
   def upload_listing_image(image, account_id, event_id) do
-    upload(image, "#{account_id}/#{event_id}/listing")
+    filename = get_event_filename(account_id, event_id, "listing")
+    upload_image(image, filename)
   end
 
   def upload_feature_image(image, account_id, event_id) do
-    upload(image, "#{account_id}/#{event_id}/feature")
+    filename = get_event_filename(account_id, event_id, "feature")
+    upload_image(image, filename)
   end
 
-  defp upload(image, filename) do
+  defp get_event_filename(account_id, event_id, type) do
+    hash_filename("#{account_id}/#{event_id}/#{type}")
+  end
+
+  defp hash_filename(filename) do
+    :crypto.hash(:sha, filename)
+    |> Base.encode16(case: :lower)
+  end
+
+  defp upload_image(image, filename) do
     bucket_name = Application.get_env(:gits, :bucket_name)
 
     ExAws.S3.upload(
@@ -20,22 +31,24 @@ defmodule Gits.Bucket do
   end
 
   def get_listing_image_path(account_id, event_id) do
-    get_image(account_id, event_id, "listing")
+    get_event_image(account_id, event_id, "listing")
   end
 
   def get_feature_image_path(account_id, event_id) do
-    get_image(account_id, event_id, "feature")
+    get_event_image(account_id, event_id, "feature")
   end
 
-  defp get_image(account_id, event_id, name) do
+  defp get_event_image(account_id, event_id, type) do
     bucket_name = Application.get_env(:gits, :bucket_name)
-    filename = "#{account_id}/#{event_id}/#{name}.jpg"
+    filename = get_event_filename(account_id, event_id, type) <> ".jpg"
 
-    ExAws.S3.head_object(bucket_name, filename)
-    |> ExAws.request()
-    |> case do
-      {:ok, _} -> "/bucket/#{filename}"
-      _ -> "/images/placeholder.png"
+    with {:ok, _} <- ExAws.S3.head_object(bucket_name, filename) |> ExAws.request(),
+         {:ok, url} <-
+           ExAws.Config.new(:s3) |> ExAws.S3.presigned_url(:get, bucket_name, filename, []) do
+      url
+    else
+      _ ->
+        "/images/placeholder.png"
     end
   end
 end

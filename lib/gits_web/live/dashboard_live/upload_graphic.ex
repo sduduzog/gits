@@ -37,7 +37,7 @@ defmodule GitsWeb.DashboardLive.UploadGraphic do
       |> assign(:account_id, account.id)
       |> assign(:account_name, account.name)
       |> assign(:event_id, event.id)
-      |> assign(:event_name, event.name) 
+      |> assign(:event_name, event.name)
       |> assign(:members, members)
       |> allow_upload(:feature_image, accept: ~w(.jpg .jpeg .png), max_entries: 1)
       |> allow_upload(:listing_image, accept: ~w(.jpg .jpeg .png), max_entries: 1)
@@ -109,7 +109,7 @@ defmodule GitsWeb.DashboardLive.UploadGraphic do
           Upload
         </button>
       </div>
-      <div class="aspect-[3/2] w-64 border *:h-full *:w-full *:object-cover">
+      <div class="aspect-[3/2] w-64 overflow-hidden rounded-md border *:h-full *:w-full *:object-cover">
         <img
           :if={[] == @uploads.feature_image.entries}
           src={Gits.Bucket.get_feature_image_path(@account_id, @event_id)}
@@ -137,7 +137,7 @@ defmodule GitsWeb.DashboardLive.UploadGraphic do
           Upload
         </button>
       </div>
-      <div class="aspect-[4/5] w-52 border *:h-full *:w-full *:object-cover">
+      <div class="aspect-[4/5] w-52 overflow-hidden rounded-md border *:h-full *:w-full *:object-cover">
         <img
           :if={[] == @uploads.listing_image.entries}
           src={Gits.Bucket.get_listing_image_path(@account_id, @event_id)}
