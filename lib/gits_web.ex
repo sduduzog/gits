@@ -56,6 +56,9 @@ defmodule GitsWeb do
       use Phoenix.LiveView,
         layout: {GitsWeb.Layouts, :app}
 
+      def ok(socket), do: {:ok, socket}
+      def noreply(socket), do: {:noreply, socket}
+
       unquote(html_helpers())
     end
   end
@@ -64,6 +67,30 @@ defmodule GitsWeb do
     quote do
       unquote(live_view())
       import GitsWeb.DashboardComponents
+
+      require Ash.Query
+
+      alias Gits.Dashboard.Member
+
+      def mount(params, _session, socket) do
+        user = socket.assigns.current_user
+
+        {:ok, member} =
+          Member
+          |> Ash.Query.for_read(:read, %{}, actor: user)
+          |> Ash.Query.filter(account.id == ^params["slug"])
+          |> Ash.Query.load(:account)
+          |> Ash.read_one()
+
+        socket =
+          socket
+          |> assign(:slug, params["slug"])
+          |> assign(:context_options, nil)
+          |> assign(:accounts, [])
+          |> assign(:account, member.account)
+
+        {:ok, socket, layout: {GitsWeb.Layouts, :dashboard}}
+      end
     end
   end
 

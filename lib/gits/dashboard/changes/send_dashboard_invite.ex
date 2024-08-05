@@ -10,9 +10,8 @@ defmodule Gits.Dashboard.Changes.SendDashboardInvite do
       invite =
         result
         |> Ash.load!(:account, actor: actor)
-        |> IO.inspect()
 
-      subject = "You've been invited to join Treehouse Inc's GiTS account"
+      subject = "You've been invited to join #{invite.account.name}'s GiTS account"
 
       body =
         AccountInvitation.render(
@@ -27,7 +26,6 @@ defmodule Gits.Dashboard.Changes.SendDashboardInvite do
       %{to: invite.email, subject: subject, body: body}
       |> DeliverEmail.new()
       |> Oban.insert()
-      |> IO.inspect()
 
       {:ok, result}
     end)

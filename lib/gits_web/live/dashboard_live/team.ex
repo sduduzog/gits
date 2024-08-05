@@ -1,45 +1,56 @@
 defmodule GitsWeb.DashboardLive.Team do
   require Ash.Query
-  use GitsWeb, :live_view
+  use GitsWeb, :dashboard_live_view
 
   alias Gits.Dashboard.Account
   alias Gits.Dashboard.Invite
   alias Gits.Dashboard.Member
 
-  def mount(params, _session, socket) do
-    user = socket.assigns.current_user
+  # def mount(params, _session, socket) do
+  #   user = socket.assigns.current_user
+  #
+  #   accounts =
+  #     Account
+  #     |> Ash.Query.for_read(:list_for_dashboard, %{user_id: user.id}, actor: user)
+  #     |> Ash.read!()
+  #     |> Enum.map(fn item -> %{id: item.id, name: item.name} end)
+  #
+  #   account = Enum.find(accounts, fn item -> item.id == params["slug"] end)
+  #
+  #   members =
+  #     Member
+  #     |> Ash.Query.for_read(:read_for_dashboard, %{}, actor: user)
+  #     |> Ash.read!()
+  #
+  #   invites =
+  #     Invite
+  #     |> Ash.Query.for_read(:read)
+  #     |> Ash.Query.filter(state == :sent and account.id == ^account.id)
+  #     |> Ash.read!(actor: user)
+  #
+  #   socket =
+  #     socket
+  #     |> assign(:slug, params["slug"])
+  #     |> assign(:title, "Team")
+  #     |> assign(:context_options, nil)
+  #     |> assign(:action, params["action"])
+  #     |> assign(:accounts, accounts)
+  #     |> assign(:account_name, account.name)
+  #     |> assign(:members, members)
+  #     |> assign(:invites, invites)
+  #
+  #   {:ok, socket, layout: {GitsWeb.Layouts, :dashboard}}
+  # end
 
-    accounts =
-      Account
-      |> Ash.Query.for_read(:list_for_dashboard, %{user_id: user.id}, actor: user)
-      |> Ash.read!()
-      |> Enum.map(fn item -> %{id: item.id, name: item.name} end)
+  def handle_params(unsigned_params, uri, socket) do
+    %{current_user: user, account: account} = socket.assigns
 
-    account = Enum.find(accounts, fn item -> item.id == params["slug"] end)
+    account = account |> Ash.load!([:invites, members: :user], actor: user)
 
-    members =
-      Member
-      |> Ash.Query.for_read(:read_for_dashboard, %{}, actor: user)
-      |> Ash.read!()
-
-    invites =
-      Invite
-      |> Ash.Query.for_read(:read)
-      |> Ash.Query.filter(state == :sent and account.id == ^account.id)
-      |> Ash.read!(actor: user)
-
-    socket =
-      socket
-      |> assign(:slug, params["slug"])
-      |> assign(:title, "Team")
-      |> assign(:context_options, nil)
-      |> assign(:action, params["action"])
-      |> assign(:accounts, accounts)
-      |> assign(:account_name, account.name)
-      |> assign(:members, members)
-      |> assign(:invites, invites)
-
-    {:ok, socket, layout: {GitsWeb.Layouts, :dashboard}}
+    socket
+    |> assign(:invites, account.invites)
+    |> assign(:members, account.members)
+    |> noreply()
   end
 
   def handle_event("validate", _unsigned_params, socket) do

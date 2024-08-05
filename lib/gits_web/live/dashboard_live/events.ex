@@ -1,37 +1,95 @@
 defmodule GitsWeb.DashboardLive.Events do
-  use GitsWeb, :live_view
+  use GitsWeb, :dashboard_live_view
   require Ash.Query
 
   alias Gits.Dashboard.Account
   alias Gits.Storefront.Event
 
-  def mount(params, _session, socket) do
-    user = socket.assigns.current_user
+  # def mount(params, _session, socket) do
+  # user = socket.assigns.current_user
+  #
+  # accounts =
+  #   Account
+  #   |> Ash.Query.for_read(:read, %{}, actor: user)
+  #   |> Ash.Query.filter(members.user.id == ^user.id)
+  #   |> Ash.read!()
+  #
+  # account = Enum.find(accounts, fn item -> item.id == params["slug"] end)
+  #
+  # events =
+  #   Event
+  #   |> Ash.Query.for_read(:read, %{}, actor: user)
+  #   |> Ash.Query.filter(account.id == ^account.id)
+  #   |> Ash.read!()
+  #
+  # socket =
+  #   socket
+  #   |> assign(:slug, params["slug"])
+  #   |> assign(:title, "Events")
+  #   |> assign(:context_options, nil)
+  #   |> assign(:accounts, accounts)
+  #   |> assign(:account_id, account.id)
+  #   |> assign(:account_name, account.name)
+  #   |> assign(:events, events)
+  #
+  # {:ok, socket, layout: {GitsWeb.Layouts, :dashboard}}
+  # {:ok, socket}
+  # end
 
-    accounts =
-      Account
-      |> Ash.Query.for_read(:read, %{}, actor: user)
-      |> Ash.Query.filter(members.user.id == ^user.id)
-      |> Ash.read!()
+  def handle_params(_unsigned_params, _uri, socket) do
+    %{current_user: user, account: account} = socket.assigns
 
-    account = Enum.find(accounts, fn item -> item.id == params["slug"] end)
+    account = account |> Ash.load!(:events)
 
-    events =
-      Event
-      |> Ash.Query.for_read(:read, %{}, actor: user)
-      |> Ash.Query.filter(account.id == ^account.id)
-      |> Ash.read!()
+    socket
+    |> assign(:events, account.events)
+    |> noreply()
+  end
 
-    socket =
-      socket
-      |> assign(:slug, params["slug"])
-      |> assign(:title, "Events")
-      |> assign(:context_options, nil)
-      |> assign(:accounts, accounts)
-      |> assign(:account_id, account.id)
-      |> assign(:account_name, account.name)
-      |> assign(:events, events)
+  def render(assigns) do
+    ~H"""
+    <h1 class="text-xl font-semibold">Events</h1>
+    <div class="flex items-center justify-between gap-4">
+      <div class="grow"></div>
+      <button
+        class="rounded-xl bg-zinc-800 px-4 py-3 text-sm font-medium text-white hover:bg-zinc-600"
+        phx-click={JS.navigate(~p"/accounts/#{@slug}/events/new")}
+      >
+        Create event
+      </button>
+    </div>
 
-    {:ok, socket, layout: {GitsWeb.Layouts, :dashboard}}
+    <div class="grid gap-4 divide-y divide-zinc-100 md:gap-6">
+      <div :for={event <- @events} class="flex items-center gap-2 pt-4 md:gap-6 md:pt-6">
+        <div class="aspect-[3/2] w-32 shrink-0 overflow-hidden rounded-xl bg-zinc-200">
+          <img
+            phx-hook="ImgSrcFallback"
+            src={Gits.Bucket.get_feature_image_path(@account.id, event.id)}
+            alt="event image"
+            id={"event-image-#{event.id}"}
+          />
+        </div>
+        <div class="line-clamp-3 grid grow gap-1 md:gap-2">
+          <h1 class="w-full text-base font-semibold md:w-auto">
+            <.link navigate={~p"/accounts/#{@slug}/events/#{event.id}"}><%= event.name %></.link>
+          </h1>
+          <div class="w-full grow gap-2 text-sm text-zinc-500 md:w-auto">
+            <span>
+              <%= event.starts_at
+              |> Timex.format!("%b %e, %Y at %H:%M %p", :strftime) %>
+            </span>
+            <span class="inline-flex px-0.5">&bull;</span>
+            <span>Artistry JHB, Sandton Somewhere</span>
+          </div>
+          <span class="hidden text-sm text-zinc-500 md:inline-flex">0/1 tickets sold</span>
+        </div>
+        <div class="shrink-0">
+          <button class="flex rounded-lg p-1 hover:bg-zinc-50">
+            <.icon name="hero-ellipsis-vertical-mini" />
+          </button>
+        </div>
+      </div>
+    </div>
+    """
   end
 end

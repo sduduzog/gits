@@ -51,6 +51,14 @@ const SideModal = {
   },
 };
 
+const ImgSrcFallback = {
+  mounted() {
+    this.el.addEventListener("error", () => {
+      this.el.src = "/images/placeholder.png"
+    })
+  }
+}
+
 const Dropdown = {
   mounted() {
     const dropdownButton = this.el.querySelector("button[data-dropdown]");
@@ -77,6 +85,7 @@ let liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
   params: { _csrf_token: csrfToken },
   hooks: {
+    ImgSrcFallback,
     Turnstile: TurnstileHook,
     SideModal,
     Dropdown: Dropdown,

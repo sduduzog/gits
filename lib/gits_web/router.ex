@@ -77,6 +77,10 @@ defmodule GitsWeb.Router do
       on_mount: {GitsWeb.LiveUserAuth, :live_no_user} do
       live "/password-reset/:token", AuthLive.PasswordReset
     end
+
+    ash_authentication_live_session :authentication_redirect,
+      on_mount: {GitsWeb.LiveUserAuth, :live_redirect} do
+    end
   end
 
   scope "/my", GitsWeb do
@@ -92,6 +96,8 @@ defmodule GitsWeb.Router do
     pipe_through [:browser, :office]
 
     live_dashboard "/dashboard",
+      ecto_repos: [Gits.Repo],
+      ecto_psql_extras_options: [long_running_queries: [threshold: "200 milliseconds"]],
       metrics: GitsWeb.Telemetry,
       additional_pages: [oban: Oban.LiveDashboard]
   end

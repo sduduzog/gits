@@ -14,7 +14,7 @@
 </div>
 <div class="flex flex-wrap items-center gap-2 md:gap-4">
   <div class="aspect-[3/2] relative w-32 overflow-hidden rounded-xl bg-zinc-200">
-    <img src={Gits.Bucket.get_feature_image_path(@account_id, @event.id)} alt="" />
+    <img src={Gits.Bucket.get_feature_image_path(@account.id, @event.id)} alt="" />
     <button
       phx-click={JS.navigate(~p"/accounts/#{@slug}/events/#{@event.id}/upload-graphics")}
       class="bg-black/5 text-white/50 absolute inset-0 flex flex items-center justify-center rounded-xl p-1.5 hover:bg-black/10 hover:text-white"

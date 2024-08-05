@@ -21,6 +21,8 @@ defmodule Gits.Dashboard.Account do
   relationships do
     has_many :members, Gits.Dashboard.Member
 
+    has_many :invites, Gits.Dashboard.Invite
+
     has_many :events, Gits.Storefront.Event do
       domain Gits.Storefront
     end

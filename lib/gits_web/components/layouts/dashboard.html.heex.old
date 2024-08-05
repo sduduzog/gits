@@ -32,7 +32,7 @@
         phx-click-away={JS.hide(to: "#account_dropdown_options")}
         id="account_dropdown"
       >
-        <span class="grow font-medium"><%= @account.name %></span>
+        <span class="grow font-medium"><%= @account_name %></span>
         <.icon name="hero-chevron-down-mini" />
         <div
           id="account_dropdown_options"

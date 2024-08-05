@@ -102,7 +102,6 @@ defmodule Gits.Storefront.Event do
                 query
               end)
 
-      prepare build(load: [:masked_id])
       prepare build(sort: [id: :desc])
     end
 

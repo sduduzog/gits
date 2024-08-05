@@ -1,48 +1,32 @@
 defmodule GitsWeb.DashboardLive.UploadGraphic do
-  require Ash.Query
-  use GitsWeb, :live_view
+  use GitsWeb, :dashboard_live_view
 
   alias Gits.Dashboard.{Account, Member}
   alias Gits.Storefront.Event
 
-  def mount(params, _session, socket) do
-    user = socket.assigns.current_user
+  def handle_params(unsigned_params, _uri, socket) do
+    %{current_user: user, account: account} = socket.assigns
 
-    accounts =
-      Account
-      |> Ash.Query.for_read(:list_for_dashboard, %{user_id: user.id}, actor: user)
-      |> Ash.read!()
-      |> Enum.map(fn item -> %{id: item.id, name: item.name} end)
+    account =
+      account
+      |> Ash.load!(
+        [
+          events:
+            Event
+            |> Ash.Query.for_read(:read)
+            |> Ash.Query.filter(id == ^unsigned_params["event_id"])
+        ],
+        actor: user
+      )
 
-    account = Enum.find(accounts, fn item -> item.id == params["slug"] end)
+    [event] = account.events
 
-    members =
-      Member
-      |> Ash.Query.for_read(:read_for_dashboard, %{}, actor: user)
-      |> Ash.read!()
-
-    event =
-      Event
-      |> Ash.Query.for_read(:read, %{id: params["event_id"]}, actor: user)
-      |> Ash.Query.load([:tickets, :account])
-      |> Ash.read_one!()
-
-    socket =
-      socket
-      |> assign(:slug, params["slug"])
-      |> assign(:title, "Team")
-      |> assign(:context_options, nil)
-      |> assign(:action, params["action"])
-      |> assign(:accounts, accounts)
-      |> assign(:account_id, account.id)
-      |> assign(:account_name, account.name)
-      |> assign(:event_id, event.id)
-      |> assign(:event_name, event.name)
-      |> assign(:members, members)
-      |> allow_upload(:feature_image, accept: ~w(.jpg .jpeg .png), max_entries: 1)
-      |> allow_upload(:listing_image, accept: ~w(.jpg .jpeg .png), max_entries: 1)
-
-    {:ok, socket, layout: {GitsWeb.Layouts, :dashboard}}
+    socket
+    |> assign(:event_id, unsigned_params["event_id"])
+    |> assign(:event_name, event.name)
+    |> allow_upload(:feature_image, accept: ~w(.jpg .jpeg .png), max_entries: 1)
+    |> allow_upload(:listing_image, accept: ~w(.jpg .jpeg .png), max_entries: 1)
+    |> noreply()
   end
 
   def handle_event("save_feature_image", _unsigned_params, socket) do
@@ -120,7 +104,7 @@ defmodule GitsWeb.DashboardLive.UploadGraphic do
       <div class="aspect-[3/2] w-64 overflow-hidden rounded-md border *:h-full *:w-full *:object-cover">
         <img
           :if={[] == @uploads.feature_image.entries}
-          src={Gits.Bucket.get_feature_image_path(@account_id, @event_id)}
+          src={Gits.Bucket.get_feature_image_path(@account.id, @event_id)}
           alt=""
         />
         <%= for entry <- @uploads.feature_image.entries do %>
@@ -148,7 +132,7 @@ defmodule GitsWeb.DashboardLive.UploadGraphic do
       <div class="aspect-[4/5] w-52 overflow-hidden rounded-md border *:h-full *:w-full *:object-cover">
         <img
           :if={[] == @uploads.listing_image.entries}
-          src={Gits.Bucket.get_listing_image_path(@account_id, @event_id)}
+          src={Gits.Bucket.get_listing_image_path(@account.id, @event_id)}
           alt=""
         />
         <%= for entry <- @uploads.listing_image.entries do %>
