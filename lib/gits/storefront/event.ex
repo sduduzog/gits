@@ -38,8 +38,8 @@ defmodule Gits.Storefront.Event do
       domain Gits.Dashboard
     end
 
-    belongs_to :address, Gits.Dashboard.Venue do
-      domain Gits.Dashboard
+    belongs_to :address, Gits.Admissions.Address do
+      domain Gits.Admissions
     end
 
     has_many :tickets, Gits.Storefront.Ticket
