@@ -60,6 +60,13 @@ defmodule GitsWeb do
     end
   end
 
+  def dashboard_live_view do
+    quote do
+      unquote(live_view())
+      import GitsWeb.DashboardComponents
+    end
+  end
+
   def live_component do
     quote do
       use Phoenix.LiveComponent

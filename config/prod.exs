@@ -18,4 +18,5 @@ config :logger, level: :info
 
 config :gits, :presigned_url_options,
   virtual_host: true,
-  bucket_as_host: true
+  bucket_as_host: true,
+  expires_in: 3_600

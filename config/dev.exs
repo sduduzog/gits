@@ -90,4 +90,5 @@ config :ash, :pub_sub, debug?: true
 
 config :gits, :presigned_url_options,
   virtual_host: false,
-  bucket_as_host: false
+  bucket_as_host: false,
+  expires_in: 3_600
