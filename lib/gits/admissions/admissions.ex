@@ -3,5 +3,6 @@ defmodule Gits.Admissions do
 
   resources do
     resource Gits.Admissions.Attendee
+    resource Gits.Admissions.Address
   end
 end

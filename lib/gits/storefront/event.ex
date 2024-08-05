@@ -38,7 +38,7 @@ defmodule Gits.Storefront.Event do
       domain Gits.Dashboard
     end
 
-    belongs_to :venue, Gits.Dashboard.Venue do
+    belongs_to :address, Gits.Dashboard.Venue do
       domain Gits.Dashboard
     end
 
@@ -55,7 +55,6 @@ defmodule Gits.Storefront.Event do
   calculations do
     calculate :masked_id, :string, Gits.Storefront.Calculations.MaskId
     calculate :resolved_payment_method, :atom, expr(payment_method or account.payment_method)
-    calculate :address, :map, Gits.Storefront.Event.Calculations.Address
 
     calculate :ticket_price_varies,
               :boolean,
@@ -259,19 +258,5 @@ defmodule Gits.Storefront.Event do
   postgres do
     table "events"
     repo Gits.Repo
-  end
-end
-
-defmodule Gits.Storefront.Event.Calculations.Address do
-  use Ash.Resource.Calculation
-
-  def load(_, _, _) do
-    [:address_place_id]
-  end
-
-  def calculate(records, _opts, _context) do
-    Enum.map(records, fn record ->
-      Gits.Cache.get_address(record.address_place_id)
-    end)
   end
 end
