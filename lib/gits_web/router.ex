@@ -56,7 +56,6 @@ defmodule GitsWeb.Router do
       live "/events/:id/tickets/:basket_id/summary", EventLive.TicketsSummary
       live "/events/:id/tickets/:basket_id/checkout", EventLive.Checkout
 
-      live "/accounts/:account_id/events/:event_id/address", EventAddressLive
       live "/attendees/scanner/:account_id/:event_id", ScanAttendeeLive
       live "/accounts/:slug", DashboardLive.Home
       live "/accounts/:slug/events", DashboardLive.Events
@@ -65,6 +64,7 @@ defmodule GitsWeb.Router do
       live "/accounts/:slug/events/:event_id/edit", DashboardLive.ManageEvent
       live "/accounts/:slug/events/:event_id/scan", DashboardLive.ScanTickets
 
+      live "/accounts/:slug/events/:event_id/address", DashboardLive.UpdateEventAddress
       live "/accounts/:slug/events/:event_id/upload-graphics", DashboardLive.UploadGraphic
       live "/accounts/:slug/team", DashboardLive.Team
       live "/accounts/:slug/team/invites/new", DashboardLive.TeamInviteNewMember

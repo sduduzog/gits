@@ -2,7 +2,6 @@ defmodule GitsWeb.DashboardLive.Settings do
   use GitsWeb, :dashboard_live_view
 
   alias AshPhoenix.Form
-  alias Gits.Dashboard.Account
   alias Gits.PaystackApi
 
   def handle_params(unsigned_params, _uri, socket) do
@@ -12,18 +11,17 @@ defmodule GitsWeb.DashboardLive.Settings do
       PaystackApi.list_banks!()
       |> Enum.map(fn bank -> {bank.name, bank.code} end)
 
-    socket =
-      socket
-      |> assign(:slug, unsigned_params["slug"])
-      |> assign(:title, "Settings")
-      |> assign(:account, account)
-      |> assign(:account_name, account.name)
-      |> assign(:banks, banks)
-      |> assign(:show_paystack_form, false)
-      |> assign(:paystack_form, %{})
-      |> assign(:show_paystack_editor, false)
-      |> assign(:form, %{})
-      |> noreply()
+    socket
+    |> assign(:slug, unsigned_params["slug"])
+    |> assign(:title, "Settings")
+    |> assign(:account, account)
+    |> assign(:account_name, account.name)
+    |> assign(:banks, banks)
+    |> assign(:show_paystack_form, false)
+    |> assign(:paystack_form, %{})
+    |> assign(:show_paystack_editor, false)
+    |> assign(:form, %{})
+    |> noreply()
   end
 
   def handle_event("enable_billing", _unsigned_params, socket) do

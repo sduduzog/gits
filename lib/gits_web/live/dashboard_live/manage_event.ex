@@ -62,7 +62,7 @@ defmodule GitsWeb.DashboardLive.ManageEvent do
       socket.assigns.form |> Form.validate(Map.put(params, :account, account))
 
     with true <- form.valid?, {:ok, event} <- Form.submit(form) do
-      socket |> push_navigate(to: ~p"/accounts/#{account.id}/events/#{event.id}")
+      socket |> push_navigate(to: ~p"/accounts/#{account.id}/events/#{event.id}/address")
     else
       {:error, %AshPhoenix.Form{} = form} ->
         socket |> assign(:form, form)

@@ -3,7 +3,6 @@ defmodule GitsWeb.DashboardLive.Event do
   require Ash.Query
 
   alias AshPhoenix.Form
-  alias Gits.Dashboard.Account
   alias Gits.Storefront.Event
   alias Gits.Storefront.Ticket
 
@@ -43,16 +42,15 @@ defmodule GitsWeb.DashboardLive.Event do
   end
 
   def handle_params(%{"ticket" => id} = unsigned_params, _uri, socket) do
-    socket =
-      socket
-      |> assign(:manage_ticket_title, "Edit ticket")
-      |> update(:manage_ticket_form, fn _, %{event: event, current_user: user} ->
-        event.tickets
-        |> Enum.find(&(&1.id == id))
-        |> Form.for_update(:update, as: "edit_ticket", actor: user)
-      end)
-      |> load_defalts(unsigned_params)
-      |> noreply()
+    socket
+    |> assign(:manage_ticket_title, "Edit ticket")
+    |> update(:manage_ticket_form, fn _, %{event: event, current_user: user} ->
+      event.tickets
+      |> Enum.find(&(&1.id == id))
+      |> Form.for_update(:update, as: "edit_ticket", actor: user)
+    end)
+    |> load_defalts(unsigned_params)
+    |> noreply()
   end
 
   def handle_params(unsigned_params, _uri, socket) do

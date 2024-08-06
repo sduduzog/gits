@@ -41,7 +41,12 @@
         <span class="inline-flex px-0.5">&bull;</span>
         <span class="inline-flex gap-2">
           Address not set
-          <.link class="underline text-zinc-400 hover:text-zinc-700">Update address</.link>
+          <.link
+            navigate={~p"/accounts/#{@slug}/events/#{@event.id}/address"}
+            class="underline text-zinc-400 hover:text-zinc-700"
+          >
+            Update address
+          </.link>
         </span>
       </div>
     </div>
@@ -83,9 +88,12 @@
       <div class="ml-3">
         <p class="text-sm text-yellow-700">
           No address is setup for this event
-          <a href="#" class="font-medium text-yellow-700 underline hover:text-yellow-600">
+          <.link
+            navigate={~p"/accounts/#{@slug}/events/#{@event.id}/address"}
+            class="font-medium text-yellow-700 underline hover:text-yellow-600"
+          >
             Add an address
-          </a>
+          </.link>
         </p>
       </div>
     </div>
