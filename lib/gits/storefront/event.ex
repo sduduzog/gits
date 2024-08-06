@@ -200,6 +200,11 @@ defmodule Gits.Storefront.Event do
     end
 
     policy action(:read) do
+      authorize_if expr(
+                     account.members.user.id == ^actor(:id) and
+                       account.members.role in [:owner, :admin]
+                   )
+
       authorize_if expr(visibility in [:protected, :public])
     end
 

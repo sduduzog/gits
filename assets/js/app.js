@@ -21,7 +21,7 @@ import "phoenix_html";
 import { Socket } from "phoenix";
 import { LiveSocket } from "phoenix_live_view";
 import topbar from "../vendor/topbar";
-import { TurnstileHook } from "phoenix_turnstile";
+
 
 import {
   computePosition,
@@ -33,6 +33,7 @@ import {
 
 import { register as swiperRegister } from "swiper/element/bundle";
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
+import { Hooks } from './hooks'
 
 swiperRegister();
 const scanSize = 260
@@ -44,13 +45,6 @@ const scanConfig = {
 let csrfToken = document
   .querySelector("meta[name='csrf-token']")
   .getAttribute("content");
-
-const SideModal = {
-  mounted() {
-    // const modal = this.el.querySelector("div[data-modal]")
-  },
-};
-
 
 const Dropdown = {
   mounted() {
@@ -78,10 +72,7 @@ let liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
   params: { _csrf_token: csrfToken },
   hooks: {
-    Turnstile: TurnstileHook,
-    SideModal,
     Dropdown: Dropdown,
-
     DropdownButton: {
       mounted() {
         const dropdown = this.el.querySelector("[data-dropdown]");
@@ -126,6 +117,7 @@ let liveSocket = new LiveSocket("/live", Socket, {
         });
       },
     },
+    ...Hooks
   },
 });
 

@@ -3,5 +3,8 @@
     "@floating-ui/dom": "^1.6.7",
     "html5-qrcode": "^2.3.8",
     "swiper": "^11.1.4"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4"
   }
 }
