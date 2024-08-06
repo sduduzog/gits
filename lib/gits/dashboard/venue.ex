@@ -19,10 +19,6 @@ defmodule Gits.Dashboard.Venue do
 
   relationships do
     belongs_to :account, Gits.Dashboard.Account
-
-    has_many :events, Gits.Storefront.Event do
-      domain Gits.Storefront
-    end
   end
 
   actions do
