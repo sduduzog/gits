@@ -44,6 +44,7 @@ defmodule GitsWeb.UserController do
       TicketInstance
       |> Ash.Query.for_read(:read, %{}, actor: user)
       |> Ash.Query.filter(state == :ready_for_use)
+      |> Ash.Query.filter(event_starts_at >= fragment("now()"))
       |> Ash.Query.load([:event_id, :event_name, :ticket_name, :event_starts_at])
       |> Ash.Query.sort(id: :asc)
       |> Ash.read()

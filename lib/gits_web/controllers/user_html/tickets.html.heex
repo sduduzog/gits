@@ -26,7 +26,11 @@
     <swiper-slide :for={ticket <- @tickets} class="grid w-72 gap-0.5 overflow-hidden rounded-xl">
       <div class="flex flex-wrap gap-4 rounded-xl bg-white p-4 shadow-sm">
         <div class="aspect-[3/2] w-full overflow-hidden rounded-lg bg-zinc-200">
-          <img src="/images/placeholder.png" alt="" class="object-cover" />
+          <img
+            src={Gits.Bucket.get_feature_image_path(ticket.event.account_id, ticket.event.id)}
+            alt=""
+            class="object-cover"
+          />
         </div>
         <h2 class="text-lg font-semibold"><%= ticket.event.name %></h2>
         <div class="w-full">
