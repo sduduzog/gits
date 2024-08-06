@@ -87,7 +87,7 @@ defmodule GitsWeb.BasketComponent do
           :if={@basket.state == :open}
           event_name={@basket.event_name}
           basket_total={@basket.total}
-          tickets={@basket.tickets}
+          tickets={@basket.event.tickets}
           instances={@basket.instances}
           myself={@myself}
         />

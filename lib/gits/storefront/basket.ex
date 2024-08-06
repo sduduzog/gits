@@ -49,14 +49,6 @@ defmodule Gits.Storefront.Basket do
     belongs_to :customer, Gits.Storefront.Customer
 
     has_many :instances, Gits.Storefront.TicketInstance
-
-    has_many :tickets, Gits.Storefront.Ticket do
-      no_attributes? true
-    end
-  end
-
-  aggregates do
-    count :count_of_instances, :instances
   end
 
   calculations do
@@ -76,8 +68,7 @@ defmodule Gits.Storefront.Basket do
                   :instances,
                   :sum_of_instance_prices,
                   :total,
-                  :tickets,
-                  event: [:account, :masked_id]
+                  event: [:tickets, :account, :masked_id]
                 ]
               )
     end
@@ -106,7 +97,7 @@ defmodule Gits.Storefront.Basket do
             changeset
             |> Ash.Changeset.get_argument(:ticket_id)
 
-          changeset.data.tickets
+          changeset.data.event.tickets
           |> Enum.find(fn ticket -> ticket.id == ticket_id end)
           |> Ash.Changeset.for_update(:add_instance, %{
             basket: changeset.data,
@@ -135,7 +126,7 @@ defmodule Gits.Storefront.Basket do
             changeset.data.instances
             |> Enum.find(fn instance -> instance.ticket_id == ticket_id end)
 
-          changeset.data.tickets
+          changeset.data.event.tickets
           |> Enum.find(fn ticket -> ticket.id == ticket_id end)
           |> Ash.Changeset.for_update(:remove_instance, %{
             id: instance.id
