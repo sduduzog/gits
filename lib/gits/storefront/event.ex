@@ -44,7 +44,6 @@ defmodule Gits.Storefront.Event do
 
     has_many :tickets, Gits.Storefront.Ticket
     has_many :baskets, Gits.Storefront.Basket
-    has_one :keypair, Gits.Storefront.Keypair
   end
 
   aggregates do
@@ -108,18 +107,6 @@ defmodule Gits.Storefront.Event do
       require_atomic? false
 
       change set_attribute(:published_at, &DateTime.utc_now/0)
-
-      change fn changeset, %{actor: actor} ->
-        changeset
-        |> Ash.Changeset.before_action(fn changeset ->
-          changeset
-          |> Ash.Changeset.manage_relationship(
-            :keypair,
-            %{},
-            type: :create
-          )
-        end)
-      end
     end
 
     update :update_address do

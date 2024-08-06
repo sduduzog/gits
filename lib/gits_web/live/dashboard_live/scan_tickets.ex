@@ -19,7 +19,7 @@ defmodule GitsWeb.DashboardLive.ScanTickets do
     event =
       Event
       |> Ash.Query.for_read(:read, %{id: params["event_id"]}, actor: user)
-      |> Ash.Query.load([:tickets, :account, :keypair])
+      |> Ash.Query.load([:tickets, :account])
       |> Ash.read_one!()
 
     socket =
@@ -49,8 +49,7 @@ defmodule GitsWeb.DashboardLive.ScanTickets do
     {:noreply, socket}
   end
 
-  def handle_event("admit", unsigned_params, socket) do
-    IO.inspect(unsigned_params)
+  def handle_event("admit", _unsigned_params, socket) do
     {:noreply, socket}
   end
 

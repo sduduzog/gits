@@ -7,6 +7,5 @@ defmodule Gits.Storefront do
     resource Gits.Storefront.Ticket
     resource Gits.Storefront.TicketInstance
     resource Gits.Storefront.Basket
-    resource Gits.Storefront.Keypair
   end
 end
