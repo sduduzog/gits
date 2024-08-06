@@ -252,7 +252,11 @@ defmodule Gits.Storefront.Event do
     end
 
     policy [action(:update), changing_attributes(payment_method: [to: :none])] do
-      authorize_if expr(count(baskets) == 0)
+      authorize_if expr(
+                     count(baskets,
+                       query: [filter: expr(state in [:payment_started, :settled_for_payment])]
+                     ) == 0
+                   )
     end
 
     policy action(:update) do
