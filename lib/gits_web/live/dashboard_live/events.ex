@@ -2,44 +2,10 @@ defmodule GitsWeb.DashboardLive.Events do
   use GitsWeb, :dashboard_live_view
   require Ash.Query
 
-  alias Gits.Dashboard.Account
-  alias Gits.Storefront.Event
-
-  # def mount(params, _session, socket) do
-  # user = socket.assigns.current_user
-  #
-  # accounts =
-  #   Account
-  #   |> Ash.Query.for_read(:read, %{}, actor: user)
-  #   |> Ash.Query.filter(members.user.id == ^user.id)
-  #   |> Ash.read!()
-  #
-  # account = Enum.find(accounts, fn item -> item.id == params["slug"] end)
-  #
-  # events =
-  #   Event
-  #   |> Ash.Query.for_read(:read, %{}, actor: user)
-  #   |> Ash.Query.filter(account.id == ^account.id)
-  #   |> Ash.read!()
-  #
-  # socket =
-  #   socket
-  #   |> assign(:slug, params["slug"])
-  #   |> assign(:title, "Events")
-  #   |> assign(:context_options, nil)
-  #   |> assign(:accounts, accounts)
-  #   |> assign(:account_id, account.id)
-  #   |> assign(:account_name, account.name)
-  #   |> assign(:events, events)
-  #
-  # {:ok, socket, layout: {GitsWeb.Layouts, :dashboard}}
-  # {:ok, socket}
-  # end
-
   def handle_params(_unsigned_params, _uri, socket) do
     %{current_user: user, account: account} = socket.assigns
 
-    account = account |> Ash.load!(:events)
+    account = account |> Ash.load!([:events], actor: user)
 
     socket
     |> assign(:events, account.events)
@@ -61,14 +27,17 @@ defmodule GitsWeb.DashboardLive.Events do
 
     <div class="grid gap-4 divide-y divide-zinc-100 md:gap-6">
       <div :for={event <- @events} class="flex items-center gap-2 pt-4 md:gap-6 md:pt-6">
-        <div class="aspect-[3/2] w-32 shrink-0 overflow-hidden rounded-xl bg-zinc-200">
+        <.link
+          navigate={~p"/accounts/#{@slug}/events/#{event.id}"}
+          class="aspect-[3/2] w-32 shrink-0 overflow-hidden rounded-xl bg-zinc-200"
+        >
           <img
             src={Gits.Bucket.get_feature_image_path(@account.id, event.id)}
             alt="event image"
             id={"event-image-#{event.id}"}
             phx-hook="ImgSrcFallback"
           />
-        </div>
+        </.link>
         <div class="line-clamp-3 grid grow gap-1 md:gap-2">
           <h1 class="w-full text-base font-semibold md:w-auto">
             <.link navigate={~p"/accounts/#{@slug}/events/#{event.id}"}><%= event.name %></.link>

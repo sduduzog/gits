@@ -5,27 +5,6 @@ defmodule GitsWeb.DashboardLive.ManageEvent do
   alias AshPhoenix.Form
   alias Gits.Storefront.Event
 
-  # def mount(params, _session, socket) do
-  #   user = socket.assigns.current_user
-  #
-  #   accounts =
-  #     Account
-  #     |> Ash.Query.for_read(:read)
-  #     |> Ash.read!(actor: user)
-  #
-  #   account = Enum.find(accounts, fn item -> item.id == params["slug"] end)
-  #
-  #   socket =
-  #     socket
-  #     |> assign(:slug, params["slug"])
-  #     |> assign(:context_options, nil)
-  #     |> assign(:accounts, accounts)
-  #     |> assign(:account, account)
-  #     |> assign(:account_name, account.name)
-  #
-  #   {:ok, socket, layout: {GitsWeb.Layouts, :dashboard}}
-  # end
-
   def handle_params(%{"event_id" => id}, _uri, socket) do
     user = socket.assigns.current_user
 
