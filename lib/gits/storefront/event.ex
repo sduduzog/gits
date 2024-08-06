@@ -251,8 +251,15 @@ defmodule Gits.Storefront.Event do
       authorize_if expr(account.paystack_ready)
     end
 
+    policy [action(:update), changing_attributes(payment_method: [to: :none])] do
+      authorize_if expr(count(baskets) == 0)
+    end
+
     policy action(:update) do
-      authorize_if actor_present()
+      authorize_if expr(
+                     account.members.user.id == ^actor(:id) and
+                       account.members.role in [:owner, :admin]
+                   )
     end
 
     policy action(:destroy) do

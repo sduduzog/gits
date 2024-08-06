@@ -11,6 +11,7 @@ defmodule GitsWeb.EventLive.Feature do
 
     Event
     |> Ash.Query.for_read(:read, %{masked_id: params["id"]}, actor: user)
+    |> Ash.Query.load(:masked_id)
     |> Ash.read_one()
     |> case do
       {:ok, nil} ->
