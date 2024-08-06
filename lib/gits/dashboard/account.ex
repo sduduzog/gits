@@ -36,6 +36,7 @@ defmodule Gits.Dashboard.Account do
     calculate :no_payment_method, :boolean, expr(payments_ready == false)
     calculate :first_event_created, :boolean, expr(count(events) > 0)
     calculate :no_event_yet, :boolean, expr(count(events) == 0)
+    calculate :no_invites_yet, :boolean, expr(count(invites) == 0)
   end
 
   actions do

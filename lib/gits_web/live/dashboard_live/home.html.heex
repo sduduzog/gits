@@ -16,6 +16,7 @@
 
     <%= if not is_nil(@current_user.confirmed_at) do %>
       <.link
+        :if={@account.no_invites_yet}
         navigate={~p"/accounts/#{@slug}/team/invites/new"}
         class="block h-40 w-72 shrink-0 hover:shadow-md transition-all space-y-4 rounded-xl border p-6"
       >
