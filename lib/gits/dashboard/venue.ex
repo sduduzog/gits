@@ -32,8 +32,6 @@ defmodule Gits.Dashboard.Venue do
       upsert_identity :google_place_id
 
       argument :event, :map
-
-      change manage_relationship(:event, :events, type: :append)
     end
   end
 
