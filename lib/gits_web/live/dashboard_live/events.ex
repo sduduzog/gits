@@ -5,7 +5,7 @@ defmodule GitsWeb.DashboardLive.Events do
   def handle_params(_unsigned_params, _uri, socket) do
     %{current_user: user, account: account} = socket.assigns
 
-    account = account |> Ash.load!([:events], actor: user)
+    account = account |> Ash.load!([events: [:address]], actor: user)
 
     socket
     |> assign(:events, account.events)
@@ -48,7 +48,11 @@ defmodule GitsWeb.DashboardLive.Events do
               |> Timex.format!("%b %e, %Y at %H:%M %p", :strftime) %>
             </span>
             <span class="inline-flex px-0.5">&bull;</span>
-            <span>Artistry JHB, Sandton Somewhere</span>
+            <%= if is_nil(event.address) do %>
+              <span>Address not set</span>
+            <% else %>
+              <span><%= event.address.display_name %> &bull; <%= event.address.city %></span>
+            <% end %>
           </div>
           <span class="hidden text-sm text-zinc-500 md:inline-flex">0/1 tickets sold</span>
         </div>

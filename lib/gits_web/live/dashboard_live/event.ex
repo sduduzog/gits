@@ -17,7 +17,7 @@ defmodule GitsWeb.DashboardLive.Event do
             Event
             |> Ash.Query.for_read(:read)
             |> Ash.Query.filter(id == ^unsigned_params["event_id"])
-            |> Ash.Query.load([:masked_id, :tickets])
+            |> Ash.Query.load([:masked_id, :tickets, :address])
         ],
         actor: user
       )

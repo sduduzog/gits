@@ -1,5 +1,4 @@
 defmodule GitsWeb.DashboardLive.UpdateEventAddress do
-  alias Gits.Admissions.Address
   alias Gits.GoogleApi.Places
   use GitsWeb, :dashboard_live_view
 

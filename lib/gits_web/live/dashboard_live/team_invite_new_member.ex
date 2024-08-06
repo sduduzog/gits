@@ -2,36 +2,10 @@ defmodule GitsWeb.DashboardLive.TeamInviteNewMember do
   use GitsWeb, :dashboard_live_view
 
   alias AshPhoenix.Form
-  alias Gits.Dashboard.Account
   alias Gits.Dashboard.Invite
 
-  # def mount(params, _session, socket) do
-  #   user = socket.assigns.current_user
-  #
-  #   accounts =
-  #     Account
-  #     |> Ash.Query.for_read(:list_for_dashboard, %{user_id: user.id}, actor: user)
-  #     |> Ash.read!()
-  #     |> Enum.map(fn item -> %{id: item.id, name: item.name} end)
-  #
-  #   account = Enum.find(accounts, fn item -> item.id == params["slug"] end)
-  #
-  #
-  #   socket =
-  #     socket
-  #     |> assign(:slug, params["slug"])
-  #     |> assign(:title, "Team")
-  #     |> assign(:context_options, nil)
-  #     |> assign(:action, params["action"])
-  #     |> assign(:accounts, accounts)
-  #     |> assign(:account_id, account.id)
-  #     |> assign(:account_name, account.name)
-  #
-  #   {:ok, socket, layout: {GitsWeb.Layouts, :dashboard}}
-  # end
-
   def handle_params(_unsigned_params, _uri, socket) do
-    %{current_user: user, account: account} = socket.assigns
+    %{current_user: user} = socket.assigns
 
     form = Invite |> Form.for_create(:create, actor: user)
 
