@@ -39,8 +39,13 @@
           |> Timex.format!("%b %e, %Y at %H:%M %p", :strftime) %>
         </span>
         <span class="inline-flex px-0.5">&bull;</span>
-        <span class="inline-flex gap-2">
-          Address not set
+        <span class="inline-flex flex-wrap gap-2 gap-y-1">
+          <%= if is_nil(@event.address) do %>
+            <span>Address not set</span>
+          <% else %>
+            <span><%= @event.address.display_name %> &bull; <%= @event.address.city %></span>
+          <% end %>
+
           <.link
             navigate={~p"/accounts/#{@slug}/events/#{@event.id}/address"}
             class="underline text-zinc-400 hover:text-zinc-700"
@@ -51,7 +56,7 @@
       </div>
     </div>
   </div>
-  <div class="flex gap-4">
+  <div class="flex gap-4 pt-2 md:p-0">
     <button
       :if={is_nil(@event.published_at)}
       class="min-w-20 rounded-lg bg-zinc-700 px-4 py-3 text-sm font-medium text-white"
@@ -69,7 +74,7 @@
 </div>
 
 <div class="grid gap-4">
-  <div class="border-l-4 border-yellow-400 bg-yellow-50 p-4">
+  <div :if={is_nil(@event.address)} class="border-l-4 border-yellow-400 bg-yellow-50 p-4">
     <div class="flex">
       <div class="flex-shrink-0">
         <svg
