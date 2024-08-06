@@ -11,12 +11,18 @@
   <div>
     <div class="grid items-center gap-0.5">
       <div class="mx-auto flex w-80 gap-4 rounded-3xl bg-white p-6 shadow-sm">
-        <div class="aspect-[4/5] h-20 rounded-lg bg-zinc-200 p-4"></div>
+        <div class="aspect-[4/5] h-20 overflow-hidden rounded-lg bg-zinc-200">
+          <img
+            src={Gits.Bucket.get_listing_image_path(@event.account_id, @event.id)}
+            alt="feature image"
+            class="w-full object-cover"
+          />
+        </div>
         <div class="grid gap-2">
           <h2 class="line-clamp-2 text-lg font-semibold">
             <%= @event.name %>
           </h2>
-          <div class="flex justify-between text-zinc-500">
+          <div class="flex justify-between gap-4 text-zinc-500">
             <span class="flex items-center gap-1 text-xs">
               <.icon name="hero-calendar-days-micro" />
               <%= @event.starts_at |> Timex.format!("%e %b %Y", :strftime) %>
