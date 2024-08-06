@@ -10,6 +10,7 @@ defmodule Gits.GoogleApi.Places do
   def fetch_place_details(place_id) do
     request_place(place_id)
     |> body_from_response()
+    |> place_details_from_body()
   end
 
   defp request_place(place_id) do
@@ -23,6 +24,46 @@ defmodule Gits.GoogleApi.Places do
       }
     )
     |> Req.get(url: "/v1/places/#{place_id}")
+  end
+
+  defp place_details_from_body(
+         {:ok,
+          %{
+            "id" => place_id,
+            "shortFormattedAddress" => short_format_address,
+            "addressComponents" => address_components,
+            "googleMapsUri" => google_maps_uri,
+            "displayName" => %{
+              "text" => display_name
+            }
+          }}
+       ) do
+    city = resolve_city_from_address_components(address_components)
+    province = resolve_province_from_address_components(address_components)
+
+    {:ok,
+     %{
+       city: city,
+       place_id: place_id,
+       province: province,
+       display_name: display_name,
+       google_maps_uri: google_maps_uri,
+       short_format_address: short_format_address
+     }}
+  end
+
+  defp resolve_city_from_address_components(address_components) do
+    address_components
+    |> Enum.find(fn component -> component["types"] == ["locality", "political"] end)
+    |> Map.get("longText")
+  end
+
+  defp resolve_province_from_address_components(address_components) do
+    address_components
+    |> Enum.find(fn component ->
+      component["types"] == ["administrative_area_level_1", "political"]
+    end)
+    |> Map.get("longText")
   end
 
   defp request_auto_complete(query) do

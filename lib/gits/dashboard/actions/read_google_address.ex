@@ -1,5 +1,4 @@
 defmodule Gits.Dashboard.Actions.ReadGoogleAddress do
-  alias Gits.Dashboard.Venue.DetailedGoogleAddress
   use Ash.Resource.ManualRead
 
   def read(query, _data_layer_query, _opts, _context) do

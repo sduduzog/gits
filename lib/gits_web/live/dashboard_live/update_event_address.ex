@@ -7,10 +7,6 @@ defmodule GitsWeb.DashboardLive.UpdateEventAddress do
   def handle_params(%{"place_id" => place_id} = unsigned_params, _uri, socket) do
     %{current_user: user, account: account} = socket.assigns
 
-    place_id
-    |> Places.fetch_place_details()
-    |> IO.inspect()
-
     account =
       account
       |> Ash.load!(
@@ -25,11 +21,18 @@ defmodule GitsWeb.DashboardLive.UpdateEventAddress do
 
     [event] = account.events
 
+    socket =
+      place_id
+      |> Places.fetch_place_details()
+      |> case do
+        {:ok, details} -> socket |> assign(:selected, details)
+        _ -> socket
+      end
+
     socket
     |> assign(:event_id, unsigned_params["event_id"])
     |> assign(:event_name, event.name)
     |> assign(:suggestions, [])
-    |> assign(:selected, nil)
     |> noreply()
   end
 
@@ -129,15 +132,22 @@ defmodule GitsWeb.DashboardLive.UpdateEventAddress do
       </div>
     <% else %>
       <div class="grid gap-8 pt-2">
-        <div class="flex max-w-screen-md items-center gap-2 truncate rounded-md border p-4 text-sm hover:bg-zinc-50">
-          <span class="shrink-0 truncate ">1</span>
-          <span class="grow truncate text-zinc-600">
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Fugiat, iste!
-          </span>
+        <div class="grid max-w-screen-md items-center gap-2 rounded-md border p-4 text-sm">
+          <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
+            <span class="shrink-0"><%= @selected.display_name %></span>
+            <span class="grow text-zinc-600">
+              <%= @selected.short_format_address %>
+            </span>
+          </div>
+          <div class="flex justify-between text-zinc-600">
+            <%= @selected.city %> &bull; <%= @selected.province %>
+          </div>
         </div>
-        <div class="flex max-w-screen-md justify-end gap-4 text-sm font-medium">
+        <div class="flex max-w-screen-md gap-4 text-sm font-medium">
           <button phx-click="cancel" class="rounded-xl bg-zinc-50 px-4 py-3">Cancel</button>
-          <button class="rounded-xl bg-zinc-900 px-4 py-3 text-white">Confirm</button>
+          <button class="rounded-xl bg-zinc-900 px-4 py-3 text-white md:order-first">
+            Confirm address
+          </button>
         </div>
       </div>
     <% end %>
