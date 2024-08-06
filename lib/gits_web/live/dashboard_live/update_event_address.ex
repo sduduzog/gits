@@ -1,4 +1,5 @@
 defmodule GitsWeb.DashboardLive.UpdateEventAddress do
+  alias Gits.Admissions.Address
   alias Gits.GoogleApi.Places
   use GitsWeb, :dashboard_live_view
 
@@ -26,12 +27,10 @@ defmodule GitsWeb.DashboardLive.UpdateEventAddress do
       |> Places.fetch_place_details()
       |> case do
         {:ok, details} -> socket |> assign(:selected, details)
-        _ -> socket
       end
 
     socket
-    |> assign(:event_id, unsigned_params["event_id"])
-    |> assign(:event_name, event.name)
+    |> assign(:event, event)
     |> assign(:suggestions, [])
     |> noreply()
   end
@@ -54,10 +53,21 @@ defmodule GitsWeb.DashboardLive.UpdateEventAddress do
     [event] = account.events
 
     socket
-    |> assign(:event_id, unsigned_params["event_id"])
-    |> assign(:event_name, event.name)
+    |> assign(:event, event)
     |> assign(:suggestions, [])
     |> assign(:selected, nil)
+    |> noreply()
+  end
+
+  def handle_event("confirm", _unsigned_params, socket) do
+    %{current_user: user, event: event, selected: address, account: account} = socket.assigns
+
+    event
+    |> Ash.Changeset.for_update(:update_address, %{address: address}, actor: user)
+    |> Ash.update()
+
+    socket
+    |> push_navigate(to: ~p"/accounts/#{account.id}/events/#{event.id}")
     |> noreply()
   end
 
@@ -89,11 +99,11 @@ defmodule GitsWeb.DashboardLive.UpdateEventAddress do
       </.link>
 
       <.link
-        navigate={~p"/accounts/#{@slug}/events/#{@event_id}"}
+        navigate={~p"/accounts/#{@slug}/events/#{@event.id}"}
         class="flex gap-2 text-sm text-zinc-400 hover:text-zinc-700"
       >
         <.icon name="hero-slash-mini" />
-        <span><%= @event_name %></span>
+        <span><%= @event.name %></span>
       </.link>
 
       <div class="flex gap-2 text-sm text-zinc-600">
@@ -119,7 +129,7 @@ defmodule GitsWeb.DashboardLive.UpdateEventAddress do
         <button
           :for={suggestion <- @suggestions}
           phx-click={
-            JS.patch(~p"/accounts/#{@slug}/events/#{@event_id}/address?place_id=#{suggestion.id}")
+            JS.patch(~p"/accounts/#{@slug}/events/#{@event.id}/address?place_id=#{suggestion.id}")
           }
           phx-value-id={suggestion.id}
           class="flex max-w-screen-md items-center gap-2 truncate rounded-md p-4 text-sm hover:bg-zinc-50"
@@ -145,7 +155,10 @@ defmodule GitsWeb.DashboardLive.UpdateEventAddress do
         </div>
         <div class="flex max-w-screen-md gap-4 text-sm font-medium">
           <button phx-click="cancel" class="rounded-xl bg-zinc-50 px-4 py-3">Cancel</button>
-          <button class="rounded-xl bg-zinc-900 px-4 py-3 text-white md:order-first">
+          <button
+            phx-click="confirm"
+            class="rounded-xl bg-zinc-900 px-4 py-3 text-white md:order-first"
+          >
             Confirm address
           </button>
         </div>

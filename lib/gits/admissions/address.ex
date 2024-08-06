@@ -6,12 +6,12 @@ defmodule Gits.Admissions.Address do
 
   attributes do
     uuid_primary_key :id
-    attribute :place_id, :string, allow_nil?: false
-    attribute :city, :string, allow_nil?: false
-    attribute :province, :string, allow_nil?: false
-    attribute :display_name, :string, allow_nil?: false
-    attribute :short_format_address, :string, allow_nil?: false
-    attribute :google_maps_uri, :string, allow_nil?: false
+    attribute :place_id, :string, allow_nil?: false, public?: true
+    attribute :city, :string, allow_nil?: false, public?: true
+    attribute :province, :string, allow_nil?: false, public?: true
+    attribute :display_name, :string, allow_nil?: false, public?: true
+    attribute :short_format_address, :string, allow_nil?: false, public?: true
+    attribute :google_maps_uri, :string, allow_nil?: false, public?: true
 
     create_timestamp :created_at, public?: true
 
@@ -29,7 +29,13 @@ defmodule Gits.Admissions.Address do
   end
 
   actions do
-    defaults [:read, :destroy, update: :*, create: :*]
+    defaults [:read, :destroy, update: :*]
+
+    create :create do
+      primary? true
+
+      accept :*
+    end
   end
 
   postgres do

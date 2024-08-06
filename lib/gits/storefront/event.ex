@@ -122,6 +122,16 @@ defmodule Gits.Storefront.Event do
       end
     end
 
+    update :update_address do
+      require_atomic? false
+
+      argument :address, :map do
+        allow_nil? false
+      end
+
+      change manage_relationship(:address, type: :create)
+    end
+
     read :read_dashboard_events do
       argument :account_id, :uuid, allow_nil?: false
       filter expr(account.id == ^arg(:account_id))
@@ -207,6 +217,10 @@ defmodule Gits.Storefront.Event do
       authorize_if actor_present()
     end
 
+    policy action(:update_address) do
+      authorize_if always()
+    end
+
     policy action(:for_dashboard_event_details) do
       authorize_if expr(
                      account.members.user.id == ^actor(:id) and
@@ -235,10 +249,6 @@ defmodule Gits.Storefront.Event do
 
     policy action([:masked, :for_feature]) do
       forbid_unless expr(visibility == :public)
-      authorize_if always()
-    end
-
-    policy action(:update_address) do
       authorize_if always()
     end
 
