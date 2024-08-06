@@ -62,6 +62,14 @@ defmodule Gits.Storefront.Event do
               expr(maximum_ticket_price - minimum_ticket_price > 0)
 
     calculate :customer_has_tickets, :boolean, expr(customer_secured_instance_count > 0)
+
+    calculate :payment_method_required?,
+              :boolean,
+              expr(
+                maximum_ticket_price > 0 and (is_nil(payment_method) or payment_method == :none)
+              )
+
+    # expr(maximum_ticket_price > 0)
   end
 
   actions do

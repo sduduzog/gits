@@ -74,17 +74,20 @@
 </div>
 
 <div class="grid gap-4">
-  <div class="border-l-4 border-yellow-400 bg-yellow-50 p-4">
+  <div :if={@event.payment_method_required?} class="border-l-4 border-yellow-400 bg-yellow-50 p-4">
     <div class="flex">
       <div class="flex-shrink-0">
         <.icon class="text-yellow-400 -mt-1" name="hero-exclamation-triangle-mini" />
       </div>
       <div class="ml-3">
         <p class="text-sm text-yellow-700">
-          You have no credits left.
-          <a href="#" class="font-medium text-yellow-700 underline hover:text-yellow-600">
-            Upgrade your account to add more credits.
-          </a>
+          Your non-free tickets won't be visible to buyers without setting a payment provider on this event
+          <.link
+            navigate={~p"/accounts/#{@slug}/settings"}
+            class="font-medium text-yellow-700 underline hover:text-yellow-600"
+          >
+            Go to settings
+          </.link>
         </p>
       </div>
     </div>
