@@ -45,27 +45,28 @@ defmodule Gits.Dashboard.Actions.ReadGoogleAddress do
   end
 
   def details_response_to_address({:ok, %Req.Response{body: body}}) do
-    %{
-      "id" => id,
-      "displayName" => %{"text" => display_name},
-      "googleMapsUri" => uri,
-      "shortFormattedAddress" => formatted_address
-    } = body
+    # %{
+    #   "id" => id,
+    #   "displayName" => %{"text" => display_name},
+    #   "googleMapsUri" => uri,
+    #   "shortFormattedAddress" => formatted_address
+    # } = body
+    body
 
-    venue = %DetailedGoogleAddress{
-      id: id,
-      name: display_name,
-      google_maps_uri: uri,
-      formatted_address: formatted_address
-    }
-
-    venue =
-      case body do
-        %{"primaryType" => type} -> %{venue | type: type}
-        _ -> venue
-      end
-
-    {:ok, [venue]}
+    # venue = %DetailedGoogleAddress{
+    #   id: id,
+    #   name: display_name,
+    #   google_maps_uri: uri,
+    #   formatted_address: formatted_address
+    # }
+    #
+    # venue =
+    #   case body do
+    #     %{"primaryType" => type} -> %{venue | type: type}
+    #     _ -> venue
+    #   end
+    #
+    # {:ok, [venue]}
   end
 
   def details_response_to_address(response_tuple) do

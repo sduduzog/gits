@@ -1,7 +1,7 @@
 defmodule GitsWeb.DashboardLive.UploadGraphic do
   use GitsWeb, :dashboard_live_view
 
-  alias Gits.Dashboard.{Account, Member}
+  alias Gits.Dashboard.Member
   alias Gits.Storefront.Event
 
   def handle_params(unsigned_params, _uri, socket) do

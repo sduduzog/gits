@@ -79,6 +79,7 @@ defmodule GitsWeb do
           Member
           |> Ash.Query.for_read(:read, %{}, actor: user)
           |> Ash.Query.filter(account.id == ^params["slug"])
+          |> Ash.Query.filter(user.id == ^user.id)
           |> Ash.Query.load(:account)
           |> Ash.read_one()
 

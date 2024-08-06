@@ -39,16 +39,15 @@ defmodule Gits.Dashboard.Member do
   end
 
   calculations do
+    calculate :actor?, :boolean, expr(user.id == ^actor(:id))
     calculate :waitlisted, :boolean, expr(state == :waitlisted)
+    calculate :display_name, :string, expr(user.display_name)
+    calculate :email, :string, expr(user.email)
   end
 
   actions do
     default_accept :*
     defaults [:read, :destroy, update: :*]
-
-    read :read_for_dashboard do
-      prepare build(load: [:user])
-    end
 
     create :create do
       primary? true
@@ -105,18 +104,11 @@ defmodule Gits.Dashboard.Member do
       authorize_if expr(
                      exists(
                        account,
-                       members.id == ^actor(:id) and members.role in [:owner, :admin]
+                       members.user.id == ^actor(:id) and members.role in [:owner, :admin]
                      )
                    )
 
       authorize_if expr(user.id == ^actor(:id))
-    end
-
-    policy action(:read_for_dashboard) do
-      authorize_if expr(
-                     account.members.user.id == ^actor(:id) and
-                       account.members.role in [:owner, :admin]
-                   )
     end
 
     policy action(:read) do

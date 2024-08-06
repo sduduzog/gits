@@ -56,27 +56,28 @@ defmodule Gits.Dashboard.Actions.ReadGoogleAddressSuggestions do
   end
 
   defp suggestion_to_google_address(suggestion) do
-    %{
-      "placePrediction" => %{
-        "placeId" => place_id,
-        "structuredFormat" => structuredFormat
-      }
-    } = suggestion
+    # %{
+    #   "placePrediction" => %{
+    #     "placeId" => place_id,
+    #     "structuredFormat" => structuredFormat
+    #   }
+    # } = suggestion
+    suggestion
 
-    case structuredFormat do
-      %{"mainText" => %{"text" => main_text}, "secondaryText" => %{"text" => secondary_text}} ->
-        %GoogleAddress{
-          id: place_id,
-          main_text: main_text,
-          secondary_text: secondary_text
-        }
-
-      %{"mainText" => %{"text" => main_text}} ->
-        %GoogleAddress{
-          id: place_id,
-          main_text: main_text,
-          secondary_text: nil
-        }
-    end
+    # case structuredFormat do
+    #   %{"mainText" => %{"text" => main_text}, "secondaryText" => %{"text" => secondary_text}} ->
+    #     %GoogleAddress{
+    #       id: place_id,
+    #       main_text: main_text,
+    #       secondary_text: secondary_text
+    #     }
+    #
+    #   %{"mainText" => %{"text" => main_text}} ->
+    #     %GoogleAddress{
+    #       id: place_id,
+    #       main_text: main_text,
+    #       secondary_text: nil
+    #     }
+    # end
   end
 end

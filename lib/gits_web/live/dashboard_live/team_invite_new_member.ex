@@ -1,66 +1,76 @@
 defmodule GitsWeb.DashboardLive.TeamInviteNewMember do
-  use GitsWeb, :live_view
+  use GitsWeb, :dashboard_live_view
 
   alias AshPhoenix.Form
   alias Gits.Dashboard.Account
   alias Gits.Dashboard.Invite
 
-  def mount(params, _session, socket) do
-    user = socket.assigns.current_user
+  # def mount(params, _session, socket) do
+  #   user = socket.assigns.current_user
+  #
+  #   accounts =
+  #     Account
+  #     |> Ash.Query.for_read(:list_for_dashboard, %{user_id: user.id}, actor: user)
+  #     |> Ash.read!()
+  #     |> Enum.map(fn item -> %{id: item.id, name: item.name} end)
+  #
+  #   account = Enum.find(accounts, fn item -> item.id == params["slug"] end)
+  #
+  #
+  #   socket =
+  #     socket
+  #     |> assign(:slug, params["slug"])
+  #     |> assign(:title, "Team")
+  #     |> assign(:context_options, nil)
+  #     |> assign(:action, params["action"])
+  #     |> assign(:accounts, accounts)
+  #     |> assign(:account_id, account.id)
+  #     |> assign(:account_name, account.name)
+  #
+  #   {:ok, socket, layout: {GitsWeb.Layouts, :dashboard}}
+  # end
 
-    accounts =
-      Account
-      |> Ash.Query.for_read(:list_for_dashboard, %{user_id: user.id}, actor: user)
-      |> Ash.read!()
-      |> Enum.map(fn item -> %{id: item.id, name: item.name} end)
-
-    account = Enum.find(accounts, fn item -> item.id == params["slug"] end)
+  def handle_params(_unsigned_params, _uri, socket) do
+    %{current_user: user, account: account} = socket.assigns
 
     form = Invite |> Form.for_create(:create, actor: user)
 
-    socket =
-      socket
-      |> assign(:slug, params["slug"])
-      |> assign(:title, "Team")
-      |> assign(:context_options, nil)
-      |> assign(:action, params["action"])
-      |> assign(:accounts, accounts)
-      |> assign(:account_id, account.id)
-      |> assign(:account_name, account.name)
-      |> assign(:form, form)
-
-    {:ok, socket, layout: {GitsWeb.Layouts, :dashboard}}
+    socket
+    |> assign(:form, form)
+    |> noreply()
   end
 
   def handle_event("validate", unsigned_params, socket) do
-    {:noreply,
-     update(socket, :form, fn current_form, _assigns ->
-       current_form
-       |> Form.validate(
-         Map.merge(unsigned_params["form"], %{account: %{id: socket.assigns.account_id}})
-       )
-     end)}
+    update(socket, :form, fn current_form, _assigns ->
+      current_form
+      |> Form.validate(
+        Map.merge(unsigned_params["form"], %{account: %{id: socket.assigns.account.id}})
+      )
+    end)
+    |> noreply()
   end
 
   def handle_event("submit", unsigned_params, socket) do
     form =
       socket.assigns.form
       |> Form.validate(
-        Map.merge(unsigned_params["form"], %{account: %{id: socket.assigns.account_id}})
+        Map.merge(unsigned_params["form"], %{account: %{id: socket.assigns.account.id}})
       )
 
     with true <- form.valid?, {:ok, _} <- Form.submit(form) do
       slug = socket.assigns.slug
-      {:noreply, push_navigate(socket, to: ~p"/accounts/#{slug}/team")}
+
+      push_navigate(socket, to: ~p"/accounts/#{slug}/team")
+      |> noreply()
     else
       _all ->
-        {:noreply, socket}
+        socket |> noreply()
     end
   end
 
   def render(assigns) do
     ~H"""
-    <h1 class="mx-auto max-w-screen-lg text-xl font-semibold"><%= @account_name %>'s team</h1>
+    <h1 class="mx-auto max-w-screen-lg text-xl font-semibold"><%= @account.name %>'s team</h1>
     <h2 class="mx-auto max-w-screen-lg text-3xl">Invite a new member</h2>
     <.simple_form
       :let={f}

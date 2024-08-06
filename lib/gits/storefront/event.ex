@@ -20,7 +20,7 @@ defmodule Gits.Storefront.Event do
     attribute :visibility, :atom do
       allow_nil? false
       public? true
-      constraints one_of: [:private, :public]
+      constraints one_of: [:private, :protected, :public]
       default :private
     end
 
