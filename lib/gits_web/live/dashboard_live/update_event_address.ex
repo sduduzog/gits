@@ -1,4 +1,5 @@
 defmodule GitsWeb.DashboardLive.UpdateEventAddress do
+  alias Gits.Admissions.Address
   alias Gits.GoogleApi.Places
   use GitsWeb, :dashboard_live_view
 
@@ -21,14 +22,12 @@ defmodule GitsWeb.DashboardLive.UpdateEventAddress do
 
     [event] = account.events
 
-    socket =
-      place_id
-      |> Places.fetch_place_details()
-      |> case do
-        {:ok, details} -> socket |> assign(:selected, details)
-      end
-
-    socket
+    with {:ok, nil} <- find_address(place_id),
+         {:ok, details} <- Places.fetch_place_details(place_id) do
+      socket |> assign(:selected, details)
+    else
+      {:ok, %Address{} = address} -> socket |> assign(:selected, address)
+    end
     |> assign(:event, event)
     |> assign(:suggestions, [])
     |> noreply()
@@ -56,6 +55,13 @@ defmodule GitsWeb.DashboardLive.UpdateEventAddress do
     |> assign(:suggestions, [])
     |> assign(:selected, nil)
     |> noreply()
+  end
+
+  defp find_address(place_id) do
+    Address
+    |> Ash.Query.for_read(:read, %{})
+    |> Ash.Query.filter(place_id: place_id)
+    |> Ash.read_one()
   end
 
   def handle_event("confirm", _unsigned_params, socket) do

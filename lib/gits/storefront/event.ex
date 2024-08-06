@@ -129,7 +129,11 @@ defmodule Gits.Storefront.Event do
         allow_nil? false
       end
 
-      change manage_relationship(:address, type: :create)
+      change manage_relationship(:address,
+               on_no_match: :create,
+               on_match: :ignore,
+               on_lookup: :relate
+             )
     end
 
     read :read_dashboard_events do

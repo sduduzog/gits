@@ -365,17 +365,3 @@ defmodule Gits.Storefront.Ticket do
     repo Gits.Repo
   end
 end
-
-defmodule Gits.Storefront.Ticket.Calculations.Address do
-  use Ash.Resource.Calculation
-
-  def load(_, _, _) do
-    [:event_address_place_id]
-  end
-
-  def calculate(records, _opts, _context) do
-    Enum.map(records, fn record ->
-      Gits.Cache.get_address(record.event_address_place_id)
-    end)
-  end
-end
