@@ -12,7 +12,7 @@ defmodule GitsWeb.PageController do
       Event
       |> Ash.Query.for_read(:read)
       |> Ash.Query.filter(starts_at >= fragment("now()"))
-      |> Ash.Query.load([:minimum_ticket_price, :maximum_ticket_price, :address])
+      |> Ash.Query.load([:minimum_ticket_price, :maximum_ticket_price, :address, :masked_id])
       |> Ash.read!(actor: conn.assigns.current_user)
 
     conn
