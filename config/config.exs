@@ -17,11 +17,11 @@ config :ash, :compatible_foreign_key_types, [
   {Ash.Type.Integer, Ash.Type.UUID}
 ]
 
-config :ash, :policies, show_policy_breakdowns?: true
+# config :ash, :policies, show_policy_breakdowns?: true
 
-config :ash, :policies, log_policy_breakdowns: :error
+# config :ash, :policies, log_policy_breakdowns: :error
 
-config :ash, :policies, log_successful_policy_breakdowns: :debug
+# config :ash, :policies, log_successful_policy_breakdowns: :debug
 
 config :gits, Oban,
   engine: Oban.Engines.Basic,

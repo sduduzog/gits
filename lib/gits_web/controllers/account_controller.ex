@@ -11,7 +11,7 @@ defmodule GitsWeb.AccountController do
   plug :set_layout
 
   defp set_layout(conn, _) do
-    put_layout(conn,  html: :dashboard )
+    put_layout(conn, html: :dashboard)
   end
 
   defp auth_guard(conn, _) do
@@ -47,8 +47,7 @@ defmodule GitsWeb.AccountController do
     with true <- form.valid?, {:ok, account} <- Form.submit(form) do
       redirect(conn, to: ~p"/accounts/#{account.id}")
     else
-      error ->
-        IO.inspect(error)
+      _error ->
         assign(conn, :form, form) |> render(:new, layout: false)
     end
   end

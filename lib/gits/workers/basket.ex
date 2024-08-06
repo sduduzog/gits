@@ -3,13 +3,14 @@ defmodule Gits.Workers.Basket do
 
   @impl Oban.Worker
   def perform(%Oban.Job{args: %{"id" => id}} = job) do
-    with {:ok, basket} <- Ash.get(Gits.Storefront.Basket, id, actor: job) do
-      basket
-      |> Ash.Changeset.for_update(:cancel, %{}, actor: job)
-      |> Ash.update()
+    case Ash.get(Gits.Storefront.Basket, id, actor: job) do
+      {:ok, basket} ->
+        basket
+        |> Ash.Changeset.for_update(:cancel, %{}, actor: job)
+        |> Ash.update()
 
-      :ok
-    else
+        :ok
+
       _ ->
         {:error, :the_thing_failed}
     end

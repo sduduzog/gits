@@ -242,21 +242,48 @@ defmodule Gits.Storefront.Ticket do
     update :add_instance do
       require_atomic? false
 
-      argument :instance, :map do
+      argument :basket, :map do
         allow_nil? false
       end
 
-      change manage_relationship(:instance, :instances, type: :create)
+      argument :customer, :map do
+        allow_nil? false
+      end
+
+      change fn changeset, %{actor: actor} = context ->
+        changeset
+        |> Ash.Changeset.before_action(fn changeset ->
+          basket = changeset |> Ash.Changeset.get_argument(:basket)
+          customer = changeset |> Ash.Changeset.get_argument(:customer)
+
+          changeset
+          |> Ash.Changeset.manage_relationship(
+            :instances,
+            [%{basket: basket, customer: customer}],
+            type: :create
+          )
+        end)
+      end
     end
 
     update :remove_instance do
       require_atomic? false
 
-      argument :instance, :map do
+      argument :id, :integer do
         allow_nil? false
       end
 
-      change manage_relationship(:instance, :instances, on_match: {:destroy, :destroy})
+      change fn changeset, %{actor: actor} = context ->
+        changeset
+        |> Ash.Changeset.before_action(fn changeset ->
+          instance_id = changeset |> Ash.Changeset.get_argument(:id)
+
+          changeset
+          |> Ash.Changeset.manage_relationship(:instances, [instance_id],
+            on_match: {:destroy, :destroy}
+          )
+        end)
+      end
     end
   end
 
@@ -265,6 +292,10 @@ defmodule Gits.Storefront.Ticket do
   end
 
   policies do
+    policy [action(:read), accessing_from(Basket, :tickets)] do
+      authorize_if always()
+    end
+
     policy action([:read_for_shopping]) do
       authorize_if actor_present()
     end

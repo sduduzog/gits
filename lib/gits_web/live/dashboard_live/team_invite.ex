@@ -7,7 +7,6 @@ defmodule GitsWeb.DashboardLive.TeamInvite do
   def mount(params, _session, socket) do
     user =
       socket.assigns.current_user
-      |> IO.inspect()
 
     invite =
       Invite

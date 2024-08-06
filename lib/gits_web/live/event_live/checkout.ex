@@ -51,7 +51,6 @@ defmodule GitsWeb.EventLive.Checkout do
 
     basket
     |> Ash.Changeset.for_update(:unlock_for_shopping, %{}, actor: user)
-    |> IO.inspect()
     |> Ash.update!()
 
     {:noreply, push_navigate(socket, to: ~p"/events/#{event.masked_id}/tickets/#{basket.id}")}

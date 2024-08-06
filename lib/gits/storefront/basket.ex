@@ -49,6 +49,10 @@ defmodule Gits.Storefront.Basket do
     belongs_to :customer, Gits.Storefront.Customer
 
     has_many :instances, Gits.Storefront.TicketInstance
+
+    has_many :tickets, Gits.Storefront.Ticket do
+      no_attributes? true
+    end
   end
 
   aggregates do
@@ -58,13 +62,24 @@ defmodule Gits.Storefront.Basket do
   calculations do
     calculate :event_name, :string, expr(event.name)
     calculate :sum_of_instance_prices, :decimal, SumOfInstancePrices
+    calculate :total, :decimal, SumOfInstancePrices
   end
 
   actions do
     read :read do
       primary? true
 
-      prepare build(load: [:event_name, :instances, :sum_of_instance_prices])
+      prepare build(
+                load: [
+                  :customer,
+                  :event_name,
+                  :instances,
+                  :sum_of_instance_prices,
+                  :total,
+                  :tickets,
+                  event: [:account, :masked_id]
+                ]
+              )
     end
 
     create :open_basket do
@@ -75,6 +90,61 @@ defmodule Gits.Storefront.Basket do
       change manage_relationship(:customer, type: :append)
 
       notifiers [StartBasketJob]
+    end
+
+    update :add_ticket do
+      require_atomic? false
+
+      argument :ticket_id, :uuid do
+        allow_nil? false
+      end
+
+      change fn changeset, %{actor: actor} ->
+        changeset
+        |> Ash.Changeset.before_action(fn changeset ->
+          ticket_id =
+            changeset
+            |> Ash.Changeset.get_argument(:ticket_id)
+
+          changeset.data.tickets
+          |> Enum.find(fn ticket -> ticket.id == ticket_id end)
+          |> Ash.Changeset.for_update(:add_instance, %{
+            basket: changeset.data,
+            customer: changeset.data.customer
+          })
+          |> Ash.update(actor: actor)
+
+          changeset
+        end)
+      end
+    end
+
+    update :remove_ticket do
+      require_atomic? false
+
+      argument :ticket_id, :uuid do
+        allow_nil? false
+      end
+
+      change fn changeset, %{actor: actor} ->
+        changeset
+        |> Ash.Changeset.before_action(fn changeset ->
+          ticket_id = changeset |> Ash.Changeset.get_argument(:ticket_id)
+
+          instance =
+            changeset.data.instances
+            |> Enum.find(fn instance -> instance.ticket_id == ticket_id end)
+
+          changeset.data.tickets
+          |> Enum.find(fn ticket -> ticket.id == ticket_id end)
+          |> Ash.Changeset.for_update(:remove_instance, %{
+            id: instance.id
+          })
+          |> Ash.update(actor: actor)
+
+          changeset
+        end)
+      end
     end
 
     update :start_payment do
@@ -166,6 +236,14 @@ defmodule Gits.Storefront.Basket do
     policy action(:read) do
       authorize_if Gits.Checks.ActorIsObanJob
       authorize_if expr(customer.user.id == ^actor(:id))
+      authorize_if actor_present()
+    end
+
+    policy action(:add_ticket) do
+      authorize_if actor_present()
+    end
+
+    policy action(:remove_ticket) do
       authorize_if actor_present()
     end
 

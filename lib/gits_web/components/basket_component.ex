@@ -3,140 +3,79 @@ defmodule GitsWeb.BasketComponent do
 
   alias Gits.Currency
   alias Gits.Storefront.Basket
-  alias Gits.Storefront.Ticket
 
   def update(assigns, socket) do
     basket =
       Basket
       |> Ash.get!(assigns.id, actor: assigns.user)
 
-    tickets =
-      Ticket
-      |> Ash.Query.for_read(:read, %{}, actor: assigns.user)
-      |> Ash.Query.load(
-        customer_reserved_instance_count_for_basket: [basket_id: basket.id],
-        customer_reserved_instance_price_for_basket: [basket_id: basket.id]
-      )
-      |> Ash.read!()
-
-    socket =
-      socket
-      |> assign(:id, assigns.id)
-      |> assign(:user, assigns.user)
-      |> assign(:basket, basket)
-      |> assign(:tickets, tickets)
-      |> assign(:show_summary, false)
-
-    {:ok, socket}
-  end
-
-  defp swap_stale_ticket_in_list(tickets, updated_ticket) do
-    tickets
-    |> Enum.map(fn ticket ->
-      if(ticket.id == updated_ticket.id, do: updated_ticket, else: ticket)
-    end)
+    socket
+    |> assign(:id, assigns.id)
+    |> assign(:basket, basket)
+    |> assign(:user, assigns.user)
+    |> assign(:show_summary, false)
+    |> ok()
   end
 
   def handle_event("remove_ticket", unsigned_params, socket) do
     %{
-      tickets: tickets,
       user: user,
       basket: basket
     } = socket.assigns
 
-    ticket =
-      Enum.find(tickets, fn ticket -> ticket.id == unsigned_params["id"] end)
+    basket
+    |> Ash.Changeset.for_update(:remove_ticket, %{ticket_id: unsigned_params["id"]}, actor: user)
+    |> Ash.update()
 
-    socket =
-      basket.instances
-      |> Enum.filter(fn x -> x.ticket_id == ticket.id end)
-      |> Enum.sort(&(&1.id < &2.id))
-      |> case do
-        [instance | _] ->
-          updated_ticket =
-            ticket
-            |> Ash.Changeset.for_update(:remove_instance, %{instance: instance}, actor: user)
-            |> Ash.update!()
-            |> Ash.load!(
-              [
-                customer_reserved_instance_count_for_basket: [basket_id: basket.id],
-                customer_reserved_instance_price_for_basket: [basket_id: basket.id]
-              ],
-              actor: user
-            )
-
-          updated_tickets = tickets |> swap_stale_ticket_in_list(updated_ticket)
-
-          socket
-          |> assign(
-            :tickets,
-            updated_tickets
-          )
-
-        _ ->
-          socket
-      end
-
-    socket = socket |> assign(:basket, basket |> Ash.reload!(actor: user))
-
-    {:noreply, socket}
+    basket
+    |> Ash.reload(actor: user)
+    |> case do
+      {:ok, basket} -> socket |> assign(:basket, basket)
+      _ -> socket
+    end
+    |> noreply()
   end
 
   def handle_event("add_ticket", unsigned_params, socket) do
     %{
-      tickets: tickets,
       user: user,
       basket: basket
     } = socket.assigns
 
-    updated_ticket =
-      Enum.find(tickets, fn ticket -> ticket.id == unsigned_params["id"] end)
-      |> Ash.Changeset.for_update(:add_instance, %{instance: %{basket: basket}}, actor: user)
-      |> Ash.update!()
-      |> Ash.load!(
-        [
-          customer_reserved_instance_count_for_basket: [basket_id: basket.id],
-          customer_reserved_instance_price_for_basket: [basket_id: basket.id]
-        ],
-        actor: user
-      )
+    basket
+    |> Ash.Changeset.for_update(:add_ticket, %{ticket_id: unsigned_params["id"]}, actor: user)
+    |> Ash.update()
 
-    updated_tickets = tickets |> swap_stale_ticket_in_list(updated_ticket)
-
-    socket
-    |> assign(
-      :tickets,
-      updated_tickets
-    )
-
-    socket = socket |> assign(:basket, basket |> Ash.reload!(actor: user))
-
-    {:noreply, socket}
+    basket
+    |> Ash.reload(actor: user)
+    |> case do
+      {:ok, basket} -> socket |> assign(:basket, basket)
+      _ -> socket
+    end
+    |> noreply()
   end
 
   def handle_event("checkout", _unsigned_params, socket) do
     %{user: user, basket: basket} = socket.assigns
 
     paid_basket? =
-      basket.sum_of_instance_prices
+      basket.total
       |> Decimal.gt?("0")
 
-    action = if(paid_basket?, do: :start_payment, else: :settle_for_free)
+    action =
+      if(paid_basket?, do: :start_payment, else: :settle_for_free)
 
-    socket =
-      basket
-      |> Ash.load!([event: [:account]], actor: user)
-      |> Ash.Changeset.for_update(action, %{}, actor: user)
-      |> Ash.update()
-      |> case do
-        {:ok, updated_basket} ->
-          socket |> assign(:basket, updated_basket)
+    basket
+    |> Ash.Changeset.for_update(action, %{}, actor: user)
+    |> Ash.update()
+    |> case do
+      {:ok, updated_basket} ->
+        socket |> assign(:basket, updated_basket)
 
-        _ ->
-          socket
-      end
-
-    {:noreply, socket}
+      _ ->
+        socket
+    end
+    |> noreply()
   end
 
   def render(assigns) do
@@ -147,8 +86,9 @@ defmodule GitsWeb.BasketComponent do
         <.ticket_selection
           :if={@basket.state == :open}
           event_name={@basket.event_name}
-          basket_total={@basket.sum_of_instance_prices}
-          tickets={@tickets}
+          basket_total={@basket.total}
+          tickets={@basket.tickets}
+          instances={@basket.instances}
           myself={@myself}
         />
         <.payment :if={@basket.state == :payment_started} basket={@basket} user={@user} />
@@ -195,6 +135,10 @@ defmodule GitsWeb.BasketComponent do
     """
   end
 
+  defp count_tickets(instances, ticket_id) do
+    instances |> Enum.count(fn instance -> instance.ticket_id == ticket_id end)
+  end
+
   def ticket_selection(assigns) do
     ~H"""
     <div class="flex flex-col overflow-auto bg-zinc-50 ">
@@ -215,7 +159,7 @@ defmodule GitsWeb.BasketComponent do
                   <.icon name="hero-minus-mini" />
                 </button>
                 <span class="w-6 text-center tabular-nums leading-5">
-                  <%= ticket.customer_reserved_instance_count_for_basket %>
+                  <%= count_tickets(@instances, ticket.id) %>
                 </span>
                 <button
                   class="flex rounded-lg p-2 hover:bg-zinc-100"
@@ -254,7 +198,7 @@ defmodule GitsWeb.BasketComponent do
         basket_total={@basket_total}
         tickets={
           @tickets
-          |> Enum.filter(fn ticket -> ticket.customer_reserved_instance_count_for_basket > 0 end)
+          |> Enum.filter(fn ticket -> count_tickets(@instances, ticket) > 0 end)
         }
       />
       <div class="grid grid-cols-2 gap-2 p-2">

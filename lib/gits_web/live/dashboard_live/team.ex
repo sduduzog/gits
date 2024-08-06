@@ -15,7 +15,6 @@ defmodule GitsWeb.DashboardLive.Team do
         ],
         actor: user
       )
-      |> IO.inspect()
 
     socket
     |> assign(:invites, account.invites)
