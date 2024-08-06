@@ -31,12 +31,7 @@ defmodule GitsWeb.DashboardLive.Events do
           navigate={~p"/accounts/#{@slug}/events/#{event.id}"}
           class="aspect-[3/2] w-32 shrink-0 overflow-hidden rounded-xl bg-zinc-200"
         >
-          <img
-            src={Gits.Bucket.get_feature_image_path(@account.id, event.id)}
-            alt="event image"
-            id={"event-image-#{event.id}"}
-            phx-hook="ImgSrcFallback"
-          />
+          <img src={Gits.Bucket.get_feature_image_path(@account.id, event.id)} alt="event image" />
         </.link>
         <div class="line-clamp-3 grid grow gap-1 md:gap-2">
           <h1 class="w-full text-base font-semibold md:w-auto">

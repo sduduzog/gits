@@ -105,9 +105,7 @@ defmodule GitsWeb.DashboardLive.UploadGraphic do
         <img
           :if={[] == @uploads.feature_image.entries}
           src={Gits.Bucket.get_feature_image_path(@account.id, @event_id)}
-          alt=""
-          id={"event-feature-image-#{@event_id}"}
-          phx-hook="ImgSrcFallback"
+          alt="featured image preview"
         />
         <%= for entry <- @uploads.feature_image.entries do %>
           <.live_img_preview entry={entry} />
@@ -135,9 +133,7 @@ defmodule GitsWeb.DashboardLive.UploadGraphic do
         <img
           :if={[] == @uploads.listing_image.entries}
           src={Gits.Bucket.get_listing_image_path(@account.id, @event_id)}
-          alt=""
-          id={"event-listing-image-#{@event_id}"}
-          phx-hook="ImgSrcFallback"
+          alt="listing image preview"
         />
         <%= for entry <- @uploads.listing_image.entries do %>
           <.live_img_preview entry={entry} />

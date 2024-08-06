@@ -1,5 +1,6 @@
 defmodule GitsWeb.EventLive.Feature do
   use GitsWeb, :live_view
+  require Ash.Query
 
   alias Gits.Storefront.Basket
   alias Gits.Storefront.Customer
@@ -8,29 +9,37 @@ defmodule GitsWeb.EventLive.Feature do
   def mount(params, _session, socket) do
     user = socket.assigns.current_user
 
-    event =
-      Event
-      |> Ash.Query.for_read(:read, %{masked_id: params["id"]}, actor: user)
-      |> Ash.read_one!()
+    Event
+    |> Ash.Query.for_read(:read, %{masked_id: params["id"]}, actor: user)
+    |> Ash.read_one()
+    |> case do
+      {:ok, nil} ->
+        raise GitsWeb.Exceptions.NotFound, "no event found"
 
-    local_starts_at =
-      event.starts_at
-      |> Timex.local()
+      {:error, _} ->
+        raise GitsWeb.Exceptions.NotFound, "forbidden"
 
-    starts_at_day = local_starts_at |> Timex.format!("%e", :strftime)
-    starts_at_month = local_starts_at |> Timex.format!("%b", :strftime)
+      {:ok, event} ->
+        local_starts_at =
+          event.starts_at
+          |> Timex.local()
 
-    socket =
-      socket
-      |> assign(:feature_image, Gits.Bucket.get_feature_image_path(event.account_id, event.id))
-      |> assign(:event, event)
-      |> assign(:event_name, event.name)
-      |> assign(:starts_at_day, starts_at_day)
-      |> assign(:starts_at_month, starts_at_month)
-      |> assign(:show_basket_modal, false)
-      |> assign(:basket_id, nil)
+        starts_at_day = local_starts_at |> Timex.format!("%e", :strftime)
+        starts_at_month = local_starts_at |> Timex.format!("%b", :strftime)
 
-    {:ok, socket}
+        socket
+        |> assign(
+          :feature_image,
+          Gits.Bucket.get_feature_image_path(event.account_id, event.id)
+        )
+        |> assign(:event, event)
+        |> assign(:event_name, event.name)
+        |> assign(:starts_at_day, starts_at_day)
+        |> assign(:starts_at_month, starts_at_month)
+        |> assign(:show_basket_modal, false)
+        |> assign(:basket_id, nil)
+        |> ok()
+    end
   end
 
   def handle_params(unsigned_params, _uri, socket) do

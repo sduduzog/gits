@@ -6,13 +6,22 @@ defmodule GitsWeb.DashboardLive.ManageEvent do
   alias Gits.Storefront.Event
 
   def handle_params(%{"event_id" => id}, _uri, socket) do
-    user = socket.assigns.current_user
+    %{current_user: user, account: account} = socket.assigns
 
-    event =
-      Event
-      |> Ash.Query.for_read(:read)
-      |> Ash.Query.filter(id: id)
-      |> Ash.read_one!(actor: user)
+    account =
+      account
+      |> Ash.load!(
+        [
+          events:
+            Event
+            |> Ash.Query.for_read(:read)
+            |> Ash.Query.filter(id == ^id)
+            |> Ash.Query.load([:masked_id, :tickets, :address])
+        ],
+        actor: user
+      )
+
+    [event] = account.events
 
     form = event |> Form.for_update(:update, as: "edit_event", actor: user)
 

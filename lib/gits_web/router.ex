@@ -32,6 +32,7 @@ defmodule GitsWeb.Router do
     get "/", PageController, :home
     get "/events", PageController, :events
     get "/organizers", PageController, :organizers
+    get "/assets/:filename", PageController, :assets
     get "/healthz", PageController, :healthz
 
     resources "/accounts", AccountController, only: [:index, :new, :create]

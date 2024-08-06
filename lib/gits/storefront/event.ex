@@ -9,6 +9,8 @@ defmodule Gits.Storefront.Event do
     authorizers: [Ash.Policy.Authorizer],
     domain: Gits.Storefront
 
+  alias Gits.Dashboard.Account
+
   attributes do
     integer_primary_key :id
     attribute :name, :string, allow_nil?: false, public?: true
@@ -193,9 +195,34 @@ defmodule Gits.Storefront.Event do
   end
 
   policies do
-    policy action(:read) do
-      authorize_if always()
+    bypass [action(:read), accessing_from(Account, :events)] do
+      authorize_if expr(account.members.user.id == ^actor(:id))
     end
+
+    policy action(:read) do
+      authorize_if expr(
+                     account.members.user.id == ^actor(:id) and
+                       account.members.role in [:owner, :admin]
+                   )
+
+      authorize_if expr(visibility in [:protected, :public])
+    end
+
+    policy action(:read) do
+      authorize_if expr(
+                     account.members.user.id == ^actor(:id) and
+                       account.members.role in [:owner, :admin]
+                   )
+
+      authorize_if expr(not is_nil(published_at))
+    end
+
+    # policy action(:read) do
+    #   authorize_if expr(
+    #                  visibility in [:protected, :public] and
+    #                    account.members.user.id == ^actor(:id)
+    #                )
+    # end
 
     policy action(:create) do
       authorize_if actor_present()
@@ -217,30 +244,6 @@ defmodule Gits.Storefront.Event do
                      account.members.user.id == ^actor(:id) and
                        account.members.role in [:owner, :admin]
                    )
-    end
-
-    policy action(:for_dashboard_event_details) do
-      authorize_if actor_present()
-    end
-
-    policy action(:for_dashboard_event_list) do
-      authorize_if expr(
-                     account.members.user.id == ^actor(:id) and
-                       account.members.role in [:owner, :admin]
-                   )
-    end
-
-    policy action(:for_dashboard_event_list) do
-      authorize_if actor_present()
-    end
-
-    bypass action([:masked, :for_feature]) do
-      authorize_if expr(visibility in [:protected, :public] and not is_nil(^arg(:id)))
-    end
-
-    policy action([:masked, :for_feature]) do
-      forbid_unless expr(visibility == :public)
-      authorize_if always()
     end
 
     policy [action(:update), changing_attributes(payment_method: [to: :paystack])] do

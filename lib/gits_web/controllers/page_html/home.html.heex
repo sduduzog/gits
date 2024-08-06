@@ -76,10 +76,13 @@
               <span class="flex items-center gap-1 truncate text-sm">
                 <.icon name="hero-map-pin-micro" class="shrink-0 opacity-50" />
                 <span class="truncate">
-                  A Streetbar called desire
+                  <%= event.address.city %>
                 </span>
               </span>
-              <span class="block whitespace-nowrap rounded-lg border p-1 px-1.5 text-sm font-medium">
+              <span
+                :if={not is_nil(event.minimum_ticket_price)}
+                class="block whitespace-nowrap rounded-lg border p-1 px-1.5 text-sm font-medium"
+              >
                 <%= if Decimal.gt?(event.minimum_ticket_price, 0) do %>
                   R <%= event.minimum_ticket_price |> Gits.Currency.format() %>
                 <% else %>

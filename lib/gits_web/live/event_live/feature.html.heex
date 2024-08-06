@@ -1,3 +1,24 @@
+<div
+  :if={is_nil(@event.published_at)}
+  class="mx-auto w-full max-w-screen-lg rounded-md bg-blue-50 p-4"
+>
+  <div class="flex">
+    <div class="flex-shrink-0">
+      <.icon class="text-blue-400 -mt-1" name="hero-information-circle-mini" />
+    </div>
+    <div class="ml-3 flex-1 md:flex md:justify-between">
+      <p class="text-sm text-blue-700">
+        This event is not published
+      </p>
+      <p :if={false} class="mt-3 text-sm md:mt-0 md:ml-6">
+        <a href="#" class="whitespace-nowrap font-medium text-blue-700 hover:text-blue-600">
+          Details <span aria-hidden="true"> &rarr;</span>
+        </a>
+      </p>
+    </div>
+  </div>
+</div>
+
 <div class="min-h-96 mx-auto w-full max-w-2xl items-start gap-4 space-y-4 p-2 md:gap-12 md:pt-20 lg:flex lg:max-w-screen-lg lg:space-y-0 lg:p-0">
   <div class="grid gap-2">
     <div class="aspect-[3/2] relative mx-auto shrink-0 overflow-hidden rounded-2xl md:w-96 md:rounded-3xl">

@@ -2,6 +2,7 @@ defmodule GitsWeb.PageController do
   use GitsWeb, :controller
 
   require Ash.Query
+  alias Gits.Bucket
   alias Gits.Dashboard.Member
   alias Gits.Storefront.Customer
   alias Gits.Storefront.Event
@@ -10,11 +11,9 @@ defmodule GitsWeb.PageController do
     events =
       Event
       |> Ash.Query.for_read(:read)
-      |> Ash.Query.filter(published_at <= fragment("now()") and starts_at >= fragment("now()"))
-      |> Ash.Query.filter(count(tickets) > 0)
-      |> Ash.Query.filter(visibility == :public)
-      |> Ash.Query.load([:minimum_ticket_price, :maximum_ticket_price])
-      |> Ash.read!()
+      |> Ash.Query.filter(starts_at >= fragment("now()"))
+      |> Ash.Query.load([:minimum_ticket_price, :maximum_ticket_price, :address])
+      |> Ash.read!(actor: conn.assigns.current_user)
 
     conn
     |> assign(:slug, "/")
@@ -129,6 +128,10 @@ defmodule GitsWeb.PageController do
     end
 
     redirect(conn, to: "/organizers")
+  end
+
+  def assets(conn, params) do
+    conn |> redirect(external: Bucket.get_image_url(params["filename"]))
   end
 
   def healthz(conn, _) do

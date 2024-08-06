@@ -10,7 +10,7 @@ defmodule Gits.Bucket do
   end
 
   defp get_event_filename(account_id, event_id, type) do
-    hash_filename("#{account_id}/#{event_id}/#{type}")
+    "/assets/" <> hash_filename("#{account_id}/#{event_id}/#{type}")
   end
 
   defp hash_filename(filename) do
@@ -32,10 +32,18 @@ defmodule Gits.Bucket do
   end
 
   def get_listing_image_path(account_id, event_id) do
-    get_event_image(account_id, event_id, "listing")
+    get_event_filename(account_id, event_id, "listing")
   end
 
   def get_feature_image_path(account_id, event_id) do
+    get_event_filename(account_id, event_id, "feature")
+  end
+
+  def get_listing_image(account_id, event_id) do
+    get_event_image(account_id, event_id, "listing")
+  end
+
+  def get_feature_image(account_id, event_id) do
     get_event_image(account_id, event_id, "feature")
   end
 
@@ -49,6 +57,22 @@ defmodule Gits.Bucket do
       {:ok, signed_url} ->
         signed_url
 
+      _ ->
+        "/images/placeholder.png"
+    end
+  end
+
+  def get_image_url(hash) do
+    presigned_url_options = Application.get_env(:gits, :presigned_url_options)
+    bucket_name = Application.get_env(:gits, :bucket_name)
+    filename = "#{hash}.jpg"
+
+    with {:ok, _} <- ExAws.S3.head_object(bucket_name, filename) |> ExAws.request(),
+         {:ok, signed_url} <-
+           ExAws.Config.new(:s3)
+           |> ExAws.S3.presigned_url(:get, bucket_name, filename, presigned_url_options) do
+      signed_url
+    else
       _ ->
         "/images/placeholder.png"
     end
