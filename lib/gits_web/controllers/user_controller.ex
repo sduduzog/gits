@@ -40,7 +40,9 @@ defmodule GitsWeb.UserController do
       |> Ash.Query.load([
         :event,
         :token,
-        instances: TicketInstance |> Ash.Query.filter(state in [:ready_for_use])
+        instances:
+          TicketInstance
+          |> Ash.Query.filter(customer.user.id == ^user.id and state in [:ready_for_use])
       ])
       |> Ash.read!()
 
