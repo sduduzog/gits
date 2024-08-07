@@ -82,6 +82,7 @@ defmodule GitsWeb.BasketComponent do
     ~H"""
     <div class="bg-zinc-500/50 fixed inset-0 z-20 flex justify-end md:p-2 lg:p-4">
       <div class="grid w-full max-w-screen-md overflow-hidden bg-white md:grid-cols-2 md:rounded-2xl">
+        <.cancelled :if={@basket.state == :reclaimed} basket={@basket} />
         <.cancelled :if={@basket.state == :cancelled} basket={@basket} />
         <.ticket_selection
           :if={@basket.state == :open}
@@ -96,6 +97,20 @@ defmodule GitsWeb.BasketComponent do
           @basket.state == :settled_for_free or @basket.state == :settled_for_payment
         } />
       </div>
+    </div>
+    """
+  end
+
+  def reclaimed(assigns) do
+    ~H"""
+    <div class="col-span-full flex flex-col items-center justify-center gap-8">
+      <span class="text-sm text-zinc-500">reclaimed</span>
+      <button
+        class="min-w-32 rounded-xl p-4 text-sm font-medium hover:bg-zinc-50"
+        phx-click="close_basket"
+      >
+        Close
+      </button>
     </div>
     """
   end
@@ -334,7 +349,7 @@ defmodule GitsWeb.BasketComponent do
       <div class="grid grow">
         <h1 class="text-xl font-semibold"><%= @event_name %></h1>
       </div>
-      <button class="flex rounded-xl p-2 hover:bg-zinc-100" phx-click="close_basket">
+      <button class="flex rounded-xl p-2 hover:bg-zinc-100" phx-click="cancel_basket">
         <.icon name="hero-x-mark-mini" />
       </button>
     </div>

@@ -9,10 +9,9 @@ defmodule Gits.Storefront.Basket do
     notifiers: [Ash.Notifier.PubSub]
 
   require Ash.Resource.Change.Builtins
-  alias Gits.Storefront.Ticket
   alias Gits.Storefront.Calculations.SumOfInstancePrices
   alias Gits.Storefront.Notifiers.StartBasketJob
-  alias Gits.Storefront.TicketInstance
+  alias Gits.Storefront.Ticket
 
   attributes do
     uuid_primary_key :id
@@ -55,7 +54,6 @@ defmodule Gits.Storefront.Basket do
 
   calculations do
     calculate :event_name, :string, expr(event.name)
-    calculate :sum_of_instance_prices, :decimal, SumOfInstancePrices
     calculate :total, :decimal, SumOfInstancePrices
   end
 
@@ -68,7 +66,6 @@ defmodule Gits.Storefront.Basket do
                   :customer,
                   :event_name,
                   :instances,
-                  :sum_of_instance_prices,
                   :total,
                   event: [
                     :account,
@@ -83,6 +80,12 @@ defmodule Gits.Storefront.Basket do
               )
     end
 
+    read :for_reclaim do
+      argument :id, :uuid
+
+      filter expr(id == ^arg(:id))
+    end
+
     create :open_basket do
       argument :event, :map, allow_nil?: false
       argument :customer, :map, allow_nil?: false
@@ -90,7 +93,7 @@ defmodule Gits.Storefront.Basket do
       change manage_relationship(:event, type: :append)
       change manage_relationship(:customer, type: :append)
 
-      # notifiers [StartBasketJob]
+      notifiers [StartBasketJob]
     end
 
     update :add_ticket do
@@ -231,11 +234,15 @@ defmodule Gits.Storefront.Basket do
     module GitsWeb.Endpoint
     prefix "basket"
     publish :cancel, ["cancelled", :id]
+    publish :reclaimed, ["reclaimed", :id]
   end
 
   policies do
-    policy action(:read) do
+    bypass action([:for_reclaim, :reclaim]) do
       authorize_if Gits.Checks.ActorIsObanJob
+    end
+
+    policy action(:read) do
       authorize_if expr(customer.user.id == ^actor(:id))
       authorize_if actor_present()
     end

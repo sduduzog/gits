@@ -140,11 +140,10 @@
   <div class="grid gap-4 md:grid-cols-3 md:gap-6 lg:grid-cols-3 lg:gap-8">
     <div :for={ticket <- @event.tickets} class="rounded-xl border border-zinc-200 p-2">
       <div class="flex w-full items-center justify-between">
-        <span
-          :if={not is_nil(ticket.sale_starts_at)}
-          class="p-2 px-4 text-sm font-medium text-zinc-500"
-        >
-          Sale starts <%= ticket.sale_starts_at |> Timex.format!("%e %b %Y, %R %p", :strftime) %>
+        <span class="p-2 px-4 text-sm font-medium text-zinc-500">
+          <%= if not is_nil(ticket.sale_starts_at) do %>
+            Sale starts <%= ticket.sale_starts_at |> Timex.format!("%e %b %Y, %R %p", :strftime) %>
+          <% end %>
         </span>
         <div
           id={"ticket-#{ticket.id}"}

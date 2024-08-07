@@ -32,6 +32,7 @@ defmodule Gits.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:sentry, "~> 10.0"},
       {:phoenix_live_view, "~> 0.20"},
       {:phoenix, "~> 1.0"},
       {:ash, "~> 3.0"},

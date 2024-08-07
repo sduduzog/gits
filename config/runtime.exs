@@ -38,6 +38,8 @@ config :ex_aws, :s3,
 
 config :gits, :bucket_name, env!("BUCKET_NAME")
 
+config :logger, level: env!("LOG_LEVEL", :atom, :info)
+
 if config_env() == :prod do
   database_url =
     System.get_env("DATABASE_URL") ||

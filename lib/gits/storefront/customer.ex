@@ -58,10 +58,6 @@ defmodule Gits.Storefront.Customer do
   actions do
     defaults [:read]
 
-    read :read_for_shopping do
-      filter expr(user.id == ^actor(:id))
-    end
-
     create :create do
       argument :user, :map, allow_nil?: false
 
@@ -78,16 +74,12 @@ defmodule Gits.Storefront.Customer do
   end
 
   policies do
+    bypass action(:read) do
+      authorize_if Gits.Checks.ActorIsObanJob
+    end
+
     policy action(:read) do
       authorize_if expr(user.id == ^actor(:id))
-    end
-
-    policy action(:read_for_shopping) do
-      authorize_if expr(user.id == ^actor(:id))
-    end
-
-    policy action([:read, :read_for_shopping]) do
-      authorize_if actor_present()
     end
 
     policy action(:create) do

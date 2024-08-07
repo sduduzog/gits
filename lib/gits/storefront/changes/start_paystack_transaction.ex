@@ -20,7 +20,7 @@ defmodule Gits.Storefront.Changes.StartPaystackTransaction do
         |> to_string
 
       amount =
-        basket.sum_of_instance_prices
+        basket.total
         |> Decimal.mult(100)
         |> Decimal.to_integer()
         |> to_string()

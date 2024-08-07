@@ -5,7 +5,7 @@ defmodule Gits.Storefront.Notifiers.StartBasketJob do
   alias Gits.Workers.ReclaimBasket
 
   def notify(%Ash.Notifier.Notification{data: data}) do
-    ReclaimBasket.new(%{id: data.id}, schedule_in: 5 * 60)
+    ReclaimBasket.new(%{id: data.id}, schedule_in: 5)
     |> Oban.insert()
 
     :ok

@@ -46,6 +46,16 @@ defmodule GitsWeb.EventLive.Feature do
     end
   end
 
+  def handle_params(%{"basket" => basket_id}, _uri, socket) do
+    basket =
+      Basket
+      |> Ash.get!(basket_id, actor: socket.assigns.current_user)
+
+    socket
+    |> assign(:basket, basket)
+    |> noreply()
+  end
+
   def handle_params(unsigned_params, _uri, socket) do
     socket = socket |> assign(:basket_id, unsigned_params["basket"])
     {:noreply, socket}
@@ -64,13 +74,21 @@ defmodule GitsWeb.EventLive.Feature do
     |> noreply()
   end
 
-  def handle_event("close_basket", _unsigned_params, socket) do
+  def handle_event("cancel_basket", _unsigned_params, socket) do
     %{event: event, current_user: user, basket_id: basket_id} = socket.assigns
 
     with {:ok, basket} <- Ash.get(Basket, basket_id, actor: user),
          {:ok, _} <- cancel_basket(basket, user) do
       socket |> push_patch(to: ~p"/events/#{event.masked_id}")
     end
+    |> noreply()
+  end
+
+  def handle_event("close_basket", _unsigned_params, socket) do
+    %{event: event} = socket.assigns
+
+    socket
+    |> push_patch(to: ~p"/events/#{event.masked_id}")
     |> noreply()
   end
 

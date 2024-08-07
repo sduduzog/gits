@@ -58,6 +58,13 @@ defmodule GitsWeb.PageController do
   end
 
   def settings(conn, _params) do
+    try do
+      ThisWillError.really()
+    rescue
+      my_exception ->
+        Sentry.capture_exception(my_exception, stacktrace: __STACKTRACE__)
+    end
+
     conn
     |> render(:settings)
   end
