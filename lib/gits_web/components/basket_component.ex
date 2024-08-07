@@ -185,6 +185,7 @@ defmodule GitsWeb.BasketComponent do
           Back to tickets
         </button>
         <button
+          :if={not @not_confirmed}
           class="col-start-2 rounded-xl bg-zinc-900 px-4 py-3 text-sm font-medium text-white"
           phx-click="checkout"
         >
