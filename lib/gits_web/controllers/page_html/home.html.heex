@@ -11,24 +11,21 @@
   <.header user={@current_user} />
 
   <div class="relative grid gap-8 p-4 pt-8 md:text-center lg:pt-40">
-    <h1 class="text-5xl font-semibold leading-tight dark:text-white md:text-6xl">
+    <h1 class="text-5xl font-semibold leading-tight md:text-6xl">
       Unlock Unforgettable Experiences
     </h1>
-    <p class="mx-auto max-w-xl font-light text-zinc-800 dark:text-zinc-200 lg:text-xl">
+    <p class="mx-auto max-w-xl font-light text-zinc-800 lg:text-xl">
       We offer better security, faster check-in, and lower costs. Whether it’s concerts, conferences, festivals, or sports events, we’ve got you covered.
     </p>
     <div class="flex items-center gap-8 font-medium md:mx-auto md:justify-center">
       <.link
         navigate={~p"/accounts/new"}
-        class="border-2 rounded-lg border-zinc-600 dark:border-zinc-300 dark:text-zinc-100 p-2 px-4 hover:underline"
+        class="border-2 rounded-lg border-zinc-600 p-2 px-4 hover:underline"
       >
         Get started
       </.link>
-      <.link
-        :if={FunWithFlags.enabled?(:why_choose_button)}
-        class="hover:underline dark:text-zinc-100"
-      >
-        Why choose <span class="font-black italic text-zinc-700 dark:text-zinc-200">GiTS</span>?
+      <.link :if={FunWithFlags.enabled?(:why_choose_button)} class="hover:underline">
+        Why choose <span class="font-black italic text-zinc-700">GiTS</span>?
       </.link>
     </div>
   </div>
@@ -44,7 +41,7 @@
       <input
         name="q"
         type="search"
-        class="bg-white/50 w-full rounded-md border-none bg-zinc-50 p-4 text-sm outline-none ring-1 ring-zinc-200 focus-visible:ring-zinc-400 dark:bg-zinc-700 dark:ring-zinc-600"
+        class="bg-white/50 w-full rounded-md border-none bg-zinc-50 p-4 text-sm outline-none ring-1 ring-zinc-200 focus-visible:ring-zinc-400"
         placeholder="Search for an event, city, etc"
       />
     </.simple_form>
