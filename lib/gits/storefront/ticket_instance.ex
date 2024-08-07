@@ -89,10 +89,9 @@ defmodule Gits.Storefront.TicketInstance do
 
   policies do
     policy action(:read) do
-      authorize_if Gits.Checks.ActorIsObanJob
-      authorize_if expr(customer.user.id == ^actor(:id))
       authorize_if accessing_from(Basket, :instances)
       authorize_if accessing_from(Ticket, :instances)
+      authorize_if expr(customer.user.id == ^actor(:id))
     end
 
     policy action(:prepare_for_use) do
@@ -103,8 +102,8 @@ defmodule Gits.Storefront.TicketInstance do
       authorize_if accessing_from(Ticket, :instances)
     end
 
-    policy [action(:cancel), accessing_from(Basket, :instances)] do
-      authorize_if actor_present()
+    policy action([:cancel, :reclaim]) do
+      authorize_if accessing_from(Basket, :instances)
     end
 
     policy action(:destroy) do

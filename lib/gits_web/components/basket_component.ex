@@ -5,84 +5,19 @@ defmodule GitsWeb.BasketComponent do
   alias Gits.Storefront.Basket
 
   def update(assigns, socket) do
-    basket =
-      Basket
-      |> Ash.get!(assigns.id, actor: assigns.user)
-
     socket
     |> assign(:id, assigns.id)
-    |> assign(:basket, basket)
+    |> assign(:basket, assigns.basket)
     |> assign(:user, assigns.user)
     |> assign(:show_summary, false)
     |> ok()
-  end
-
-  def handle_event("remove_ticket", unsigned_params, socket) do
-    %{
-      user: user,
-      basket: basket
-    } = socket.assigns
-
-    basket
-    |> Ash.Changeset.for_update(:remove_ticket, %{ticket_id: unsigned_params["id"]}, actor: user)
-    |> Ash.update()
-
-    basket
-    |> Ash.reload(actor: user)
-    |> case do
-      {:ok, basket} -> socket |> assign(:basket, basket)
-      _ -> socket
-    end
-    |> noreply()
-  end
-
-  def handle_event("add_ticket", unsigned_params, socket) do
-    %{
-      user: user,
-      basket: basket
-    } = socket.assigns
-
-    basket
-    |> Ash.Changeset.for_update(:add_ticket, %{ticket_id: unsigned_params["id"]}, actor: user)
-    |> Ash.update()
-
-    basket
-    |> Ash.reload(actor: user)
-    |> case do
-      {:ok, basket} -> socket |> assign(:basket, basket)
-      _ -> socket
-    end
-    |> noreply()
-  end
-
-  def handle_event("checkout", _unsigned_params, socket) do
-    %{user: user, basket: basket} = socket.assigns
-
-    paid_basket? =
-      basket.total
-      |> Decimal.gt?("0")
-
-    action =
-      if(paid_basket?, do: :start_payment, else: :settle_for_free)
-
-    basket
-    |> Ash.Changeset.for_update(action, %{}, actor: user)
-    |> Ash.update()
-    |> case do
-      {:ok, updated_basket} ->
-        socket |> assign(:basket, updated_basket)
-
-      _ ->
-        socket
-    end
-    |> noreply()
   end
 
   def render(assigns) do
     ~H"""
     <div class="bg-zinc-500/50 fixed inset-0 z-20 flex justify-end md:p-2 lg:p-4">
       <div class="grid w-full max-w-screen-md overflow-hidden bg-white md:grid-cols-2 md:rounded-2xl">
-        <.cancelled :if={@basket.state == :reclaimed} basket={@basket} />
+        <.reclaimed :if={@basket.state == :reclaimed} basket={@basket} />
         <.cancelled :if={@basket.state == :cancelled} basket={@basket} />
         <.ticket_selection
           :if={@basket.state == :open}
@@ -178,7 +113,6 @@ defmodule GitsWeb.BasketComponent do
                 class="flex rounded-lg p-2 hover:bg-zinc-100"
                 phx-click="remove_ticket"
                 phx-value-id={ticket.id}
-                phx-target={@myself}
               >
                 <.icon name="hero-minus-mini" />
               </button>
@@ -189,7 +123,6 @@ defmodule GitsWeb.BasketComponent do
                 class="flex rounded-lg p-2 hover:bg-zinc-100"
                 phx-click="add_ticket"
                 phx-value-id={ticket.id}
-                phx-target={@myself}
               >
                 <.icon name="hero-plus-mini" />
               </button>

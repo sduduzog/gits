@@ -11,7 +11,6 @@ defmodule Gits.Storefront.Basket do
   require Ash.Resource.Change.Builtins
   alias Gits.Storefront.Calculations.SumOfInstancePrices
   alias Gits.Storefront.Notifiers.StartBasketJob
-  alias Gits.Storefront.Ticket
 
   attributes do
     uuid_primary_key :id
@@ -60,24 +59,6 @@ defmodule Gits.Storefront.Basket do
   actions do
     read :read do
       primary? true
-
-      prepare build(
-                load: [
-                  :customer,
-                  :event_name,
-                  :instances,
-                  :total,
-                  event: [
-                    :account,
-                    :masked_id,
-                    tickets:
-                      Ticket
-                      |> Ash.Query.filter(
-                        sale_starts_at <= fragment("now()") and sale_ends_at > fragment("now()")
-                      )
-                  ]
-                ]
-              )
     end
 
     read :for_reclaim do
@@ -225,6 +206,26 @@ defmodule Gits.Storefront.Basket do
 
     update :reclaim do
       require_atomic? false
+
+      change fn changeset, %{actor: actor} ->
+        changeset
+        |> Ash.Changeset.before_action(fn changeset ->
+          changeset.data
+          |> Ash.load([:instances], actor: actor)
+          |> case do
+            {:ok, basket} ->
+              changeset
+              |> Ash.Changeset.manage_relationship(
+                :instances,
+                basket.instances,
+                on_match: {:update, :reclaim}
+              )
+
+            _ ->
+              changeset
+          end
+        end)
+      end
 
       change transition_state(:reclaimed)
     end

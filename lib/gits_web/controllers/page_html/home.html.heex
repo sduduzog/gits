@@ -62,14 +62,11 @@
             class="size-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-110"
           />
 
-          <div class="size-12 absolute top-2 left-2 flex flex-col items-center justify-center rounded-xl bg-white text-zinc-800 shadow-md *:leading-4">
-            <span class="font-semibold">
-              <%= event.starts_at |> Timex.format!("%e", :strftime) %>
-            </span>
-            <span class="text-xs">
-              <%= event.starts_at |> Timex.format!("%b", :strftime) %>
-            </span>
-          </div>
+          <GitsWeb.EventLive.EventComponents.floating_event_date
+            day={event.starts_at |> Timex.format!("%e", :strftime)}
+            month={event.starts_at |> Timex.format!("%b", :strftime)}
+          />
+
           <div class="absolute inset-x-2 bottom-2 space-y-1.5 rounded-xl bg-white p-2 px-2.5 shadow-md">
             <span class="p0.5 line-clamp-2 text-sm font-medium"><%= event.name %></span>
             <div class="flex items-center justify-between gap-1">

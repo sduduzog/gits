@@ -1,13 +1,9 @@
 defmodule GitsWeb.EventLive.Feature do
-  alias Gits.Workers.Basket
-  alias Gits.Workers.Basket
-  alias Gits.Workers.Basket
+  import GitsWeb.EventLive.EventComponents
   use GitsWeb, :live_view
   require Ash.Query
 
-  alias Gits.Storefront.Basket
-  alias Gits.Storefront.Customer
-  alias Gits.Storefront.Event
+  alias Gits.Storefront.{Basket, Customer, Event, Ticket}
 
   def mount(params, _session, socket) do
     user = socket.assigns.current_user
@@ -40,24 +36,42 @@ defmodule GitsWeb.EventLive.Feature do
         |> assign(:event_name, event.name)
         |> assign(:starts_at_day, starts_at_day)
         |> assign(:starts_at_month, starts_at_month)
-        |> assign(:show_basket_modal, false)
-        |> assign(:basket_id, nil)
         |> ok()
     end
   end
 
+  defp fetch_basket(id, actor) do
+    Basket
+    |> Ash.Query.for_read(:read)
+    |> Ash.Query.filter(id: id)
+    |> Ash.Query.load([
+      :customer,
+      :event_name,
+      :instances,
+      :total,
+      event: [
+        :account,
+        :masked_id,
+        tickets:
+          Ticket
+          |> Ash.Query.filter(
+            sale_starts_at <= fragment("now()") and sale_ends_at > fragment("now()")
+          )
+      ]
+    ])
+    |> Ash.read_one(actor: actor)
+  end
+
   def handle_params(%{"basket" => basket_id}, _uri, socket) do
-    basket =
-      Basket
-      |> Ash.get!(basket_id, actor: socket.assigns.current_user)
+    {:ok, basket} = fetch_basket(basket_id, socket.assigns.current_user)
 
     socket
     |> assign(:basket, basket)
     |> noreply()
   end
 
-  def handle_params(unsigned_params, _uri, socket) do
-    socket = socket |> assign(:basket_id, unsigned_params["basket"])
+  def handle_params(_unsigned_params, _uri, socket) do
+    socket = socket |> assign(:basket, nil)
     {:noreply, socket}
   end
 
@@ -74,11 +88,69 @@ defmodule GitsWeb.EventLive.Feature do
     |> noreply()
   end
 
-  def handle_event("cancel_basket", _unsigned_params, socket) do
-    %{event: event, current_user: user, basket_id: basket_id} = socket.assigns
+  def handle_event("remove_ticket", unsigned_params, socket) do
+    %{
+      current_user: user,
+      basket: basket
+    } = socket.assigns
 
-    with {:ok, basket} <- Ash.get(Basket, basket_id, actor: user),
-         {:ok, _} <- cancel_basket(basket, user) do
+    basket
+    |> Ash.Changeset.for_update(:remove_ticket, %{ticket_id: unsigned_params["id"]}, actor: user)
+    |> Ash.update()
+
+    fetch_basket(basket.id, user)
+    |> case do
+      {:ok, basket} -> socket |> assign(:basket, basket)
+      _ -> socket
+    end
+    |> noreply()
+  end
+
+  def handle_event("add_ticket", unsigned_params, socket) do
+    %{
+      current_user: user,
+      basket: basket
+    } = socket.assigns
+
+    basket
+    |> Ash.Changeset.for_update(:add_ticket, %{ticket_id: unsigned_params["id"]}, actor: user)
+    |> Ash.update()
+
+    fetch_basket(basket.id, user)
+    |> case do
+      {:ok, basket} -> socket |> assign(:basket, basket)
+      _ -> socket
+    end
+    |> noreply()
+  end
+
+  def handle_event("checkout", _unsigned_params, socket) do
+    %{current_user: user, basket: basket} = socket.assigns
+
+    paid_basket? =
+      basket.total
+      |> Decimal.gt?("0")
+
+    action =
+      if(paid_basket?, do: :start_payment, else: :settle_for_free)
+
+    basket
+    |> Ash.Changeset.for_update(action, %{}, actor: user)
+    |> Ash.update()
+    |> case do
+      {:ok, updated_basket} ->
+        socket |> assign(:basket, updated_basket)
+
+      _ ->
+        socket
+    end
+    |> noreply()
+  end
+
+  def handle_event("cancel_basket", _unsigned_params, socket) do
+    %{event: event, current_user: user, basket: basket} = socket.assigns
+
+    with {:ok, _} <- cancel_basket(basket, user) do
       socket |> push_patch(to: ~p"/events/#{event.masked_id}")
     end
     |> noreply()
@@ -167,10 +239,7 @@ defmodule GitsWeb.EventLive.Feature do
     <div class="min-h-96 mx-auto w-full max-w-2xl items-start gap-4 space-y-4 p-2 md:gap-12 md:pt-20 lg:flex lg:max-w-screen-lg lg:space-y-0 lg:p-0">
       <div class="grid gap-2">
         <div class="aspect-[3/2] relative mx-auto shrink-0 overflow-hidden rounded-2xl md:w-96 md:rounded-3xl">
-          <div class="size-12 border-zinc-200/40 text-white/80 bg-black/20 absolute top-2 left-2 z-10 flex shrink-0 flex-col items-center justify-center rounded-xl border *:leading-4 md:top-4 md:left-4">
-            <span class="text-base font-semibold"><%= @starts_at_day %></span>
-            <span class="text-xs"><%= @starts_at_month %></span>
-          </div>
+          <.floating_event_date day={@starts_at_day} month={@starts_at_month} />
 
           <img
             src={@feature_image}
@@ -201,8 +270,9 @@ defmodule GitsWeb.EventLive.Feature do
     </div>
 
     <.live_component
-      :if={@basket_id}
-      id={@basket_id}
+      :if={not is_nil(@basket)}
+      id={@basket.id}
+      basket={@basket}
       user={@current_user}
       module={GitsWeb.BasketComponent}
     />
