@@ -225,6 +225,13 @@ defmodule Gits.Storefront.Event do
       authorize_if expr(not is_nil(published_at))
     end
 
+    # policy action(:create) do
+    #   authorize_if expr(
+    #                  account.members.user.id == ^actor(:id) and
+    #                    not is_nil(account.members.user.confirmed_at)
+    #                )
+    # end
+
     policy action(:create) do
       authorize_if actor_present()
     end

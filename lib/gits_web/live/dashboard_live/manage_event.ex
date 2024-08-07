@@ -143,7 +143,10 @@ defmodule GitsWeb.DashboardLive.ManageEvent do
         </.radio_group>
       </div>
       <div class="flex gap-8">
-        <button class="min-w-20 rounded-lg bg-zinc-700 px-4 py-3 text-sm font-medium text-white">
+        <button
+          :if={@current_user.confirmed_at}
+          class="min-w-20 rounded-lg bg-zinc-700 px-4 py-3 text-sm font-medium text-white"
+        >
           Save
         </button>
       </div>

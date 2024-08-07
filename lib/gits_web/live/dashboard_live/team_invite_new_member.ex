@@ -67,7 +67,10 @@ defmodule GitsWeb.DashboardLive.TeamInviteNewMember do
       />
 
       <div class="col-span-full">
-        <button class="min-w-20 rounded-lg bg-zinc-800 p-3 px-4 font-medium text-white">
+        <button
+          :if={@current_user.confirmed_at}
+          class="min-w-20 rounded-lg bg-zinc-800 p-3 px-4 font-medium text-white"
+        >
           Invite
         </button>
       </div>

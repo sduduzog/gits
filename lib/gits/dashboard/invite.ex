@@ -147,6 +147,13 @@ defmodule Gits.Dashboard.Invite do
     policy action_type([:create, :destroy]) do
       authorize_if AshStateMachine.Checks.ValidNextState
     end
+
+    # policy action(:create) do
+    #   authorize_if expr(
+    #                  account.members.user.id == ^actor(:id) and
+    #                    not is_nil(account.members.user.confirmed_at)
+    #                )
+    # end
   end
 
   postgres do
