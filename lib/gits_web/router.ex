@@ -98,7 +98,7 @@ defmodule GitsWeb.Router do
 
     live_dashboard "/dashboard",
       ecto_repos: [Gits.Repo],
-      ecto_psql_extras_options: [long_running_queries: [threshold: "200 milliseconds"]],
+      ecto_psql_extras_options: [long_running_queries: [threshold: "50 milliseconds"]],
       metrics: GitsWeb.Telemetry,
       additional_pages: [oban: Oban.LiveDashboard]
   end
