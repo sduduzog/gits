@@ -259,7 +259,7 @@ defmodule GitsWeb.EventLive.Feature do
         </h1>
         <div class="flex justify-between text-sm text-zinc-500">
           <span>
-            hosted by <%= @event.host %>
+            by <%= @event.host %>
           </span>
         </div>
 
