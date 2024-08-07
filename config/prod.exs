@@ -14,7 +14,7 @@ config :swoosh, api_client: Swoosh.ApiClient.Finch, finch_name: Gits.Finch
 config :swoosh, local: false
 
 # Do not print debug messages in production
-config :logger, level: :info
+config :logger, level: :debug
 
 config :gits, :presigned_url_options,
   virtual_host: true,
