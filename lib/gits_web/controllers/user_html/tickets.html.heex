@@ -59,12 +59,13 @@
             </span>
           </div>
         </div>
-        <div :if={false} class="w-full">
+        <div class="w-full">
           <div class="flex w-full justify-between text-xs font-medium text-zinc-500">
             <span>Place</span>
           </div>
           <div class="flex w-full justify-between text-sm font-medium">
-            <span>Artistry JHB</span>
+            <span><%= ticket.event.address.display_name %></span>
+            <span><%= ticket.event.address.city %></span>
           </div>
         </div>
       </div>
