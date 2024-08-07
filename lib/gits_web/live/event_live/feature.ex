@@ -141,8 +141,7 @@ defmodule GitsWeb.EventLive.Feature do
       {:ok, updated_basket} ->
         socket |> assign(:basket, updated_basket)
 
-      foo ->
-        foo |> IO.inspect()
+      _ ->
         socket
     end
     |> noreply()

@@ -10,7 +10,7 @@ defmodule Gits.Storefront.Changes.StartPaystackTransaction do
     |> Ash.Changeset.before_action(fn changeset ->
       basket =
         changeset.data
-        |> Ash.load!([event: [:account]], actor: user)
+        |> Ash.load!([event: [:masked_id, :account]], actor: user)
 
       subaccount_code =
         basket.event.account.paystack_subaccount_code
