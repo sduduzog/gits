@@ -11,7 +11,8 @@ defmodule Gits.Workers.Basket do
 
         :ok
 
-      _ ->
+      errors ->
+        IO.inspect(errors)
         {:error, :the_thing_failed}
     end
   end

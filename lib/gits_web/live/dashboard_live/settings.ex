@@ -37,7 +37,9 @@ defmodule GitsWeb.DashboardLive.Settings do
 
   def handle_event("save", unsigned_params, socket) do
     form =
-      socket.assigns.account |> Form.for_update(:update) |> Form.validate(unsigned_params["form"])
+      socket.assigns.account
+      |> Form.for_update(:update)
+      |> Form.validate(unsigned_params["form"])
 
     form
     |> Form.submit()

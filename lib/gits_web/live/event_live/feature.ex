@@ -1,4 +1,5 @@
 defmodule GitsWeb.EventLive.Feature do
+  alias Gits.Workers.Basket
   use GitsWeb, :live_view
   require Ash.Query
 
@@ -84,11 +85,35 @@ defmodule GitsWeb.EventLive.Feature do
       |> Ash.Changeset.for_create(:create, %{user: user}, actor: user)
       |> Ash.create!()
 
-    basket =
-      Basket
-      |> Ash.Changeset.for_create(:open_basket, %{event: event, customer: customer}, actor: user)
-      |> Ash.create!()
+    with {:ok, nil} <- find_existing_basket(event.id, customer.id, user),
+         {:ok, new_basket} <- create_new_basket(event, customer, user) do
+      push_patch(socket, to: ~p"/events/#{event.masked_id}/?basket=#{new_basket.id}")
+    else
+      {:ok, existing_basket} ->
+        push_patch(socket, to: ~p"/events/#{event.masked_id}/?basket=#{existing_basket.id}")
 
-    push_patch(socket, to: ~p"/events/#{event.masked_id}/?basket=#{basket.id}")
+      :create_error ->
+        socket
+    end
+  end
+
+  defp find_existing_basket(event_id, customer_id, actor) do
+    Basket
+    |> Ash.Query.for_read(:read, %{}, actor: actor)
+    |> Ash.Query.filter(state == :open)
+    |> Ash.Query.filter(event.id == ^event_id)
+    |> Ash.Query.filter(customer.id == ^customer_id)
+    |> Ash.Query.limit(1)
+    |> Ash.read_one()
+  end
+
+  defp create_new_basket(event, customer, actor) do
+    Basket
+    |> Ash.Changeset.for_create(:open_basket, %{event: event, customer: customer}, actor: actor)
+    |> Ash.create()
+    |> case do
+      {:ok, basket} -> {:ok, basket}
+      _ -> :create_error
+    end
   end
 end
