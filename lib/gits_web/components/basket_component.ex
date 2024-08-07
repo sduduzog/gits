@@ -141,40 +141,57 @@ defmodule GitsWeb.BasketComponent do
 
   def ticket_selection(assigns) do
     ~H"""
-    <div class="flex flex-col overflow-auto bg-zinc-50 ">
-      <div class="sticky top-0 shadow-sm md:hidden">
+    <div class="flex flex-col overflow-auto">
+      <div class="sticky top-0 md:hidden">
         <.basket_header event_name={@event_name} />
       </div>
       <div class="grid grow content-start gap-4 p-4">
-        <div :for={ticket <- @tickets} class="">
-          <div class="space-y-4 rounded-xl bg-white p-2 shadow-sm">
-            <div class="flex justify-end">
-              <div class="flex items-center gap-2">
-                <button
-                  class="flex rounded-lg p-2 hover:bg-zinc-100"
-                  phx-click="remove_ticket"
-                  phx-value-id={ticket.id}
-                  phx-target={@myself}
-                >
-                  <.icon name="hero-minus-mini" />
-                </button>
-                <span class="w-6 text-center tabular-nums leading-5">
-                  <%= count_tickets(@instances, ticket.id) %>
-                </span>
-                <button
-                  class="flex rounded-lg p-2 hover:bg-zinc-100"
-                  phx-click="add_ticket"
-                  phx-value-id={ticket.id}
-                  phx-target={@myself}
-                >
-                  <.icon name="hero-plus-mini" />
-                </button>
-              </div>
+        <div :for={ticket <- @tickets} class="rounded-xl border border-zinc-200 p-2">
+          <div class="flex w-full items-center justify-between">
+            <span :if={false} class="p-2 px-4 text-sm font-medium text-zinc-500">
+              From <%= ticket.sale_starts_at
+              |> Timex.format!("%I:%M %p, %e %b %Y", :strftime) %>
+            </span>
+
+            <span class="p-2 px-4 text-sm font-medium text-zinc-500">
+              <span :if={ticket.price |> Decimal.gt?(0)}>
+                R <%= ticket.price |> Decimal.mult(count_tickets(@instances, ticket.id)) %>
+              </span>
+            </span>
+            <div class="flex items-center gap-2">
+              <button
+                class="flex rounded-lg p-2 hover:bg-zinc-100"
+                phx-click="remove_ticket"
+                phx-value-id={ticket.id}
+                phx-target={@myself}
+              >
+                <.icon name="hero-minus-mini" />
+              </button>
+              <span class="w-6 text-center tabular-nums leading-5">
+                <%= count_tickets(@instances, ticket.id) %>
+              </span>
+              <button
+                class="flex rounded-lg p-2 hover:bg-zinc-100"
+                phx-click="add_ticket"
+                phx-value-id={ticket.id}
+                phx-target={@myself}
+              >
+                <.icon name="hero-plus-mini" />
+              </button>
             </div>
-            <div class="flex justify-between *:p-2 *:font-semibold">
-              <span><%= ticket.name %></span>
-              <span>R <%= ticket.price |> Gits.Currency.format() %></span>
-            </div>
+          </div>
+          <div class="p-2 px-4">
+            <h3 class="text-xl font-medium"><%= ticket.name %></h3>
+          </div>
+          <div class="flex p-2 px-4">
+            <span class="grow text-xs text-zinc-500"></span>
+            <span class="text-xs font-medium text-zinc-800">
+              <%= if Decimal.gt?(ticket.price, 0) do %>
+                R <%= ticket.price |> Gits.Currency.format() %>
+              <% else %>
+                FREE
+              <% end %>
+            </span>
           </div>
         </div>
       </div>
@@ -196,9 +213,10 @@ defmodule GitsWeb.BasketComponent do
       </div>
       <.basket_summary
         basket_total={@basket_total}
+        instances={@instances}
         tickets={
           @tickets
-          |> Enum.filter(fn ticket -> count_tickets(@instances, ticket) > 0 end)
+          # |> Enum.filter(fn ticket -> count_tickets(@instances, ticket) > 0 end)
         }
       />
       <div class="grid grid-cols-2 gap-2 p-2">
@@ -325,11 +343,15 @@ defmodule GitsWeb.BasketComponent do
 
   def basket_summary(assigns) do
     ~H"""
-    <div class="p-2 px-4 ">
-      <div :for={ticket <- @tickets} class="flex justify-between py-4 text-zinc-700 *:text-lg">
-        <span>R <%= ticket.customer_reserved_instance_price_for_basket |> Currency.format() %></span>
+    <div class="p-2 px-4">
+      <div :for={ticket <- @tickets} class="flex justify-between py-2 text-zinc-700">
+        <span>
+          R <%= ticket.price
+          |> Decimal.mult(count_tickets(@instances, ticket.id))
+          |> Currency.format() %>
+        </span>
         <span class="tabular-nums">
-          <%= ticket.name %> &times; <%= ticket.customer_reserved_instance_count_for_basket %>
+          <%= ticket.name %> &times; <%= count_tickets(@instances, ticket.id) %>
         </span>
       </div>
       <div class="flex justify-between border-t pt-4 *:text-lg *:font-medium">
