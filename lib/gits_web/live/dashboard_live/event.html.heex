@@ -140,7 +140,9 @@
   <div class="grid gap-4 md:grid-cols-3 md:gap-6 lg:grid-cols-3 lg:gap-8">
     <div :for={ticket <- @event.tickets} class="rounded-xl border border-zinc-200 p-2">
       <div class="flex w-full items-center justify-between">
-        <span class="p-2 px-4 text-sm font-medium text-zinc-500">10 Jun, 2024</span>
+        <span class="p-2 px-4 text-sm font-medium text-zinc-500">
+          Sale starsts <%= ticket.sale_starts_at |> Timex.format!("%e %b %Y, %R %p", :strftime) %>
+        </span>
         <div
           id={"ticket-#{ticket.id}"}
           phx-hook="Dropdown"
@@ -262,7 +264,7 @@
         <.input field={f[:allowed_quantity_per_user]} label="Limit per customer" type="number" />
         <.input field={f[:total_quantity]} label="Total ticket quantity" type="number" />
         <.input field={f[:sale_starts_at]} label="Sale starts at" type="datetime-local" />
-        <.input field={f[:sale_ends_at]} label="Sale starts at" type="datetime-local" />
+        <.input field={f[:sale_ends_at]} label="Sale ends at" type="datetime-local" />
         <.radio_group label="Availability" field={f[:availability]} class="col-span-full">
           <:radio value={:open}>Open</:radio>
           <:radio value={:restricted}>Restricted</:radio>
