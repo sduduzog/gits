@@ -2,6 +2,7 @@ defmodule GitsWeb.AuthController do
   use GitsWeb, :controller
   use AshAuthentication.Phoenix.Controller
 
+  alias AshPhoenix.Form
   alias AshAuthentication.AddOn.Confirmation
   alias Gits.Auth.Senders.UserConfirmation
 
@@ -81,24 +82,37 @@ defmodule GitsWeb.AuthController do
     |> redirect(to: return_to)
   end
 
-  def resend_verification_email(conn, _) do
-    if conn.assigns.current_user && conn.assigns.current_user.confirmed_at == nil do
-      changeset =
-        Ash.Changeset.for_update(conn.assigns.current_user, :send_confirmation_email)
+  def email_not_verified(conn, _params) do
+    # conn |> render(:email_not_verified)
+    conn |> render(:email_sent)
+  end
 
-      strategy =
-        AshAuthentication.Info.strategy!(conn.assigns.current_user, :confirm)
+  def resend_verification_email(conn, params) do
+    case Turnstile.verify(params, conn.remote_ip) do
+      {:ok, _} ->
+        if conn.assigns.current_user && conn.assigns.current_user.confirmed_at == nil do
+          changeset =
+            Ash.Changeset.for_update(conn.assigns.current_user, :send_confirmation_email)
 
-      {:ok, token} =
-        Confirmation.confirmation_token(
-          strategy,
-          changeset,
-          changeset.data
-        )
+          strategy =
+            AshAuthentication.Info.strategy!(conn.assigns.current_user, :confirm)
 
-      UserConfirmation.send(changeset.data, token, [])
+          {:ok, token} =
+            Confirmation.confirmation_token(
+              strategy,
+              changeset,
+              changeset.data
+            )
+
+          UserConfirmation.send(changeset.data, token, [])
+        end
+
+        conn |> render(:email_sent)
+
+      {:error, _} ->
+        conn
+        |> put_flash(:error, "Please try submitting again")
+        |> redirect(to: ~p"/email-not-verified")
     end
-
-    conn |> put_layout(false) |> render(:email_sent)
   end
 end

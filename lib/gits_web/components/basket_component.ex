@@ -24,6 +24,7 @@ defmodule GitsWeb.BasketComponent do
           basket_total={@basket.total}
           tickets={@basket.event.tickets}
           instances={@basket.instances}
+          not_confirmed={is_nil(@user.confirmed_at)}
         />
         <.payment :if={@basket.state == :payment_started} basket={@basket} user={@user} />
         <.order_completed :if={
@@ -162,9 +163,20 @@ defmodule GitsWeb.BasketComponent do
         instances={@instances}
         tickets={
           @tickets
-          # |> Enum.filter(fn ticket -> count_tickets(@instances, ticket) > 0 end)
+          |> Enum.filter(fn ticket -> count_tickets(@instances, ticket.id) > 0 end)
         }
       />
+
+      <div :if={@not_confirmed} class="px-4 text-sm">
+        <span>Please verify your email to continue. Don't worry, your tickets are safe.</span>
+        <.link
+          target="_blank"
+          class="text-zinc-400 hover:text-zinc-700"
+          href={~p"/email-not-verified"}
+        >
+          Learn more
+        </.link>
+      </div>
       <div class="grid grid-cols-2 gap-2 p-2">
         <button
           class="rounded-xl px-4 py-3 text-sm font-medium ring-1 ring-zinc-200 md:hidden"

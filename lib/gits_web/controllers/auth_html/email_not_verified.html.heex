@@ -1,0 +1,20 @@
+<div class="flex flex-col items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+  <div class="mx-auto max-w-md text-center" data-id="2">
+    <div data-id="3" class="text-primary mx-auto h-12 w-12"></div>
+    <h1 class="text-foreground mt-4 text-3xl font-bold tracking-tight sm:text-4xl">
+      Email Not Verified
+    </h1>
+    <p class="text-muted-foreground mt-4">
+      Your email address has not been verified yet. Verifying your email is important to ensure the security of your account and to receive important updates and notifications.
+    </p>
+    <.form for={%{}} action={~p"/resend-verification"} class="mt-6">
+      <Turnstile.widget theme="light" appearance="interaction-only" />
+      <button
+        data-id="7"
+        class="inline-flex items-center rounded-md bg-zinc-900 px-4 py-3 text-sm font-medium text-white shadow-sm transition-colors hover:bg-zinc-900/90 focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:ring-offset-2"
+      >
+        Resend Verification Email
+      </button>
+    </.form>
+  </div>
+</div>

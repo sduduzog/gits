@@ -35,6 +35,7 @@ defmodule GitsWeb.EventLive.Feature do
           Gits.Bucket.get_feature_image_path(event.account_id, event.id)
         )
         |> assign(:event, event)
+        |> assign(:page_title, event.name)
         |> assign(:event_name, event.name)
         |> assign(:starts_at_day, starts_at_day)
         |> assign(:starts_at_month, starts_at_month)
