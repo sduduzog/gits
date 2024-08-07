@@ -38,6 +38,7 @@ defmodule Gits.Storefront.Basket do
       transition :start_payment, from: :open, to: :payment_started
       transition :evaluate_paystack_transaction, from: :payment_started, to: :settled_for_payment
       transition :cancel, from: :open, to: :cancelled
+      transition :reclaim, from: :open, to: :reclaimed
     end
   end
 
@@ -80,7 +81,7 @@ defmodule Gits.Storefront.Basket do
       change manage_relationship(:event, type: :append)
       change manage_relationship(:customer, type: :append)
 
-      notifiers [StartBasketJob]
+      # notifiers [StartBasketJob]
     end
 
     update :add_ticket do
@@ -150,27 +151,13 @@ defmodule Gits.Storefront.Basket do
       require_atomic? false
 
       change fn changeset, %{actor: actor} ->
-        instances =
-          case actor do
-            %Oban.Job{} ->
-              TicketInstance
-              |> Ash.Query.for_read(:read, %{}, actor: actor)
-              |> Ash.Query.filter(basket.id == ^changeset.data.id)
-              |> Ash.read!()
-
-            _ ->
-              changeset.data
-              |> Ash.load!(:instances, actor: actor)
-              |> Map.get(:instances)
-          end
-
         changeset
         |> Ash.Changeset.before_action(fn changeset ->
           changeset
           |> Ash.Changeset.manage_relationship(
             :instances,
-            Enum.map(instances, & &1.id),
-            on_match: {:update, :cancel}
+            [],
+            on_missing: :destroy
           )
         end)
       end
@@ -214,6 +201,12 @@ defmodule Gits.Storefront.Basket do
 
     update :refund do
       transition_state(:refunded)
+    end
+
+    update :reclaim do
+      require_atomic? false
+
+      change transition_state(:reclaimed)
     end
   end
 
@@ -296,13 +289,13 @@ defmodule Gits.Storefront.Basket do
       authorize_if actor_present()
     end
 
-    bypass action(:cancel) do
-      authorize_if Gits.Checks.ActorIsObanJob
-    end
-
     policy action(:cancel) do
       forbid_unless expr(customer.user.id == ^actor(:id))
       authorize_if actor_present()
+    end
+
+    policy action(:garbage_collection) do
+      authorize_if Gits.Checks.ActorIsObanJob
     end
 
     policy action([

@@ -27,6 +27,7 @@ defmodule Gits.Storefront.TicketInstance do
     transitions do
       transition :prepare_for_use, from: :reserved, to: :ready_for_use
       transition :cancel, from: [:reserved, :locked_for_checkout], to: :cancelled
+      transition :reclaim, from: [:reserved, :locked_for_checkout], to: :reclaimed
     end
   end
 
@@ -77,6 +78,12 @@ defmodule Gits.Storefront.TicketInstance do
     update :prepare_for_use do
       require_atomic? false
       change transition_state(:ready_for_use)
+    end
+
+    update :reclaim do
+      require_atomic? false
+
+      change transition_state(:reclaimed)
     end
   end
 

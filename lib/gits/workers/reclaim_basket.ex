@@ -1,4 +1,4 @@
-defmodule Gits.Workers.Basket do
+defmodule Gits.Workers.ReclaimBasket do
   use Oban.Worker
 
   @impl Oban.Worker
@@ -6,7 +6,7 @@ defmodule Gits.Workers.Basket do
     case Ash.get(Gits.Storefront.Basket, id, actor: job) do
       {:ok, basket} ->
         basket
-        |> Ash.Changeset.for_update(:cancel, %{}, actor: job)
+        |> Ash.Changeset.for_update(:re, %{}, actor: job)
         |> Ash.update()
 
         :ok
@@ -17,3 +17,4 @@ defmodule Gits.Workers.Basket do
     end
   end
 end
+

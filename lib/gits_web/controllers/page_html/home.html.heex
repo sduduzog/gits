@@ -19,7 +19,7 @@
     </p>
     <div class="flex items-center gap-8 font-medium md:mx-auto md:justify-center">
       <.link
-        :if={FunWithFlags.enabled?(:get_started_button)}
+        navigate={~p"/accounts/new"}
         class="border-2 rounded-lg border-zinc-600 dark:border-zinc-300 dark:text-zinc-100 p-2 px-4 hover:underline"
       >
         Get started
@@ -33,7 +33,7 @@
     </div>
   </div>
 
-  <div class="relative w-full bg-gradient-to-t from-white to-transparent py-8">
+  <div class="relative w-full bg-gradient-to-t from-white to-transparent py-0">
     <.simple_form
       :if={FunWithFlags.enabled?(:search_bar)}
       action="/events"

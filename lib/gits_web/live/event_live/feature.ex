@@ -1,5 +1,7 @@
 defmodule GitsWeb.EventLive.Feature do
   alias Gits.Workers.Basket
+  alias Gits.Workers.Basket
+  alias Gits.Workers.Basket
   use GitsWeb, :live_view
   require Ash.Query
 
@@ -50,28 +52,32 @@ defmodule GitsWeb.EventLive.Feature do
   end
 
   def handle_event("get_tickets", _unsigned_params, socket) do
-    user =
-      socket.assigns.current_user
+    %{event: event, current_user: user} = socket.assigns
 
-    event = socket.assigns.event
-
-    socket =
-      if is_nil(user) do
-        push_navigate(socket,
-          to: ~p"/sign-in" <> "?return_to=" <> ~p"/events/#{event.masked_id}"
-        )
-      else
-        socket |> open_basket()
-      end
-
-    {:noreply, socket}
+    if is_nil(user) do
+      push_navigate(socket,
+        to: ~p"/sign-in" <> "?return_to=" <> ~p"/events/#{event.masked_id}"
+      )
+    else
+      socket |> open_basket()
+    end
+    |> noreply()
   end
 
   def handle_event("close_basket", _unsigned_params, socket) do
-    event = socket.assigns.event
+    %{event: event, current_user: user, basket_id: basket_id} = socket.assigns
 
-    socket = socket |> push_patch(to: ~p"/events/#{event.masked_id}")
-    {:noreply, socket}
+    with {:ok, basket} <- Ash.get(Basket, basket_id, actor: user),
+         {:ok, _} <- cancel_basket(basket, user) do
+      socket |> push_patch(to: ~p"/events/#{event.masked_id}")
+    end
+    |> noreply()
+  end
+
+  defp cancel_basket(basket, actor) do
+    basket
+    |> Ash.Changeset.for_update(:cancel, %{}, actor: actor)
+    |> Ash.update()
   end
 
   defp open_basket(socket) do
