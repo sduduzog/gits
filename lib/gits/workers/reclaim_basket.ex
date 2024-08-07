@@ -6,9 +6,14 @@ defmodule Gits.Workers.ReclaimBasket do
   @impl Oban.Worker
   def perform(%Oban.Job{args: %{"id" => id}} = job) do
     Basket
-    |> Ash.Query.for_read(:for_reclaim, %{id: id})
+    |> Ash.Query.for_read(:read)
+    |> Ash.Query.filter(id: id)
+    |> Ash.Query.filter(state in [:open])
     |> Ash.read_one(actor: job)
     |> case do
+      {:ok, nil} ->
+        :ok
+
       {:ok, basket} ->
         basket
         |> Ash.Changeset.for_update(:reclaim)

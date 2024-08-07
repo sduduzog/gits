@@ -34,9 +34,9 @@ defmodule GitsWeb.UserController do
     tickets =
       Ticket
       |> Ash.Query.for_read(:read, %{}, actor: user)
-      |> Ash.Query.filter(
-        instances.customer.user.id == ^user.id and instances.state in [:ready_for_use]
-      )
+      |> Ash.Query.filter(instances.customer.user.id == ^user.id)
+      |> Ash.Query.filter(instances.state in [:ready_for_use])
+      |> Ash.Query.filter(event.ends_at >= fragment("now()"))
       |> Ash.Query.load([
         :event,
         :token,
@@ -45,19 +45,6 @@ defmodule GitsWeb.UserController do
           |> Ash.Query.filter(customer.user.id == ^user.id and state in [:ready_for_use])
       ])
       |> Ash.read!()
-
-    conn =
-      TicketInstance
-      |> Ash.Query.for_read(:read, %{}, actor: user)
-      |> Ash.Query.filter(state == :ready_for_use)
-      |> Ash.Query.filter(event_starts_at >= fragment("now()"))
-      |> Ash.Query.load([:event_id, :event_name, :ticket_name, :event_starts_at])
-      |> Ash.Query.sort(id: :asc)
-      |> Ash.read()
-      |> case do
-        {:error, _} -> raise GitsWeb.Exceptions.NotFound, "no tickets"
-        {:ok, instances} -> conn |> assign(:instances, instances)
-      end
 
     conn
     |> put_layout(false)

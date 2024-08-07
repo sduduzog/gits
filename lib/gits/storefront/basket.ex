@@ -9,9 +9,9 @@ defmodule Gits.Storefront.Basket do
     notifiers: [Ash.Notifier.PubSub]
 
   require Ash.Resource.Change.Builtins
-  alias Gits.Storefront.TicketInstance
   alias Gits.Storefront.Calculations.SumOfInstancePrices
   alias Gits.Storefront.Notifiers.StartBasketJob
+  alias Gits.Storefront.TicketInstance
 
   attributes do
     uuid_primary_key :id
@@ -60,12 +60,6 @@ defmodule Gits.Storefront.Basket do
   actions do
     read :read do
       primary? true
-    end
-
-    read :for_reclaim do
-      argument :id, :uuid
-
-      filter expr(id == ^arg(:id))
     end
 
     create :open_basket do
@@ -246,11 +240,8 @@ defmodule Gits.Storefront.Basket do
   end
 
   policies do
-    bypass action([:for_reclaim, :reclaim]) do
-      authorize_if Gits.Checks.ActorIsObanJob
-    end
-
     policy action(:read) do
+      authorize_if Gits.Checks.ActorIsObanJob
       authorize_if expr(customer.user.id == ^actor(:id))
       authorize_if actor_present()
     end
@@ -323,10 +314,12 @@ defmodule Gits.Storefront.Basket do
 
     policy action(:cancel) do
       forbid_unless expr(customer.user.id == ^actor(:id))
+      forbid_unless expr(state == :open)
       authorize_if actor_present()
     end
 
-    policy action(:garbage_collection) do
+    policy action(:reclaim) do
+      forbid_unless expr(state == :open)
       authorize_if Gits.Checks.ActorIsObanJob
     end
 

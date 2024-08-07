@@ -196,7 +196,7 @@ defmodule GitsWeb.EventLive.Feature do
   defp find_existing_basket(event_id, customer_id, actor) do
     Basket
     |> Ash.Query.for_read(:read, %{}, actor: actor)
-    |> Ash.Query.filter(state == :open)
+    |> Ash.Query.filter(state not in [:cancelled, :reclaimed])
     |> Ash.Query.filter(event.id == ^event_id)
     |> Ash.Query.filter(customer.id == ^customer_id)
     |> Ash.Query.limit(1)

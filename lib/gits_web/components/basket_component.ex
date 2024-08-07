@@ -24,7 +24,6 @@ defmodule GitsWeb.BasketComponent do
           basket_total={@basket.total}
           tickets={@basket.event.tickets}
           instances={@basket.instances}
-          myself={@myself}
         />
         <.payment :if={@basket.state == :payment_started} basket={@basket} user={@user} />
         <.order_completed :if={
@@ -176,7 +175,6 @@ defmodule GitsWeb.BasketComponent do
         <button
           class="col-start-2 rounded-xl bg-zinc-900 px-4 py-3 text-sm font-medium text-white"
           phx-click="checkout"
-          phx-target={@myself}
         >
           Checkout
         </button>
