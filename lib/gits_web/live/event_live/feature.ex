@@ -278,13 +278,14 @@ defmodule GitsWeb.EventLive.Feature do
         <%= if not is_nil(@event.address) do %>
           <div class="flex gap-2 rounded-xl border p-4">
             <.icon name="hero-map-pin-micro" class="shrink-0 mt-0.5" />
-            <button
+            <.link
               class="flex grow flex-wrap items-center justify-between gap-x-1 gap-y-2 text-sm text-zinc-500"
-              phx-click={JS.navigate(@event.address.google_maps_uri)}
+              target="_blank"
+              href={@event.address.google_maps_uri}
             >
               <span><%= @event.address.display_name %> &bull; <%= @event.address.city %></span>
               <span class="text-xs text-zinc-400">Click for directions</span>
-            </button>
+            </.link>
           </div>
         <% end %>
         <div class="mt-4 space-y-2 rounded-2xl bg-white text-sm">
