@@ -12,7 +12,7 @@ defmodule GitsWeb.EventLive.Feature do
 
     Event
     |> Ash.Query.for_read(:read, %{masked_id: params["id"]}, actor: user)
-    |> Ash.Query.load([:masked_id, :minimum_ticket_price, :maximum_ticket_price, :host])
+    |> Ash.Query.load([:masked_id, :minimum_ticket_price, :maximum_ticket_price, :host, :address])
     |> Ash.read_one()
     |> case do
       {:ok, nil} ->
@@ -275,11 +275,22 @@ defmodule GitsWeb.EventLive.Feature do
             Get Tickets
           </button>
         </div>
-        <div class="space-y-2 rounded-2xl bg-white text-sm">
+        <%= if not is_nil(@event.address) do %>
+          <div class="flex gap-2 rounded-xl border p-4">
+            <.icon name="hero-map-pin-micro" class="shrink-0 mt-0.5" />
+            <button
+              class="flex grow flex-wrap items-center justify-between gap-x-1 gap-y-2 text-sm text-zinc-500"
+              phx-click={JS.navigate(@event.address.google_maps_uri)}
+            >
+              <span><%= @event.address.display_name %> &bull; <%= @event.address.city %></span>
+              <span class="text-xs text-zinc-400">Click for directions</span>
+            </button>
+          </div>
+        <% end %>
+        <div class="mt-4 space-y-2 rounded-2xl bg-white text-sm">
           <h2 class="font-medium text-zinc-500">About this event</h2>
           <p class="max-w-screen-md whitespace-pre-line"><%= @event.description %></p>
         </div>
-        <div class="border p-4"></div>
       </div>
     </div>
 
