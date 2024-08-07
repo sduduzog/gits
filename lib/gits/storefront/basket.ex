@@ -9,6 +9,7 @@ defmodule Gits.Storefront.Basket do
     notifiers: [Ash.Notifier.PubSub]
 
   require Ash.Resource.Change.Builtins
+  alias Gits.Storefront.TicketInstance
   alias Gits.Storefront.Calculations.SumOfInstancePrices
   alias Gits.Storefront.Notifiers.StartBasketJob
 
@@ -120,14 +121,20 @@ defmodule Gits.Storefront.Basket do
             changeset.data.instances
             |> Enum.find(fn instance -> instance.ticket_id == ticket_id end)
 
-          changeset.data.event.tickets
-          |> Enum.find(fn ticket -> ticket.id == ticket_id end)
-          |> Ash.Changeset.for_update(:remove_instance, %{
-            id: instance.id
-          })
-          |> Ash.update(actor: actor)
+          case instance do
+            nil ->
+              changeset
 
-          changeset
+            %TicketInstance{} ->
+              changeset.data.event.tickets
+              |> Enum.find(fn ticket -> ticket.id == ticket_id end)
+              |> Ash.Changeset.for_update(:remove_instance, %{
+                id: instance.id
+              })
+              |> Ash.update(actor: actor)
+
+              changeset
+          end
         end)
       end
     end

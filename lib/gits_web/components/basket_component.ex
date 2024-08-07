@@ -2,7 +2,6 @@ defmodule GitsWeb.BasketComponent do
   use GitsWeb, :live_component
 
   alias Gits.Currency
-  alias Gits.Storefront.Basket
 
   def update(assigns, socket) do
     socket

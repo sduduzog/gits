@@ -10,7 +10,6 @@ defmodule Gits.Checks.ActorIsObanJob do
   end
 
   def match?(_, _, _) do
-    "foooooooooooooooooooooooo" |> IO.puts()
     false
   end
 end
