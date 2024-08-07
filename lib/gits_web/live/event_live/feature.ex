@@ -141,7 +141,8 @@ defmodule GitsWeb.EventLive.Feature do
       {:ok, updated_basket} ->
         socket |> assign(:basket, updated_basket)
 
-      _ ->
+      foo ->
+        foo |> IO.inspect()
         socket
     end
     |> noreply()
@@ -196,7 +197,9 @@ defmodule GitsWeb.EventLive.Feature do
   defp find_existing_basket(event_id, customer_id, actor) do
     Basket
     |> Ash.Query.for_read(:read, %{}, actor: actor)
-    |> Ash.Query.filter(state not in [:cancelled, :reclaimed])
+    |> Ash.Query.filter(
+      state not in [:cancelled, :reclaimed, :settled_for_free, :settled_for_payment]
+    )
     |> Ash.Query.filter(event.id == ^event_id)
     |> Ash.Query.filter(customer.id == ^customer_id)
     |> Ash.Query.limit(1)

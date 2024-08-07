@@ -38,8 +38,8 @@ defmodule GitsWeb.UserController do
       |> Ash.Query.filter(instances.state in [:ready_for_use])
       |> Ash.Query.filter(event.ends_at >= fragment("now()"))
       |> Ash.Query.load([
-        :event,
         :token,
+        event: [:address],
         instances:
           TicketInstance
           |> Ash.Query.filter(customer.user.id == ^user.id and state in [:ready_for_use])

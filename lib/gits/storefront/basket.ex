@@ -271,7 +271,7 @@ defmodule Gits.Storefront.Basket do
     end
 
     policy action(:settle_for_free) do
-      authorize_if expr(count_of_instances > 0)
+      authorize_if expr(count(instances) > 0)
     end
 
     policy action(:settle_for_free) do
@@ -283,7 +283,7 @@ defmodule Gits.Storefront.Basket do
     end
 
     policy action(:lock_for_checkout) do
-      forbid_unless expr(count_of_instances > 0)
+      forbid_unless expr(count(instances) > 0)
       authorize_if expr(customer.user.id == ^actor(:id))
     end
 
