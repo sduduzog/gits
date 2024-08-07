@@ -50,6 +50,6 @@ kill_signal = 'SIGTERM'
     type = "tcp"
 
 [[vm]]
-  memory = '512mb'
+  memory = '1024mb'
   cpu_kind = 'shared'
-  cpus = 1
+  cpus = 4
