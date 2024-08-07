@@ -153,12 +153,20 @@ defmodule Gits.Storefront.Basket do
       change fn changeset, %{actor: actor} ->
         changeset
         |> Ash.Changeset.before_action(fn changeset ->
-          changeset
-          |> Ash.Changeset.manage_relationship(
-            :instances,
-            [],
-            on_missing: :destroy
-          )
+          changeset.data
+          |> Ash.load([:instances], actor: actor)
+          |> case do
+            {:ok, basket} ->
+              changeset
+              |> Ash.Changeset.manage_relationship(
+                :instances,
+                basket.instances,
+                on_match: {:update, :cancel}
+              )
+
+            _ ->
+              changeset
+          end
         end)
       end
 
