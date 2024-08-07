@@ -69,7 +69,7 @@ defmodule Gits.Storefront.Event do
                 maximum_ticket_price > 0 and (is_nil(payment_method) or payment_method == :none)
               )
 
-    # expr(maximum_ticket_price > 0)
+    calculate :host, :string, expr(account.name)
   end
 
   actions do

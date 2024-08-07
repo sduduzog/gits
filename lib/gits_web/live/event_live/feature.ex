@@ -1,5 +1,7 @@
 defmodule GitsWeb.EventLive.Feature do
+  require Decimal
   import GitsWeb.EventLive.EventComponents
+  alias Gits.Currency
   use GitsWeb, :live_view
   require Ash.Query
 
@@ -10,7 +12,7 @@ defmodule GitsWeb.EventLive.Feature do
 
     Event
     |> Ash.Query.for_read(:read, %{masked_id: params["id"]}, actor: user)
-    |> Ash.Query.load(:masked_id)
+    |> Ash.Query.load([:masked_id, :minimum_ticket_price, :maximum_ticket_price, :host])
     |> Ash.read_one()
     |> case do
       {:ok, nil} ->
@@ -250,13 +252,22 @@ defmodule GitsWeb.EventLive.Feature do
           />
         </div>
       </div>
-      <div class="grid grow gap-6">
+      <div class="grid grow">
         <h1 class="line-clamp-2 text-2xl font-semibold">
           <%= @event.name %>
         </h1>
+        <div class="flex justify-between text-sm text-zinc-500">
+          <span>
+            hosted by <%= @event.host %>
+          </span>
+        </div>
 
-        <div class="flex">
-          <div class="grow"></div>
+        <div class="flex items-center py-6">
+          <div class="grow">
+            <span class="text-sm text-zinc-500">
+              <%= resolve_price_range_label(@event) %>
+            </span>
+          </div>
           <button
             phx-click="get_tickets"
             class="rounded-xl bg-zinc-800 p-3 px-4 font-medium text-white"
@@ -268,6 +279,7 @@ defmodule GitsWeb.EventLive.Feature do
           <h2 class="font-medium text-zinc-500">About this event</h2>
           <p class="max-w-screen-md whitespace-pre-line"><%= @event.description %></p>
         </div>
+        <div class="border p-4"></div>
       </div>
     </div>
 
@@ -279,5 +291,21 @@ defmodule GitsWeb.EventLive.Feature do
       module={GitsWeb.BasketComponent}
     />
     """
+  end
+
+  defp resolve_min_price_label(price) do
+    if Decimal.eq?(price, 0) do
+      "FREE"
+    else
+      "R #{price |> Currency.format()}"
+    end
+  end
+
+  defp resolve_price_range_label(%Event{minimum_ticket_price: min, maximum_ticket_price: max}) do
+    if min == max do
+      "#{resolve_min_price_label(min)}"
+    else
+      "#{resolve_min_price_label(min)} - R #{max |> Currency.format()}"
+    end
   end
 end
