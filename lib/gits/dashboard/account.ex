@@ -41,7 +41,7 @@ defmodule Gits.Dashboard.Account do
 
   actions do
     default_accept :*
-    defaults [:destroy, update: :*]
+    defaults [:destroy]
 
     read :read do
       primary? true
@@ -55,22 +55,6 @@ defmodule Gits.Dashboard.Account do
       end
 
       filter expr(id == ^arg(:id))
-    end
-
-    read :read_for_dashboard do
-      argument :id, :uuid do
-        allow_nil? false
-      end
-
-      filter expr(id == ^arg(:id))
-    end
-
-    read :list_for_dashboard do
-      argument :user_id, :uuid do
-        allow_nil? false
-      end
-
-      filter expr(members.user.id == ^arg(:user_id))
     end
 
     create :create do
@@ -95,6 +79,10 @@ defmodule Gits.Dashboard.Account do
       argument :member, :map
 
       change manage_relationship(:member, :members, on_lookup: {:relate_and_update, :activate})
+    end
+
+    update :update do
+      accept [:name]
     end
 
     update :update_paystack_account do

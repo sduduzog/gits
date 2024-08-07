@@ -11,6 +11,8 @@ defmodule GitsWeb.DashboardLive.Settings do
       PaystackApi.list_banks!()
       |> Enum.map(fn bank -> {bank.name, bank.code} end)
 
+    form = account |> Form.for_update(:update)
+
     socket
     |> assign(:slug, unsigned_params["slug"])
     |> assign(:title, "Settings")
@@ -20,7 +22,32 @@ defmodule GitsWeb.DashboardLive.Settings do
     |> assign(:show_paystack_form, false)
     |> assign(:paystack_form, %{})
     |> assign(:show_paystack_editor, false)
-    |> assign(:form, %{})
+    |> assign(:form, form)
+    |> noreply()
+  end
+
+  def handle_event("validate", unsigned_params, socket) do
+    form =
+      socket.assigns.account |> Form.for_update(:update) |> Form.validate(unsigned_params["form"])
+
+    socket
+    |> assign(:form, form)
+    |> noreply()
+  end
+
+  def handle_event("save", unsigned_params, socket) do
+    form =
+      socket.assigns.account |> Form.for_update(:update) |> Form.validate(unsigned_params["form"])
+
+    form
+    |> Form.submit()
+    |> case do
+      {:ok, account} ->
+        socket |> assign(:account, account)
+
+      {:error, form} ->
+        socket |> assign(:form, form)
+    end
     |> noreply()
   end
 

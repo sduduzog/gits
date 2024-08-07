@@ -1,7 +1,14 @@
 <h1 class="mx-auto max-w-screen-md text-xl font-semibold">Settings</h1>
 <h2 class="mx-auto max-w-screen-md text-xl">General</h2>
-<.form :let={f} for={%{}} class="mx-auto max-w-screen-md w-full">
+<.form
+  :let={f}
+  for={@form}
+  phx-submit="save"
+  phx-change="validate"
+  class="mx-auto max-w-screen-md w-full  space-y-4"
+>
   <.input field={f[:name]} label="Account name" />
+  <button class="w-20 rounded-xl bg-zinc-50 px-4 py-3 hover:bg-zinc-100">Save</button>
 </.form>
 <h2 class="mx-auto max-w-screen-md text-xl">Accepting payments</h2>
 <div class="mx-auto flex max-w-screen-md flex-wrap items-center justify-between gap-2 rounded-xl border p-4">
