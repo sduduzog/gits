@@ -9,6 +9,7 @@ defmodule Gits.Storefront.Basket do
     notifiers: [Ash.Notifier.PubSub]
 
   require Ash.Resource.Change.Builtins
+  alias Gits.Storefront.Ticket
   alias Gits.Storefront.Calculations.SumOfInstancePrices
   alias Gits.Storefront.Notifiers.StartBasketJob
   alias Gits.Storefront.TicketInstance
@@ -69,7 +70,15 @@ defmodule Gits.Storefront.Basket do
                   :instances,
                   :sum_of_instance_prices,
                   :total,
-                  event: [:tickets, :account, :masked_id]
+                  event: [
+                    :account,
+                    :masked_id,
+                    tickets:
+                      Ticket
+                      |> Ash.Query.filter(
+                        sale_starts_at <= fragment("now()") and sale_ends_at > fragment("now()")
+                      )
+                  ]
                 ]
               )
     end
