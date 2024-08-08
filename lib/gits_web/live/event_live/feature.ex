@@ -265,7 +265,7 @@ defmodule GitsWeb.EventLive.Feature do
 
         <div class="flex items-center py-6">
           <div class="grow">
-            <span class="text-sm text-zinc-500">
+            <span class=" font-medium text-zinc-700">
               <%= resolve_price_range_label(@event) %>
             </span>
           </div>
