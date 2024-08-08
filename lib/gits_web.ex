@@ -59,6 +59,7 @@ defmodule GitsWeb do
       unquote(html_helpers())
 
       def ok(socket), do: {:ok, socket}
+      def seo_ok(socket), do: {:ok, socket, temporary_assigns: [{SEO.key(), nil}]}
       def noreply(socket), do: {:noreply, socket}
     end
   end

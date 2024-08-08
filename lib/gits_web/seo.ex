@@ -25,33 +25,25 @@ end
 defimpl SEO.OpenGraph.Build, for: Gits.Storefront.Event do
   use GitsWeb, :verified_routes
 
-  def build(event, _conn) do
+  def build(event, conn) do
     SEO.OpenGraph.build(
       detail:
         SEO.OpenGraph.Article.build(
           published_time: event.updated_at,
           author: "GiTS"
         ),
-      image: image(event),
+      image: image(event, conn),
       title: event.name,
       description: event.description
     )
   end
 
-  defp image(event) do
-    bucket_name = Application.get_env(:gits, :bucket_name)
-    filename = "#{event.account_id}/#{event.id}/feature.jpg"
+  defp image(event, conn) do
+    file = Gits.Bucket.get_feature_image_path(event.account_id, event.id)
 
-    exists? =
-      case ExAws.S3.head_object(bucket_name, filename)
-           |> ExAws.request() do
-        {:ok, _} -> true
-        _ -> false
-      end
-
-    if exists? do
+    if Gits.Bucket.feature_image_exists?(event.account_id, event.id) do
       SEO.OpenGraph.Image.build(
-        url: url(~p"/bucket/#{filename}"),
+        url: static_url(conn, file),
         alt: event.name
       )
     end

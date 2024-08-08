@@ -51,8 +51,15 @@ defmodule GitsWeb.DashboardLive.Event do
 
     socket
     |> assign_new(:manage_ticket_form, fn ->
-      event.tickets
-      |> Enum.find(&(&1.id == id))
+      ticket =
+        event.tickets
+        |> Enum.find(&(&1.id == id))
+
+      local_starts_at =
+        ticket.sale_starts_at
+        |> IO.inspect()
+
+      ticket
       |> Form.for_update(:update, as: "edit_ticket", actor: user)
     end)
     |> noreply()

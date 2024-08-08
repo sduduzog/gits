@@ -39,7 +39,7 @@ defmodule GitsWeb.EventLive.Feature do
         |> assign(:event_name, event.name)
         |> assign(:starts_at_day, starts_at_day)
         |> assign(:starts_at_month, starts_at_month)
-        |> ok()
+        |> seo_ok()
     end
   end
 
@@ -70,12 +70,13 @@ defmodule GitsWeb.EventLive.Feature do
 
     socket
     |> assign(:basket, basket)
-    |> noreply()
+
+    socket |> SEO.assign(socket.assigns.event) |> noreply()
   end
 
   def handle_params(_unsigned_params, _uri, socket) do
     socket = socket |> assign(:basket, nil)
-    {:noreply, socket}
+    socket |> SEO.assign(socket.assigns.event) |> noreply()
   end
 
   def handle_event("get_tickets", _unsigned_params, socket) do

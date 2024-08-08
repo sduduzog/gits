@@ -39,8 +39,23 @@ defmodule Gits.Bucket do
     "/assets/" <> get_event_filename(account_id, event_id, "feature")
   end
 
+  def feature_image_exists?(account_id, event_id) do
+    filename = get_event_filename(account_id, event_id, "feature")
+
+    bucket_name = Application.get_env(:gits, :bucket_name)
+    filename = "#{filename}.jpg"
+
+    ExAws.S3.head_object(bucket_name, filename)
+    |> ExAws.request()
+    |> case do
+      {:ok, _} -> true
+      _ -> false
+    end
+  end
+
   def get_image_url(hash) do
     presigned_url_options = Application.get_env(:gits, :presigned_url_options)
+
     bucket_name = Application.get_env(:gits, :bucket_name)
     filename = "#{hash}.jpg"
 
