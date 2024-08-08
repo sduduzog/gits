@@ -11,6 +11,10 @@ config :gits, :presigned_url_options,
   bucket_as_host: true,
   expires_in: 900
 
+config :gits, :workers,
+  reclaim_open_basket_timeout: 1_200,
+  reclaim_payment_started_basket_timeout: 1_800
+
 config :sentry,
   dsn:
     "https://ff8905f3ab19071b0df977da3a43d54e@o4506665217032192.ingest.us.sentry.io/4507737254723584",

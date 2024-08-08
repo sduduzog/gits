@@ -5,15 +5,17 @@ defmodule Gits.Storefront.Notifiers.StartBasketJob do
   alias Gits.Workers.ReclaimBasket
 
   def notify(%Ash.Notifier.Notification{data: data}) do
+    [reclaim_open_basket_timeout, reclaim_payment_started_basket_timeout] =
+      Application.get_env(:gits, :workers)
 
     Ecto.Multi.new()
     |> Oban.insert(
       :open_basket_job,
-      ReclaimBasket.new(%{id: data.id, state: :open}, schedule_in: 20)
+      ReclaimBasket.new(%{id: data.id, state: :open}, schedule_in: reclaim_open_basket_timeout)
     )
     |> Oban.insert(
       :payment_started_basket_job,
-      ReclaimBasket.new(%{id: data.id, state: :payment_started}, schedule_in: 30)
+      ReclaimBasket.new(%{id: data.id, state: :payment_started}, schedule_in: reclaim_payment_started_basket_timeout)
     )
     |> Gits.Repo.transaction()
 
