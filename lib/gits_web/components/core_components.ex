@@ -136,7 +136,7 @@ defmodule GitsWeb.CoreComponents do
 
   def footer(assigns) do
     ~H"""
-    <div class="min-h-28 bg-zinc-50 p-4">
+    <div class="min-h-28 mt-20 bg-zinc-50 p-4">
       <nav class="flex flex-wrap justify-center gap-8 pt-4 *:text-sm">
         <.link navigate="/organizers">
           Business & Organizers

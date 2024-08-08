@@ -148,6 +148,9 @@ defmodule Gits.Storefront.Ticket do
              end)
 
       change manage_relationship(:event, type: :append)
+
+      change {Gits.Storefront.Changes.SetLocalTimezone, attribute: :sale_starts_at}
+      change {Gits.Storefront.Changes.SetLocalTimezone, attribute: :sale_ends_at}
     end
 
     update :update do
@@ -170,6 +173,7 @@ defmodule Gits.Storefront.Ticket do
              end)
 
       change {Gits.Storefront.Changes.SetLocalTimezone, attribute: :sale_starts_at}
+      change {Gits.Storefront.Changes.SetLocalTimezone, attribute: :sale_ends_at}
     end
 
     update :add_instance do

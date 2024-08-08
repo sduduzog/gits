@@ -42,14 +42,19 @@ defmodule GitsWeb.DashboardLive.Event do
   end
 
   def handle_params(%{"ticket" => id} = unsigned_params, _uri, socket) do
+    socket =
+      socket
+      |> load_defalts(unsigned_params)
+      |> assign(:manage_ticket_title, "Edit ticket")
+
+    %{event: event, current_user: user} = socket.assigns
+
     socket
-    |> assign(:manage_ticket_title, "Edit ticket")
-    |> update(:manage_ticket_form, fn _, %{event: event, current_user: user} ->
+    |> assign_new(:manage_ticket_form, fn ->
       event.tickets
       |> Enum.find(&(&1.id == id))
       |> Form.for_update(:update, as: "edit_ticket", actor: user)
     end)
-    |> load_defalts(unsigned_params)
     |> noreply()
   end
 
