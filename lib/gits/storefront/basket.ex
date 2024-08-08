@@ -10,7 +10,7 @@ defmodule Gits.Storefront.Basket do
 
   require Ash.Resource.Change.Builtins
   alias Gits.Storefront.Calculations.SumOfInstancePrices
-  alias Gits.Storefront.Notifiers.StartBasketJob
+  alias Gits.Storefront.Notifiers.{BasketCancelled, BasketOpened, BasketReclaimed}
   alias Gits.Storefront.TicketInstance
 
   paper_trail do
@@ -43,7 +43,7 @@ defmodule Gits.Storefront.Basket do
       transition :settle_for_free, from: :open, to: :settled_for_free
       transition :start_payment, from: :open, to: :payment_started
       transition :evaluate_paystack_transaction, from: :payment_started, to: :settled_for_payment
-      transition :cancel, from: :open, to: :cancelled
+      transition :cancel, from: [:open, :payment_started], to: :cancelled
       transition :reclaim, from: [:open, :payment_started], to: :reclaimed
     end
   end
@@ -75,7 +75,7 @@ defmodule Gits.Storefront.Basket do
       change manage_relationship(:event, type: :append)
       change manage_relationship(:customer, type: :append)
 
-      notifiers [StartBasketJob]
+      notifiers [BasketOpened]
     end
 
     update :add_ticket do
@@ -171,6 +171,8 @@ defmodule Gits.Storefront.Basket do
       end
 
       change transition_state(:cancelled)
+
+      notifiers [BasketCancelled]
     end
 
     update :settle_for_free do
@@ -235,6 +237,8 @@ defmodule Gits.Storefront.Basket do
       end
 
       change transition_state(:reclaimed)
+
+      notifiers [BasketReclaimed]
     end
   end
 
@@ -320,7 +324,7 @@ defmodule Gits.Storefront.Basket do
 
     policy action(:cancel) do
       forbid_unless expr(customer.user.id == ^actor(:id))
-      forbid_unless expr(state == :open)
+      forbid_unless expr(state in [:open, :payment_started])
       authorize_if actor_present()
     end
 

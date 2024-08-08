@@ -237,16 +237,35 @@ defmodule GitsWeb.BasketComponent do
 
     ~H"""
     <div class="col-span-full flex flex-col items-center justify-center gap-8">
-      <span class="font-semibold">Started payment process...</span>
-      <span class="text-sm text-zinc-500">
-        If you were not redirected,
-        <.link
-          class="font-medium underline text-zinc-900"
-          navigate={@basket.paystack_authorization_url}
-        >
-          click here
-        </.link>
+      <span class="font-semibold">Payment Process not complete</span>
+      <span class="mx-auto w-full max-w-lg px-4 text-center text-sm text-zinc-500">
+        There was an issue with your payment. Please review your purchase and try the payment again.
       </span>
+      <div class="w-full space-y-4 px-2">
+        <div class="mx-auto w-full max-w-lg rounded-lg border *:text-sm">
+          <span class="inline-block px-4 pt-4">Summary</span>
+          <.basket_summary
+            basket_total={@basket.total}
+            instances={@basket.instances}
+            tickets={
+              @basket.event.tickets
+              |> Enum.filter(fn ticket -> count_tickets(@basket.instances, ticket.id) > 0 end)
+            }
+          />
+        </div>
+        <div class="mx-auto flex w-full max-w-lg gap-4 text-sm font-medium">
+          <.link
+            class="font-medium py-3 px-4 grow text-center rounded-xl bg-zinc-800 text-white"
+            navigate={@basket.paystack_authorization_url}
+          >
+            Retry payment
+          </.link>
+
+          <button phx-click="cancel_basket" class="shrink-0 rounded-xl px-4 py-3 hover:bg-zinc-100">
+            Cancel purchase
+          </button>
+        </div>
+      </div>
     </div>
     """
   end
