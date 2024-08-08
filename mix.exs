@@ -32,6 +32,8 @@ defmodule Gits.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:ash_paper_trail, "~> 0.1"},
+      {:ash_state_machine, "~> 0.2"},
       {:sentry, "~> 10.0"},
       {:phoenix_live_view, "~> 0.20"},
       {:phoenix, "~> 1.0"},
@@ -68,7 +70,6 @@ defmodule Gits.MixProject do
       {:ash_postgres, "~> 2.1"},
       {:ash_authentication, "~> 4.0"},
       {:ash_authentication_phoenix, "~> 2.0"},
-      {:ash_state_machine, "~> 0.2.5"},
       {:ash_archival, "~> 1.0"},
       {:phoenix_turnstile, "~> 1.1"},
       {:tailwind_formatter, "~> 0.4.0", only: [:dev, :test], runtime: false},

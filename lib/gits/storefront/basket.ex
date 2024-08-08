@@ -4,7 +4,7 @@ defmodule Gits.Storefront.Basket do
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     authorizers: [Ash.Policy.Authorizer],
-    extensions: [AshStateMachine],
+    extensions: [AshStateMachine, AshPaperTrail.Resource],
     domain: Gits.Storefront,
     notifiers: [Ash.Notifier.PubSub]
 
@@ -12,6 +12,12 @@ defmodule Gits.Storefront.Basket do
   alias Gits.Storefront.Calculations.SumOfInstancePrices
   alias Gits.Storefront.Notifiers.StartBasketJob
   alias Gits.Storefront.TicketInstance
+
+  paper_trail do
+    reference_source? false
+    store_action_name? true
+    ignore_attributes [:created_at, :updated_at]
+  end
 
   attributes do
     uuid_primary_key :id
@@ -38,7 +44,7 @@ defmodule Gits.Storefront.Basket do
       transition :start_payment, from: :open, to: :payment_started
       transition :evaluate_paystack_transaction, from: :payment_started, to: :settled_for_payment
       transition :cancel, from: :open, to: :cancelled
-      transition :reclaim, from: :open, to: :reclaimed
+      transition :reclaim, from: [:open, :payment_started], to: :reclaimed
     end
   end
 
@@ -319,7 +325,7 @@ defmodule Gits.Storefront.Basket do
     end
 
     policy action(:reclaim) do
-      forbid_unless expr(state == :open)
+      forbid_unless expr(state in [:open, :payment_started])
       authorize_if Gits.Checks.ActorIsObanJob
     end
 

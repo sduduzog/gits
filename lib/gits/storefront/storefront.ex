@@ -1,5 +1,9 @@
 defmodule Gits.Storefront do
-  use Ash.Domain
+  use Ash.Domain, extensions: [AshPaperTrail.Domain]
+
+  paper_trail do
+    include_versions? true
+  end
 
   resources do
     resource Gits.Storefront.Event

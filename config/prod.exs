@@ -16,4 +16,9 @@ config :sentry,
     "https://ff8905f3ab19071b0df977da3a43d54e@o4506665217032192.ingest.us.sentry.io/4507737254723584",
   environment_name: Mix.env(),
   enable_source_code_context: true,
-  root_source_code_paths: [File.cwd!()]
+  root_source_code_paths: [File.cwd!()],
+  integrations: [
+    oban: [
+      capture_errors: true
+    ]
+  ]

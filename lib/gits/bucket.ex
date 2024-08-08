@@ -28,7 +28,7 @@ defmodule Gits.Bucket do
       content_type: "image/jpeg",
       cache_control: "public,max-age=3600"
     )
-    |> ExAws.request!()
+    |> ExAws.request()
   end
 
   def get_listing_image_path(account_id, event_id) do
