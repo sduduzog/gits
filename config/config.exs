@@ -17,6 +17,8 @@ config :ash, :compatible_foreign_key_types, [
   {Ash.Type.Integer, Ash.Type.UUID}
 ]
 
+config :gits, time_zone: "Africa/Johannesburg"
+
 # config :ash, :policies, show_policy_breakdowns?: true
 
 # config :ash, :policies, log_policy_breakdowns: :error

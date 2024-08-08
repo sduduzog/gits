@@ -15,8 +15,8 @@ defmodule Gits.Storefront.Event do
     integer_primary_key :id
     attribute :name, :string, allow_nil?: false, public?: true
     attribute :description, :string, allow_nil?: false, public?: true
-    attribute :starts_at, :naive_datetime, allow_nil?: false, public?: true
-    attribute :ends_at, :naive_datetime, allow_nil?: false, public?: true
+    attribute :starts_at, :datetime, allow_nil?: false, public?: true
+    attribute :ends_at, :datetime, allow_nil?: false, public?: true
     attribute :published_at, :datetime, public?: true
 
     attribute :visibility, :atom do

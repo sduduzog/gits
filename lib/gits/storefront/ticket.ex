@@ -34,8 +34,8 @@ defmodule Gits.Storefront.Ticket do
       default 100
     end
 
-    attribute :sale_starts_at, :naive_datetime, public?: true
-    attribute :sale_ends_at, :naive_datetime, public?: true
+    attribute :sale_starts_at, :datetime, public?: true
+    attribute :sale_ends_at, :datetime, public?: true
 
     attribute :availability, :atom do
       allow_nil? false
@@ -168,6 +168,8 @@ defmodule Gits.Storefront.Ticket do
                  price |> Decimal.mult(100) |> Decimal.to_integer()
                )
              end)
+
+      change {Gits.Storefront.Changes.SetLocalTimezone, attribute: :sale_starts_at}
     end
 
     update :add_instance do
