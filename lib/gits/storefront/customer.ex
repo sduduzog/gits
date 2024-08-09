@@ -1,4 +1,6 @@
 defmodule Gits.Storefront.Customer do
+  alias Gits.Storefront.{Ticket, TicketInstance}
+
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     authorizers: [Ash.Policy.Authorizer],
@@ -79,6 +81,7 @@ defmodule Gits.Storefront.Customer do
     end
 
     policy action(:read) do
+      authorize_if accessing_from(TicketInstance, :customer)
       authorize_if expr(user.id == ^actor(:id))
     end
 
