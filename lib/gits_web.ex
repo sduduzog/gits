@@ -19,7 +19,7 @@ defmodule GitsWeb do
 
   def static_paths,
     do:
-      ~w(assets fonts images favicon.ico robots.txt android-chrome-192x192.png android-chrome-512x512.png site.webmanifest apple-touch-icon.png favicon-32x32.png favicon-16x16.png)
+      ~w(assets fonts images favicon.ico robots.txt android-chrome-192x192.png android-chrome-512x512.png site.webmanifest apple-touch-icon.png favicon-32x32.png favicon-16x16.png apple-developer-merchantid-domain-association)
 
   def router do
     quote do
