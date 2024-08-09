@@ -85,21 +85,6 @@ defmodule Gits.Storefront.Ticket do
       prepare build(load: [:price, :local_sale_starts_at, :local_sale_ends_at])
     end
 
-    read :read_for_checkout_summary do
-      argument :event_id, :integer, allow_nil?: false
-      argument :basket_id, :uuid, allow_nil?: false
-      filter expr(event.id == ^arg(:event_id))
-
-      prepare build(
-                load: [
-                  customer_locked_instance_count_for_basket: [basket_id: arg(:basket_id)],
-                  customer_locked_instance_price_for_basket: [basket_id: arg(:basket_id)]
-                ]
-              )
-
-      prepare build(sort: [created_at: :asc])
-    end
-
     read :with_token do
       argument :token, :string, allow_nil?: false
 
@@ -253,14 +238,6 @@ defmodule Gits.Storefront.Ticket do
   policies do
     policy [action(:read), accessing_from(Basket, :tickets)] do
       authorize_if always()
-    end
-
-    policy action([:read_for_shopping]) do
-      authorize_if actor_present()
-    end
-
-    policy action(:read_for_checkout_summary) do
-      authorize_if actor_present()
     end
 
     policy action(:with_token) do
