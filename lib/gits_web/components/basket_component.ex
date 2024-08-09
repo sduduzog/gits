@@ -114,7 +114,7 @@ defmodule GitsWeb.BasketComponent do
                 <%= count_tickets(@instances, ticket.id) %>
               </span>
               <button
-                class="flex rounded-lg p-2 hover:bg-zinc-100"
+                class="flex rounded-lg bg-zinc-100 p-2 hover:bg-zinc-100"
                 phx-click="add_ticket"
                 phx-value-id={ticket.id}
               >

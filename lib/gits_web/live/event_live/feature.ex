@@ -73,8 +73,7 @@ defmodule GitsWeb.EventLive.Feature do
       {:ok, basket} ->
         socket |> assign(:basket, basket) |> SEO.assign(socket.assigns.event) |> noreply()
 
-      {:error, foo} ->
-        foo |> IO.inspect()
+      {:error, _} ->
         raise GitsWeb.Exceptions.NotFound, "no basket found"
     end
   end
