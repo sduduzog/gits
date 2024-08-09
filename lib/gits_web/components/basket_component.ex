@@ -124,9 +124,6 @@ defmodule GitsWeb.BasketComponent do
           </div>
           <div class="p-2 px-4">
             <h3 class="text-xl font-medium">
-              <span :if={FunWithFlags.enabled?(:sold_counter)}>
-                <%= ticket.total_sold_for_actor %>
-              </span>
               <%= ticket.name %>
             </h3>
           </div>

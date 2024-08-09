@@ -60,10 +60,7 @@ defmodule GitsWeb.EventLive.Feature do
           |> Ash.Query.load([
             :sold_out?,
             :sold_out_for_actor?,
-            :total_sold,
-            :total_sold_for_actor,
-            :total_unavailable,
-            :total_unavailable_for_actor
+            :total_sold
           ])
       ]
     ])

@@ -94,43 +94,11 @@ defmodule Gits.Storefront.Ticket do
                 ) >=
                   allowed_quantity_per_user
               )
-
-    calculate :total_sold_for_actor,
-              :integer,
-              expr(
-                count(instances,
-                  query: [
-                    filter:
-                      expr(
-                        basket.state in [:settled_for_free, :settled_for_payment] and
-                          customer.user.id == ^actor(:id)
-                      )
-                  ]
-                )
-              )
-
-    calculate :total_unavailable_for_actor,
-              :integer,
-              expr(
-                count(instances,
-                  query: [
-                    filter:
-                      expr(
-                        basket.state in [:open, :settled_for_free, :settled_for_payment] and
-                          customer.user.id == ^actor(:id)
-                      )
-                  ]
-                )
-              )
   end
 
   aggregates do
     count :total_sold, :instances do
       filter expr(basket.state in [:settled_for_free, :settled_for_payment])
-    end
-
-    count :total_unavailable, :instances do
-      filter expr(basket.state in [:open, :settled_for_free, :settled_for_payment])
     end
   end
 
@@ -301,86 +269,6 @@ defmodule Gits.Storefront.Ticket do
     policy action(:with_token) do
       authorize_if actor_present()
     end
-
-    # policy action(:add_instance) do
-    #   forbid_unless expr(
-    #                   total_quantity == 0 or
-    #                     count(instances, query: [filter: expr(state not in [:cancelled])]) <
-    #                       total_quantity
-    #                 )
-    #
-    #   forbid_unless expr(
-    #                   allowed_quantity_per_user == 0 or
-    #                     count(instances,
-    #                       query: [
-    #                         filter:
-    #                           expr(state not in [:cancelled] and customer.user.id == ^actor(:id))
-    #                       ]
-    #                     ) <
-    #                       allowed_quantity_per_user
-    #                 )
-    #
-    #   authorize_if actor_present()
-    # end
-    #
-    # policy action(:add_instance) do
-    #   authorize_if expr(
-    #                  allowed_quantity_per_user == 0 or
-    #                    count(instances,
-    #                      query: [
-    #                        filter:
-    #                          expr(state not in [:cancelled] and customer.user.id == ^actor(:id))
-    #                      ]
-    #                    ) <
-    #                      allowed_quantity_per_user
-    #                )
-    # end
-    #
-    # policy action(:add_instance) do
-    #   authorize_if expr(
-    #                  total_quantity == 0 or
-    #                    count(instances, query: [filter: expr(state not in [:cancelled])]) <
-    #                      total_quantity
-    #                )
-    # end
-
-    # policy action(:add_instance) do
-    #   authorize_unless expr(
-    #                      count(instances,
-    #                        query: [
-    #                          filter:
-    #                            expr(
-    #                              basket.state in [:open, :settled_for_free, :settled_for_payment] and
-    #                                customer.user.id == ^actor(:id)
-    #                            )
-    #                        ]
-    #                      ) >=
-    #                        allowed_quantity_per_user
-    #                    )
-    # end
-    #
-    # policy action(:add_instance) do
-    #   authorize_unless expr(
-    #                      count(instances,
-    #                        query: [
-    #                          filter:
-    #                            expr(
-    #                              basket.state in [:open, :settled_for_free, :settled_for_payment]
-    #                            )
-    #                        ]
-    #                      ) >=
-    #                        total_quantity
-    #                    )
-    # end
-
-    # policy action(:add_instance) do
-    #   authorize_if expr(allowed_quantity_per_user == 0)
-    #   authorize_if expr(total_unavailable_for_actor < allowed_quantity_per_user)
-    # end
-    #
-    # policy action(:add_instance) do
-    #   authorize_if expr(total_unavailable < total_quantity)
-    # end
 
     policy action(:add_instance) do
       authorize_unless Gits.Storefront.Checks.TicketSoldOut
