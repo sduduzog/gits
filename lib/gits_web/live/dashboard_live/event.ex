@@ -47,20 +47,28 @@ defmodule GitsWeb.DashboardLive.Event do
       |> load_defalts(unsigned_params)
       |> assign(:manage_ticket_title, "Edit ticket")
 
-    %{event: event, current_user: user} = socket.assigns
-
     socket
-    |> assign_new(:manage_ticket_form, fn ->
+    |> assign_new(:manage_ticket_form, fn -> nil end)
+    |> update(:manage_ticket_form, fn _form, %{event: event, current_user: user} ->
       ticket =
         event.tickets
         |> Enum.find(&(&1.id == id))
 
       local_starts_at =
         ticket.sale_starts_at
-        |> IO.inspect()
+        |> DateTime.shift_zone!(socket.assigns.time_zone)
+        |> DateTime.to_naive()
+
+      local_ends_at =
+        ticket.sale_ends_at
+        |> DateTime.shift_zone!(socket.assigns.time_zone)
+        |> DateTime.to_naive()
 
       ticket
       |> Form.for_update(:update, as: "edit_ticket", actor: user)
+      |> Form.validate(%{sale_starts_at: local_starts_at, sale_ends_at: local_ends_at},
+        errors: false
+      )
     end)
     |> noreply()
   end

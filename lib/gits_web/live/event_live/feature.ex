@@ -66,12 +66,17 @@ defmodule GitsWeb.EventLive.Feature do
   end
 
   def handle_params(%{"basket" => basket_id}, _uri, socket) do
-    {:ok, basket} = fetch_basket(basket_id, socket.assigns.current_user)
+    fetch_basket(basket_id, socket.assigns.current_user)
+    |> case do
+      {:ok, basket} ->
+        socket
+        |> assign(:basket, basket)
 
-    socket
-    |> assign(:basket, basket)
+        socket |> SEO.assign(socket.assigns.event) |> noreply()
 
-    socket |> SEO.assign(socket.assigns.event) |> noreply()
+      {:error, _} ->
+        raise GitsWeb.Exceptions.NotFound, "no basket found"
+    end
   end
 
   def handle_params(_unsigned_params, _uri, socket) do

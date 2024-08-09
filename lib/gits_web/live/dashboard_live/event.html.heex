@@ -142,7 +142,9 @@
       <div class="flex w-full items-center justify-between">
         <span class="p-2 px-4 text-sm font-medium text-zinc-500">
           <%= if not is_nil(ticket.sale_starts_at) do %>
-            Sale starts <%= ticket.sale_starts_at |> Timex.format!("%e %b %Y, %R %p", :strftime) %>
+            Sale starts <%= ticket.sale_starts_at
+            |> DateTime.shift_zone!(@time_zone)
+            |> Timex.format!("%e %b %Y, %R %p", :strftime) %>
           <% end %>
         </span>
         <div
@@ -244,9 +246,8 @@
     </div>
   </div>
 </div>
-
 <div
-  :if={@manage_ticket_form}
+  :if={not is_nil(@manage_ticket_form)}
   class="!m-0 bg-zinc-500/50 fixed inset-0 z-20 flex justify-end transition-all"
 >
   <div class="flex h-full w-full max-w-2xl gap-4 md:p-4">
