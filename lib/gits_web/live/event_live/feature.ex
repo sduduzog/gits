@@ -25,18 +25,20 @@ defmodule GitsWeb.EventLive.Feature do
         starts_at_day = event.starts_at |> Timex.format!("%e", :strftime)
         starts_at_month = event.starts_at |> Timex.format!("%b", :strftime)
 
-        socket
-        |> assign(
-          :feature_image,
-          Gits.Bucket.get_feature_image_path(event.account_id, event.id)
-        )
-        |> assign(:event, event)
-        |> assign(:basket, nil)
-        |> assign(:page_title, event.name)
-        |> assign(:event_name, event.name)
-        |> assign(:starts_at_day, starts_at_day)
-        |> assign(:starts_at_month, starts_at_month)
-        |> seo_ok()
+        socket =
+          socket
+          |> assign(
+            :feature_image,
+            Gits.Bucket.get_feature_image_path(event.account_id, event.id)
+          )
+          |> assign(:event, event)
+          |> assign(:basket, nil)
+          |> assign(:page_title, event.name)
+          |> assign(:event_name, event.name)
+          |> assign(:starts_at_day, starts_at_day)
+          |> assign(:starts_at_month, starts_at_month)
+
+        {:ok, socket, layout: {GitsWeb.Layouts, :event}, temporary_assigns: [{SEO.key(), nil}]}
     end
   end
 
@@ -252,6 +254,7 @@ defmodule GitsWeb.EventLive.Feature do
           <.floating_event_date day={@starts_at_day} month={@starts_at_month} />
 
           <img
+            loading="eager"
             src={@feature_image}
             alt="Event's featured image"
             class="size-full object-cover transition-transform duration-300 hover:scale-110"

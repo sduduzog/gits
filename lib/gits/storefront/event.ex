@@ -51,6 +51,12 @@ defmodule Gits.Storefront.Event do
   aggregates do
     min :minimum_ticket_price, :tickets, :price
     max :maximum_ticket_price, :tickets, :price
+
+    count :total_sold, [:tickets, :instances] do
+      filter expr(basket.state in [:settled_for_free, :settled_for_payment])
+    end
+
+    sum :total_available, :tickets, :total_quantity
   end
 
   calculations do

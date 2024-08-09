@@ -5,7 +5,8 @@ defmodule GitsWeb.DashboardLive.Events do
   def handle_params(_unsigned_params, _uri, socket) do
     %{current_user: user, account: account} = socket.assigns
 
-    account = account |> Ash.load!([events: [:address]], actor: user)
+    account =
+      account |> Ash.load!([events: [:address, :total_sold, :total_available]], actor: user)
 
     socket
     |> assign(:events, account.events)
@@ -49,7 +50,9 @@ defmodule GitsWeb.DashboardLive.Events do
               <span><%= event.address.display_name %> &bull; <%= event.address.city %></span>
             <% end %>
           </div>
-          <span class="hidden text-sm text-zinc-500 md:inline-flex">0/1 tickets sold</span>
+          <span class="hidden text-sm text-zinc-500 md:inline-flex">
+            <%= event.total_sold %>/<%= event.total_available %> tickets sold
+          </span>
         </div>
         <div class="shrink-0">
           <button class="flex rounded-lg p-1 hover:bg-zinc-50">

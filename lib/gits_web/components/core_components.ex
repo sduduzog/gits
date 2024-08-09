@@ -134,9 +134,11 @@ defmodule GitsWeb.CoreComponents do
     """
   end
 
+  attr :class, :string, default: ""
+
   def footer(assigns) do
     ~H"""
-    <div class="min-h-28 mt-20 bg-zinc-50 p-4">
+    <div class={["p-4", @class]}>
       <nav class="flex flex-wrap justify-center gap-8 pt-4 *:text-sm">
         <.link navigate="/organizers">
           Business & Organizers

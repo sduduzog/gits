@@ -74,24 +74,6 @@
 </div>
 
 <div class="grid gap-4">
-  <div :if={@event.payment_method_required?} class="border-l-4 border-yellow-400 bg-yellow-50 p-4">
-    <div class="flex">
-      <div class="flex-shrink-0">
-        <.icon class="text-yellow-400 -mt-1" name="hero-exclamation-triangle-mini" />
-      </div>
-      <div class="ml-3">
-        <p class="text-sm text-yellow-700">
-          Your non-free tickets won't be visible to buyers without setting a payment provider on this event
-          <.link
-            navigate={~p"/accounts/#{@slug}/settings"}
-            class="font-medium text-yellow-700 underline hover:text-yellow-600"
-          >
-            Go to settings
-          </.link>
-        </p>
-      </div>
-    </div>
-  </div>
   <div :if={is_nil(@event.address)} class="border-l-4 border-yellow-400 bg-yellow-50 p-4">
     <div class="flex">
       <div class="flex-shrink-0">
@@ -105,6 +87,25 @@
             class="font-medium text-yellow-700 underline hover:text-yellow-600"
           >
             Add an address
+          </.link>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div :if={@event.payment_method_required?} class="border-l-4 border-yellow-400 bg-yellow-50 p-4">
+    <div class="flex">
+      <div class="flex-shrink-0">
+        <.icon class="text-yellow-400 -mt-1" name="hero-exclamation-triangle-mini" />
+      </div>
+      <div class="ml-3">
+        <p class="text-sm text-yellow-700">
+          Your buyers won't be able to see your paid tickets until you have setup a payment provider for this event
+          <.link
+            navigate={~p"/accounts/#{@slug}/settings"}
+            class="font-medium text-yellow-700 underline hover:text-yellow-600"
+          >
+            Setup a payment provider
           </.link>
         </p>
       </div>
