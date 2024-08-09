@@ -68,6 +68,21 @@ defmodule Gits.Storefront.Ticket do
     calculate :local_sale_ends_at,
               :naive_datetime,
               {Gits.Storefront.Calculations.LocalDatetime, attribute: :sale_ends_at}
+
+    calculate :sold_out?, :boolean, expr(total_sold == total_quantity)
+
+    calculate :sold_out_for_actor?,
+              :boolean,
+              expr(
+                allowed_quantity_per_user > 0 and
+                  total_sold < total_quantity and
+                  count(instances,
+                    query: [
+                      filter: expr(customer.user.id == ^actor(:id) and state in [:ready_for_use])
+                    ]
+                  ) ==
+                    allowed_quantity_per_user
+              )
   end
 
   aggregates do

@@ -97,11 +97,6 @@ defmodule GitsWeb.BasketComponent do
       <div class="grid grow content-start gap-4 p-4">
         <div :for={ticket <- @tickets} class="rounded-xl border border-zinc-200 p-2">
           <div class="flex w-full items-center justify-between">
-            <span :if={false} class="p-2 px-4 text-sm font-medium text-zinc-500">
-              From <%= ticket.sale_starts_at
-              |> Timex.format!("%I:%M %p, %e %b %Y", :strftime) %>
-            </span>
-
             <span class="p-2 px-4 text-sm font-medium text-zinc-500">
               <span :if={ticket.price |> Decimal.gt?(0)}>
                 R <%= ticket.price |> Decimal.mult(count_tickets(@instances, ticket.id)) %>
@@ -131,7 +126,10 @@ defmodule GitsWeb.BasketComponent do
             <h3 class="text-xl font-medium"><%= ticket.name %></h3>
           </div>
           <div class="flex p-2 px-4">
-            <span class="grow text-xs text-zinc-500"></span>
+            <span :if={ticket.sold_out?} class="grow text-xs text-zinc-500">Sold out</span>
+            <span :if={ticket.sold_out_for_actor?} class="grow text-xs text-zinc-500">
+              Sold out for you.
+            </span>
             <span class="text-xs font-medium text-zinc-800">
               <%= if Decimal.gt?(ticket.price, 0) do %>
                 R <%= ticket.price |> Gits.Currency.format() %>

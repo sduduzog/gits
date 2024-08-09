@@ -94,5 +94,5 @@ config :gits, :presigned_url_options,
   expires_in: 3_600
 
 config :gits, :workers,
-  reclaim_open_basket_timeout: 20,
-  reclaim_payment_started_basket_timeout: 30
+  reclaim_open_basket_timeout: 40,
+  reclaim_payment_started_basket_timeout: 60

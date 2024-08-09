@@ -61,6 +61,10 @@ defmodule GitsWeb.EventLive.Feature do
           |> Ash.Query.filter(
             sale_starts_at <= fragment("now()") and sale_ends_at > fragment("now()")
           )
+          |> Ash.Query.load([
+            :sold_out?,
+            :sold_out_for_actor?
+          ])
       ]
     ])
     |> Ash.read_one(actor: actor)
