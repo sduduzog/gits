@@ -70,6 +70,12 @@ defmodule Gits.Storefront.Ticket do
               {Gits.Storefront.Calculations.LocalDatetime, attribute: :sale_ends_at}
   end
 
+  aggregates do
+    count :total_sold, :instances do
+      filter expr(basket.state in [:settled_for_free, :settled_for_payment])
+    end
+  end
+
   actions do
     default_accept :*
     defaults [:destroy]
