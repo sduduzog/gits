@@ -31,6 +31,10 @@ defmodule GitsWeb.UserController do
     user =
       conn.assigns.current_user
 
+    if is_nil(user) do
+      raise GitsWeb.Exceptions.NotFound, "no user found"
+    end
+
     tickets =
       Ticket
       |> Ash.Query.for_read(:read, %{}, actor: user)
