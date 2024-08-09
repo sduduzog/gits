@@ -1,6 +1,6 @@
 defmodule Gits.Storefront.Checks.TicketSoldOut do
   require Ash.Query
-  alias Gits.Storefront.{Ticket, TicketInstance}
+  alias Gits.Storefront.TicketInstance
   use Ash.Policy.SimpleCheck
 
   def describe(_) do
