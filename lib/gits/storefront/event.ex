@@ -70,10 +70,18 @@ defmodule Gits.Storefront.Event do
               )
 
     calculate :host, :string, expr(account.name)
+
+    calculate :local_starts_at,
+              :naive_datetime,
+              {Gits.Storefront.Calculations.LocalDatetime, attribute: :starts_at}
+
+    calculate :local_ends_at,
+              :naive_datetime,
+              {Gits.Storefront.Calculations.LocalDatetime, attribute: :ends_at}
   end
 
   actions do
-    defaults [:destroy, update: :*]
+    defaults [:destroy]
 
     read :read do
       primary? true
@@ -110,7 +118,28 @@ defmodule Gits.Storefront.Event do
                 query
               end)
 
+      prepare build(load: [:local_starts_at, :local_ends_at])
       prepare build(sort: [id: :desc])
+    end
+
+    update :update do
+      primary? true
+      require_atomic? false
+      accept [:name, :description, :visibility, :payment_method]
+
+      argument :local_starts_at, :naive_datetime do
+        allow_nil? false
+      end
+
+      argument :local_ends_at, :naive_datetime do
+        allow_nil? false
+      end
+
+      change {Gits.Storefront.Changes.SetLocalTimezone,
+              attribute: :starts_at, input: :local_starts_at}
+
+      change {Gits.Storefront.Changes.SetLocalTimezone,
+              attribute: :ends_at, input: :local_ends_at}
     end
 
     update :publish do
@@ -197,8 +226,20 @@ defmodule Gits.Storefront.Event do
 
       validate Gits.Storefront.Validations.EventDates
 
+      argument :local_starts_at, :naive_datetime, allow_nil?: false
+      argument :local_ends_at, :naive_datetime, allow_nil?: false
+
       argument :account, :map
       change manage_relationship(:account, type: :append)
+
+      change {Gits.Storefront.Changes.SetLocalTimezone, attribute: :starts_at}
+      change {Gits.Storefront.Changes.SetLocalTimezone, attribute: :ends_at}
+
+      change {Gits.Storefront.Changes.SetLocalTimezone,
+              attribute: :starts_at, input: :local_starts_at}
+
+      change {Gits.Storefront.Changes.SetLocalTimezone,
+              attribute: :ends_at, input: :local_ends_at}
     end
   end
 

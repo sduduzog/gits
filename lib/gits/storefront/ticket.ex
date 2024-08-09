@@ -60,6 +60,14 @@ defmodule Gits.Storefront.Ticket do
     calculate :price, :decimal, expr(round(price_in_cents / 100, 2))
 
     calculate :token, :string, TicketToken
+
+    calculate :local_sale_starts_at,
+              :naive_datetime,
+              {Gits.Storefront.Calculations.LocalDatetime, attribute: :sale_starts_at}
+
+    calculate :local_sale_ends_at,
+              :naive_datetime,
+              {Gits.Storefront.Calculations.LocalDatetime, attribute: :sale_ends_at}
   end
 
   actions do
@@ -68,7 +76,7 @@ defmodule Gits.Storefront.Ticket do
 
     read :read do
       primary? true
-      prepare build(load: [:price])
+      prepare build(load: [:price, :local_sale_starts_at, :local_sale_ends_at])
     end
 
     read :read_for_shopping do
@@ -133,6 +141,14 @@ defmodule Gits.Storefront.Ticket do
         constraints min: 0
       end
 
+      argument :local_sale_starts_at, :naive_datetime do
+        allow_nil? false
+      end
+
+      argument :local_sale_ends_at, :naive_datetime do
+        allow_nil? false
+      end
+
       argument :event, :map do
         allow_nil? false
       end
@@ -149,8 +165,11 @@ defmodule Gits.Storefront.Ticket do
 
       change manage_relationship(:event, type: :append)
 
-      change {Gits.Storefront.Changes.SetLocalTimezone, attribute: :sale_starts_at}
-      change {Gits.Storefront.Changes.SetLocalTimezone, attribute: :sale_ends_at}
+      change {Gits.Storefront.Changes.SetLocalTimezone,
+              attribute: :sale_starts_at, input: :local_sale_starts_at}
+
+      change {Gits.Storefront.Changes.SetLocalTimezone,
+              attribute: :sale_ends_at, input: :local_sale_ends_at}
     end
 
     update :update do
@@ -160,6 +179,14 @@ defmodule Gits.Storefront.Ticket do
       argument :price, :decimal do
         allow_nil? false
         constraints min: 0
+      end
+
+      argument :local_sale_starts_at, :naive_datetime do
+        allow_nil? false
+      end
+
+      argument :local_sale_ends_at, :naive_datetime do
+        allow_nil? false
       end
 
       change before_action(fn changeset, _ ->
@@ -172,8 +199,11 @@ defmodule Gits.Storefront.Ticket do
                )
              end)
 
-      change {Gits.Storefront.Changes.SetLocalTimezone, attribute: :sale_starts_at}
-      change {Gits.Storefront.Changes.SetLocalTimezone, attribute: :sale_ends_at}
+      change {Gits.Storefront.Changes.SetLocalTimezone,
+              attribute: :sale_starts_at, input: :local_sale_starts_at}
+
+      change {Gits.Storefront.Changes.SetLocalTimezone,
+              attribute: :sale_ends_at, input: :local_sale_ends_at}
     end
 
     update :add_instance do

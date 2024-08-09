@@ -35,7 +35,7 @@
     <div class="flex flex-wrap items-center gap-4">
       <div class="w-full grow gap-2 text-sm text-zinc-500 md:w-auto">
         <span>
-          <%= @event.starts_at
+          <%= @event.local_starts_at
           |> Timex.format!("%b %e, %Y at %H:%M %p", :strftime) %>
         </span>
         <span class="inline-flex px-0.5">&bull;</span>
@@ -142,8 +142,7 @@
       <div class="flex w-full items-center justify-between">
         <span class="p-2 px-4 text-sm font-medium text-zinc-500">
           <%= if not is_nil(ticket.sale_starts_at) do %>
-            Sale starts <%= ticket.sale_starts_at
-            |> DateTime.shift_zone!(@time_zone)
+            Sale starts <%= ticket.local_sale_starts_at
             |> Timex.format!("%e %b %Y, %R %p", :strftime) %>
           <% end %>
         </span>
@@ -266,8 +265,8 @@
         <.input field={f[:price]} label="Price" type="number" class="col-span-full" step="0.01" />
         <.input field={f[:allowed_quantity_per_user]} label="Limit per customer" type="number" />
         <.input field={f[:total_quantity]} label="Total ticket quantity" type="number" />
-        <.input field={f[:sale_starts_at]} label="Sale starts at" type="datetime-local" />
-        <.input field={f[:sale_ends_at]} label="Sale ends at" type="datetime-local" />
+        <.input field={f[:local_sale_starts_at]} label="Sale starts at" type="datetime-local" />
+        <.input field={f[:local_sale_ends_at]} label="Sale ends at" type="datetime-local" />
         <.radio_group label="Availability" field={f[:availability]} class="col-span-full">
           <:radio value={:open}>Open</:radio>
           <:radio value={:restricted}>Restricted</:radio>

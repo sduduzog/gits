@@ -23,8 +23,11 @@ defmodule GitsWeb.DashboardLive.ManageEvent do
 
     [event] = account.events
 
-    form = event |> Form.for_update(:update, as: "edit_event", actor: user)
+    form =
+      event
+      |> Form.for_update(:update, as: "edit_event", actor: user)
 
+    
     socket
     |> assign(:form, form)
     |> assign(:event, event)
@@ -49,7 +52,8 @@ defmodule GitsWeb.DashboardLive.ManageEvent do
     account = socket.assigns.account
 
     form =
-      socket.assigns.form |> Form.validate(params)
+      socket.assigns.form
+      |> Form.validate(params)
 
     with true <- form.valid?, {:ok, event} <- Form.submit(form) do
       socket |> push_navigate(to: ~p"/accounts/#{account.id}/events/#{event.id}")
@@ -125,8 +129,8 @@ defmodule GitsWeb.DashboardLive.ManageEvent do
       <div class="grid grow grid-cols-2 content-start gap-4 md:gap-8">
         <.input field={f[:name]} label="Name" class="col-span-full" />
         <.input type="textarea" field={f[:description]} label="Description" class="col-span-full" />
-        <.input type="datetime-local" field={f[:starts_at]} label="Starts At" />
-        <.input type="datetime-local" field={f[:ends_at]} label="Ends At" />
+        <.input type="datetime-local" field={f[:local_starts_at]} label="Starts At" />
+        <.input type="datetime-local" field={f[:local_ends_at]} label="Ends At" />
         <.radio_group field={f[:visibility]} class="col-span-full md:col-span-2" label="Visibility">
           <:radio value={:private}>Private</:radio>
           <:radio value={:protected}>Protected</:radio>

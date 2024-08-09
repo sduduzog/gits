@@ -7,17 +7,23 @@ defmodule Gits.Storefront.Changes.SetLocalTimezone do
     else
       {:error, "attribute must be an atom"}
     end
+
+    if is_atom(opts[:input]) do
+      {:ok, opts}
+    else
+      {:error, "input must be an atom"}
+    end
   end
 
   def change(changeset, opts, _context) do
     changeset
-    |> Ash.Changeset.fetch_change(opts[:attribute])
+    |> Ash.Changeset.fetch_argument(opts[:input])
     |> case do
-      {:ok, new_value} ->
+      {:ok, argument} ->
         time_zone = Application.get_env(:gits, :time_zone)
 
         {:ok, datetime} =
-          new_value
+          argument
           |> DateTime.from_naive(time_zone)
 
         changeset |> Ash.Changeset.force_change_attribute(opts[:attribute], datetime)

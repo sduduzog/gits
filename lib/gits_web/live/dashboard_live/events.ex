@@ -39,7 +39,7 @@ defmodule GitsWeb.DashboardLive.Events do
           </h1>
           <div class="w-full grow gap-2 text-sm text-zinc-500 md:w-auto">
             <span>
-              <%= event.starts_at
+              <%= event.local_starts_at
               |> Timex.format!("%b %e, %Y at %H:%M %p", :strftime) %>
             </span>
             <span class="inline-flex px-0.5">&bull;</span>

@@ -2,7 +2,6 @@ defmodule GitsWeb.PageController do
   use GitsWeb, :controller
 
   require Ash.Query
-  alias AshPhoenix.Form
   alias Gits.Bucket
   alias Gits.Dashboard.Member
   alias Gits.Storefront.Customer
@@ -142,9 +141,6 @@ defmodule GitsWeb.PageController do
   def healthz(conn, _) do
     time_zone = Application.get_env(:gits, :time_zone)
     {:ok, datetime} = NaiveDateTime.local_now() |> DateTime.from_naive(time_zone)
-
-    conn
-    |> assign(:datetime, datetime)
 
     conn |> json(%{datetime: datetime})
   end

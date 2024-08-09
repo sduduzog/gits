@@ -90,7 +90,6 @@ defmodule GitsWeb do
           |> assign(:context_options, nil)
           |> assign(:accounts, [])
           |> assign(:account, member.account)
-          |> assign(:time_zone, Application.get_env(:gits, :time_zone))
 
         {:ok, socket, layout: {GitsWeb.Layouts, :dashboard}}
       end
