@@ -22,12 +22,8 @@ defmodule GitsWeb.EventLive.Feature do
         raise GitsWeb.Exceptions.NotFound, "forbidden"
 
       {:ok, event} ->
-        local_starts_at =
-          event.starts_at
-          |> Timex.local()
-
-        starts_at_day = local_starts_at |> Timex.format!("%e", :strftime)
-        starts_at_month = local_starts_at |> Timex.format!("%b", :strftime)
+        starts_at_day = event.starts_at |> Timex.format!("%e", :strftime)
+        starts_at_month = event.starts_at |> Timex.format!("%b", :strftime)
 
         socket
         |> assign(
@@ -63,7 +59,11 @@ defmodule GitsWeb.EventLive.Feature do
           )
           |> Ash.Query.load([
             :sold_out?,
-            :sold_out_for_actor?
+            :sold_out_for_actor?,
+            :total_sold,
+            :total_sold_for_actor,
+            :total_unavailable,
+            :total_unavailable_for_actor
           ])
       ]
     ])
@@ -76,7 +76,8 @@ defmodule GitsWeb.EventLive.Feature do
       {:ok, basket} ->
         socket |> assign(:basket, basket) |> SEO.assign(socket.assigns.event) |> noreply()
 
-      {:error, _} ->
+      {:error, foo} ->
+        foo |> IO.inspect()
         raise GitsWeb.Exceptions.NotFound, "no basket found"
     end
   end
