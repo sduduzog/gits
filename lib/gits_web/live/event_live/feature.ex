@@ -35,6 +35,7 @@ defmodule GitsWeb.EventLive.Feature do
           Gits.Bucket.get_feature_image_path(event.account_id, event.id)
         )
         |> assign(:event, event)
+        |> assign(:basket, nil)
         |> assign(:page_title, event.name)
         |> assign(:event_name, event.name)
         |> assign(:starts_at_day, starts_at_day)
@@ -69,10 +70,7 @@ defmodule GitsWeb.EventLive.Feature do
     fetch_basket(basket_id, socket.assigns.current_user)
     |> case do
       {:ok, basket} ->
-        socket
-        |> assign(:basket, basket)
-
-        socket |> SEO.assign(socket.assigns.event) |> noreply()
+        socket |> assign(:basket, basket) |> SEO.assign(socket.assigns.event) |> noreply()
 
       {:error, _} ->
         raise GitsWeb.Exceptions.NotFound, "no basket found"

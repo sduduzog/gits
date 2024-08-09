@@ -85,20 +85,6 @@ defmodule Gits.Storefront.Ticket do
       prepare build(load: [:price, :local_sale_starts_at, :local_sale_ends_at])
     end
 
-    read :read_for_shopping do
-      argument :event_id, :integer, allow_nil?: false
-      argument :basket_id, :uuid, allow_nil?: false
-      filter expr(event.id == ^arg(:event_id))
-
-      prepare build(
-                load: [
-                  customer_reserved_instance_count_for_basket: [basket_id: arg(:basket_id)]
-                ]
-              )
-
-      prepare build(sort: [created_at: :asc])
-    end
-
     read :read_for_checkout_summary do
       argument :event_id, :integer, allow_nil?: false
       argument :basket_id, :uuid, allow_nil?: false

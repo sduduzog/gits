@@ -239,7 +239,7 @@
         <h3 class="text-xl font-medium"><%= ticket.name %></h3>
       </div>
       <div class="flex p-2 px-4">
-        <span class="grow text-xs text-zinc-500">
+        <span class="grow text-xs font-medium text-zinc-900">
           <%= ticket.total_sold %>/<%= ticket.total_quantity %> tickets sold
         </span>
         <span class="text-xs text-zinc-500">R <%= ticket.price |> Gits.Currency.format() %></span>
