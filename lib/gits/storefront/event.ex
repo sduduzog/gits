@@ -52,13 +52,6 @@ defmodule Gits.Storefront.Event do
     min :minimum_ticket_price, :tickets, :price
     max :maximum_ticket_price, :tickets, :price
 
-    count :total_sold, [:tickets, :instances] do
-      filter expr(
-               basket.state in [:settled_for_free, :settled_for_payment] and
-                 basket.instances.ticket.test == false
-             )
-    end
-
     sum :total_available, :tickets, :total_quantity do
       filter expr(test == false)
     end
@@ -89,6 +82,20 @@ defmodule Gits.Storefront.Event do
     calculate :local_ends_at,
               :naive_datetime,
               {Gits.Storefront.Calculations.LocalDatetime, attribute: :ends_at}
+
+    calculate :total_sold,
+              :integer,
+              expr(
+                count(tickets.instances,
+                  query: [
+                    filter:
+                      expr(
+                        basket.state in [:settled_for_free, :settled_for_payment] and
+                          ticket.test == false
+                      )
+                  ]
+                )
+              )
   end
 
   actions do

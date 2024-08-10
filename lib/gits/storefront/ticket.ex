@@ -102,7 +102,9 @@ defmodule Gits.Storefront.Ticket do
 
   aggregates do
     count :total_sold, :instances do
-      filter expr(basket.state in [:settled_for_free, :settled_for_payment])
+      filter expr(
+               basket.state in [:settled_for_free, :settled_for_payment] and ticket.test == false
+             )
     end
   end
 
