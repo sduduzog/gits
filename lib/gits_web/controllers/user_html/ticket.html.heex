@@ -1,74 +1,36 @@
-<div class="min-h-dvh sticky top-0 z-10 mx-auto max-w-screen-sm space-y-8 bg-zinc-50">
-  <div class="flex items-center justify-between bg-white p-4">
-    <.link navigate={~p"/my/tickets"} replace={true} class="flex rounded-lg hover:bg-zinc-100 p-2">
-      <.icon name="hero-arrow-left-mini" />
-    </.link>
-    <h1 class="font-semibold">Ticket</h1>
-    <.link class="flex rounded-lg hover:bg-zinc-100 p-2">
-      <!-- <.icon name="hero-ellipsis-horizontal-mini" /> -->
-    </.link>
-  </div>
-  <div>
-    <div class="grid items-center gap-0.5">
-      <div class="mx-auto flex w-80 gap-4 rounded-3xl bg-white p-6 shadow-sm">
-        <div class="aspect-[4/5] h-20 shrink-0 overflow-hidden rounded-lg bg-zinc-200">
-          <img
-            src={Gits.Bucket.get_listing_image_path(@event.account_id, @event.id)}
-            alt="feature image"
-            class="h-full w-full object-cover"
-          />
+<%= if is_nil(@token) do %>
+<% else %>
+  <div class="min-h-dvh mx-auto w-full max-w-sm flex-col space-y-2 p-4 pt-12 text-center">
+    <span class="text-sm font-medium text-zinc-500"><%= @ticket_name %></span>
+    <div class="min-h-16">
+      <h1 class="line-clamp-2 text-2xl font-bold">
+        <%= @event_name %>
+      </h1>
+    </div>
+    <div></div>
+    <div class="">
+      <%= raw(
+        @token
+        |> EQRCode.encode()
+        |> EQRCode.svg(
+          shape: "circle",
+          color: "#3f3f46",
+          viewbox: true,
+          background_color: :transparent,
+          width: 360
+        )
+      ) %>
+    </div>
+    <div>
+      <%= if is_nil(@current_user) do %>
+      <% else %>
+        <div class="grid justify-center gap-2 text-center">
+          <span class="font-semibold"><%= @current_user.display_name %></span>
+          <span class="w-56 text-sm text-zinc-500">
+            Please present this QR code at the entrance
+          </span>
         </div>
-        <div class="grid gap-2">
-          <h2 class="line-clamp-2 text-lg font-semibold">
-            <%= @event.name %>
-          </h2>
-          <div class="flex justify-between gap-4 text-zinc-500">
-            <span class="flex items-center gap-1 text-xs">
-              <.icon name="hero-calendar-days-micro" />
-              <%= @event.starts_at |> Timex.format!("%e %b %Y", :strftime) %>
-            </span>
-
-            <span class="flex items-center gap-1 text-xs">
-              <.icon name="hero-clock-micro" />
-              <%= @event.starts_at |> Timex.format!("%H:%M %p", :strftime) %>
-            </span>
-          </div>
-        </div>
-      </div>
-      <div class="mx-auto flex grid w-80 justify-center gap-4 rounded-3xl bg-white p-2 shadow-sm">
-        <div class="size-72 mx-auto flex max-w-sm justify-center">
-          <%= raw(
-            @token
-            |> EQRCode.encode()
-            |> EQRCode.svg(
-              shape: "circle",
-              color: "#3f3f46",
-              background_color: :transparent,
-              width: 300
-            )
-          ) %>
-        </div>
-        <div :if={true} class="max-w-80 mx-auto rounded-2xl bg-blue-50 p-4">
-          <div class="flex">
-            <div class="flex-shrink-0">
-              <.icon name="hero-information-circle-mini" class="bg-blue-500" />
-            </div>
-            <div class="ml-3 flex-1 md:flex md:justify-between">
-              <p class="text-sm text-blue-700">
-                Present this ticket at the event for access
-              </p>
-              <p :if={false} class="mt-3 text-sm md:mt-0 md:ml-6">
-                <a
-                  href="#"
-                  class="whitespace-nowrap font-medium text-blue-700 hover:text-blue-600"
-                >
-                  Details <span aria-hidden="true"> &rarr;</span>
-                </a>
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+      <% end %>
     </div>
   </div>
-</div>
+<% end %>

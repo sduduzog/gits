@@ -8,7 +8,7 @@ defmodule Gits.Storefront.TicketInstance do
     domain: Gits.Storefront
 
   alias Gits.Storefront.Basket
-  alias Gits.Storefront.Calculations.TicketInstanceCode
+  alias Gits.Storefront.Calculations.QrCode
   alias Gits.Storefront.Customer
   alias Gits.Storefront.Ticket
 
@@ -39,18 +39,33 @@ defmodule Gits.Storefront.TicketInstance do
 
   calculations do
     calculate :price, :decimal, expr(ticket.price)
-
     calculate :event_id, :integer, expr(ticket.event.id)
     calculate :event_name, :string, expr(ticket.event.name)
     calculate :ticket_name, :string, expr(ticket.name)
     calculate :event_starts_at, :naive_datetime, expr(ticket.event.starts_at)
 
-    calculate :qr_code, :string, TicketInstanceCode
+    calculate :qr_code, :string, QrCode
   end
 
   actions do
     default_accept :*
     defaults [:read, :update, :destroy]
+
+    read :qr_code do
+      argument :token, :string, allow_nil?: false
+
+      prepare before_action(fn query, _ ->
+                token =
+                  query
+                  |> Ash.Query.get_argument(:token)
+
+                [id, user_id] =
+                  ExBase58.decode!(token)
+                  |> String.split(":")
+
+                query |> Ash.Query.filter(id: id)
+              end)
+    end
 
     create :create do
       primary? true
@@ -88,6 +103,10 @@ defmodule Gits.Storefront.TicketInstance do
   end
 
   policies do
+    policy action(:qr_code) do
+      authorize_if always()
+    end
+
     policy action(:read) do
       authorize_if accessing_from(Basket, :instances)
       authorize_if accessing_from(Ticket, :instances)

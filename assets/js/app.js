@@ -31,11 +31,9 @@ import {
   offset,
 } from "@floating-ui/dom";
 
-import { register as swiperRegister } from "swiper/element/bundle";
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
 import { Hooks } from './hooks'
 
-swiperRegister();
 const scanSize = 260
 let html5QrCode;
 const scanConfig = {

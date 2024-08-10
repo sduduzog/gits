@@ -1,4 +1,4 @@
-defmodule Gits.Storefront.Calculations.TicketToken do
+defmodule Gits.Storefront.Calculations.QrCode do
   use Ash.Resource.Calculation
   require Decimal
 
@@ -9,11 +9,7 @@ defmodule Gits.Storefront.Calculations.TicketToken do
   def calculate(records, _opts, %{actor: user} = _context) do
     records
     |> Enum.map(fn record ->
-      do_thing(record, user)
+      ExBase58.encode!("#{record.id}:#{user.id}")
     end)
-  end
-
-  defp do_thing(record, user) do
-    ExBase58.encode!("#{record.id}:#{user.id}")
   end
 end
