@@ -98,9 +98,11 @@ defmodule GitsWeb.Router do
   scope "/admin" do
     pipe_through [:browser, :office]
 
+    live "/support", SupportLive.Overview
+
     live_dashboard "/dashboard",
       ecto_repos: [Gits.Repo],
-      ecto_psql_extras_options: [long_running_queries: [threshold: "50 milliseconds"]],
+      ecto_psql_extras_options: [long_running_queries: [threshold: "20 milliseconds"]],
       metrics: GitsWeb.Telemetry,
       additional_pages: [oban: Oban.LiveDashboard]
   end

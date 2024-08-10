@@ -44,6 +44,10 @@ defmodule Gits.Storefront.Ticket do
       default :open
     end
 
+    attribute :test, :boolean do
+      default false
+    end
+
     create_timestamp :created_at, public?: true
     update_timestamp :updated_at, public?: true
   end
