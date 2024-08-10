@@ -1,8 +1,8 @@
 <div class="min-h-[calc(100dvh-theme(space.28))] space-y-4 p-2 pt-6 lg:px-0">
-  <h1 class="text-xl font-medium">My Tickets</h1>
+  <h1 class="text-xl font-semibold">My Tickets</h1>
   <div class="flex border-b">
-    <span :for={i <- ["Past tickets", "Coming up", "Shared"]} class="px-4">
-      <span class="block border-b-2 border-b-transparent py-4 text-sm text-zinc-400 hover:border-zinc-500 hover:text-zinc-700">
+    <span :for={i <- ["Coming up"]} class="px-4">
+      <span class="block border-b-2 border-zinc-500 py-4 text-sm font-medium text-zinc-400 text-zinc-700">
         <%= i %>
       </span>
     </span>
@@ -12,7 +12,7 @@
       :for={instance <- @instances}
       class="bg-slate-200x space-y-0.5 overflow-hidden rounded-2xl"
     >
-      <div class="relative flex items-start gap-4 rounded-t-2xl border-x border-t p-2">
+      <div class="relative flex items-start gap-4 rounded-t-2xl border-x border-t border-zinc-300 p-2">
         <div class="aspect-[4/5] relative w-16 shrink-0 overflow-hidden rounded-lg">
           <img
             src={
@@ -39,11 +39,14 @@
             <.icon name="hero-qr-code" />
           </.link>
         </div>
-        <div class="size-5 absolute -bottom-3 -left-3 z-10 rounded-full border bg-white"></div>
-        <div class="size-5 absolute -right-3 -bottom-3 z-10 rounded-full border bg-white"></div>
-        <div class="absolute inset-x-0 -bottom-1 h-1 rounded-full border-b-2 border-dashed"></div>
+        <div class="size-5 absolute -bottom-3 -left-3 z-10 rounded-full border border-zinc-300 bg-white">
+        </div>
+        <div class="size-5 absolute -right-3 -bottom-3 z-10 rounded-full border border-zinc-300 bg-white">
+        </div>
+        <div class="absolute inset-x-0 -bottom-1 h-1 rounded-full border-b-2 border-dashed border-zinc-300">
+        </div>
       </div>
-      <div class="grid rounded-b-2xl border-x border-b p-2">
+      <div class="grid rounded-b-2xl border-x border-b border-zinc-300 p-2">
         <div class="flex grow items-center gap-2 p-2 text-zinc-500">
           <.icon name="hero-calendar-days-micro" class="shrink-0" />
           <span class="text-sm"><%= ticket_dates_from_event(instance.ticket.event) %></span>

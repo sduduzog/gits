@@ -7,8 +7,7 @@
         <%= @event_name %>
       </h1>
     </div>
-    <div></div>
-    <div class="">
+    <div class={["", if(is_nil(@current_user), do: "blur", else: "")]}>
       <%= raw(
         @token
         |> EQRCode.encode()
@@ -22,15 +21,24 @@
       ) %>
     </div>
     <div>
-      <%= if is_nil(@current_user) do %>
-      <% else %>
-        <div class="grid justify-center gap-2 text-center">
+      <div class="grid justify-center gap-2 text-center">
+        <%= if is_nil(@current_user) do %>
+          <span class="max-w-56 text-sm">
+            Please make sure you're signed in to use this ticket.
+            <.link
+              class="underline text-zinc-400 hover:text-zinc-700"
+              navigate={~p"/sign-in?=return_to=/my/tickets"}
+            >
+              Sign in here
+            </.link>
+          </span>
+        <% else %>
           <span class="font-semibold"><%= @current_user.display_name %></span>
-          <span class="w-56 text-sm text-zinc-500">
+          <span class="max-w-56 mx-auto inline-block w-full text-sm text-zinc-500">
             Please present this QR code at the entrance
           </span>
-        </div>
-      <% end %>
+        <% end %>
+      </div>
     </div>
   </div>
 <% end %>

@@ -2,7 +2,6 @@ defmodule GitsWeb.UserController do
   use GitsWeb, :controller
   require Ash.Query
 
-  alias Gits.Auth.User
   alias Gits.Storefront.TicketInstance
 
   def events(conn, _) do
@@ -17,8 +16,6 @@ defmodule GitsWeb.UserController do
     |> Ash.read_one()
     |> case do
       {:ok, %TicketInstance{} = instance} ->
-        time_zone = Application.get_env(:gits, :time_zone)
-
         conn
         |> assign(:ticket_name, instance.ticket_name)
         |> assign(:event_name, instance.event_name)
@@ -27,7 +24,6 @@ defmodule GitsWeb.UserController do
       _ ->
         conn |> assign(:token, nil)
     end
-    # |> put_layout(false)
     |> render(:ticket)
   end
 
@@ -35,32 +31,21 @@ defmodule GitsWeb.UserController do
     user =
       conn.assigns.current_user
 
-    user
-    |> load_user_with_tickets()
+    TicketInstance
+    |> Ash.Query.for_read(:read)
+    |> Ash.Query.filter(state in [:ready_for_use])
+    |> Ash.Query.filter(ticket.event.ends_at >= fragment("now()"))
+    |> Ash.Query.load([:qr_code, ticket: [event: :address]])
+    |> Ash.read(actor: user)
     |> case do
-      {:ok, %User{customer: customer}} ->
+      {:ok, instances} ->
         conn
-        |> assign(:instances, customer.instances)
+        |> assign(:instances, instances)
         |> render(:tickets)
 
       _ ->
         conn |> redirect(to: ~p"/sign-in?return_to=/my/tickets")
     end
-  end
-
-  defp load_user_with_tickets(user) do
-    Ash.load(
-      user,
-      [
-        customer: [
-          instances:
-            TicketInstance
-            |> Ash.Query.filter(state in [:ready_for_use])
-            |> Ash.Query.load([:qr_code, ticket: [event: :address]])
-        ]
-      ],
-      actor: user
-    )
   end
 
   def profile(conn, _) do
