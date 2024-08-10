@@ -40,7 +40,7 @@ defmodule Gits.Storefront.Ticket do
     attribute :availability, :atom do
       allow_nil? false
       public? true
-      constraints one_of: [:open, :restricted]
+      constraints one_of: [:public, :invite_only]
       default :open
     end
 
