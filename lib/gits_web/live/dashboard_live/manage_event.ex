@@ -27,7 +27,6 @@ defmodule GitsWeb.DashboardLive.ManageEvent do
       event
       |> Form.for_update(:update, as: "edit_event", actor: user)
 
-    
     socket
     |> assign(:form, form)
     |> assign(:event, event)

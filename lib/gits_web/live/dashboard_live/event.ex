@@ -17,7 +17,12 @@ defmodule GitsWeb.DashboardLive.Event do
             Event
             |> Ash.Query.for_read(:read)
             |> Ash.Query.filter(id == ^unsigned_params["event_id"])
-            |> Ash.Query.load([:masked_id, :address, :payment_method_required?, tickets: [:total_sold]])
+            |> Ash.Query.load([
+              :masked_id,
+              :address,
+              :payment_method_required?,
+              tickets: [:total_sold]
+            ])
         ],
         actor: user
       )
@@ -50,9 +55,8 @@ defmodule GitsWeb.DashboardLive.Event do
     socket
     |> assign_new(:manage_ticket_form, fn -> nil end)
     |> update(:manage_ticket_form, fn _form, %{event: event, current_user: user} ->
-        event.tickets
-        |> Enum.find(&(&1.id == id))
-
+      event.tickets
+      |> Enum.find(&(&1.id == id))
       |> Form.for_update(:update, as: "edit_ticket", actor: user)
     end)
     |> noreply()
