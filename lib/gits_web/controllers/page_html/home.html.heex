@@ -70,7 +70,7 @@
             <div class="flex items-center justify-between gap-1">
               <span class="flex items-center gap-1 truncate text-sm">
                 <.icon name="hero-map-pin-micro" class="shrink-0 opacity-50" />
-                <span class="truncate">
+                <span :if={not is_nil(event.address)} class="truncate">
                   <%= event.address.city %>
                 </span>
               </span>

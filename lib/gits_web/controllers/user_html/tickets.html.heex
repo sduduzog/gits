@@ -75,7 +75,16 @@
           <.icon name="hero-users-micro" class="text-zinc-500" />
           <span class="text-sm"><%= ticket.instances |> Enum.count() %></span>
         </div>
-        <span class="ring-green-600/20 inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset">
+
+        <div class="flex items-center gap-2 rounded-xl bg-zinc-100 p-3">
+          <.icon name="hero-share-micro" class="text-zinc-500" />
+          <span class="text-sm"><%= ticket.instances |> Enum.count() %></span>
+        </div>
+
+        <span
+          :if={false}
+          class="ring-green-600/20 inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset"
+        >
           Available
         </span>
         <div role="none" class="grow"></div>
