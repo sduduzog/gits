@@ -53,7 +53,10 @@ defmodule Gits.Storefront.Event do
     max :maximum_ticket_price, :tickets, :price
 
     count :total_sold, [:tickets, :instances] do
-      filter expr(basket.state in [:settled_for_free, :settled_for_payment] and test == false)
+      filter expr(
+               basket.state in [:settled_for_free, :settled_for_payment] and
+                 basket.instances.ticket.test == false
+             )
     end
 
     sum :total_available, :tickets, :total_quantity do
