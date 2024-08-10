@@ -11,8 +11,17 @@ defmodule Gits.Storefront.Calculations.LocalDatetime do
     Enum.map(records, fn record ->
       record
       |> Map.get(opts[:attribute])
-      |> DateTime.shift_zone!(time_zone)
-      |> DateTime.to_naive()
+      |> utc_to_naive(time_zone)
     end)
+  end
+
+  def utc_to_naive(%DateTime{} = datetime, time_zone) do
+    datetime
+    |> DateTime.shift_zone!(time_zone)
+    |> DateTime.to_naive()
+  end
+
+  def utc_to_naive(_, _) do
+    nil
   end
 end
