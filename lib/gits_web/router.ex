@@ -33,6 +33,9 @@ defmodule GitsWeb.Router do
     get "/events", PageController, :events
     get "/settings", PageController, :settings
     get "/organizers", PageController, :organizers
+    get "/privacy", PageController, :privacy
+    get "/terms", PageController, :terms
+    get "/faq", PageController, :faq
     get "/assets/:filename", PageController, :assets
     get "/healthz", PageController, :healthz
 
@@ -69,6 +72,8 @@ defmodule GitsWeb.Router do
 
       live "/accounts/:slug/events/:event_id/address", DashboardLive.UpdateEventAddress
       live "/accounts/:slug/events/:event_id/upload-graphics", DashboardLive.UploadGraphic
+      live "/accounts/:slug/events/:event_id/attendees", DashboardLive.Attendees, :list
+      live "/accounts/:slug/events/:event_id/attendees/scan", DashboardLive.Attendees, :scan
       live "/accounts/:slug/team", DashboardLive.Team
       live "/accounts/:slug/team/invites/new", DashboardLive.TeamInviteNewMember
       live "/accounts/:slug/team/invites/:invite_id", DashboardLive.TeamInvite

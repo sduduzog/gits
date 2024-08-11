@@ -7,7 +7,7 @@ defmodule GitsWeb.DashboardLive.Event do
   alias Gits.Storefront.Ticket
 
   defp load_defalts(socket, unsigned_params) do
-    %{current_user: user, account: account} = socket.assigns
+    %{current_user: user, account: account, slug: slug} = socket.assigns
 
     account =
       account
@@ -33,6 +33,18 @@ defmodule GitsWeb.DashboardLive.Event do
     |> assign(:event, event)
     |> assign(:event_name, event.name)
     |> assign(:title, event.name)
+    |> assign(:context_options, [
+      %{
+        label: "Scan ticket",
+        to: ~p"/accounts/#{slug}/events/#{event.id}/attendees/scan",
+        icon: "hero-qr-code-mini"
+      },
+      %{
+        label: "Attendees",
+        to: ~p"/accounts/#{slug}/events/#{event.id}/attendees",
+        icon: "hero-users-mini"
+      }
+    ])
   end
 
   def handle_params(%{"ticket" => "new"} = unsigned_params, _uri, socket) do

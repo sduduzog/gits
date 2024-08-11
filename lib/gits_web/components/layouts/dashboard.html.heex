@@ -81,11 +81,11 @@
       </div>
 
       <%= if @context_options do %>
-        <span class="mt-4 truncate text-sm font-medium text-zinc-400">
+        <span class="mt-4 truncate pl-2 text-xs font-medium text-zinc-500">
           <%= @title %>
         </span>
         <div
-          class="grid gap-2 pt-4 text-base font-medium *:flex *:items-center *:gap-3 *:rounded-lg *:p-2 *:text-zinc-500 hover:*:bg-zinc-50 lg:hover:*:bg-zinc-100"
+          class="grid gap-2 pt-2 text-base font-medium *:flex *:items-center *:gap-3 *:rounded-lg *:p-2 *:text-zinc-500 hover:*:bg-zinc-50 lg:hover:*:bg-zinc-100"
           phx-click={
             JS.remove_class("translate-x-72", to: "#sidebar")
             |> JS.add_class("hidden", to: "#backdrop")

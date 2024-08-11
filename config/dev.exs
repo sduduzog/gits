@@ -58,6 +58,8 @@ config :gits, GitsWeb.Endpoint,
     patterns: [
       ~r"priv/static/(?!uploads/).*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
+      ~r"priv/pages/*/*.(md)$",
+      ~r"priv/faqs/*/*.(md)$",
       ~r"lib/gits/email_templates/.*(heex)$",
       ~r"lib/gits_web/(controllers|live|components)/.*(ex|heex)$"
     ]

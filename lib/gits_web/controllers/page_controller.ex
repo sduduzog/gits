@@ -2,9 +2,9 @@ defmodule GitsWeb.PageController do
   use GitsWeb, :controller
 
   require Ash.Query
+  alias Gits.Documentation
   alias Gits.Bucket
   alias Gits.Dashboard.Member
-  alias Gits.Storefront.Customer
   alias Gits.Storefront.Event
 
   def home(conn, _) do
@@ -57,81 +57,20 @@ defmodule GitsWeb.PageController do
     end
   end
 
-  def settings(conn, _params) do
-    time_zone = Application.get_env(:gits, :time_zone)
-    datetime = NaiveDateTime.local_now() |> DateTime.from_naive(time_zone)
-
-    conn
-    |> assign(:datetime, datetime)
-    |> render(:settings)
-  end
-
-  def tickets(conn, _params) do
-    customer =
-      if conn.assigns.current_user do
-        Ash.Query.for_read(Customer, :read, %{}, actor: conn.assigns.current_user)
-        |> Ash.Query.filter(user.id == ^conn.assigns.current_user.id)
-        |> Ash.read_one!()
-      else
-        nil
-      end
-
-    customer =
-      if is_nil(customer) do
-        nil
-      else
-        customer
-        |> Ash.load!(
-          [scannable_instances: [:event_name, :ticket_name, :event_starts_at]],
-          actor: customer
-        )
-      end
-
-    conn |> assign(:customer, customer) |> render(:tickets)
-  end
-
   def faq(conn, _) do
+    faqs = Documentation.Faqs.all_faqs()
+
     conn
-    |> assign(:faqs, [
-      %{
-        q: "Can I print my ticket?",
-        a:
-          "No. The world is digital enough. There's no use downloading or printing the ticket when you're still going to open your phone to get the ticket from your gallery anyways"
-      },
-      %{
-        q: "Where's the rest of GiTS",
-        a:
-          "We're being careful by how much we release into the wild. The aim is to have the most stable version of gits available to the general public. Until then, we'll just continue releasing enough to get things done. This doesn't stop you from buying a ticket to an event on the platform or creating your own."
-      }
-    ])
+    |> assign(:faqs, faqs)
     |> render(:faq)
+  end
+
+  def privacy(conn, _params) do
+    render(conn, :privacy)
   end
 
   def search(conn, _params) do
     render(conn, :search)
-  end
-
-  def join_wailtist(conn, _) do
-    user = conn.assigns.current_user
-
-    if is_nil(user) do
-      redirect(conn, to: "/register?return_to=#{conn.request_path}")
-    else
-      member =
-        Member
-        |> Ash.Query.for_read(:read, %{}, actor: conn.assigns.current_user)
-        |> Ash.Query.filter(user.id == ^conn.assigns.current_user.id)
-        |> Ash.Query.limit(1)
-        |> Ash.read_one!()
-
-      if is_nil(member) do
-        Member
-        |> Ash.Changeset.for_create(:waitlist, %{user: user}, actor: user)
-        |> Ash.create!()
-      end
-    end
-
-    redirect(conn, to: "/organizers")
   end
 
   def assets(conn, params) do

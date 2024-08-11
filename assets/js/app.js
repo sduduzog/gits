@@ -31,14 +31,7 @@ import {
   offset,
 } from "@floating-ui/dom";
 
-import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
 import { Hooks } from './hooks'
-
-const scanSize = 260
-let html5QrCode;
-const scanConfig = {
-  qrbox: { width: scanSize, height: scanSize },
-};
 
 let csrfToken = document
   .querySelector("meta[name='csrf-token']")
@@ -104,18 +97,7 @@ let liveSocket = new LiveSocket("/live", Socket, {
         });
       },
     },
-    QrScanner: {
-      mounted() {
-        html5QrCode = new Html5Qrcode("scanner", {
-          formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
-        });
-        html5QrCode.start({ facingMode: "environment" }, scanConfig, async (decodedText) => {
-          await html5QrCode.stop()
-          this.pushEvent("scanned", decodedText);
-        });
-      },
-    },
-    ...Hooks
+        ...Hooks
   },
 });
 
