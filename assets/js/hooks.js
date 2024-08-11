@@ -10,7 +10,9 @@ const scanConfig = {
 
 const QrScanner = {
   initialiseCamera() {
-    const {id} = this.currentCamera
+    const {id, label} = this.currentCamera
+    const span = this.el.querySelector("span#camera-label")
+    span.innerText = label
     this.html5QrCode = new Html5Qrcode("scanner", {
       formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
     });
@@ -21,17 +23,19 @@ const QrScanner = {
   },
   async mounted() {
     const rotateCamera = this.el.querySelector("button#rotate-camera")
-    rotateCamera.addEventListener("click", async (e) => {
+    rotateCamera.addEventListener("click", async () => {
       const index = this.cameras.findIndex(camera => camera.id === this.currentCamera.id)
       const nextIndex = index === (this.cameras.length - 1) ? 0 : index + 1
       this.currentCamera = this.cameras[nextIndex]
+      window.localStorage.setItem("camera_id", this.currentCamera.id)
       await this.html5QrCode.stop()
       this.initialiseCamera()
     })
-    console.log(rotateCamera)
     this.cameras = await Html5Qrcode.getCameras()
+    const id = window.localStorage.getItem("camera_id")
+    const previousCamera = this.cameras.find(camera => camera.id === id)
     const [camera] = this.cameras;
-    this.currentCamera = camera
+    this.currentCamera = previousCamera || camera
     this.initialiseCamera()
   },
 }
