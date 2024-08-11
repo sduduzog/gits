@@ -8,7 +8,7 @@ defmodule Gits.Storefront.TicketInstance do
     domain: Gits.Storefront
 
   alias Gits.Storefront.Basket
-  alias Gits.Storefront.Calculations.QrCode
+  alias Gits.Storefront.Calculations.{HolderIdFromToken, QrCode}
   alias Gits.Storefront.Customer
   alias Gits.Storefront.Ticket
 
@@ -44,6 +44,10 @@ defmodule Gits.Storefront.TicketInstance do
     calculate :ticket_name, :string, expr(ticket.name)
     calculate :event_starts_at, :naive_datetime, expr(ticket.event.starts_at)
 
+    calculate :ticket_holder_id, :uuid, {HolderIdFromToken, []} do
+      argument :token, :string, allow_nil?: false
+    end
+
     calculate :qr_code, :string, QrCode
   end
 
@@ -59,11 +63,17 @@ defmodule Gits.Storefront.TicketInstance do
                   query
                   |> Ash.Query.get_argument(:token)
 
-                [id, user_id] =
-                  ExBase58.decode!(token)
-                  |> String.split(":")
+                ExBase58.decode(token)
+                |> case do
+                  {:ok, decoded} ->
+                    [id, _] = decoded |> String.split(":")
 
-                query |> Ash.Query.filter(id: id)
+                    query
+                    |> Ash.Query.filter(id: id)
+
+                  {:error, _} ->
+                    query |> Ash.Query.add_error("There was an error decoding the token")
+                end
               end)
     end
 

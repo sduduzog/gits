@@ -1,6 +1,4 @@
 defmodule Gits.Storefront.Customer do
-  alias Gits.Storefront.{Ticket, TicketInstance}
-
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     authorizers: [Ash.Policy.Authorizer],
@@ -21,32 +19,7 @@ defmodule Gits.Storefront.Customer do
   end
 
   calculations do
-    calculate :tickets_total_price, :integer do
-      calculation expr(
-                    sum(tickets,
-                      field: :price,
-                      query: [filter: expr(event.id == ^arg(:event_id))]
-                    )
-                  )
-
-      argument :event_id, :integer do
-        allow_nil? false
-      end
-    end
-
-    calculate :tickets_count, :integer do
-      calculation expr(
-                    count(tickets,
-                      query: [
-                        filter: expr(event.id == ^arg(:event_id) and instances.state == :reserved)
-                      ]
-                    )
-                  )
-
-      argument :event_id, :integer do
-        allow_nil? false
-      end
-    end
+    calculate :name, :string, expr(user.display_name)
   end
 
   identities do
@@ -72,13 +45,8 @@ defmodule Gits.Storefront.Customer do
   end
 
   policies do
-    bypass action(:read) do
-      authorize_if Gits.Checks.ActorIsObanJob
-    end
-
     policy action(:read) do
-      authorize_if accessing_from(TicketInstance, :customer)
-      authorize_if expr(user.id == ^actor(:id))
+      authorize_if actor_present()
     end
 
     policy action(:create) do

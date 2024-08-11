@@ -16,12 +16,11 @@
 //
 
 // Include phoenix_html to handle method=PUT/DELETE in forms and buttons.
-import "phoenix_html";
+import 'phoenix_html';
 // Establish Phoenix Socket and LiveView configuration.
-import { Socket } from "phoenix";
-import { LiveSocket } from "phoenix_live_view";
-import topbar from "../vendor/topbar";
-
+import { Socket } from 'phoenix';
+import { LiveSocket } from 'phoenix_live_view';
+import topbar from '../vendor/topbar';
 
 import {
   computePosition,
@@ -29,22 +28,22 @@ import {
   shift,
   autoUpdate,
   offset,
-} from "@floating-ui/dom";
+} from '@floating-ui/dom';
 
-import { Hooks } from './hooks'
+import { Hooks } from './hooks';
 
 let csrfToken = document
   .querySelector("meta[name='csrf-token']")
-  .getAttribute("content");
+  .getAttribute('content');
 
 const Dropdown = {
   mounted() {
-    const dropdownButton = this.el.querySelector("button[data-dropdown]");
-    const dropdownOptions = this.el.querySelector("div[data-dropdown]");
+    const dropdownButton = this.el.querySelector('button[data-dropdown]');
+    const dropdownOptions = this.el.querySelector('div[data-dropdown]');
 
     this.cleanup = autoUpdate(dropdownButton, dropdownOptions, () => {
       computePosition(this.el, dropdownOptions, {
-        placement: "bottom-end",
+        placement: 'bottom-end',
         middleware: [flip(), offset(10), shift({ padding: 5 })],
       }).then(({ x, y }) => {
         Object.assign(dropdownOptions.style, {
@@ -59,14 +58,14 @@ const Dropdown = {
   },
 };
 
-let liveSocket = new LiveSocket("/live", Socket, {
+let liveSocket = new LiveSocket('/live', Socket, {
   longPollFallbackMs: 2500,
   params: { _csrf_token: csrfToken },
   hooks: {
     Dropdown: Dropdown,
     DropdownButton: {
       mounted() {
-        const dropdown = this.el.querySelector("[data-dropdown]");
+        const dropdown = this.el.querySelector('[data-dropdown]');
         this.cleanup = autoUpdate(this.el, dropdown, () => {
           computePosition(this.el, dropdown, {
             middleware: [flip(), shift({ padding: 5 })],
@@ -84,27 +83,27 @@ let liveSocket = new LiveSocket("/live", Socket, {
     },
     HeaderOpacityOnScroll: {
       mounted() {
-        document.addEventListener("scroll", function () {
+        document.addEventListener('scroll', function () {
           if (window.scrollY > 20) {
-            const header = document.getElementById("homepage_header");
-            header.classList.add("bg-opacity-100");
-            header.classList.remove("bg-opacity-0");
+            const header = document.getElementById('homepage_header');
+            header.classList.add('bg-opacity-100');
+            header.classList.remove('bg-opacity-0');
           } else {
-            const header = document.getElementById("homepage_header");
-            header.classList.add("bg-opacity-0");
-            header.classList.remove("bg-opacity-100");
+            const header = document.getElementById('homepage_header');
+            header.classList.add('bg-opacity-0');
+            header.classList.remove('bg-opacity-100');
           }
         });
       },
     },
-        ...Hooks
+    ...Hooks,
   },
 });
 
 // Show progress bar on live navigation and form submits
-topbar.config({ barColors: { 0: "#29d" }, shadowColor: "rgba(0, 0, 0, .3)" });
-window.addEventListener("phx:page-loading-start", (_info) => topbar.show(300));
-window.addEventListener("phx:page-loading-stop", (_info) => topbar.hide());
+topbar.config({ barColors: { 0: '#29d' }, shadowColor: 'rgba(0, 0, 0, .3)' });
+window.addEventListener('phx:page-loading-start', (_info) => topbar.show(300));
+window.addEventListener('phx:page-loading-stop', (_info) => topbar.hide());
 
 // connect if there are any LiveViews on the page
 liveSocket.connect();

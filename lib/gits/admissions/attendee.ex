@@ -36,7 +36,7 @@ defmodule Gits.Admissions.Attendee do
   actions do
     defaults [:read, :destroy, update: :*]
 
-    create :create do
+    create :admit do
       argument :user, :map do
         allow_nil? false
       end

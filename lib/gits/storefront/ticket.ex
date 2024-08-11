@@ -91,7 +91,7 @@ defmodule Gits.Storefront.Ticket do
                   query: [
                     filter:
                       expr(
-                        basket.state in [:open, :settled_for_free, :settled_for_payment] and
+                        basket.state in [:settled_for_free, :settled_for_payment] and
                           customer.user.id == ^actor(:id)
                       )
                   ]
