@@ -56,9 +56,13 @@ defmodule GitsWeb.DashboardLive.Attendees do
       <div id="scanner" class="absolute inset-0 z-10 flex h-full"></div>
       <div class="absolute inset-0 z-20 flex h-full w-full items-center justify-center">
         <div class="absolute inset-x-0 top-0 flex w-full items-center gap-2 bg-white p-2">
-          <button id="rotate-camera" class="flex shrink-0 rounded-xl p-3 hover:bg-zinc-100">
-            <.icon name="hero-arrow-path-rounded-square-mini" />
-          </button>
+          <.link
+            patch={~p"/accounts/#{@slug}/events/#{@event.id}/attendees"}
+            replace={true}
+            class="flex shrink-0 rounded-xl p-3 hover:bg-zinc-100"
+          >
+            <.icon name="hero-arrow-left-mini" />
+          </.link>
           <span id="camera-label" class="grow truncate text-right text-xs text-zinc-500">Label</span>
           <button id="rotate-camera" class="flex shrink-0 rounded-xl p-3 hover:bg-zinc-100">
             <.icon name="hero-arrow-path-rounded-square-mini" />
@@ -74,7 +78,6 @@ defmodule GitsWeb.DashboardLive.Attendees do
   def render(assigns) do
     ~H"""
     <h1 class="text-xl font-semibold">Attendees</h1>
-    <div>Attendees</div>
     """
   end
 end
