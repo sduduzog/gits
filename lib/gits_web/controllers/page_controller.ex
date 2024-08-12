@@ -2,9 +2,9 @@ defmodule GitsWeb.PageController do
   use GitsWeb, :controller
 
   require Ash.Query
-  alias Gits.Documentation
   alias Gits.Bucket
   alias Gits.Dashboard.Member
+  alias Gits.Documentation
   alias Gits.Storefront.Event
 
   def home(conn, _) do

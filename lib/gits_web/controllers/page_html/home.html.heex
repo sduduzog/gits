@@ -78,11 +78,7 @@
                 :if={not is_nil(event.minimum_ticket_price)}
                 class="block whitespace-nowrap rounded-lg border p-1 px-1.5 text-sm font-medium"
               >
-                <%= if Decimal.gt?(event.minimum_ticket_price, 0) do %>
-                  R <%= event.minimum_ticket_price |> Gits.Currency.format() %>
-                <% else %>
-                  FREE+
-                <% end %>
+                <%= resolve_price_summary_label(event) %>
               </span>
             </div>
           </div>
