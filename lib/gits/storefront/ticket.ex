@@ -78,7 +78,7 @@ defmodule Gits.Storefront.Ticket do
               expr(
                 count(instances,
                   query: [
-                    filter: expr(basket.state in [:open, :settled_for_free, :settled_for_payment])
+                    filter: expr(basket.state in [:settled_for_free, :settled_for_payment])
                   ]
                 ) >=
                   total_quantity
