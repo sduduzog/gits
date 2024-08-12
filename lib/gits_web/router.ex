@@ -70,6 +70,9 @@ defmodule GitsWeb.Router do
       live "/accounts/:slug/events/:event_id/edit", DashboardLive.ManageEvent
       live "/accounts/:slug/events/:event_id/scan", DashboardLive.ScanTickets
 
+      live "/accounts/:slug/events/:event_id/tickets/:ticket_id/invites",
+           DashboardLive.TicketInvites
+
       live "/accounts/:slug/events/:event_id/address", DashboardLive.UpdateEventAddress
       live "/accounts/:slug/events/:event_id/upload-graphics", DashboardLive.UploadGraphic
       live "/accounts/:slug/events/:event_id/attendees", DashboardLive.Attendees, :list

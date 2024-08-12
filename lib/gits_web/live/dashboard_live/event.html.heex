@@ -197,7 +197,6 @@
                 class="flex w-full items-center gap-4 px-4 py-2 text-left text-sm text-gray-700 hover:bg-zinc-100 hover:text-zinc-900"
                 role="menuitem"
                 tabindex="-1"
-                id="menu-item-0"
                 phx-click={
                   JS.hide(
                     to: "#ticket-#{ticket.id}>div[data-dropdown]",
@@ -211,6 +210,15 @@
               >
                 <.icon name="hero-pencil-square-mini" /> Edit
               </button>
+
+              <.link
+                patch={~p"/accounts/#{@slug}/events/#{@event.id}/tickets/#{ticket.id}/invites"}
+                class="flex w-full items-center gap-4 px-4 py-2 text-left text-sm text-gray-700 hover:bg-zinc-100 hover:text-zinc-900"
+                role="menuitem"
+                tabindex="-1"
+              >
+                <.icon name="hero-user-plus-mini" /> Invites
+              </.link>
             </div>
 
             <div class="w-56 py-1" role="none">
@@ -218,7 +226,6 @@
                 class="flex w-full items-center gap-4 px-4 py-2 text-left text-sm text-rose-600 hover:bg-rose-100 hover:text-rose-900"
                 role="menuitem"
                 tabindex="-1"
-                id="menu-item-1"
                 phx-click={
                   JS.hide(
                     to: "#ticket-#{ticket.id}>div[data-dropdown]",
@@ -239,10 +246,18 @@
       <div class="p-2 px-4">
         <h3 class="text-xl font-medium"><%= ticket.name %></h3>
       </div>
-      <div class="flex p-2 px-4">
-        <span class="grow text-xs font-medium text-zinc-900">
-          <%= ticket.total_sold %>/<%= ticket.total_quantity %> tickets sold
+      <div class="flex items-center gap-2 p-2 px-4">
+        <span class="text-xs font-medium text-zinc-900">
+          <%= ticket.total_sold %>/<%= if(ticket.total_quantity > 0,
+            do: ticket.total_quantity,
+            else: raw("&infin;")
+          ) %> tickets sold
         </span>
+        &bull;
+        <div class="flex grow items-center rounded-lg text-zinc-800">
+          <!-- <.icon :if={ticket.availability == :invite_only} name="hero-lock-closed-micro" /> -->
+          <span class="text-xs">100 invited</span>
+        </div>
         <span class="text-xs text-zinc-500">R <%= ticket.price |> Gits.Currency.format() %></span>
       </div>
     </div>
