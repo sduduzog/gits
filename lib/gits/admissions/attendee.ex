@@ -29,6 +29,11 @@ defmodule Gits.Admissions.Attendee do
     end
   end
 
+  calculations do
+    calculate :name, :string, expr(user.display_name)
+    calculate :ticket_name, :string, expr(instance.ticket.name)
+  end
+
   identities do
     identity :admission_identity, [:user_id, :event_id, :instance_id]
   end

@@ -2,7 +2,6 @@ defmodule GitsWeb.AuthController do
   use GitsWeb, :controller
   use AshAuthentication.Phoenix.Controller
 
-  alias AshPhoenix.Form
   alias AshAuthentication.AddOn.Confirmation
   alias Gits.Auth.Senders.UserConfirmation
 

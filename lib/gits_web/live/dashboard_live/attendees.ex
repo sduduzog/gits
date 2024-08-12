@@ -75,9 +75,22 @@ defmodule GitsWeb.DashboardLive.Attendees do
   end
 
   def handle_params(unsigned_params, _uri, socket) do
-    socket
-    |> assign(:scan_results, :default)
-    |> load_defalts(unsigned_params)
+    socket = socket |> load_defalts(unsigned_params)
+    %{event: event, current_user: user} = socket.assigns
+
+    Attendee
+    |> Ash.Query.for_read(:read)
+    |> Ash.Query.filter(event.id == ^event.id)
+    |> Ash.Query.load([:name, :ticket_name])
+    |> Ash.read(actor: user)
+    |> case do
+      {:ok, attendees} ->
+        socket
+        |> assign(:attendees, attendees)
+
+      _ ->
+        socket |> assign(:attendees, [])
+    end
     |> noreply()
   end
 
@@ -296,9 +309,33 @@ defmodule GitsWeb.DashboardLive.Attendees do
     """
   end
 
-  def render(assigns) do
+  def render(%{live_action: :list} = assigns) do
     ~H"""
     <h1 class="text-xl font-semibold">Attendees</h1>
+    <ul role="list" class="divide-y divide-gray-100">
+      <li
+        :for={attendee <- @attendees}
+        class="flex items-center gap-4 rounded-xl p-4 hover:bg-zinc-50 lg:px-8"
+      >
+        <div class="size-12 overflow-hidden rounded-full">
+          <img src="/images/placeholder.png" alt="" class="size-full" />
+        </div>
+
+        <div class="grid grow gap-2">
+          <span class="text-sm font-semibold"><%= attendee.name %></span>
+          <span class="text-xs text-zinc-500">
+            Admitted <%= attendee.created_at |> Timex.from_now() %>
+          </span>
+        </div>
+        <div class="hidden text-right lg:grid">
+          <span class="text-sm"><%= attendee.ticket_name %></span>
+          <span :if={false} class="text-xs text-zinc-500"><%= attendee.ticket_name %></span>
+        </div>
+        <div class="text-zinc-400">
+          <.icon name="hero-chevron-right-mini" />
+        </div>
+      </li>
+    </ul>
     """
   end
 
