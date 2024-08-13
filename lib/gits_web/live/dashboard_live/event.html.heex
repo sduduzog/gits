@@ -258,7 +258,7 @@
           &bull;
           <div class="flex items-center rounded-lg text-zinc-800">
             <!-- <.icon :if={ticket.availability == :invite_only} name="hero-lock-closed-micro" /> -->
-            <span class="text-xs">100 invited</span>
+            <span class="text-xs"><%= ticket.invites_count %> invited</span>
           </div>
         <% end %>
         <div class="grow"></div>

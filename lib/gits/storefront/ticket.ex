@@ -108,6 +108,8 @@ defmodule Gits.Storefront.Ticket do
                basket.state in [:settled_for_free, :settled_for_payment] and ticket.test == false
              )
     end
+
+    count :invites_count, :invites
   end
 
   actions do

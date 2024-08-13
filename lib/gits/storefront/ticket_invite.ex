@@ -53,6 +53,10 @@ defmodule Gits.Storefront.TicketInvite do
   end
 
   policies do
+    policy action(:read) do
+      authorize_if accessing_from(Ticket, :invites)
+    end
+
     policy action(:create) do
       authorize_if actor_present()
     end

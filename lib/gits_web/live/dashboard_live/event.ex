@@ -21,7 +21,10 @@ defmodule GitsWeb.DashboardLive.Event do
               :masked_id,
               :address,
               :payment_method_required?,
-              tickets: Ticket |> Ash.Query.filter(test == false) |> Ash.Query.load([:total_sold])
+              tickets:
+                Ticket
+                |> Ash.Query.filter(test == false)
+                |> Ash.Query.load([:total_sold, :invites_count])
             ])
         ],
         actor: user
