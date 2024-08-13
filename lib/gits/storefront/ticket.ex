@@ -83,7 +83,7 @@ defmodule Gits.Storefront.Ticket do
                     filter: expr(basket.state in [:settled_for_free, :settled_for_payment])
                   ]
                 ) >=
-                  total_quantity
+                  total_quantity and total_quantity > 0
               )
 
     calculate :sold_out_for_actor?,
@@ -98,7 +98,7 @@ defmodule Gits.Storefront.Ticket do
                       )
                   ]
                 ) >=
-                  allowed_quantity_per_user
+                  allowed_quantity_per_user and sold_out? == false
               )
   end
 
