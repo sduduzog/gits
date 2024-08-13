@@ -59,6 +59,7 @@ defmodule GitsWeb.EventLive.Feature do
           |> Ash.Query.filter(
             sale_starts_at <= fragment("now()") and sale_ends_at > fragment("now()")
           )
+          |> Ash.Query.filter(availability in [:public, :open])
           |> Ash.Query.load([
             :sold_out?,
             :sold_out_for_actor?,
