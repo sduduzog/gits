@@ -212,6 +212,7 @@
               </button>
 
               <.link
+                :if={ticket.availability == :invite_only}
                 patch={~p"/accounts/#{@slug}/events/#{@event.id}/tickets/#{ticket.id}/invites"}
                 class="flex w-full items-center gap-4 px-4 py-2 text-left text-sm text-gray-700 hover:bg-zinc-100 hover:text-zinc-900"
                 role="menuitem"
@@ -253,11 +254,14 @@
             else: raw("&infin;")
           ) %> tickets sold
         </span>
-        &bull;
-        <div class="flex grow items-center rounded-lg text-zinc-800">
-          <!-- <.icon :if={ticket.availability == :invite_only} name="hero-lock-closed-micro" /> -->
-          <span class="text-xs">100 invited</span>
-        </div>
+        <%= if ticket.availability == :invite_only do %>
+          &bull;
+          <div class="flex items-center rounded-lg text-zinc-800">
+            <!-- <.icon :if={ticket.availability == :invite_only} name="hero-lock-closed-micro" /> -->
+            <span class="text-xs">100 invited</span>
+          </div>
+        <% end %>
+        <div class="grow"></div>
         <span class="text-xs text-zinc-500">R <%= ticket.price |> Gits.Currency.format() %></span>
       </div>
     </div>
