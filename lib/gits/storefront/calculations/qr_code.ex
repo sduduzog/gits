@@ -19,7 +19,7 @@ defmodule Gits.Storefront.Calculations.QrCode do
 
       _ ->
         records
-        |> Enum.map(fn record ->
+        |> Enum.map(fn _record ->
           nil
         end)
     end

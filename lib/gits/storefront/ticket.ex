@@ -58,6 +58,8 @@ defmodule Gits.Storefront.Ticket do
     end
 
     has_many :instances, Gits.Storefront.TicketInstance
+
+    has_many :invites, Gits.Storefront.TicketInvite
   end
 
   calculations do
@@ -287,6 +289,7 @@ defmodule Gits.Storefront.Ticket do
     policy action(:read) do
       authorize_if accessing_from(TicketInstance, :ticket)
       authorize_if accessing_from(Event, :tickets)
+      authorize_if expr(event.account.members.user.id == ^actor(:id))
       authorize_if expr(event.baskets.customer.user.id == ^actor(:id))
     end
 

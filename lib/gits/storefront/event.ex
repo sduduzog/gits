@@ -46,6 +46,10 @@ defmodule Gits.Storefront.Event do
 
     has_many :tickets, Gits.Storefront.Ticket
     has_many :baskets, Gits.Storefront.Basket
+
+    has_many :attendees, Gits.Admissions.Attendee do
+      domain Gits.Admissions
+    end
   end
 
   aggregates do
@@ -55,6 +59,8 @@ defmodule Gits.Storefront.Event do
     sum :total_available, :tickets, :total_quantity do
       filter expr(test == false)
     end
+
+    count :attendees_count, :attendees
   end
 
   calculations do
