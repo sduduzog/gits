@@ -7,6 +7,8 @@ defmodule Gits.Storefront.TicketInvite do
     extensions: [AshStateMachine, AshArchival.Resource],
     domain: Gits.Storefront
 
+  require Ash.Resource.Change.Builtins
+  require Ash.Resource.Change.Builtins
   alias Gits.Storefront.{Customer, Ticket}
 
   attributes do
@@ -45,6 +47,28 @@ defmodule Gits.Storefront.TicketInvite do
       change manage_relationship(:customer, type: :append)
       change manage_relationship(:ticket, type: :append)
     end
+
+    update :accept do
+      require_atomic? false
+
+      change before_action(fn changeset, %{actor: actor} ->
+               invite = changeset.data |> Ash.load!([:customer, ticket: :event], actor: actor)
+
+               # basket =
+               #   Basket
+               #   |> Ash.Changeset.for_create(:open_basket, %{
+               #     customer: invite.customer,
+               #     event: invite.ticket.event
+               #   })
+               #   |> Ash.create!(actor: actor)
+               #
+               # basket
+               # |> Ash.Changeset.for_update(:add_ticket, %{ticket_id: invite.ticket.id})
+               # |> Ash.update!(actor: actor)
+
+               changeset
+             end)
+    end
   end
 
   identities do
@@ -54,7 +78,11 @@ defmodule Gits.Storefront.TicketInvite do
 
   policies do
     policy action(:read) do
-      authorize_if accessing_from(Ticket, :invites)
+      authorize_if always()
+    end
+
+    policy action(:accept) do
+      authorize_if expr(customer.user.id == ^actor(:id))
     end
 
     policy action(:create) do

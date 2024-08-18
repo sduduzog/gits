@@ -54,6 +54,7 @@ defmodule GitsWeb.Router do
     ash_authentication_live_session :authentication_optional,
       on_mount: {GitsWeb.LiveUserAuth, :live_user_optional} do
       live "/events/:id", EventLive.Feature
+      live "/ticket-invite/:invite_id", EventLive.Invite
     end
 
     ash_authentication_live_session :authentication_required,
