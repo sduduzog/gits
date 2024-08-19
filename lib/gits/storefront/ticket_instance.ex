@@ -12,12 +12,9 @@ defmodule Gits.Storefront.TicketInstance do
   alias Gits.Storefront.Customer
   alias Gits.Storefront.Ticket
 
-  attributes do
-    integer_primary_key :id
-
-    create_timestamp :created_at, public?: true
-
-    update_timestamp :updated_at, public?: true
+  postgres do
+    table "ticket_instances"
+    repo Gits.Repo
   end
 
   state_machine do
@@ -29,26 +26,6 @@ defmodule Gits.Storefront.TicketInstance do
       transition :cancel, from: [:reserved, :locked_for_checkout], to: :cancelled
       transition :reclaim, from: [:reserved, :locked_for_checkout], to: :reclaimed
     end
-  end
-
-  relationships do
-    belongs_to :ticket, Ticket
-    belongs_to :customer, Customer
-    belongs_to :basket, Basket
-  end
-
-  calculations do
-    calculate :price, :decimal, expr(ticket.price)
-    calculate :event_id, :integer, expr(ticket.event.id)
-    calculate :event_name, :string, expr(ticket.event.name)
-    calculate :ticket_name, :string, expr(ticket.name)
-    calculate :event_starts_at, :naive_datetime, expr(ticket.event.starts_at)
-
-    calculate :ticket_holder_id, :uuid, {HolderIdFromToken, []} do
-      argument :token, :string, allow_nil?: false
-    end
-
-    calculate :qr_code, :string, QrCode
   end
 
   actions do
@@ -80,6 +57,24 @@ defmodule Gits.Storefront.TicketInstance do
     create :create do
       primary? true
       argument :basket, :map, allow_nil?: false
+
+      change before_action(fn changeset, %{actor: user} ->
+               customer =
+                 Customer
+                 |> Ash.Query.for_read(:read, %{}, actor: user)
+                 |> Ash.Query.filter(user.id == ^user.id)
+                 |> Ash.read_one!()
+
+               changeset |> Ash.Changeset.manage_relationship(:customer, customer, type: :append)
+             end)
+
+      change manage_relationship(:basket, type: :append)
+    end
+
+    create :create_for_invite do
+      argument :basket, :map, allow_nil?: false
+
+      change set_attribute(:state, :ready_for_use)
 
       change before_action(fn changeset, %{actor: user} ->
                customer =
@@ -127,7 +122,7 @@ defmodule Gits.Storefront.TicketInstance do
       authorize_if accessing_from(Basket, :instances)
     end
 
-    policy action(:create) do
+    policy action([:create, :create_for_invite]) do
       authorize_if accessing_from(Ticket, :instances)
     end
 
@@ -153,8 +148,31 @@ defmodule Gits.Storefront.TicketInstance do
     end
   end
 
-  postgres do
-    table "ticket_instances"
-    repo Gits.Repo
+  attributes do
+    integer_primary_key :id
+
+    create_timestamp :created_at, public?: true
+
+    update_timestamp :updated_at, public?: true
+  end
+
+  relationships do
+    belongs_to :ticket, Ticket
+    belongs_to :customer, Customer
+    belongs_to :basket, Basket
+  end
+
+  calculations do
+    calculate :price, :decimal, expr(ticket.price)
+    calculate :event_id, :integer, expr(ticket.event.id)
+    calculate :event_name, :string, expr(ticket.event.name)
+    calculate :ticket_name, :string, expr(ticket.name)
+    calculate :event_starts_at, :naive_datetime, expr(ticket.event.starts_at)
+
+    calculate :ticket_holder_id, :uuid, {HolderIdFromToken, []} do
+      argument :token, :string, allow_nil?: false
+    end
+
+    calculate :qr_code, :string, QrCode
   end
 end

@@ -13,6 +13,6 @@
     :ash_paper_trail
   ],
   subdirectories: ["priv/*/migrations"],
-  plugins: [TailwindFormatter, Phoenix.LiveView.HTMLFormatter],
+  plugins: [Spark.Formatter, TailwindFormatter, Phoenix.LiveView.HTMLFormatter],
   inputs: ["*.{heex,eex,ex,exs}", "{config,lib,test}/**/*.{heex,ex,exs}", "priv/*/seeds.exs"]
 ]

@@ -9,26 +9,20 @@ defmodule Gits.Storefront.TicketInvite do
 
   require Ash.Resource.Change.Builtins
   require Ash.Resource.Change.Builtins
-  alias Gits.Storefront.{Customer, Ticket}
+  alias Gits.Storefront.{Basket, Customer, Ticket}
 
-  attributes do
-    uuid_primary_key :id
-
-    attribute :receipient_email, :ci_string, public?: true
-
-    create_timestamp :created_at, public?: true
-
-    update_timestamp :updated_at, public?: true
+  postgres do
+    table "ticket_invites"
+    repo Gits.Repo
   end
 
   state_machine do
     initial_states [:created]
     default_initial_state :created
-  end
 
-  relationships do
-    belongs_to :ticket, Ticket
-    belongs_to :customer, Customer
+    transitions do
+      transition :accept, from: :created, to: :accepted
+    end
   end
 
   actions do
@@ -52,28 +46,26 @@ defmodule Gits.Storefront.TicketInvite do
       require_atomic? false
 
       change before_action(fn changeset, %{actor: actor} ->
-               invite = changeset.data |> Ash.load!([:customer, ticket: :event], actor: actor)
+               invite =
+                 changeset.data |> Ash.load!([:customer, ticket: :event], actor: actor)
 
-               # basket =
-               #   Basket
-               #   |> Ash.Changeset.for_create(:open_basket, %{
-               #     customer: invite.customer,
-               #     event: invite.ticket.event
-               #   })
-               #   |> Ash.create!(actor: actor)
-               #
-               # basket
-               # |> Ash.Changeset.for_update(:add_ticket, %{ticket_id: invite.ticket.id})
-               # |> Ash.update!(actor: actor)
+               basket =
+                 Basket
+                 |> Ash.Changeset.for_create(
+                   :accept_invite,
+                   %{
+                     customer: invite.customer,
+                     ticket: invite.ticket
+                   },
+                   actor: actor
+                 )
+                 |> Ash.create!()
 
                changeset
              end)
-    end
-  end
 
-  identities do
-    identity :email_ticket_invite, [:receipient_email, :ticket_id]
-    identity :customer_ticket_invite, [:customer_id, :ticket_id]
+      change transition_state(:accepted)
+    end
   end
 
   policies do
@@ -90,8 +82,23 @@ defmodule Gits.Storefront.TicketInvite do
     end
   end
 
-  postgres do
-    table "ticket_invites"
-    repo Gits.Repo
+  attributes do
+    uuid_primary_key :id
+
+    attribute :receipient_email, :ci_string, public?: true
+
+    create_timestamp :created_at, public?: true
+
+    update_timestamp :updated_at, public?: true
+  end
+
+  relationships do
+    belongs_to :ticket, Ticket
+    belongs_to :customer, Customer
+  end
+
+  identities do
+    identity :email_ticket_invite, [:receipient_email, :ticket_id]
+    identity :customer_ticket_invite, [:customer_id, :ticket_id]
   end
 end

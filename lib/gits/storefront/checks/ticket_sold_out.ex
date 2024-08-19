@@ -28,7 +28,7 @@ defmodule Gits.Storefront.Checks.TicketSoldOut do
         max_per_user_reached =
           ticket.allowed_quantity_per_user > 0 and user_total >= ticket.allowed_quantity_per_user
 
-        total_reached = total >= ticket.total_quantity
+        total_reached = ticket.total_quantity > 0 and total >= ticket.total_quantity
 
         max_per_user_reached or total_reached
     end

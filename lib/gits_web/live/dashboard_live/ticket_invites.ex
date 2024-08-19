@@ -1,5 +1,4 @@
 defmodule GitsWeb.DashboardLive.TicketInvites do
-  alias Gits.Storefront.TicketInvite
   alias Gits.Storefront.Ticket
   use GitsWeb, :dashboard_live_view
 
@@ -37,7 +36,6 @@ defmodule GitsWeb.DashboardLive.TicketInvites do
       TicketInvite
       |> Ash.Changeset.for_create(:create, %{customer: attendee.user.customer, ticket: ticket})
       |> Ash.create(actor: user)
-      |> IO.inspect()
     end)
 
     socket

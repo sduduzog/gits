@@ -13,30 +13,13 @@ defmodule Gits.Storefront.Basket do
   alias Gits.Storefront.Notifiers.{BasketCancelled, BasketOpened, BasketReclaimed}
   alias Gits.Storefront.TicketInstance
 
-  paper_trail do
-    reference_source? false
-    store_action_name? true
-    ignore_attributes [:created_at, :updated_at]
-  end
-
-  attributes do
-    uuid_primary_key :id
-
-    attribute :payment_method, :atom do
-      public? true
-      constraints one_of: [:paystack, :payfast]
-    end
-
-    attribute :paystack_authorization_url, :string
-    attribute :paystack_reference, :string
-
-    create_timestamp :created_at, public?: true
-
-    update_timestamp :updated_at, public?: true
+  postgres do
+    table "baskets"
+    repo Gits.Repo
   end
 
   state_machine do
-    initial_states [:open]
+    initial_states [:open, :invited]
     default_initial_state :open
 
     transitions do
@@ -48,19 +31,10 @@ defmodule Gits.Storefront.Basket do
     end
   end
 
-  relationships do
-    belongs_to :event, Gits.Storefront.Event do
-      attribute_type :integer
-    end
-
-    belongs_to :customer, Gits.Storefront.Customer
-
-    has_many :instances, Gits.Storefront.TicketInstance
-  end
-
-  calculations do
-    calculate :event_name, :string, expr(event.name)
-    calculate :total, :decimal, SumOfInstancePrices
+  paper_trail do
+    reference_source? false
+    store_action_name? true
+    ignore_attributes [:created_at, :updated_at]
   end
 
   actions do
@@ -76,6 +50,39 @@ defmodule Gits.Storefront.Basket do
       change manage_relationship(:customer, type: :append)
 
       notifiers [BasketOpened]
+    end
+
+    create :accept_invite do
+      argument :ticket, :map do
+        allow_nil? false
+      end
+
+      argument :customer, :map do
+        allow_nil? false
+      end
+
+      change set_attribute(:state, :invited)
+
+      change fn changeset, %{actor: actor} ->
+        changeset
+        |> Ash.Changeset.after_action(fn changeset, record ->
+          ticket = changeset |> Ash.Changeset.get_argument(:ticket)
+          customer = changeset |> Ash.Changeset.get_argument(:customer)
+
+          ticket
+          |> Ash.Changeset.for_update(
+            :add_invite_instance,
+            %{
+              basket: record,
+              customer: changeset.data.customer
+            },
+            actor: actor
+          )
+          |> Ash.update!()
+
+          {:ok, record}
+        end)
+      end
     end
 
     update :add_ticket do
@@ -94,11 +101,15 @@ defmodule Gits.Storefront.Basket do
 
           changeset.data.event.tickets
           |> Enum.find(fn ticket -> ticket.id == ticket_id end)
-          |> Ash.Changeset.for_update(:add_instance, %{
-            basket: changeset.data,
-            customer: changeset.data.customer
-          })
-          |> Ash.update(actor: actor)
+          |> Ash.Changeset.for_update(
+            :add_instance,
+            %{
+              basket: changeset.data,
+              customer: changeset.data.customer
+            },
+            actor: actor
+          )
+          |> Ash.update()
 
           changeset
         end)
@@ -242,13 +253,6 @@ defmodule Gits.Storefront.Basket do
     end
   end
 
-  pub_sub do
-    module GitsWeb.Endpoint
-    prefix "basket"
-    publish :cancel, ["cancelled", :id]
-    publish :reclaimed, ["reclaimed", :id]
-  end
-
   policies do
     policy action(:read) do
       authorize_if Gits.Checks.ActorIsObanJob
@@ -335,6 +339,7 @@ defmodule Gits.Storefront.Basket do
 
     policy action([
              :open_basket,
+             :accept_invite,
              :lock_for_checkout,
              :unlock_for_shopping
            ]) do
@@ -342,8 +347,41 @@ defmodule Gits.Storefront.Basket do
     end
   end
 
-  postgres do
-    table "baskets"
-    repo Gits.Repo
+  pub_sub do
+    module GitsWeb.Endpoint
+    prefix "basket"
+    publish :cancel, ["cancelled", :id]
+    publish :reclaimed, ["reclaimed", :id]
+  end
+
+  attributes do
+    uuid_primary_key :id
+
+    attribute :payment_method, :atom do
+      public? true
+      constraints one_of: [:paystack, :payfast]
+    end
+
+    attribute :paystack_authorization_url, :string
+    attribute :paystack_reference, :string
+
+    create_timestamp :created_at, public?: true
+
+    update_timestamp :updated_at, public?: true
+  end
+
+  relationships do
+    belongs_to :event, Gits.Storefront.Event do
+      attribute_type :integer
+    end
+
+    belongs_to :customer, Gits.Storefront.Customer
+
+    has_many :instances, Gits.Storefront.TicketInstance
+  end
+
+  calculations do
+    calculate :event_name, :string, expr(event.name)
+    calculate :total, :decimal, SumOfInstancePrices
   end
 end

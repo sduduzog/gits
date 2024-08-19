@@ -8,6 +8,7 @@ defmodule GitsWeb.EventLive.Invite do
     TicketInvite
     |> Ash.Query.for_read(:read)
     |> Ash.Query.filter(id: unsigned_params["invite_id"])
+    |> Ash.Query.load(ticket: [event: :address])
     |> Ash.read_one(actor: socket.assigns.current_user)
     |> case do
       {:ok, nil} -> socket |> assign(:invite, nil)
@@ -30,34 +31,44 @@ defmodule GitsWeb.EventLive.Invite do
       <div class="mx-auto w-full max-w-md space-y-8 divide-y rounded-xl border p-4 text-sm md:p-8">
         <div class="grid-cols-[5fr_3fr] grid gap-4 pt-4">
           <div class="flex items-center gap-4">
-            <.icon name="hero-calendar" />
+            <.icon name="hero-calendar" class="shrink-0" />
             <div class="grid">
-              <span class="font-medium">Special event</span>
-              <span class="text-zinc-500">24 August 2024</span>
+              <span class="font-medium"><%= @invite.ticket.event.name %></span>
+              <span class="text-zinc-500">
+                <%= @invite.ticket.event.local_starts_at
+                |> Timex.format!("%e %B %Y", :strftime) %>
+              </span>
             </div>
           </div>
 
           <div class="flex items-center gap-4">
-            <.icon name="hero-clock" />
+            <.icon name="hero-clock" class="shrink-0" />
             <div class="grid">
-              <span class="font-medium">12:00 PM</span>
+              <span class="font-medium">12:00 PM </span>
               <span class="text-zinc-500">Start Time</span>
             </div>
           </div>
 
-          <div class="col-span-full flex items-center gap-4">
-            <.icon name="hero-map-pin" />
+          <div
+            :if={not is_nil(@invite.ticket.event.address)}
+            class="col-span-full flex items-center gap-4"
+          >
+            <.icon name="hero-map-pin" class="shrink-0" />
             <div class="grid">
-              <span class="font-medium">The Grand Ballroom</span>
-              <span class="text-zinc-500">123 Main St, Anytown</span>
+              <span class="font-medium"><%= @invite.ticket.event.address.display_name %></span>
+              <span class="text-zinc-500">
+                <%= @invite.ticket.event.address.short_format_address %>
+              </span>
             </div>
           </div>
         </div>
         <div class="space-y-4 pt-8">
           <div class="flex items-center">
             <div class="grid grow p-1">
-              <span class="font-medium">Patron</span>
-              <span class="text-zinc-500">Value: R 0.00</span>
+              <span class="font-medium"><%= @invite.ticket.name %></span>
+              <span class="text-zinc-500">
+                Value: R <%= @invite.ticket.price |> Gits.Currency.format() %>
+              </span>
             </div>
             <%= if is_nil(@current_user) do %>
               <.link
@@ -88,8 +99,8 @@ defmodule GitsWeb.EventLive.Invite do
     %{invite: invite, current_user: user} = socket.assigns
 
     invite
-    |> Ash.Changeset.for_update(:accept)
-    |> Ash.update(actor: user)
+    |> Ash.Changeset.for_update(:accept, %{}, actor: user)
+    |> Ash.update()
 
     socket |> noreply()
   end

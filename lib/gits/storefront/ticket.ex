@@ -8,108 +8,11 @@ defmodule Gits.Storefront.Ticket do
     domain: Gits.Storefront
 
   alias Gits.Storefront.Calculations.TicketToken
-  alias Gits.Storefront.{Event, TicketInstance}
+  alias Gits.Storefront.{Event, TicketInstance, TicketInvite}
 
-  attributes do
-    uuid_primary_key :id
-    attribute :name, :string, allow_nil?: false, public?: true
-
-    attribute :price_in_cents, :integer do
-      allow_nil? false
-      public? true
-      constraints min: 0
-    end
-
-    attribute :allowed_quantity_per_user, :integer do
-      allow_nil? true
-      public? true
-      constraints min: 0
-      default 1
-    end
-
-    attribute :total_quantity, :integer do
-      allow_nil? true
-      public? true
-      constraints min: 0
-      default 100
-    end
-
-    attribute :sale_starts_at, :datetime, public?: true
-    attribute :sale_ends_at, :datetime, public?: true
-
-    attribute :availability, :atom do
-      allow_nil? false
-      public? true
-      constraints one_of: [:public, :invite_only]
-      default :open
-    end
-
-    attribute :test, :boolean do
-      default false
-    end
-
-    create_timestamp :created_at, public?: true
-    update_timestamp :updated_at, public?: true
-  end
-
-  relationships do
-    belongs_to :event, Gits.Storefront.Event do
-      attribute_type :integer
-    end
-
-    has_many :instances, Gits.Storefront.TicketInstance
-
-    has_many :invites, Gits.Storefront.TicketInvite
-  end
-
-  calculations do
-    calculate :price, :decimal, expr(round(price_in_cents / 100, 2))
-
-    calculate :token, :string, TicketToken
-
-    calculate :local_sale_starts_at,
-              :naive_datetime,
-              {Gits.Storefront.Calculations.LocalDatetime, attribute: :sale_starts_at}
-
-    calculate :local_sale_ends_at,
-              :naive_datetime,
-              {Gits.Storefront.Calculations.LocalDatetime, attribute: :sale_ends_at}
-
-    calculate :sold_out?,
-              :boolean,
-              expr(
-                count(instances,
-                  query: [
-                    filter: expr(basket.state in [:settled_for_free, :settled_for_payment])
-                  ]
-                ) >=
-                  total_quantity and total_quantity > 0
-              )
-
-    calculate :sold_out_for_actor?,
-              :boolean,
-              expr(
-                count(instances,
-                  query: [
-                    filter:
-                      expr(
-                        basket.state in [:settled_for_free, :settled_for_payment] and
-                          customer.user.id == ^actor(:id)
-                      )
-                  ]
-                ) >=
-                  allowed_quantity_per_user and sold_out? == false
-              )
-  end
-
-  aggregates do
-    count :total_sold, :instances do
-      filter expr(
-               basket.state in [:settled_for_free, :settled_for_payment] and ticket.test == false
-             )
-    end
-
-    count :invites_count, :invites
+  postgres do
+    table "tickets"
+    repo Gits.Repo
   end
 
   actions do
@@ -265,10 +168,34 @@ defmodule Gits.Storefront.Ticket do
         end)
       end
     end
-  end
 
-  aggregates do
-    first :instance_id, :instances, :id
+    update :add_invite_instance do
+      require_atomic? false
+
+      argument :basket, :map do
+        allow_nil? false
+      end
+
+      argument :customer, :map do
+        allow_nil? false
+      end
+
+      change fn changeset, %{actor: actor} = context ->
+        changeset
+        |> Ash.Changeset.before_action(fn changeset ->
+          basket = changeset |> Ash.Changeset.get_argument(:basket)
+          customer = changeset |> Ash.Changeset.get_argument(:customer)
+
+          changeset
+          |> Ash.Changeset.manage_relationship(
+            :instances,
+            [%{basket: basket, customer: customer}],
+            on_no_match: {:create, :create_for_invite},
+            on_match: :ignore
+          )
+        end)
+      end
+    end
   end
 
   policies do
@@ -280,7 +207,7 @@ defmodule Gits.Storefront.Ticket do
       authorize_if actor_present()
     end
 
-    policy action(:add_instance) do
+    policy action([:add_instance, :add_invite_instance]) do
       authorize_unless Gits.Storefront.Checks.TicketSoldOut
     end
 
@@ -289,6 +216,7 @@ defmodule Gits.Storefront.Ticket do
     end
 
     policy action(:read) do
+      authorize_if accessing_from(TicketInvite, :ticket)
       authorize_if accessing_from(TicketInstance, :ticket)
       authorize_if accessing_from(Event, :tickets)
       authorize_if expr(event.account.members.user.id == ^actor(:id))
@@ -318,8 +246,109 @@ defmodule Gits.Storefront.Ticket do
     end
   end
 
-  postgres do
-    table "tickets"
-    repo Gits.Repo
+  attributes do
+    uuid_primary_key :id
+    attribute :name, :string, allow_nil?: false, public?: true
+
+    attribute :price_in_cents, :integer do
+      allow_nil? false
+      public? true
+      constraints min: 0
+    end
+
+    attribute :allowed_quantity_per_user, :integer do
+      allow_nil? true
+      public? true
+      constraints min: 0
+      default 1
+    end
+
+    attribute :total_quantity, :integer do
+      allow_nil? true
+      public? true
+      constraints min: 0
+      default 100
+    end
+
+    attribute :sale_starts_at, :datetime, public?: true
+    attribute :sale_ends_at, :datetime, public?: true
+
+    attribute :availability, :atom do
+      allow_nil? false
+      public? true
+      constraints one_of: [:public, :invite_only]
+      default :open
+    end
+
+    attribute :test, :boolean do
+      default false
+    end
+
+    create_timestamp :created_at, public?: true
+    update_timestamp :updated_at, public?: true
+  end
+
+  relationships do
+    belongs_to :event, Gits.Storefront.Event do
+      attribute_type :integer
+    end
+
+    has_many :instances, Gits.Storefront.TicketInstance
+
+    has_many :invites, Gits.Storefront.TicketInvite
+  end
+
+  calculations do
+    calculate :price, :decimal, expr(round(price_in_cents / 100, 2))
+
+    calculate :token, :string, TicketToken
+
+    calculate :local_sale_starts_at,
+              :naive_datetime,
+              {Gits.Storefront.Calculations.LocalDatetime, attribute: :sale_starts_at}
+
+    calculate :local_sale_ends_at,
+              :naive_datetime,
+              {Gits.Storefront.Calculations.LocalDatetime, attribute: :sale_ends_at}
+
+    calculate :sold_out?,
+              :boolean,
+              expr(
+                count(instances,
+                  query: [
+                    filter: expr(basket.state in [:settled_for_free, :settled_for_payment])
+                  ]
+                ) >=
+                  total_quantity and total_quantity > 0
+              )
+
+    calculate :sold_out_for_actor?,
+              :boolean,
+              expr(
+                count(instances,
+                  query: [
+                    filter:
+                      expr(
+                        basket.state in [:settled_for_free, :settled_for_payment] and
+                          customer.user.id == ^actor(:id)
+                      )
+                  ]
+                ) >=
+                  allowed_quantity_per_user and sold_out? == false
+              )
+  end
+
+  aggregates do
+    count :total_sold, :instances do
+      filter expr(
+               basket.state in [:settled_for_free, :settled_for_payment] and ticket.test == false
+             )
+    end
+
+    count :invites_count, :invites
+  end
+
+  aggregates do
+    first :instance_id, :instances, :id
   end
 end
