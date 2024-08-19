@@ -1,5 +1,6 @@
 defmodule GitsWeb.SupportLive do
   require Ash.Query
+  require Logger
   alias Gits.Storefront.TicketInvite
   use GitsWeb, :live_view
 
@@ -14,18 +15,20 @@ defmodule GitsWeb.SupportLive do
   def handle_event("send_invites", _unsigned_params, socket) do
     TicketInvite
     |> Ash.Query.for_read(:read)
-    |> Ash.Query.load(customer: [:name, user: :email], ticket: [event: :account])
     |> Ash.Query.filter(state == :created)
+    |> Ash.Query.load(customer: [:name, user: :email], ticket: [event: :account])
     |> Ash.read!()
     |> Enum.each(fn invite ->
-      subject = "You're Invited to The ZATechRadio 📻 Meet: Rooftop Edition"
+      subject = "About that link. The ZATechRadio 📻 Meet: Rooftop Edition"
+
+      uri = url(~p"/ticket-invite/#{invite.id}")
 
       body =
         Gits.EmailTemplates.TicketInvite.render(
           title: subject,
           user_name: invite.customer.name,
           base_url: Application.get_env(:gits, :base_url),
-          url: "/ticket-invite/#{invite.id}"
+          url: uri
         )
 
       %{to: invite.customer.user.email, subject: subject, body: body}

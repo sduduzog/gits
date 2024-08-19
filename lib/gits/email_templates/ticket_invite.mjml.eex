@@ -1,6 +1,7 @@
 <mj-text>Hey <%= @user_name %></mj-text>
-<mj-text>Thank you for being part of our first ZATechRadio meetup. Your presence made it truly special and a success.</mj-text>
-<mj-text>We're thriled to invite you to our upcoming meetup in 24 August 2024. As promised, we're presenting you with a complimentary ticket at no extra cost.<br /><br />If you would like to bring a friend, or you know someone who was there with us but didn't get this invite, please reply with their email address to this thread. See you there.</mj-text>
+<mj-text>So there's good news and some bad news. The bad news is, we sent you an email invite with a broken link, we apologise for the inconvenience. The good news is, your complimentary ticket is still safe and ready for you to claim.</mj-text>
+
+<mj-text>Let's try this again with the link below. Thank you for your patience. Drinks are on us :)</mj-text>
 <mj-text>Sdu</mj-text>
 <mj-button padding="10px 0" background-color="#18181b" color="white" align="left" border-radius="10px" href="<%= @url %>">
   Accept ticket
