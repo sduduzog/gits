@@ -107,7 +107,7 @@ defmodule GitsWeb.Router do
   scope "/admin" do
     pipe_through [:browser, :office]
 
-    live "/support", SupportLive.Overview
+    live "/support", GitsWeb.SupportLive
 
     live_dashboard "/dashboard",
       ecto_repos: [Gits.Repo],

@@ -1,33 +1,15 @@
 defmodule Gits.Auth.User do
+  alias Gits.Storefront.Customer
+
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     extensions: [AshAuthentication, AshArchival.Resource],
     authorizers: Ash.Policy.Authorizer,
     domain: Gits.Auth
 
-  attributes do
-    uuid_primary_key :id
-    attribute :email, :ci_string, allow_nil?: false, public?: true
-    attribute :hashed_password, :string, allow_nil?: false, sensitive?: true
-    attribute :display_name, :string, allow_nil?: false, public?: true
-  end
-
-  relationships do
-    has_one :member, Gits.Dashboard.Member do
-      domain Gits.Dashboard
-    end
-
-    has_one :customer, Gits.Storefront.Customer
-  end
-
-  actions do
-    default_accept :*
-    defaults [:read]
-
-    update :send_confirmation_email do
-      require_atomic? false
-      accept []
-    end
+  postgres do
+    table "users"
+    repo Gits.Repo
   end
 
   authentication do
@@ -61,14 +43,13 @@ defmodule Gits.Auth.User do
     end
   end
 
-  postgres do
-    table "users"
-    repo Gits.Repo
-  end
+  actions do
+    default_accept :*
+    defaults [:read]
 
-  identities do
-    identity :unique_email, [:email] do
-      eager_check_with Gits.Auth
+    update :send_confirmation_email do
+      require_atomic? false
+      accept []
     end
   end
 
@@ -78,7 +59,29 @@ defmodule Gits.Auth.User do
     end
 
     policy action(:read) do
+      authorize_if accessing_from(Customer, :user)
       authorize_if actor_present()
+    end
+  end
+
+  attributes do
+    uuid_primary_key :id
+    attribute :email, :ci_string, allow_nil?: false, public?: true
+    attribute :hashed_password, :string, allow_nil?: false, sensitive?: true
+    attribute :display_name, :string, allow_nil?: false, public?: true
+  end
+
+  relationships do
+    has_one :member, Gits.Dashboard.Member do
+      domain Gits.Dashboard
+    end
+
+    has_one :customer, Gits.Storefront.Customer
+  end
+
+  identities do
+    identity :unique_email, [:email] do
+      eager_check_with Gits.Auth
     end
   end
 end

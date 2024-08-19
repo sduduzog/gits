@@ -102,6 +102,6 @@ defmodule GitsWeb.EventLive.Invite do
     |> Ash.Changeset.for_update(:accept, %{}, actor: user)
     |> Ash.update()
 
-    socket |> noreply()
+    socket |> push_navigate(to: ~p"/my/tickets") |> noreply()
   end
 end

@@ -14,8 +14,8 @@ defmodule GitsWeb.EmailHTML do
     #   )
 
     template =
-      EmailTemplates.AccountInvitation.render(
-        title: "You've been invited to join Treehouse Inc's GiTS account",
+      EmailTemplates.TicketInvite.render(
+        title: "You're Invited to The ZATechRadio 📻 Meet: Rooftop Edition",
         user_name: "Sdu",
         sender: "Foo",
         account_name: "GiTS",
