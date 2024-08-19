@@ -339,15 +339,15 @@ defmodule Gits.Storefront.Event do
 
   aggregates do
     min :minimum_ticket_price, :tickets, :price do
-      filter expr(test == false and availability == :public)
+      filter expr(test == false and availability in [:open, :public])
     end
 
     max :maximum_ticket_price, :tickets, :price do
-      filter expr(test == false and availability == :public)
+      filter expr(test == false and availability in [:open, :public])
     end
 
     sum :total_available, :tickets, :total_quantity do
-      filter expr(test == false and availability == :public)
+      filter expr(test == false and availability in [:open, :public])
     end
 
     count :attendees_count, :attendees
