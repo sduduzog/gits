@@ -11,97 +11,9 @@ defmodule Gits.Storefront.Event do
 
   alias Gits.Dashboard.Account
 
-  attributes do
-    integer_primary_key :id
-    attribute :name, :string, allow_nil?: false, public?: true
-    attribute :description, :string, allow_nil?: false, public?: true
-    attribute :starts_at, :datetime, allow_nil?: false, public?: true
-    attribute :ends_at, :datetime, allow_nil?: false, public?: true
-    attribute :published_at, :datetime, public?: true
-
-    attribute :visibility, :atom do
-      allow_nil? false
-      public? true
-      constraints one_of: [:private, :protected, :public]
-      default :private
-    end
-
-    attribute :payment_method, :atom do
-      public? true
-      constraints one_of: [:none, :paystack, :payfast]
-    end
-
-    create_timestamp :created_at, public?: true
-    update_timestamp :updated_at, public?: true
-  end
-
-  relationships do
-    belongs_to :account, Gits.Dashboard.Account do
-      domain Gits.Dashboard
-    end
-
-    belongs_to :address, Gits.Admissions.Address do
-      domain Gits.Admissions
-    end
-
-    has_many :tickets, Gits.Storefront.Ticket
-    has_many :baskets, Gits.Storefront.Basket
-
-    has_many :attendees, Gits.Admissions.Attendee do
-      domain Gits.Admissions
-    end
-  end
-
-  aggregates do
-    min :minimum_ticket_price, :tickets, :price
-    max :maximum_ticket_price, :tickets, :price
-
-    sum :total_available, :tickets, :total_quantity do
-      filter expr(test == false)
-    end
-
-    count :attendees_count, :attendees
-  end
-
-  calculations do
-    calculate :masked_id, :string, Gits.Storefront.Calculations.MaskId
-    calculate :resolved_payment_method, :atom, expr(payment_method or account.payment_method)
-
-    calculate :ticket_price_varies,
-              :boolean,
-              expr(maximum_ticket_price - minimum_ticket_price > 0)
-
-    calculate :customer_has_tickets, :boolean, expr(customer_secured_instance_count > 0)
-
-    calculate :payment_method_required?,
-              :boolean,
-              expr(
-                maximum_ticket_price > 0 and (is_nil(payment_method) or payment_method == :none)
-              )
-
-    calculate :host, :string, expr(account.name)
-
-    calculate :local_starts_at,
-              :naive_datetime,
-              {Gits.Storefront.Calculations.LocalDatetime, attribute: :starts_at}
-
-    calculate :local_ends_at,
-              :naive_datetime,
-              {Gits.Storefront.Calculations.LocalDatetime, attribute: :ends_at}
-
-    calculate :total_sold,
-              :integer,
-              expr(
-                count(tickets.instances,
-                  query: [
-                    filter:
-                      expr(
-                        basket.state in [:settled_for_free, :settled_for_payment] and
-                          ticket.test == false
-                      )
-                  ]
-                )
-              )
+  postgres do
+    table "events"
+    repo Gits.Repo
   end
 
   actions do
@@ -343,8 +255,101 @@ defmodule Gits.Storefront.Event do
     end
   end
 
-  postgres do
-    table "events"
-    repo Gits.Repo
+  attributes do
+    integer_primary_key :id
+    attribute :name, :string, allow_nil?: false, public?: true
+    attribute :description, :string, allow_nil?: false, public?: true
+    attribute :starts_at, :datetime, allow_nil?: false, public?: true
+    attribute :ends_at, :datetime, allow_nil?: false, public?: true
+    attribute :published_at, :datetime, public?: true
+
+    attribute :visibility, :atom do
+      allow_nil? false
+      public? true
+      constraints one_of: [:private, :protected, :public]
+      default :private
+    end
+
+    attribute :payment_method, :atom do
+      public? true
+      constraints one_of: [:none, :paystack, :payfast]
+    end
+
+    create_timestamp :created_at, public?: true
+    update_timestamp :updated_at, public?: true
+  end
+
+  relationships do
+    belongs_to :account, Gits.Dashboard.Account do
+      domain Gits.Dashboard
+    end
+
+    belongs_to :address, Gits.Admissions.Address do
+      domain Gits.Admissions
+    end
+
+    has_many :tickets, Gits.Storefront.Ticket
+    has_many :baskets, Gits.Storefront.Basket
+
+    has_many :attendees, Gits.Admissions.Attendee do
+      domain Gits.Admissions
+    end
+  end
+
+  calculations do
+    calculate :masked_id, :string, Gits.Storefront.Calculations.MaskId
+    calculate :resolved_payment_method, :atom, expr(payment_method or account.payment_method)
+
+    calculate :ticket_price_varies,
+              :boolean,
+              expr(maximum_ticket_price - minimum_ticket_price > 0)
+
+    calculate :customer_has_tickets, :boolean, expr(customer_secured_instance_count > 0)
+
+    calculate :payment_method_required?,
+              :boolean,
+              expr(
+                maximum_ticket_price > 0 and (is_nil(payment_method) or payment_method == :none)
+              )
+
+    calculate :host, :string, expr(account.name)
+
+    calculate :local_starts_at,
+              :naive_datetime,
+              {Gits.Storefront.Calculations.LocalDatetime, attribute: :starts_at}
+
+    calculate :local_ends_at,
+              :naive_datetime,
+              {Gits.Storefront.Calculations.LocalDatetime, attribute: :ends_at}
+
+    calculate :total_sold,
+              :integer,
+              expr(
+                count(tickets.instances,
+                  query: [
+                    filter:
+                      expr(
+                        basket.state in [:settled_for_free, :settled_for_payment] and
+                          ticket.test == false
+                      )
+                  ]
+                )
+              )
+  end
+
+  aggregates do
+    min :minimum_ticket_price, :tickets, :price do
+      filter expr(test == false and availability == :public)
+    end
+
+    max :maximum_ticket_price, :tickets, :price do
+      filter expr(test == false and availability == :public)
+    end
+
+    sum :total_available, :tickets, :total_quantity do
+      filter expr(test == false and availability == :public)
+    end
+
+    count :attendees_count, :attendees
   end
 end
