@@ -10,16 +10,19 @@ defmodule GitsWeb.UserController do
   end
 
   def ticket(conn, params) do
+    user =
+      conn.assigns.current_user
+
     TicketInstance
-    |> Ash.Query.for_read(:qr_code, %{token: params["token"]})
-    |> Ash.Query.load([:ticket_name, :event_name])
+    |> Ash.Query.for_read(:qr_code, %{token: params["token"]}, actor: user)
+    |> Ash.Query.load([:qr_code, :ticket_name, :event_name])
     |> Ash.read_one()
     |> case do
       {:ok, %TicketInstance{} = instance} ->
         conn
         |> assign(:ticket_name, instance.ticket_name)
         |> assign(:event_name, instance.event_name)
-        |> assign(:token, params["token"])
+        |> assign(:token, instance.qr_code)
 
       _ ->
         conn |> assign(:token, nil)
