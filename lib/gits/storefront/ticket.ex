@@ -236,7 +236,7 @@ defmodule Gits.Storefront.Ticket do
       authorize_if actor_present()
     end
 
-    policy action(:update) do
+    policy [action(:update), changing_attributes([:price_in_cents])] do
       authorize_if expr(count(instances) == 0)
     end
 
