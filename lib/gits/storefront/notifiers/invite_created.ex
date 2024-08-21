@@ -25,9 +25,6 @@ defmodule Gits.Storefront.Notifiers.InviteCreated do
         |> Gits.Workers.DeliverEmail.new()
         |> Oban.insert()
 
-        DeliverEmail.new(%{id: data.id})
-        |> Oban.insert()
-
         :ok
 
       _ ->
