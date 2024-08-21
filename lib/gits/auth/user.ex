@@ -23,9 +23,9 @@ defmodule Gits.Auth.User do
     strategies do
       password :password do
         identity_field :email
-        sign_in_tokens_enabled? true
         registration_enabled? true
         confirmation_required? false
+        sign_in_token_lifetime {24, :hours}
 
         register_action_accept [:display_name]
 
@@ -83,5 +83,11 @@ defmodule Gits.Auth.User do
     identity :unique_email, [:email] do
       eager_check_with Gits.Auth
     end
+  end
+end
+
+defimpl FunWithFlags.Actor, for: Gits.Auth.User do
+  def id(%{id: id}) do
+    "user:#{id}"
   end
 end

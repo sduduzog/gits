@@ -38,6 +38,7 @@ defmodule GitsWeb.Router do
     get "/faq", PageController, :faq
     get "/assets/:filename", PageController, :assets
     get "/healthz", PageController, :healthz
+    get "/beta", PageController, :beta
 
     resources "/accounts", AccountController, only: [:index, :new, :create]
 
@@ -55,6 +56,7 @@ defmodule GitsWeb.Router do
       on_mount: {GitsWeb.LiveUserAuth, :live_user_optional} do
       live "/events/:id", EventLive.Feature
       live "/ticket-invite/:invite_id", EventLive.Invite
+      live "/admin/support", GitsWeb.SupportLive
     end
 
     ash_authentication_live_session :authentication_required,
@@ -106,8 +108,6 @@ defmodule GitsWeb.Router do
 
   scope "/admin" do
     pipe_through [:browser, :office]
-
-    live "/support", GitsWeb.SupportLive
 
     live_dashboard "/dashboard",
       ecto_repos: [Gits.Repo],

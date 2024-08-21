@@ -83,4 +83,20 @@ defmodule GitsWeb.PageController do
 
     conn |> json(%{datetime: datetime})
   end
+
+  def beta(conn, %{"enable" => "true"}) do
+    if conn.assigns.current_user do
+      FunWithFlags.enable(:beta, for_actor: conn.assigns.current_user)
+    end
+
+    conn |> render(:beta)
+  end
+
+  def beta(conn, %{"enable" => "false"}) do
+    if conn.assigns.current_user do
+      FunWithFlags.disable(:beta, for_actor: conn.assigns.current_user)
+    end
+
+    conn |> render(:beta)
+  end
 end
