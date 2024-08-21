@@ -21,7 +21,13 @@ defmodule Gits.Storefront.Notifiers.InviteCreated do
             url: uri
           )
 
-        %{to: invite.receipient_email, subject: subject, body: body}
+        email =
+          if(is_nil(invite.customer),
+            do: invite.receipient_email,
+            else: invite.customer.user.email
+          )
+
+        %{to: email, subject: subject, body: body}
         |> Gits.Workers.DeliverEmail.new()
         |> Oban.insert()
 

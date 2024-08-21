@@ -30,24 +30,6 @@ kill_signal = 'SIGTERM'
     hard_limit = 1000
     soft_limit = 1000
 
-[checks]
-  [checks.gits_http_check]
-    grace_period = "30s"
-    interval = "90s"
-    method = "get"
-    path = "/healthz"
-    port = 8080
-    timeout = "10s"
-    type = "http"
-    [checks.gits_http_check.headers]
-      Content-Type = "application/json"
-
-  [checks.gits_tcp_check]
-    grace_period = "30s"
-    interval = "15s"
-    port = 8080
-    timeout = "10s"
-    type = "tcp"
 
 [[vm]]
   memory = '512mb'
