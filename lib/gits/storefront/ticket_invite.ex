@@ -9,6 +9,7 @@ defmodule Gits.Storefront.TicketInvite do
 
   require Ash.Resource.Change.Builtins
   require Ash.Resource.Change.Builtins
+  alias Gits.Storefront.Notifiers.InviteCreated
   alias Gits.Storefront.{Basket, Customer, Ticket}
 
   postgres do
@@ -42,6 +43,18 @@ defmodule Gits.Storefront.TicketInvite do
       change manage_relationship(:ticket, type: :append)
     end
 
+    create :email_only do
+      accept [:receipient_email]
+
+      argument :ticket, :map do
+        allow_nil? false
+      end
+
+      change manage_relationship(:ticket, type: :append)
+
+      notifiers [InviteCreated]
+    end
+
     update :accept do
       require_atomic? false
 
@@ -49,12 +62,21 @@ defmodule Gits.Storefront.TicketInvite do
                invite =
                  changeset.data |> Ash.load!([:customer, ticket: :event], actor: actor)
 
+               customer =
+                 if is_nil(invite.customer) do
+                   Customer
+                   |> Ash.Changeset.for_create(:create, %{user: actor}, actor: actor)
+                   |> Ash.create!()
+                 else
+                   invite.customer
+                 end
+
                basket =
                  Basket
                  |> Ash.Changeset.for_create(
                    :accept_invite,
                    %{
-                     customer: invite.customer,
+                     customer: customer,
                      ticket: invite.ticket
                    },
                    actor: actor
@@ -74,10 +96,11 @@ defmodule Gits.Storefront.TicketInvite do
     end
 
     policy action(:accept) do
+      authorize_if expr(receipient_email == ^actor(:email))
       authorize_if expr(customer.user.id == ^actor(:id))
     end
 
-    policy action(:create) do
+    policy action([:create, :email_only]) do
       authorize_if actor_present()
     end
   end

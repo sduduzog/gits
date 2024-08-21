@@ -76,6 +76,9 @@ defmodule GitsWeb.Router do
       live "/accounts/:slug/events/:event_id/tickets/:ticket_id/invites",
            DashboardLive.TicketInvites
 
+      live "/accounts/:slug/events/:event_id/tickets/:ticket_id/invites/email",
+           DashboardLive.TicketInvitesViaEmail
+
       live "/accounts/:slug/events/:event_id/address", DashboardLive.UpdateEventAddress
       live "/accounts/:slug/events/:event_id/upload-graphics", DashboardLive.UploadGraphic
       live "/accounts/:slug/events/:event_id/attendees", DashboardLive.Attendees, :list

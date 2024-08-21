@@ -1,7 +1,7 @@
-<mj-text>Hey <%= @user_name %></mj-text>
-<mj-text>So there's good news and some bad news. The bad news is, we sent you an email invite with a broken link, we apologise for the inconvenience. The good news is, your complimentary ticket is still safe and ready for you to claim.</mj-text>
-
-<mj-text>Let's try this again with the link below. Thank you for your patience. Drinks are on us :)</mj-text>
+<mj-text>Hey Stranger</mj-text>
+<mj-text>You're invited to the ZATechRadio Meetup. Here's a complimentary ticket just for you</mj-text>
+<mj-text>Reserve your spot by accepting the ticket with the link below. Remember, you have to be signed in with this email address.</mj-text>
+<mj-text>Drinks are on us :)</mj-text>
 <mj-text>Sdu</mj-text>
 <mj-button padding="10px 0" background-color="#18181b" color="white" align="left" border-radius="10px" href="<%= @url %>">
   Accept ticket

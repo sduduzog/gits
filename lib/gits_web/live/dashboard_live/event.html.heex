@@ -212,7 +212,10 @@
               </button>
 
               <.link
-                :if={ticket.availability == :invite_only}
+                :if={
+                  ticket.availability == :invite_only and
+                    FunWithFlags.enabled?(:beta, for: @current_user)
+                }
                 patch={~p"/accounts/#{@slug}/events/#{@event.id}/tickets/#{ticket.id}/invites"}
                 class="flex w-full items-center gap-4 px-4 py-2 text-left text-sm text-gray-700 hover:bg-zinc-100 hover:text-zinc-900"
                 role="menuitem"
@@ -291,7 +294,9 @@
         <.input field={f[:local_sale_ends_at]} label="Sale ends at" type="datetime-local" />
         <.radio_group label="Availability" field={f[:availability]} class="col-span-full">
           <:radio value={:public}>Public</:radio>
-          <:radio value={:invite_only}>Invite Only</:radio>
+          <:radio :if={FunWithFlags.enabled?(:beta, for: @current_user)} value={:invite_only}>
+            Invite Only
+          </:radio>
         </.radio_group>
       </div>
       <div class="grid grid-cols-2 gap-4 bg-white md:gap-8">

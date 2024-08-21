@@ -112,13 +112,20 @@ defmodule GitsWeb.DashboardLive.TicketInvites do
   def render(assigns) do
     ~H"""
     <h1 class="text-xl font-semibold">Ticket Invites</h1>
-    <div class="grid grid-cols-3 gap-4">
+    <div :if={FunWithFlags.enabled?(:beta, for: @current_user)} class="grid grid-cols-3 gap-8">
       <!-- <h2 class="col-span-full mx-auto max-w-screen-md text-xl">Cheese</h2> -->
       <.link
         patch={~p"/accounts/#{@slug}/events/#{@event_id}/tickets/#{@ticket_id}/invites?from=events"}
         class="rounded-2xl border p-4 px-6"
       >
         <h3 class="font-semibold">From previous events</h3>
+      </.link>
+
+      <.link
+        patch={~p"/accounts/#{@slug}/events/#{@event_id}/tickets/#{@ticket_id}/invites/email"}
+        class="rounded-2xl border p-4 px-6"
+      >
+        <h3 class="font-semibold">From emails</h3>
       </.link>
     </div>
     """
