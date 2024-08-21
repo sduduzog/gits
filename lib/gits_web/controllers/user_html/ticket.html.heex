@@ -1,6 +1,6 @@
 <%= if is_nil(@token) do %>
 <% else %>
-  <div class="min-h-dvh mx-auto w-full max-w-sm flex-col space-y-2 p-4 pt-8 text-center">
+  <div class="min-h-dvh mx-auto w-full max-w-sm flex-col space-y-2 p-4 text-center">
     <span class="text-sm font-medium text-zinc-500"><%= @ticket_name %></span>
     <div class="min-h-16">
       <h1 class="line-clamp-2 text-2xl font-bold">
@@ -37,6 +37,17 @@
           <span class="max-w-56 mx-auto inline-block w-full text-sm text-zinc-500">
             Please present this QR code at the entrance
           </span>
+          <div>
+            <button
+              id="copy-link-button"
+              data-uri={@share_uri}
+              phx-hook="CopyLinkButton"
+              class="mx-auto flex w-36 items-center gap-2 rounded-full border px-4 py-3 text-sm active:bg-zinc-50"
+            >
+              <.icon name="hero-link-mini" />
+              <span>Copy link</span>
+            </button>
+          </div>
         <% end %>
       </div>
     </div>

@@ -40,7 +40,21 @@ const QrScanner = {
   },
 };
 
+const CopyLinkButton = {
+  mounted() {
+    const textElement = this.el.querySelector('span:not(.hero-link-mini)')
+    this.el.addEventListener('click', async () => {
+      await navigator.clipboard.writeText(this.el.dataset.uri)
+      textElement.innerText = "Link copied"
+      setTimeout(() => {
+        textElement.innerText = 'Copy link'
+      }, 1500)
+    })
+  }
+}
+
 export const Hooks = {
   QrScanner,
   Turnstile: TurnstileHook,
+  CopyLinkButton
 };

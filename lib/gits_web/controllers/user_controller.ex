@@ -22,6 +22,7 @@ defmodule GitsWeb.UserController do
         conn
         |> assign(:ticket_name, instance.ticket_name)
         |> assign(:event_name, instance.event_name)
+        |> assign(:share_uri, url(~p"/my/tickets/#{params["token"]}"))
         |> assign(:token, instance.qr_code)
 
       _ ->
