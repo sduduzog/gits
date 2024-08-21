@@ -74,6 +74,7 @@ defmodule GitsWeb.DashboardLive.TicketInvitesViaEmail do
     </div>
 
     <div :for={e <- @invites}>
+      <span><%= e.id %></span>
       <span><%= e.receipient_email || e.customer.user.email %></span>
       <span><%= e.state %></span>
     </div>
