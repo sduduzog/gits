@@ -91,3 +91,8 @@ defimpl FunWithFlags.Actor, for: Gits.Auth.User do
     "user:#{id}"
   end
 end
+
+defimpl FunWithFlags.Group, for: Gits.Auth.User do
+  def in?(%{email: email, confirmed_at: confirmed_at}, :admins),
+    do: not is_nil(confirmed_at) and Regex.match?(~r/@(bar.com|gits.co.za)$/, email)
+end

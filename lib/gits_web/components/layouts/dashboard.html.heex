@@ -1,186 +1,216 @@
-<div class="h-dvh bg-zinc-50 lg:grid-cols-[theme(space.64)_1fr] lg:grid lg:grid">
-  <div
-    role="none"
-    class="bg-black/20 fixed inset-0 z-10 hidden transition-all"
-    id="backdrop"
-    phx-click={
-      JS.remove_class("translate-x-72", to: "#sidebar")
-      |> JS.add_class("hidden", to: "#backdrop")
-    }
-  >
-  </div>
-  <div
-    class="fixed inset-y-0 -left-72 z-20 w-72 p-2 transition-all lg:static lg:w-auto lg:p-2"
-    id="sidebar"
-  >
-    <div class="flex h-full flex-col rounded-xl bg-white p-2 shadow-sm lg:bg-transparent lg:shadow-none">
-      <div class="flex gap-2 pb-4">
-        <button
-          phx-click={
-            JS.remove_class("translate-x-72", to: "#sidebar")
-            |> JS.add_class("hidden", to: "#backdrop")
-          }
-          class="rounded-xl p-2 lg:hidden"
-        >
-          <.icon name="hero-x-mark-mini" />
-        </button>
-
-        <div class="relative flex shrink-0 grow pt-1 sm:p-0 lg:px-2">
-          <.link navigate="/" class="text-2xl font-black italic text-zinc-800">
-            GiTS
-          </.link>
-          <span class="text-[12px] leading-2 absolute -top-1 left-16 inline-flex items-center rounded-md px-1 font-medium text-yellow-800">
-            Beta
-          </span>
-        </div>
-      </div>
-      <div
-        class="flex items-center rounded-lg p-2 px-4 hover:bg-zinc-50 lg:hover:bg-zinc-100"
-        phx-hook="DropdownButton"
-        phx-click={JS.toggle(to: "#account_dropdown_options")}
-        phx-click-away={JS.hide(to: "#account_dropdown_options")}
-        id="account_dropdown"
-      >
-        <span class="grow font-medium"><%= @account.name %></span>
-        <.icon name="hero-chevron-down-mini" />
-        <div
-          id="account_dropdown_options"
-          class="absolute z-30 grid gap-1 rounded-xl border bg-white p-1 text-sm *:flex *:w-72 *:items-center *:gap-2 *:rounded-lg *:p-2 hover:*:bg-zinc-50"
-          style="display: none;"
-          data-dropdown
-        >
-          <.link :for={account <- @accounts} navigate={~p"/accounts/#{account.id}"}>
-            <img src="/images/placeholder.png" alt="" class="size-5 rounded-full object-cover " />
-            <span><%= account.name %></span>
-          </.link>
-          <.link class="text-zinc-700">
-            <.icon name="hero-plus-mini" />
-            <span>New organization...</span>
-          </.link>
-        </div>
-      </div>
-      <div
-        class="mt-4 grid gap-2 border-t pt-4 text-sm font-medium *:flex *:items-center *:gap-3 *:rounded-lg *:p-2 *:text-zinc-500 hover:*:bg-zinc-50 lg:hover:*:bg-zinc-100"
-        phx-click={
-          JS.remove_class("translate-x-72", to: "#sidebar")
-          |> JS.add_class("hidden", to: "#backdrop")
-        }
-      >
-        <.link navigate={~p"/accounts/#{@slug}"}>
-          <.icon name="hero-home-mini" />
-          <span>Home</span>
+<%= if FunWithFlags.enabled?(:next) do %>
+  <div class="flex min-h-screen flex-col bg-zinc-50 p-2">
+    <div class="flex items-center gap-4 p-2">
+      <div class="relative flex shrink-0">
+        <.link navigate="/" class="text-2xl font-black italic text-zinc-800">
+          GiTS
         </.link>
-        <.link navigate={~p"/accounts/#{@slug}/events"}>
-          <.icon name="hero-calendar-days-mini" />
+      </div>
+      <div class="self-stretch border-l"></div>
+      <div class="hidden grow justify-center gap-6 font-medium md:flex">
+        <div class="flex items-center gap-2 rounded-full border bg-white py-1 pr-4 pl-3 text-sm">
+          <.icon name="hero-rectangle-group-micro" />
+          <span>Overview</span>
+        </div>
+
+        <div class="flex items-center gap-2 rounded-full border py-1 pr-4 pl-3 text-sm text-zinc-500">
+          <.icon name="hero-calendar-days-micro" />
           <span>Events</span>
-        </.link>
-        <.link navigate={~p"/accounts/#{@slug}/team"}>
-          <.icon name="hero-user-group-mini" />
-          <span>Team</span>
-        </.link>
-      </div>
+        </div>
 
-      <%= if @context_options do %>
-        <span class="mt-4 truncate pl-2 text-xs font-medium text-zinc-500">
-          <%= @title %>
-        </span>
+        <div class="flex items-center gap-2 rounded-full border py-1 pr-4 pl-3 text-sm text-zinc-500">
+          <.icon name="hero-user-group-micro" />
+          <span>Team</span>
+        </div>
+      </div>
+    </div>
+    <div class="grow rounded-2xl bg-white p-2 py-8 shadow-md">content</div>
+  </div>
+<% else %>
+  <div class="h-dvh bg-zinc-50 lg:grid-cols-[theme(space.64)_1fr] lg:grid lg:grid">
+    <div
+      role="none"
+      class="bg-black/20 fixed inset-0 z-10 hidden transition-all"
+      id="backdrop"
+      phx-click={
+        JS.remove_class("translate-x-72", to: "#sidebar")
+        |> JS.add_class("hidden", to: "#backdrop")
+      }
+    >
+    </div>
+    <div
+      class="fixed inset-y-0 -left-72 z-20 w-72 p-2 transition-all lg:static lg:w-auto lg:p-2"
+      id="sidebar"
+    >
+      <div class="flex h-full flex-col rounded-xl bg-white p-2 shadow-sm lg:bg-transparent lg:shadow-none">
+        <div class="flex gap-2 pb-4">
+          <button
+            phx-click={
+              JS.remove_class("translate-x-72", to: "#sidebar")
+              |> JS.add_class("hidden", to: "#backdrop")
+            }
+            class="rounded-xl p-2 lg:hidden"
+          >
+            <.icon name="hero-x-mark-mini" />
+          </button>
+
+          <div class="relative flex shrink-0 grow pt-1 sm:p-0 lg:px-2">
+            <.link navigate="/" class="text-2xl font-black italic text-zinc-800">
+              GiTS
+            </.link>
+            <span class="text-[12px] leading-2 absolute -top-1 left-16 inline-flex items-center rounded-md px-1 font-medium text-yellow-800">
+              Beta
+            </span>
+          </div>
+        </div>
         <div
-          class="grid gap-2 pt-2 text-base font-medium *:flex *:items-center *:gap-3 *:rounded-lg *:p-2 *:text-zinc-500 hover:*:bg-zinc-50 lg:hover:*:bg-zinc-100"
+          class="flex items-center rounded-lg p-2 px-4 hover:bg-zinc-50 lg:hover:bg-zinc-100"
+          phx-hook="DropdownButton"
+          phx-click={JS.toggle(to: "#account_dropdown_options")}
+          phx-click-away={JS.hide(to: "#account_dropdown_options")}
+          id="account_dropdown"
+        >
+          <span class="grow font-medium"><%= @account.name %></span>
+          <.icon name="hero-chevron-down-mini" />
+          <div
+            id="account_dropdown_options"
+            class="absolute z-30 grid gap-1 rounded-xl border bg-white p-1 text-sm *:flex *:w-72 *:items-center *:gap-2 *:rounded-lg *:p-2 hover:*:bg-zinc-50"
+            style="display: none;"
+            data-dropdown
+          >
+            <.link :for={account <- @accounts} navigate={~p"/accounts/#{account.id}"}>
+              <img src="/images/placeholder.png" alt="" class="size-5 rounded-full object-cover " />
+              <span><%= account.name %></span>
+            </.link>
+            <.link class="text-zinc-700">
+              <.icon name="hero-plus-mini" />
+              <span>New organization...</span>
+            </.link>
+          </div>
+        </div>
+        <div
+          class="mt-4 grid gap-2 border-t pt-4 text-sm font-medium *:flex *:items-center *:gap-3 *:rounded-lg *:p-2 *:text-zinc-500 hover:*:bg-zinc-50 lg:hover:*:bg-zinc-100"
           phx-click={
             JS.remove_class("translate-x-72", to: "#sidebar")
             |> JS.add_class("hidden", to: "#backdrop")
           }
         >
-          <.link :for={option <- @context_options} navigate={option.to} class="text-sm">
-            <.icon name={option.icon} />
-            <span><%= option.label %></span>
+          <.link navigate={~p"/accounts/#{@slug}"}>
+            <.icon name="hero-home-mini" />
+            <span>Home</span>
+          </.link>
+          <.link navigate={~p"/accounts/#{@slug}/events"}>
+            <.icon name="hero-calendar-days-mini" />
+            <span>Events</span>
+          </.link>
+          <.link navigate={~p"/accounts/#{@slug}/team"}>
+            <.icon name="hero-user-group-mini" />
+            <span>Team</span>
           </.link>
         </div>
-      <% end %>
-      <div role="none" class="grow"></div>
-      <div
-        class="mt-4 grid gap-2 pt-4 text-base font-medium *:flex *:items-center *:gap-3 *:rounded-lg *:p-2 *:text-zinc-500 hover:*:bg-zinc-50 lg:hover:*:bg-zinc-100"
-        phx-click={
-          JS.remove_class("translate-x-72", to: "#sidebar")
-          |> JS.add_class("hidden", to: "#backdrop")
-        }
-      >
-        <.link navigate={~p"/accounts/#{@slug}/settings"}>
-          <.icon name="hero-cog-6-tooth-solid" />
-          <span>Settings</span>
-        </.link>
-      </div>
-      <div class="mt-4 hidden border-t pt-4 lg:block">
-        <div
-          id="user_dropdown"
-          class="flex items-center gap-4 rounded-2xl p-2 hover:bg-zinc-100"
-          phx-hook="DropdownButton"
-          phx-click={JS.toggle(to: "#user_dropdown_options")}
-          phx-click-away={JS.hide(to: "#user_dropdown_options")}
-        >
-          <img src="/images/placeholder.png" alt="" class="size-10 rounded-xl" />
-          <div class="grid grow text-sm">
-            <span class="text-sm font-medium"><%= @current_user.display_name %></span>
-            <span class="text-xs text-zinc-700"><%= @current_user.email %></span>
-          </div>
-          <.icon name="hero-chevron-up-mini" class="text-zinc-700" />
+
+        <%= if @context_options do %>
+          <span class="mt-4 truncate pl-2 text-xs font-medium text-zinc-500">
+            <%= @title %>
+          </span>
           <div
-            id="user_dropdown_options"
-            class="absolute z-30 grid gap-1 rounded-xl border bg-white p-1 shadow-lg *:flex *:w-52 *:items-center *:gap-2 *:rounded-lg *:p-2 hover:*:bg-zinc-50"
-            style="display: none;"
-            data-dropdown
+            class="grid gap-2 pt-2 text-base font-medium *:flex *:items-center *:gap-3 *:rounded-lg *:p-2 *:text-zinc-500 hover:*:bg-zinc-50 lg:hover:*:bg-zinc-100"
+            phx-click={
+              JS.remove_class("translate-x-72", to: "#sidebar")
+              |> JS.add_class("hidden", to: "#backdrop")
+            }
           >
-            <.link navigate="/sign-out">
-              <.icon name="hero-arrow-right-start-on-rectangle-mini" />
-              <span>Sign out</span>
+            <.link :for={option <- @context_options} navigate={option.to} class="text-sm">
+              <.icon name={option.icon} />
+              <span><%= option.label %></span>
             </.link>
+          </div>
+        <% end %>
+        <div role="none" class="grow"></div>
+        <div
+          class="mt-4 grid gap-2 pt-4 text-base font-medium *:flex *:items-center *:gap-3 *:rounded-lg *:p-2 *:text-zinc-500 hover:*:bg-zinc-50 lg:hover:*:bg-zinc-100"
+          phx-click={
+            JS.remove_class("translate-x-72", to: "#sidebar")
+            |> JS.add_class("hidden", to: "#backdrop")
+          }
+        >
+          <.link navigate={~p"/accounts/#{@slug}/settings"}>
+            <.icon name="hero-cog-6-tooth-solid" />
+            <span>Settings</span>
+          </.link>
+        </div>
+        <div class="mt-4 hidden border-t pt-4 lg:block">
+          <div
+            id="user_dropdown"
+            class="flex items-center gap-4 rounded-2xl p-2 hover:bg-zinc-100"
+            phx-hook="DropdownButton"
+            phx-click={JS.toggle(to: "#user_dropdown_options")}
+            phx-click-away={JS.hide(to: "#user_dropdown_options")}
+          >
+            <img src="/images/placeholder.png" alt="" class="size-10 rounded-xl" />
+            <div class="grid grow text-sm">
+              <span class="text-sm font-medium"><%= @current_user.display_name %></span>
+              <span class="text-xs text-zinc-700"><%= @current_user.email %></span>
+            </div>
+            <.icon name="hero-chevron-up-mini" class="text-zinc-700" />
+            <div
+              id="user_dropdown_options"
+              class="absolute z-30 grid gap-1 rounded-xl border bg-white p-1 shadow-lg *:flex *:w-52 *:items-center *:gap-2 *:rounded-lg *:p-2 hover:*:bg-zinc-50"
+              style="display: none;"
+              data-dropdown
+            >
+              <.link navigate="/sign-out">
+                <.icon name="hero-arrow-right-start-on-rectangle-mini" />
+                <span>Sign out</span>
+              </.link>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-  <div class="grid h-full overflow-y-auto lg:p-2">
-    <div class="bg-white shadow lg:rounded-lg">
-      <div class="flex items-center justify-between p-2 lg:hidden">
-        <button
-          class="flex rounded-xl p-2.5"
-          phx-click={
-            JS.add_class("translate-x-72", to: "#sidebar")
-            |> JS.remove_class("hidden", to: "#backdrop")
-          }
-        >
-          <.icon name="hero-bars-2-mini" />
-        </button>
-
-        <button
-          class="size-10 flex overflow-hidden p-0.5"
-          phx-hook="DropdownButton"
-          id="avatar_dropdown"
-          phx-click={JS.toggle(to: "#avatar_dropdown_options")}
-          phx-click-away={JS.hide(to: "#avatar_dropdown_options")}
-        >
-          <img
-            src="/images/placeholder.png"
-            alt="avatar"
-            class="h-full w-full rounded-xl object-cover"
-          />
-          <div
-            id="avatar_dropdown_options"
-            class="absolute z-30 grid gap-1 rounded-xl border bg-white p-1 shadow-lg *:flex *:w-52 *:items-center *:gap-2 *:rounded-lg *:p-2 hover:*:bg-zinc-50"
-            style="display: none;"
-            data-dropdown
+    <div class="grid h-full overflow-y-auto lg:p-2">
+      <div class="bg-white shadow lg:rounded-lg">
+        <div class="flex items-center justify-between p-2 lg:hidden">
+          <button
+            class="flex rounded-xl p-2.5"
+            phx-click={
+              JS.add_class("translate-x-72", to: "#sidebar")
+              |> JS.remove_class("hidden", to: "#backdrop")
+            }
           >
-            <.link navigate="/sign-out">
-              <.icon name="hero-arrow-right-start-on-rectangle-mini" />
-              <span>Sign out</span>
-            </.link>
-          </div>
-        </button>
-      </div>
+            <.icon name="hero-bars-2-mini" />
+          </button>
 
-      <div class="mx-auto max-w-screen-xl space-y-8 p-4 pt-6 lg:pt-12">
-        <%= @inner_content %>
+          <button
+            class="size-10 flex overflow-hidden p-0.5"
+            phx-hook="DropdownButton"
+            id="avatar_dropdown"
+            phx-click={JS.toggle(to: "#avatar_dropdown_options")}
+            phx-click-away={JS.hide(to: "#avatar_dropdown_options")}
+          >
+            <img
+              src="/images/placeholder.png"
+              alt="avatar"
+              class="h-full w-full rounded-xl object-cover"
+            />
+            <div
+              id="avatar_dropdown_options"
+              class="absolute z-30 grid gap-1 rounded-xl border bg-white p-1 shadow-lg *:flex *:w-52 *:items-center *:gap-2 *:rounded-lg *:p-2 hover:*:bg-zinc-50"
+              style="display: none;"
+              data-dropdown
+            >
+              <.link navigate="/sign-out">
+                <.icon name="hero-arrow-right-start-on-rectangle-mini" />
+                <span>Sign out</span>
+              </.link>
+            </div>
+          </button>
+        </div>
+
+        <div class="mx-auto max-w-screen-xl space-y-8 p-4 pt-6 lg:pt-12">
+          <%= @inner_content %>
+        </div>
       </div>
     </div>
   </div>
-</div>
+<% end %>

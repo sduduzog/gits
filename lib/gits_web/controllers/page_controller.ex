@@ -99,4 +99,8 @@ defmodule GitsWeb.PageController do
 
     conn |> render(:beta)
   end
+
+  def beta(conn, _) do
+    conn |> render(:beta)
+  end
 end
