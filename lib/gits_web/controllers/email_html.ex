@@ -12,13 +12,11 @@ defmodule GitsWeb.EmailHTML do
     #     base_url: Application.get_env(:gits, :base_url),
     #     url: "/foo"
     #   )
+    subject = "Complimentary ticket to The ZATechRadio 📻 Meet: Rooftop Edition"
 
     template =
-      EmailTemplates.TicketInvite.render(
-        title: "You're Invited to The ZATechRadio 📻 Meet: Rooftop Edition",
-        user_name: "Sdu",
-        sender: "Foo",
-        account_name: "GiTS",
+      Gits.EmailTemplates.TicketInvite.render(
+        title: subject,
         base_url: Application.get_env(:gits, :base_url),
         url: "/foo"
       )

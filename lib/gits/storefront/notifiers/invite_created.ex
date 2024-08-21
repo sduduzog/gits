@@ -10,7 +10,7 @@ defmodule Gits.Storefront.Notifiers.InviteCreated do
     |> Ash.load(customer: [:name, user: :email], ticket: [event: :account])
     |> case do
       {:ok, invite} ->
-        subject = "You're Invited. The ZATechRadio 📻 Meet: Rooftop Edition"
+        subject = "Complimentary ticket to The ZATechRadio 📻 Meet: Rooftop Edition"
 
         uri = url(~p"/ticket-invite/#{invite.id}")
 
