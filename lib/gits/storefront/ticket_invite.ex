@@ -41,6 +41,8 @@ defmodule Gits.Storefront.TicketInvite do
 
       change manage_relationship(:customer, type: :append)
       change manage_relationship(:ticket, type: :append)
+
+      notifiers [InviteCreated]
     end
 
     create :email_only do

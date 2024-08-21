@@ -54,6 +54,7 @@ defmodule GitsWeb.DashboardLive.TicketInvitesViaEmail do
   defp update_invites(socket, actor) do
     TicketInvite
     |> Ash.Query.for_read(:read, %{}, actor: actor)
+    |> Ash.Query.load(customer: :user)
     |> Ash.read()
     |> case do
       {:ok, list} -> socket |> assign(:invites, list)
@@ -73,7 +74,7 @@ defmodule GitsWeb.DashboardLive.TicketInvitesViaEmail do
     </div>
 
     <div :for={e <- @invites}>
-      <span><%= e.id %></span>
+      <span><%= e.receipient_email || e.customer.user.email %></span>
       <span><%= e.state %></span>
     </div>
     """
