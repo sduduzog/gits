@@ -91,6 +91,7 @@ defmodule GitsWeb.DashboardLive.Attendees do
       _ ->
         socket |> assign(:attendees, [])
     end
+    |> assign(:scan_results, :default)
     |> noreply()
   end
 
