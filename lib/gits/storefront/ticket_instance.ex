@@ -7,10 +7,9 @@ defmodule Gits.Storefront.TicketInstance do
     extensions: [AshStateMachine],
     domain: Gits.Storefront
 
-  alias Gits.Storefront.Basket
+  alias Gits.Admissions.Attendee
   alias Gits.Storefront.Calculations.{HolderIdFromToken, QrCode}
-  alias Gits.Storefront.Customer
-  alias Gits.Storefront.Ticket
+  alias Gits.Storefront.{Basket, Customer, Ticket}
 
   postgres do
     table "ticket_instances"
@@ -23,6 +22,7 @@ defmodule Gits.Storefront.TicketInstance do
 
     transitions do
       transition :prepare_for_use, from: :reserved, to: :ready_for_use
+      transition :use, from: :ready_for_use, to: :used
       transition :cancel, from: [:reserved, :locked_for_checkout], to: :cancelled
       transition :reclaim, from: [:reserved, :locked_for_checkout], to: :reclaimed
     end
@@ -100,6 +100,30 @@ defmodule Gits.Storefront.TicketInstance do
       change transition_state(:ready_for_use)
     end
 
+    update :use do
+      require_atomic? false
+
+      argument :user, :map do
+        allow_nil? false
+      end
+
+      argument :event, :map do
+        allow_nil? false
+      end
+
+      change fn changeset, %{actor: actor} ->
+        event = changeset |> Ash.Changeset.get_argument(:event)
+        user = changeset |> Ash.Changeset.get_argument(:user)
+
+        changeset
+        |> Ash.Changeset.manage_relationship(:attendee, %{user: user, event: event},
+          type: :create
+        )
+      end
+
+      change transition_state(:used)
+    end
+
     update :reclaim do
       require_atomic? false
 
@@ -139,6 +163,10 @@ defmodule Gits.Storefront.TicketInstance do
       authorize_if always()
     end
 
+    policy action(:use) do
+      authorize_if expr(ticket.event.account.members.user.id == ^actor(:id))
+    end
+
     policy action(:abandon) do
       authorize_if always()
     end
@@ -160,6 +188,11 @@ defmodule Gits.Storefront.TicketInstance do
     belongs_to :ticket, Ticket
     belongs_to :customer, Customer
     belongs_to :basket, Basket
+
+    has_one :attendee, Attendee do
+      domain Gits.Admissions
+      destination_attribute :instance_id
+    end
   end
 
   calculations do

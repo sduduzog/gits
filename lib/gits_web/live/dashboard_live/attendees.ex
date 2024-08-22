@@ -25,16 +25,15 @@ defmodule GitsWeb.DashboardLive.Attendees do
       customer
       |> Ash.load!([:user], actor: actor)
 
-    Attendee
-    |> Ash.Changeset.for_create(:admit, %{
-      user: customer.user,
-      instance: instance,
-      event: event
-    })
-    |> Ash.create(actor: actor)
+    instance
+    |> Ash.Changeset.for_update(:use, %{user: customer.user, event: event}, actor: actor)
+    |> Ash.update()
     |> case do
-      {:ok, _} -> :ok
-      {:error, _} -> :exists
+      {:ok, _} ->
+        :ok
+
+      {:error, _} ->
+        :exists
     end
   end
 

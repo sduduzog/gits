@@ -5,6 +5,36 @@ defmodule Gits.Admissions.Attendee do
     authorizers: [Ash.Policy.Authorizer],
     domain: Gits.Admissions
 
+  postgres do
+    table "attendees"
+    repo Gits.Repo
+  end
+
+  actions do
+    defaults [:read, :destroy, update: :*]
+
+    create :admit do
+      primary? true
+
+      argument :user, :map do
+        allow_nil? false
+      end
+
+      argument :event, :map do
+        allow_nil? false
+      end
+
+      change manage_relationship(:user, type: :append)
+      change manage_relationship(:event, type: :append)
+    end
+  end
+
+  policies do
+    policy always() do
+      authorize_if actor_present()
+    end
+  end
+
   attributes do
     uuid_primary_key :id
 
@@ -36,38 +66,5 @@ defmodule Gits.Admissions.Attendee do
 
   identities do
     identity :admission_identity, [:user_id, :event_id, :instance_id]
-  end
-
-  actions do
-    defaults [:read, :destroy, update: :*]
-
-    create :admit do
-      argument :user, :map do
-        allow_nil? false
-      end
-
-      argument :event, :map do
-        allow_nil? false
-      end
-
-      argument :instance, :map do
-        allow_nil? false
-      end
-
-      change manage_relationship(:user, type: :append)
-      change manage_relationship(:event, type: :append)
-      change manage_relationship(:instance, type: :append)
-    end
-  end
-
-  policies do
-    policy always() do
-      authorize_if actor_present()
-    end
-  end
-
-  postgres do
-    table "attendees"
-    repo Gits.Repo
   end
 end
