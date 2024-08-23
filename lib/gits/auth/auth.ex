@@ -4,5 +4,6 @@ defmodule Gits.Auth do
   resources do
     resource Gits.Auth.User
     resource Gits.Auth.Token
+    resource Gits.Auth.UserIdentity
   end
 end
