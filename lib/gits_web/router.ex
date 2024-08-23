@@ -56,7 +56,6 @@ defmodule GitsWeb.Router do
       on_mount: {GitsWeb.LiveUserAuth, :live_user_optional} do
       live "/events/:id", EventLive.Feature
       live "/ticket-invite/:invite_id", EventLive.Invite
-      live "/admin/support", GitsWeb.SupportLive
     end
 
     ash_authentication_live_session :authentication_required,
@@ -88,6 +87,9 @@ defmodule GitsWeb.Router do
       live "/accounts/:slug/team/invites/:invite_id", DashboardLive.TeamInvite
       live "/accounts/:slug/settings", DashboardLive.Settings
       live "/accounts/:slug/settings/paystack", DashboardLive.SetupPaystack
+      live "/accounts/:slug/test", DashboardLive.Dashboard
+
+      live "/portal/support", GitsWeb.SupportLive
     end
 
     ash_authentication_live_session :authentication_forbidden,
@@ -117,11 +119,8 @@ defmodule GitsWeb.Router do
       ecto_psql_extras_options: [long_running_queries: [threshold: "20 milliseconds"]],
       metrics: GitsWeb.Telemetry,
       additional_pages: [oban: Oban.LiveDashboard]
-  end
 
-  scope "/admin/flags" do
-    pipe_through [:browser, :office]
-    forward "/", FunWithFlags.UI.Router, namespace: "admin/flags"
+    forward "/flags", FunWithFlags.UI.Router, namespace: "admin/flags"
   end
 
   if Application.compile_env(:gits, :dev_routes) do

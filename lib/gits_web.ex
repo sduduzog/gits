@@ -58,6 +58,7 @@ defmodule GitsWeb do
 
       unquote(html_helpers())
 
+      def ok(socket, layout), do: {:ok, socket, layout: {GitsWeb.Layouts, layout}}
       def ok(socket), do: {:ok, socket}
       def noreply(socket), do: {:noreply, socket}
     end
@@ -86,6 +87,7 @@ defmodule GitsWeb do
         socket =
           socket
           |> assign(:slug, params["slug"])
+          |> assign(:current_route, false)
           |> assign(:context_options, nil)
           |> assign(:accounts, [])
           |> assign(:account, member.account)

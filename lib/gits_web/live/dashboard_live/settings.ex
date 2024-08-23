@@ -14,6 +14,7 @@ defmodule GitsWeb.DashboardLive.Settings do
     form = account |> Form.for_update(:update)
 
     socket
+    |> assign(:current_route, :Settings)
     |> assign(:slug, unsigned_params["slug"])
     |> assign(:title, "Settings")
     |> assign(:account, account)
