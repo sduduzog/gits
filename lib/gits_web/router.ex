@@ -89,7 +89,11 @@ defmodule GitsWeb.Router do
       live "/accounts/:slug/settings/paystack", DashboardLive.SetupPaystack
       live "/accounts/:slug/test", DashboardLive.Dashboard
 
-      live "/portal/support", GitsWeb.SupportLive
+      live "/portal/support", SupportLive
+      live "/portal/support/users", SupportLive, :users
+      live "/portal/support/jobs", SupportLive, :jobs
+      live "/portal/support/accounts", SupportLive, :accounts
+      live "/portal/support/events", SupportLive, :events
     end
 
     ash_authentication_live_session :authentication_forbidden,

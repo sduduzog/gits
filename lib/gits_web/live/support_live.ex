@@ -1,50 +1,48 @@
 defmodule GitsWeb.SupportLive do
   require Ash.Query
   require Logger
-  alias Gits.Storefront.TicketInvite
+  alias Gits.Auth.User
   use GitsWeb, :live_view
 
   def mount(_params, _session, socket) do
-    {:ok, socket, layout: false}
+    socket
+    |> assign(:options, [%{href: ~p"/portal/support/users", label: "Users"}])
+    |> ok(false)
+  end
+
+  def handle_params(_unsigned_params, _uri, %{assigns: %{live_action: :users}} = socket) do
+    users =
+      User
+      |> Ash.Query.for_read(:read, %{}, actor: socket.assigns.current_user)
+      |> Ash.read!()
+
+    socket
+    |> assign(:users, users)
+    |> noreply()
   end
 
   def handle_params(_unsigned_params, _uri, socket) do
     socket |> noreply()
   end
 
-  def handle_event("send_invites", _unsigned_params, socket) do
-    TicketInvite
-    |> Ash.Query.for_read(:read)
-    |> Ash.Query.filter(state == :created)
-    |> Ash.Query.load(customer: [:name, user: :email], ticket: [event: :account])
-    |> Ash.read!()
-    |> Enum.each(fn invite ->
-      subject = "About that link. The ZATechRadio 📻 Meet: Rooftop Edition"
-
-      uri = url(~p"/ticket-invite/#{invite.id}")
-
-      body =
-        Gits.EmailTemplates.TicketInvite.render(
-          title: subject,
-          user_name: invite.customer.name,
-          base_url: Application.get_env(:gits, :base_url),
-          url: uri
-        )
-
-      %{to: invite.customer.user.email, subject: subject, body: body}
-      |> Gits.Workers.DeliverEmail.new()
-      |> Oban.insert()
-    end)
-
-    socket |> noreply()
+  def render(%{live_action: :users} = assigns) do
+    ~H"""
+    <div>Users</div>
+    <div>
+      <div :for={user <- @users}><%= user.display_name %></div>
+    </div>
+    """
   end
 
   def render(assigns) do
     ~H"""
-    <div class="p-20">
-      <button class="rounded-lg border px-4 py-3 font-medium" phx-click="send_invites">
-        Send invites
-      </button>
+    <div class="mx-auto max-w-screen-md space-y-16 p-4">
+      <h1>Support</h1>
+      <div class="flex flex-wrap gap-8">
+        <.link :for={option <- @options} navigate={option.href} class="border p-8">
+          <%= option.label %>
+        </.link>
+      </div>
     </div>
     """
   end

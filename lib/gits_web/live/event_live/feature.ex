@@ -7,6 +7,30 @@ defmodule GitsWeb.EventLive.Feature do
 
   alias Gits.Storefront.{Basket, Customer, Event, Ticket}
 
+  def ticket_dates_from_event(%Event{local_starts_at: starts_at, local_ends_at: ends_at}) do
+    "#{starts_at |> format_datetime()} - #{ends_at |> format_end_date(starts_at)}"
+  end
+
+  defp format_time(starts_at) do
+    starts_at |> Timex.format!("%I:%M %p", :strftime)
+  end
+
+  defp format_datetime(starts_at) do
+    starts_at |> Timex.format!("%e %b, %Y, %I:%M %p", :strftime)
+  end
+
+  defp format_end_date(ends_at, starts_at) do
+    starts_at
+    |> NaiveDateTime.diff(ends_at, :day)
+    |> case do
+      0 ->
+        ends_at |> format_time()
+
+      _ ->
+        ends_at |> format_datetime()
+    end
+  end
+
   def mount(params, _session, socket) do
     user = socket.assigns.current_user
 
@@ -285,6 +309,7 @@ defmodule GitsWeb.EventLive.Feature do
             Get Tickets
           </button>
         </div>
+
         <%= if not is_nil(@event.address) do %>
           <div class="flex gap-2 rounded-xl border p-4">
             <.icon name="hero-map-pin-micro" class="shrink-0 mt-0.5" />
@@ -299,7 +324,10 @@ defmodule GitsWeb.EventLive.Feature do
           </div>
         <% end %>
         <div class="mt-4 space-y-2 rounded-2xl bg-white text-sm">
-          <h2 class="font-medium text-zinc-500">About this event</h2>
+          <div class="flex items-center justify-between">
+            <h2 class="font-medium text-zinc-500">About this event</h2>
+            <span class="text-sm text-zinc-500"><%= ticket_dates_from_event(@event) %></span>
+          </div>
           <p class="max-w-screen-md whitespace-pre-line"><%= @event.description %></p>
         </div>
       </div>

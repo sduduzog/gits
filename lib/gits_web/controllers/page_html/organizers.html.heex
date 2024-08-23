@@ -1,6 +1,9 @@
-<h1 class="px-4 text-3xl">Organizers</h1>
+<h1 class="px-4 text-4xl">Organizers</h1>
 <div class="flex w-full flex-wrap items-start gap-8 px-4 *:flex *:flex-col">
-  <.link navigate="/accounts/new" class="block h-40 w-72 shrink-0 space-y-4 rounded-xl border p-6">
+  <.link
+    navigate="/accounts/new"
+    class="block h-48 w-80 shrink-0 space-y-4 rounded-xl border p-10"
+  >
     <span class="font-semibold">Create a new account</span>
     <span class="grow text-sm text-zinc-500">
       For your organization to manage events, invite team members and more
@@ -8,7 +11,7 @@
   </.link>
   <.link
     navigate={~p"/sign-in?return_to=/organizers"}
-    class="h-40 w-72 shrink-0 space-y-4 rounded-xl border p-6 *:block"
+    class="h-48 w-80 shrink-0 space-y-4 rounded-xl border p-10 *:block"
   >
     <span class="font-semibold">Sign in to see more options</span>
     <span class="grow text-sm text-zinc-500">
