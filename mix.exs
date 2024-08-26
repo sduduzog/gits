@@ -32,6 +32,7 @@ defmodule Gits.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:ash_slug, "~> 0.1"},
       {:nimble_totp, "~> 1.0"},
       {:nimble_publisher, "~> 1.0"},
       {:ash_paper_trail, "~> 0.1"},

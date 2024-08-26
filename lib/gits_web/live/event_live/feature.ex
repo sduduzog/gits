@@ -252,32 +252,9 @@ defmodule GitsWeb.EventLive.Feature do
 
   def render(assigns) do
     ~H"""
-    <div
-      :if={is_nil(@event.published_at)}
-      class="mx-auto w-full max-w-screen-lg rounded-md bg-blue-50 p-4"
-    >
-      <div class="flex">
-        <div class="flex-shrink-0">
-          <.icon class="text-blue-400 -mt-1" name="hero-information-circle-mini" />
-        </div>
-        <div class="ml-3 flex-1 md:flex md:justify-between">
-          <p class="text-sm text-blue-700">
-            This event is not published
-          </p>
-          <p :if={false} class="mt-3 text-sm md:mt-0 md:ml-6">
-            <a href="#" class="whitespace-nowrap font-medium text-blue-700 hover:text-blue-600">
-              Details <span aria-hidden="true"> &rarr;</span>
-            </a>
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <div class="min-h-96 mx-auto w-full max-w-2xl items-start gap-4 space-y-4 p-2 md:gap-12 md:pt-20 lg:flex lg:max-w-screen-lg lg:space-y-0 lg:p-0">
-      <div class="grid gap-2">
-        <div class="aspect-[3/2] relative mx-auto shrink-0 overflow-hidden rounded-2xl md:w-96 md:rounded-3xl">
-          <.floating_event_date day={@starts_at_day} month={@starts_at_month} />
-
+    <%= if FunWithFlags.enabled?(:beta, for: @current_user) do %>
+      <div class="grid gap-4 md:gap-12 lg:flex lg:items-start lg:gap-16">
+        <div class="aspect-[3/2] mx-auto shrink-0 md:w-96 md:overflow-hidden md:rounded-2xl">
           <img
             loading="eager"
             src={@feature_image}
@@ -285,54 +262,122 @@ defmodule GitsWeb.EventLive.Feature do
             class="size-full object-cover transition-transform duration-300 hover:scale-110"
           />
         </div>
-      </div>
-      <div class="grid grow">
-        <h1 class="line-clamp-2 text-2xl font-semibold">
-          <%= @event.name %>
-        </h1>
-        <div class="flex justify-between text-sm text-zinc-500">
-          <span>
-            by <%= @event.host %>
-          </span>
-        </div>
-
-        <div class="flex items-center py-6">
-          <div class="grow">
-            <span class=" font-medium text-zinc-700">
+        <div class="space-y-4 p-2 md:mx-auto md:w-full md:max-w-2xl md:space-y-6 md:p-0">
+          <div class="flex flex-col gap-2 md:h-[5.25rem]">
+            <h1 class="line-clamp-2 text-lg font-semibold leading-tight md:text-xl">
+              <%= @event.name %>
+            </h1>
+            <div class="flex items-end justify-between leading-tight">
+              <span class="text-sm text-zinc-500">Hosted by <%= @event.host %></span>
+            </div>
+          </div>
+          <div class="flex items-center justify-between gap-4 pt-1">
+            <span class="text-xl font-medium text-zinc-800">
               <%= resolve_price_range_label(@event) %>
             </span>
-          </div>
-          <button
-            phx-click="get_tickets"
-            class="rounded-xl bg-zinc-800 p-3 px-4 font-medium text-white"
-          >
-            Get Tickets
-          </button>
-        </div>
 
-        <%= if not is_nil(@event.address) do %>
-          <div class="flex gap-2 rounded-xl border p-4">
-            <.icon name="hero-map-pin-micro" class="shrink-0 mt-0.5" />
-            <.link
-              class="flex grow flex-wrap items-center justify-between gap-x-1 gap-y-2 text-sm text-zinc-500"
-              target="_blank"
-              href={@event.address.google_maps_uri}
+            <button
+              phx-click="get_tickets"
+              class="rounded-lg bg-zinc-800 px-4 py-3 text-sm font-medium text-white"
             >
-              <span><%= @event.address.display_name %> &bull; <%= @event.address.city %></span>
-              <span class="text-xs text-zinc-400">Click for directions</span>
-            </.link>
+              Get Tickets
+            </button>
           </div>
-        <% end %>
-        <div class="mt-4 space-y-2 rounded-2xl bg-white text-sm">
-          <div class="flex items-center justify-between">
-            <h2 class="font-medium text-zinc-500">About this event</h2>
-            <span class="text-sm text-zinc-500"><%= ticket_dates_from_event(@event) %></span>
+
+          <div class="space-y-4 rounded-xl border p-2">
+            <div class="flex items-center gap-2 text-zinc-500">
+              <.icon name="hero-calendar-days-micro" class="shrink-0" />
+              <span class="text-sm text-zinc-500"><%= ticket_dates_from_event(@event) %></span>
+            </div>
+            <div class="flex items-center gap-2 text-zinc-500">
+              <.icon name="hero-map-pin-micro" class="shrink-0" />
+              <span class="text-sm"><%= @event.address.display_name %></span>
+            </div>
           </div>
-          <p class="max-w-screen-md whitespace-pre-line"><%= @event.description %></p>
         </div>
       </div>
-    </div>
+    <% else %>
+      <div
+        :if={is_nil(@event.published_at)}
+        class="mx-auto w-full max-w-screen-lg rounded-md bg-blue-50 p-4"
+      >
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <.icon class="text-blue-400 -mt-1" name="hero-information-circle-mini" />
+          </div>
+          <div class="ml-3 flex-1 md:flex md:justify-between">
+            <p class="text-sm text-blue-700">
+              This event is not published
+            </p>
+            <p :if={false} class="mt-3 text-sm md:mt-0 md:ml-6">
+              <a href="#" class="whitespace-nowrap font-medium text-blue-700 hover:text-blue-600">
+                Details <span aria-hidden="true"> &rarr;</span>
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
 
+      <div class="min-h-96 mx-auto w-full max-w-2xl items-start gap-4 space-y-4 p-2 md:gap-12 md:pt-20 lg:flex lg:max-w-screen-lg lg:space-y-0 lg:p-0">
+        <div class="grid gap-2">
+          <div class="aspect-[3/2] relative mx-auto shrink-0 overflow-hidden rounded-2xl md:w-96 md:rounded-3xl">
+            <.floating_event_date day={@starts_at_day} month={@starts_at_month} />
+
+            <img
+              loading="eager"
+              src={@feature_image}
+              alt="Event's featured image"
+              class="size-full object-cover transition-transform duration-300 hover:scale-110"
+            />
+          </div>
+        </div>
+        <div class="grid grow">
+          <h1 class="line-clamp-2 text-2xl font-semibold">
+            <%= @event.name %>
+          </h1>
+          <div class="flex justify-between text-sm text-zinc-500">
+            <span>
+              by <%= @event.host %>
+            </span>
+          </div>
+
+          <div class="flex items-center py-6">
+            <div class="grow">
+              <span class=" font-medium text-zinc-700">
+                <%= resolve_price_range_label(@event) %>
+              </span>
+            </div>
+            <button
+              phx-click="get_tickets"
+              class="rounded-xl bg-zinc-800 p-3 px-4 font-medium text-white"
+            >
+              Get Tickets
+            </button>
+          </div>
+
+          <%= if not is_nil(@event.address) do %>
+            <div class="flex gap-2 rounded-xl border p-4">
+              <.icon name="hero-map-pin-micro" class="shrink-0 mt-0.5" />
+              <.link
+                class="flex grow flex-wrap items-center justify-between gap-x-1 gap-y-2 text-sm text-zinc-500"
+                target="_blank"
+                href={@event.address.google_maps_uri}
+              >
+                <span><%= @event.address.display_name %> &bull; <%= @event.address.city %></span>
+                <span class="text-xs text-zinc-400">Click for directions</span>
+              </.link>
+            </div>
+          <% end %>
+          <div class="mt-4 space-y-2 rounded-2xl bg-white text-sm">
+            <div class="flex items-center justify-between">
+              <h2 class="font-medium text-zinc-500">About this event</h2>
+              <span class="text-sm text-zinc-500"><%= ticket_dates_from_event(@event) %></span>
+            </div>
+            <p class="max-w-screen-md whitespace-pre-line"><%= @event.description %></p>
+          </div>
+        </div>
+      </div>
+    <% end %>
     <.live_component
       :if={not is_nil(@basket)}
       id={@basket.id}

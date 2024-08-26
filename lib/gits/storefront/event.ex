@@ -5,7 +5,7 @@ defmodule Gits.Storefront.Event do
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
-    extensions: [AshArchival.Resource],
+    extensions: [AshArchival.Resource, AshSlug],
     authorizers: [Ash.Policy.Authorizer],
     domain: Gits.Storefront
 
@@ -76,6 +76,8 @@ defmodule Gits.Storefront.Event do
 
       change {Gits.Storefront.Changes.SetLocalTimezone,
               attribute: :ends_at, input: :local_ends_at}
+
+      change slugify(:name, into: :slug)
     end
 
     update :publish do
@@ -258,6 +260,7 @@ defmodule Gits.Storefront.Event do
   attributes do
     integer_primary_key :id
     attribute :name, :string, allow_nil?: false, public?: true
+    attribute :slug, :string, public?: true
     attribute :description, :string, allow_nil?: false, public?: true
     attribute :starts_at, :datetime, allow_nil?: false, public?: true
     attribute :ends_at, :datetime, allow_nil?: false, public?: true

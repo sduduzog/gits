@@ -17,7 +17,7 @@ defmodule Gits.Currency do
 
       String.contains?(input, ".") ->
         [whole_number | fraction_part] = input |> String.split(".")
-        Enum.join([whole_number |> format(), fraction_part], ",")
+        Enum.join([whole_number |> format(), fraction_part], ".")
 
       String.length(input) > 3 ->
         length = String.length(input)

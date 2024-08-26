@@ -1,42 +1,13 @@
 defmodule Gits.Dashboard.Account do
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
+    extensions: [AshSlug],
     authorizers: [Ash.Policy.Authorizer],
     domain: Gits.Dashboard
 
-  attributes do
-    uuid_primary_key :id
-    attribute :name, :string, allow_nil?: false, public?: true
-    attribute :paystack_subaccount_code, :string, public?: true
-
-    attribute :payment_method, :atom do
-      public? true
-      constraints one_of: [:paystack, :payfast]
-    end
-
-    create_timestamp :created_at
-    update_timestamp :updated_at
-  end
-
-  relationships do
-    has_many :members, Gits.Dashboard.Member
-
-    has_many :invites, Gits.Dashboard.Invite
-
-    has_many :events, Gits.Storefront.Event do
-      domain Gits.Storefront
-    end
-  end
-
-  calculations do
-    calculate :paystack_subaccount, :map, Gits.Dashboard.Calculations.PaystackSubaccount
-    calculate :paystack_ready, :boolean, expr(not is_nil(paystack_subaccount_code))
-    calculate :payfast_ready, :boolean, expr(false)
-    calculate :payments_ready, :boolean, expr(paystack_ready)
-    calculate :no_payment_method, :boolean, expr(payments_ready == false)
-    calculate :first_event_created, :boolean, expr(count(events) > 0)
-    calculate :no_event_yet, :boolean, expr(count(events) == 0)
-    calculate :no_invites_yet, :boolean, expr(count(invites) == 0)
+  postgres do
+    table "accounts"
+    repo Gits.Repo
   end
 
   actions do
@@ -83,6 +54,7 @@ defmodule Gits.Dashboard.Account do
 
     update :update do
       accept [:name]
+      change slugify(:name, into: :slug)
     end
 
     update :update_paystack_account do
@@ -102,8 +74,39 @@ defmodule Gits.Dashboard.Account do
     end
   end
 
-  postgres do
-    table "accounts"
-    repo Gits.Repo
+  attributes do
+    uuid_primary_key :id
+    attribute :name, :string, allow_nil?: false, public?: true
+    attribute :slug, :string, public?: true
+    attribute :paystack_subaccount_code, :string, public?: true
+
+    attribute :payment_method, :atom do
+      public? true
+      constraints one_of: [:paystack, :payfast]
+    end
+
+    create_timestamp :created_at
+    update_timestamp :updated_at
+  end
+
+  relationships do
+    has_many :members, Gits.Dashboard.Member
+
+    has_many :invites, Gits.Dashboard.Invite
+
+    has_many :events, Gits.Storefront.Event do
+      domain Gits.Storefront
+    end
+  end
+
+  calculations do
+    calculate :paystack_subaccount, :map, Gits.Dashboard.Calculations.PaystackSubaccount
+    calculate :paystack_ready, :boolean, expr(not is_nil(paystack_subaccount_code))
+    calculate :payfast_ready, :boolean, expr(false)
+    calculate :payments_ready, :boolean, expr(paystack_ready)
+    calculate :no_payment_method, :boolean, expr(payments_ready == false)
+    calculate :first_event_created, :boolean, expr(count(events) > 0)
+    calculate :no_event_yet, :boolean, expr(count(events) == 0)
+    calculate :no_invites_yet, :boolean, expr(count(invites) == 0)
   end
 end
