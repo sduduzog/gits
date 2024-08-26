@@ -296,6 +296,10 @@ defmodule GitsWeb.EventLive.Feature do
           </div>
         </div>
       </div>
+      <div class="mx-auto mt-4 space-y-2 rounded-2xl bg-white p-2 text-sm md:mt-8 md:max-w-2xl md:p-0 lg:mx-0">
+        <h2 class="font-medium text-zinc-500">About this event</h2>
+        <p class="max-w-screen-md whitespace-pre-line"><%= @event.description %></p>
+      </div>
     <% else %>
       <div
         :if={is_nil(@event.published_at)}
