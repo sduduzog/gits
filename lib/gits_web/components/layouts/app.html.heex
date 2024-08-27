@@ -30,24 +30,25 @@
     }
   ] %>
   <div class="grid-rows-[1fr_auto] grid h-screen">
-    <div class="p-2 dark:bg-zinc-900 dark:text-zinc-50">
+    <div class="dark:bg-zinc-900 dark:text-zinc-50">
       <%= @inner_content %>
     </div>
-    <div class="sticky bottom-0 flex w-full border-t bg-white p-1.5 dark:border-t-zinc-700 dark:bg-zinc-900">
-      <.link
-        :for={nav <- navigation}
-        navigate={nav.href}
-        class={[
-          "grid grow max-w-40 place-items-center rounded-lg p-2.5",
-          if(nav.current,
-            do: "text-zinc-800 bg-zinc-100 dark:text-zinc-200 dark:bg-zinc-800",
-            else: "text-zinc-400"
-          )
-        ]}
-      >
-        <.icon name={if(nav.current, do: nav.icon_active, else: nav.icon)} />
-        <span class="sr-only"><%= nav.label %></span>
-      </.link>
+    <div class="sticky bottom-0 flex w-full justify-evenly border-t bg-white p-1.5 dark:border-t-zinc-700 dark:bg-zinc-900">
+      <div :for={nav <- navigation} class="w-full grow">
+        <.link
+          navigate={nav.href}
+          class={[
+            "grid mx-auto max-w-14 place-items-center rounded-lg p-2.5",
+            if(nav.current,
+              do: "text-zinc-800 bg-zinc-100 dark:text-zinc-200 dark:bg-zinc-800",
+              else: "text-zinc-400"
+            )
+          ]}
+        >
+          <.icon name={if(nav.current, do: nav.icon_active, else: nav.icon)} />
+          <span class="sr-only"><%= nav.label %></span>
+        </.link>
+      </div>
     </div>
   </div>
 <% else %>
