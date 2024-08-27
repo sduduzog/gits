@@ -16,7 +16,7 @@ defmodule GitsWeb.EventLive.Feature do
   end
 
   defp format_datetime(starts_at) do
-    starts_at |> Timex.format!("%e %b, %Y, %I:%M %p", :strftime)
+    starts_at |> Timex.format!("%A %e %b, %I:%M%p", :strftime)
   end
 
   defp format_end_date(ends_at, starts_at) do
@@ -253,7 +253,7 @@ defmodule GitsWeb.EventLive.Feature do
   def render(assigns) do
     ~H"""
     <%= if FunWithFlags.enabled?(:beta, for: @current_user) do %>
-      <div class="grid gap-4 md:gap-12 lg:flex lg:items-start lg:gap-16">
+      <div class="grid gap-1 md:gap-12 lg:flex">
         <div class="aspect-[3/2] mx-auto shrink-0 md:w-96 md:overflow-hidden md:rounded-2xl">
           <img
             loading="eager"
@@ -262,41 +262,45 @@ defmodule GitsWeb.EventLive.Feature do
             class="size-full object-cover transition-transform duration-300 hover:scale-110"
           />
         </div>
-        <div class="space-y-4 p-2 md:mx-auto md:w-full md:max-w-2xl md:space-y-6 md:p-0">
-          <div class="flex flex-col gap-2 md:h-[5.25rem]">
-            <h1 class="line-clamp-2 text-lg font-semibold leading-tight md:text-xl">
-              <%= @event.name %>
-            </h1>
-            <div class="flex items-end justify-between leading-tight">
-              <span class="text-sm text-zinc-500">Hosted by <%= @event.host %></span>
+        <div class="space-y-4 p-2 md:mx-auto md:w-full md:max-w-3xl md:space-y-8 md:p-0">
+          <h1 class="line-clamp-2 text-2xl font-semibold leading-tight">
+            <%= @event.name %>
+          </h1>
+          <div class="flex gap-3 text-zinc-500">
+            <.icon name="hero-calendar-days-mini" class="shrink-0 mt-1" />
+            <span class="text-lg text-zinc-800"><%= ticket_dates_from_event(@event) %></span>
+          </div>
+          <div class="flex items-start gap-3 text-zinc-500">
+            <.icon name="hero-map-pin-mini" class="shrink-0 mt-1" />
+            <div class="grid text-lg">
+              <span class="text-zinc-800"><%= @event.address.display_name %></span>
+              <span class="text-xs"><%= @event.address.short_format_address %></span>
             </div>
           </div>
-          <div class="flex items-center justify-between gap-4 pt-1">
-            <span class="text-xl font-medium text-zinc-800">
-              <%= resolve_price_range_label(@event) %>
-            </span>
-
-            <button
-              phx-click="get_tickets"
-              class="rounded-lg bg-zinc-800 px-4 py-3 text-sm font-medium text-white"
-            >
-              Get Tickets
-            </button>
-          </div>
-
-          <div class="space-y-4 rounded-xl border p-2">
-            <div class="flex items-center gap-2 text-zinc-500">
-              <.icon name="hero-calendar-days-micro" class="shrink-0" />
-              <span class="text-sm text-zinc-500"><%= ticket_dates_from_event(@event) %></span>
-            </div>
-            <div class="flex items-center gap-2 text-zinc-500">
-              <.icon name="hero-map-pin-micro" class="shrink-0" />
-              <span class="text-sm"><%= @event.address.display_name %></span>
-            </div>
+          <div class="flex gap-3 text-zinc-500">
+            <.icon name="hero-ticket-mini" class="shrink-0 mt-1" />
+            <span class="text-lg text-zinc-800"><%= resolve_price_range_label(@event) %></span>
           </div>
         </div>
       </div>
-      <div class="mx-auto mt-4 space-y-2 rounded-2xl bg-white p-2 text-sm md:mt-8 md:max-w-2xl md:p-0 lg:mx-0">
+      <div class="flex p-2 py-4 md:px-0 md:py-8">
+        <span class="rounded-xl border px-2 py-1 text-xs font-medium text-zinc-800">
+          Hosted by <%= @event.host %>
+        </span>
+      </div>
+      <div class="flex items-center justify-between p-2 md:justify-end md:gap-8">
+        <div class="flex items-center">
+          <span class="text-sm">You have 2 tickets</span>
+          <span class="px-2 py-1 text-sm font-medium underline">view</span>
+        </div>
+        <button
+          class="max-w-40 w-full rounded-lg bg-zinc-800 px-4 py-3 text-sm font-medium text-white active:bg-zinc-700"
+          phx-click="get_tickets"
+        >
+          Get Tickets
+        </button>
+      </div>
+      <div class="mx-auto space-y-2 rounded-2xl bg-white p-2 text-sm md:max-w-3xl md:p-0 lg:mx-0">
         <h2 class="font-medium text-zinc-500">About this event</h2>
         <p class="max-w-screen-md whitespace-pre-line"><%= @event.description %></p>
       </div>
@@ -396,7 +400,7 @@ defmodule GitsWeb.EventLive.Feature do
     if Decimal.eq?(price, 0) do
       "FREE"
     else
-      "R #{price |> Currency.format()}"
+      "R#{price |> Currency.format()}"
     end
   end
 
@@ -404,7 +408,7 @@ defmodule GitsWeb.EventLive.Feature do
     if min == max do
       "#{resolve_min_price_label(min)}"
     else
-      "#{resolve_min_price_label(min)} - R #{max |> Currency.format()}"
+      "#{resolve_min_price_label(min)} - R#{max |> Currency.format()}"
     end
   end
 end
