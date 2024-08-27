@@ -19,7 +19,20 @@ defmodule GitsWeb.PageController do
     |> assign(:slug, "/")
     |> assign(:title, "/")
     |> assign(:events, events)
-    |> render(:home, layout: false)
+    |> assign(:current_tab, :home)
+    |> render(:home,
+      layout:
+        if(FunWithFlags.enabled?(:beta, for: conn.assigns.current_user),
+          do: {GitsWeb.Layouts, :app},
+          else: false
+        )
+    )
+  end
+
+  def search(conn, _) do
+    conn
+    |> assign(:current_tab, :search)
+    |> render(:search)
   end
 
   def events(conn, _) do
@@ -67,10 +80,6 @@ defmodule GitsWeb.PageController do
 
   def privacy(conn, _params) do
     render(conn, :privacy)
-  end
-
-  def search(conn, _params) do
-    render(conn, :search)
   end
 
   def assets(conn, params) do

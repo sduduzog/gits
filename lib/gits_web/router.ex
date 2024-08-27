@@ -30,6 +30,7 @@ defmodule GitsWeb.Router do
     auth_routes_for Gits.Auth.User, to: AuthController
 
     get "/", PageController, :home
+    get "/search", PageController, :search
     get "/events", PageController, :events
     get "/settings", PageController, :settings
     get "/organizers", PageController, :organizers
@@ -108,7 +109,7 @@ defmodule GitsWeb.Router do
 
   scope "/my", GitsWeb do
     pipe_through :browser
-    get "/profile", UserController, :settings
+    get "/profile", UserController, :profile
     get "/profile/settings", UserController, :settings
     get "/tickets", UserController, :tickets
     get "/tickets/past", UserController, :past_tickets

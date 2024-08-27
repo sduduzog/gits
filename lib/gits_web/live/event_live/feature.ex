@@ -285,11 +285,11 @@ defmodule GitsWeb.EventLive.Feature do
       </div>
       <div class="flex p-2 py-4 md:px-0 md:py-8">
         <span class="rounded-xl border px-2 py-1 text-xs font-medium text-zinc-800">
-          Hosted by <%= @event.host %>
+          <%= @event.host %>
         </span>
       </div>
       <div class="flex items-center justify-between p-2 md:justify-end md:gap-8">
-        <div class="flex items-center">
+        <div class="flex items-center opacity-0">
           <span class="text-sm">You have 2 tickets</span>
           <span class="px-2 py-1 text-sm font-medium underline">view</span>
         </div>

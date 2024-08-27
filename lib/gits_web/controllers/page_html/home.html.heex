@@ -1,92 +1,95 @@
-<div class="fixed inset-0 overflow-hidden bg-zinc-50 blur-3xl">
-  <div class="size-72 fixed -top-16 -left-16 animate-pulse rounded-full bg-purple-300 opacity-50 mix-blend-multiply blur-3xl lg:size-[40rem]">
-  </div>
-  <div class="size-40 size-72 fixed top-4 left-48 animate-pulse rounded-full bg-yellow-300 opacity-50 mix-blend-multiply blur-3xl lg:left-[26rem] lg:top-96">
-  </div>
-  <div class="size-96 fixed right-4 bottom-0 animate-pulse rounded-full bg-pink-300 opacity-50 mix-blend-multiply blur-3xl lg:size-[50rem] lg:-right-40 lg:-bottom-20">
-  </div>
-</div>
-
-<div class="flex min-h-screen flex-col">
-  <.header user={@current_user} />
-
-  <div class="relative grid gap-8 p-4 pt-8 md:text-center lg:pt-40">
-    <h1 class="text-5xl font-semibold leading-tight md:text-6xl">
-      Unlock Unforgettable Experiences
-    </h1>
-    <p class="mx-auto max-w-xl font-light text-zinc-800 lg:text-xl">
-      We offer better security, faster check-in, and lower costs. Whether it’s concerts, conferences, festivals, or sports events, we’ve got you covered.
-    </p>
-    <div class="flex items-center gap-8 font-medium md:mx-auto md:justify-center">
-      <.link
-        navigate={~p"/accounts/new"}
-        class="border-2 rounded-lg border-zinc-600 p-3 px-4 hover:underline"
-      >
-        Sell your event tickets
-      </.link>
-      <.link :if={FunWithFlags.enabled?(:why_choose_button)} class="hover:underline">
-        Why choose <span class="font-black italic text-zinc-700">GiTS</span>?
-      </.link>
+<%= if FunWithFlags.enabled?(:beta, for: @current_user) do %>
+<% else %>
+  <div class="fixed inset-0 overflow-hidden bg-zinc-50 blur-3xl">
+    <div class="size-72 fixed -top-16 -left-16 animate-pulse rounded-full bg-purple-300 opacity-50 mix-blend-multiply blur-3xl lg:size-[40rem]">
+    </div>
+    <div class="size-40 size-72 fixed top-4 left-48 animate-pulse rounded-full bg-yellow-300 opacity-50 mix-blend-multiply blur-3xl lg:left-[26rem] lg:top-96">
+    </div>
+    <div class="size-96 fixed right-4 bottom-0 animate-pulse rounded-full bg-pink-300 opacity-50 mix-blend-multiply blur-3xl lg:size-[50rem] lg:-right-40 lg:-bottom-20">
     </div>
   </div>
 
-  <div class="relative w-full bg-gradient-to-t from-white to-transparent py-0">
-    <.simple_form
-      :if={FunWithFlags.enabled?(:search_bar)}
-      action="/events"
-      for={%{}}
-      method="get"
-      class="mx-auto flex max-w-screen-lg items-center p-4 gap-2"
-    >
-      <input
-        name="q"
-        type="search"
-        class="bg-white/50 w-full rounded-md border-none bg-zinc-50 p-4 text-sm outline-none ring-1 ring-zinc-200 focus-visible:ring-zinc-400"
-        placeholder="Search for an event, city, etc"
-      />
-    </.simple_form>
-    <div class="min-h-96 mx-auto max-w-screen-lg pt-8">
-      <h2 :if={Enum.any?(@events)} class="px-4 text-xl font-medium">Coming up</h2>
-      <div class="flex gap-8 overflow-x-auto p-4">
+  <div class="flex min-h-screen flex-col">
+    <.header user={@current_user} />
+
+    <div class="relative grid gap-8 p-4 pt-8 md:text-center lg:pt-40">
+      <h1 class="text-5xl font-semibold leading-tight md:text-6xl">
+        Unlock Unforgettable Experiences
+      </h1>
+      <p class="mx-auto max-w-xl font-light text-zinc-800 lg:text-xl">
+        We offer better security, faster check-in, and lower costs. Whether it’s concerts, conferences, festivals, or sports events, we’ve got you covered.
+      </p>
+      <div class="flex items-center gap-8 font-medium md:mx-auto md:justify-center">
         <.link
-          :for={event <- @events}
-          navigate={~p"/events/#{event.masked_id}"}
-          class="aspect-[4/5] group relative shrink-0 overflow-hidden rounded-2xl shadow-sm w-56"
+          navigate={~p"/accounts/new"}
+          class="border-2 rounded-lg border-zinc-600 p-3 px-4 hover:underline"
         >
-          <img
-            loading="eager"
-            src={Gits.Bucket.get_listing_image_path(event.account_id, event.id)}
-            alt=""
-            class="size-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-110"
-          />
-
-          <GitsWeb.EventLive.EventComponents.floating_event_date
-            day={event.starts_at |> Timex.format!("%e", :strftime)}
-            month={event.starts_at |> Timex.format!("%b", :strftime)}
-          />
-
-          <div class="absolute inset-x-2 bottom-2 space-y-1.5 rounded-xl bg-white p-2 px-2.5 shadow-md">
-            <span class="p0.5 line-clamp-2 text-sm font-medium"><%= event.name %></span>
-            <div class="flex items-center justify-between gap-1">
-              <span class="flex items-center gap-1 truncate text-sm">
-                <.icon name="hero-map-pin-micro" class="shrink-0 opacity-50" />
-                <span :if={not is_nil(event.address)} class="truncate">
-                  <%= event.address.city %>
-                </span>
-              </span>
-              <span
-                :if={not is_nil(event.minimum_ticket_price)}
-                class="block whitespace-nowrap rounded-lg border p-1 px-1.5 text-sm font-medium"
-              >
-                <%= resolve_price_summary_label(event) %>
-              </span>
-            </div>
-          </div>
+          Sell your event tickets
+        </.link>
+        <.link :if={FunWithFlags.enabled?(:why_choose_button)} class="hover:underline">
+          Why choose <span class="font-black italic text-zinc-700">GiTS</span>?
         </.link>
       </div>
     </div>
+
+    <div class="relative w-full bg-gradient-to-t from-white to-transparent py-0">
+      <.simple_form
+        :if={FunWithFlags.enabled?(:search_bar)}
+        action="/events"
+        for={%{}}
+        method="get"
+        class="mx-auto flex max-w-screen-lg items-center p-4 gap-2"
+      >
+        <input
+          name="q"
+          type="search"
+          class="bg-white/50 w-full rounded-md border-none bg-zinc-50 p-4 text-sm outline-none ring-1 ring-zinc-200 focus-visible:ring-zinc-400"
+          placeholder="Search for an event, city, etc"
+        />
+      </.simple_form>
+      <div class="min-h-96 mx-auto max-w-screen-lg pt-8">
+        <h2 :if={Enum.any?(@events)} class="px-4 text-xl font-medium">Coming up</h2>
+        <div class="flex gap-8 overflow-x-auto p-4">
+          <.link
+            :for={event <- @events}
+            navigate={~p"/events/#{event.masked_id}"}
+            class="aspect-[4/5] group relative shrink-0 overflow-hidden rounded-2xl shadow-sm w-56"
+          >
+            <img
+              loading="eager"
+              src={Gits.Bucket.get_listing_image_path(event.account_id, event.id)}
+              alt=""
+              class="size-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-110"
+            />
+
+            <GitsWeb.EventLive.EventComponents.floating_event_date
+              day={event.starts_at |> Timex.format!("%e", :strftime)}
+              month={event.starts_at |> Timex.format!("%b", :strftime)}
+            />
+
+            <div class="absolute inset-x-2 bottom-2 space-y-1.5 rounded-xl bg-white p-2 px-2.5 shadow-md">
+              <span class="p0.5 line-clamp-2 text-sm font-medium"><%= event.name %></span>
+              <div class="flex items-center justify-between gap-1">
+                <span class="flex items-center gap-1 truncate text-sm">
+                  <.icon name="hero-map-pin-micro" class="shrink-0 opacity-50" />
+                  <span :if={not is_nil(event.address)} class="truncate">
+                    <%= event.address.city %>
+                  </span>
+                </span>
+                <span
+                  :if={not is_nil(event.minimum_ticket_price)}
+                  class="block whitespace-nowrap rounded-lg border p-1 px-1.5 text-sm font-medium"
+                >
+                  <%= resolve_price_summary_label(event) %>
+                </span>
+              </div>
+            </div>
+          </.link>
+        </div>
+      </div>
+    </div>
+    <div class="relative grow bg-white p-6">
+      <.footer />
+    </div>
   </div>
-  <div class="relative grow bg-white p-6">
-    <.footer />
-  </div>
-</div>
+<% end %>

@@ -45,6 +45,7 @@ defmodule GitsWeb.UserController do
       {:ok, instances} ->
         conn
         |> assign(:instances, instances)
+        |> assign(:current_tab, :tickets)
         |> render(:tickets)
 
       _ ->
@@ -54,6 +55,7 @@ defmodule GitsWeb.UserController do
 
   def profile(conn, _) do
     conn
+    |> assign(:current_tab, :profile)
     |> render(:profile)
   end
 

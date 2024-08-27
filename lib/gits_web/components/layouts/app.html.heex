@@ -1,5 +1,59 @@
-<.header user={@current_user} />
-<div class="min-h-[calc(100dvh-theme(space.40))] mx-auto flex w-full max-w-screen-xl grow flex-col justify-center gap-10 rounded-lg bg-white dark:bg-white">
-  <%= @inner_content %>
-</div>
-<.footer class="" />
+<%= if FunWithFlags.enabled?(:beta, for: @current_user) do %>
+  <% navigation = [
+    %{
+      label: :home,
+      icon: "hero-home",
+      icon_active: "hero-home-solid",
+      href: "/",
+      current: @current_tab == :home
+    },
+    %{
+      label: :search,
+      icon: "hero-magnifying-glass",
+      icon_active: "hero-magnifying-glass-solid",
+      href: "/search",
+      current: @current_tab == :search
+    },
+    %{
+      label: :tickets,
+      icon: "hero-ticket",
+      icon_active: "hero-ticket-solid",
+      href: "/my/tickets",
+      current: @current_tab == :tickets
+    },
+    %{
+      label: :profile,
+      icon: "hero-user",
+      icon_active: "hero-user-solid",
+      href: "/my/profile",
+      current: @current_tab == :profile
+    }
+  ] %>
+  <div class="grid-rows-[1fr_auto] grid h-screen">
+    <div class="dark:bg-zinc-900 md:mx-auto md:max-w-screen-lg md:p-2 md:pt-16">
+      <%= @inner_content %>
+    </div>
+    <div class="sticky bottom-0 flex w-full border-t bg-white p-1.5 dark:border-t-zinc-700 dark:bg-zinc-900">
+      <.link
+        :for={nav <- navigation}
+        navigate={nav.href}
+        class={[
+          "grid grow max-w-40 place-items-center rounded-lg p-2.5",
+          if(nav.current,
+            do: "text-zinc-800 bg-zinc-100 dark:text-zinc-200 dark:bg-zinc-800",
+            else: "text-zinc-400"
+          )
+        ]}
+      >
+        <.icon name={if(nav.current, do: nav.icon_active, else: nav.icon)} />
+        <span class="sr-only"><%= nav.label %></span>
+      </.link>
+    </div>
+  </div>
+<% else %>
+  <.header user={@current_user} />
+  <div class="min-h-[calc(100dvh-theme(space.40))] mx-auto flex w-full max-w-screen-xl grow flex-col justify-center gap-10 rounded-lg bg-white dark:bg-white">
+    <%= @inner_content %>
+  </div>
+  <.footer class="" />
+<% end %>
