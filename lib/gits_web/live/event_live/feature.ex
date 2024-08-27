@@ -257,8 +257,8 @@ defmodule GitsWeb.EventLive.Feature do
   def render(assigns) do
     ~H"""
     <%= if FunWithFlags.enabled?(:beta, for: @current_user) do %>
-      <div class="grid gap-1 md:gap-12 lg:flex">
-        <div class="absolute top-2 left-2 flex">
+      <div class="grid flex-wrap gap-1 md:grid-cols-[auto_1fr] md:gap-8 md:p-4 lg:mx-auto lg:max-w-screen-lg">
+        <div class="absolute top-2 left-2 col-span-full flex md:static">
           <.link
             navigate={~p"/search"}
             class="bg-white/20 rounded-xl p-3 backdrop-blur-md dark:bg-black/10"
@@ -266,7 +266,7 @@ defmodule GitsWeb.EventLive.Feature do
             <.icon name="hero-chevron-left" />
           </.link>
         </div>
-        <div class="aspect-[3/2] mx-auto shrink-0 md:w-96 md:overflow-hidden md:rounded-2xl">
+        <div class="aspect-[3/2] shrink-0 md:w-72 md:overflow-hidden md:rounded-2xl lg:w-96">
           <img
             loading="eager"
             src={Gits.Bucket.get_feature_image_path(@event.account_id, @event.id)}
@@ -274,23 +274,23 @@ defmodule GitsWeb.EventLive.Feature do
             class="size-full object-cover md:transition-transform md:duration-300 md:hover:scale-110"
           />
         </div>
-        <div class="space-y-4 p-2 md:mx-auto md:w-full md:max-w-3xl md:space-y-8 md:p-0">
+        <div class="space-y-3 p-2 md:mx-auto md:w-full md:space-y-4 md:p-0 lg:space-y-6">
           <h1 class="line-clamp-2 text-2xl font-semibold leading-tight">
             <%= @event.name %>
           </h1>
-          <div class="flex gap-4 pl-1">
-            <.icon
-              name="hero-calendar-days-mini"
-              class="shrink-0 mt-1 text-zinc-500 dark:text-zinc-400"
-            />
-            <span class="text-lg font-medium text-zinc-800 dark:text-zinc-200">
+          <span class="text-xs font-medium text-zinc-500 dark:border-zinc-600 dark:text-zinc-400">
+            <%= @event.host %>
+          </span>
+          <div class="flex gap-2">
+            <.icon name="hero-calendar-days-mini" class="shrink-0 text-zinc-500 dark:text-zinc-400" />
+            <span class="font-medium leading-tight text-zinc-800 dark:text-zinc-200">
               <%= ticket_dates_from_event(@event) %>
             </span>
           </div>
-          <div class="flex items-start gap-4 pl-1">
-            <.icon name="hero-map-pin-mini" class="shrink-0 mt-1 text-zinc-500 dark:text-zinc-400" />
-            <div class="grid text-lg">
-              <span class="font-medium text-zinc-800 dark:text-zinc-200">
+          <div class="flex items-start gap-2">
+            <.icon name="hero-map-pin-mini" class="shrink-0  text-zinc-500 dark:text-zinc-400" />
+            <div class="grid">
+              <span class="font-medium leading-tight text-zinc-800 dark:text-zinc-200">
                 <%= @event.address.display_name %>
               </span>
               <span class="text-xs text-zinc-500 dark:text-zinc-400">
@@ -298,21 +298,21 @@ defmodule GitsWeb.EventLive.Feature do
               </span>
             </div>
           </div>
-          <div class="flex gap-4 pl-1">
-            <.icon name="hero-ticket-mini" class="shrink-0 mt-1 text-zinc-500 dark:text-zinc-400" />
-            <span class="text-lg font-medium text-zinc-800 dark:text-zinc-200">
+          <div class="flex gap-2">
+            <.icon name="hero-ticket-mini" class="shrink-0 text-zinc-500 dark:text-zinc-400" />
+            <span class="font-medium leading-tight text-zinc-800 dark:text-zinc-200">
               <%= resolve_price_range_label(@event) %>
             </span>
           </div>
         </div>
       </div>
-      <div class="flex bg-white p-2 py-4 dark:bg-zinc-900 md:px-0 md:py-8">
+      <div class="flex bg-white p-4 dark:bg-zinc-900 lg:mx-auto lg:max-w-screen-lg">
         <span class="rounded-xl border px-2 py-1 text-xs font-medium text-zinc-800 dark:border-zinc-600 dark:text-zinc-200">
           <%= @event.host %>
         </span>
       </div>
-      <div class="flex items-center justify-between p-2 md:justify-end md:gap-8">
-        <div class="flex items-center opacity-0">
+      <div class="flex items-center justify-between p-4 md:gap-8 lg:mx-auto lg:max-w-screen-lg">
+        <div class="flexx hidden items-center">
           <span class="text-sm">You have 2 tickets</span>
           <span class="px-2 py-1 text-sm font-medium underline">view</span>
         </div>
@@ -323,7 +323,7 @@ defmodule GitsWeb.EventLive.Feature do
           Get Tickets
         </button>
       </div>
-      <div class="mx-auto space-y-2 p-2 text-sm md:max-w-3xl md:p-0 lg:mx-0">
+      <div class="space-y-2 p-4 text-sm lg:mx-auto lg:max-w-screen-lg">
         <h2 class="font-medium text-zinc-500 dark:text-zinc-400">About this event</h2>
         <p class="max-w-screen-md whitespace-pre-line"><%= @event.description %></p>
       </div>
