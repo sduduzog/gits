@@ -12,7 +12,7 @@ defmodule GitsWeb.PageHTML do
     if Decimal.eq?(price, 0) do
       "FREE"
     else
-      "R #{price |> Gits.Currency.format()}"
+      "R#{price |> Gits.Currency.format()}"
     end
   end
 
@@ -21,6 +21,14 @@ defmodule GitsWeb.PageHTML do
       "#{resolve_min_price_label(min)}"
     else
       "#{resolve_min_price_label(min)}+"
+    end
+  end
+
+  defp resolve_price_range_label(%Event{minimum_ticket_price: min, maximum_ticket_price: max}) do
+    if min == max do
+      "#{resolve_min_price_label(min)}"
+    else
+      "#{resolve_min_price_label(min)} - R#{max |> Gits.Currency.format()}"
     end
   end
 

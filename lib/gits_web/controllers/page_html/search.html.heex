@@ -1,1 +1,34 @@
-<div class=""></div>
+<h1 class="p-2 text-4xl">Events</h1>
+<div class="grid w-full gap-8 overflow-hidden p-2">
+  <div :for={event <- @events} class="flex items-center gap-2">
+    <div class="aspect-[3/2] w-24 shrink-0 overflow-hidden rounded-lg">
+      <img
+        loading="eager"
+        src={Gits.Bucket.get_listing_image_path(event.account_id, event.id)}
+        alt=""
+        class="size-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-110"
+      />
+    </div>
+    <div class="grid gap-1">
+      <div class="inline-flex items-center gap-1">
+        <span class="max-w-40 truncate text-xs font-medium">
+          <%= if not is_nil(event.address) do %>
+            <%= event.address.display_name %>
+          <% else %>
+            n/a
+          <% end %>
+        </span>
+        <span class="text-xs">
+          &bull;
+        </span>
+        <span class="shrink-0 text-xs font-medium">
+          <%= event.starts_at |> Timex.format!("%a, %e %b, %I:%M%p", :strftime) %>
+        </span>
+      </div>
+      <span class="truncate text-lg font-semibold"><%= event.name %></span>
+      <span :if={not is_nil(event.minimum_ticket_price)} class="whitespace-nowrap text-xs">
+        <%= resolve_price_range_label(event) %>
+      </span>
+    </div>
+  </div>
+</div>
