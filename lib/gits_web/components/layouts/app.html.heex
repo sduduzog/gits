@@ -29,8 +29,17 @@
       current: @current_tab == :profile
     }
   ] %>
-  <div class="grid-rows-[1fr_auto] grid h-screen">
-    <div class=""></div>
+  <div class="grid-rows-[1fr_auto] grid h-screen lg:grid-rows-[auto_1fr]">
+    <div class="hidden p-2 lg:mx-auto lg:flex lg:w-full lg:max-w-screen-xl">
+      <div class="relative flex grow">
+        <.link navigate="/" class="text-2xl font-black italic text-zinc-800 dark:text-zinc-100">
+          GiTS
+        </.link>
+        <span class="text-[12px] leading-2 absolute -top-1 left-14 inline-flex items-center rounded-md px-1 font-medium text-yellow-800 dark:text-yellow-300">
+          Beta
+        </span>
+      </div>
+    </div>
     <div class="max-w-screen-xl dark:bg-zinc-900 dark:text-zinc-50 xl:mx-auto">
       <%= @inner_content %>
     </div>

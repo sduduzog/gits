@@ -3,7 +3,7 @@
   <.link
     :for={event <- @events}
     navigate={~p"/events/#{event.masked_id}"}
-    class="flex items-center gap-2 lg:p-2 lg:border rounded-xl hover:bg-zinc-50 hover:dark:bg-zinc-800"
+    class="flex items-center gap-2 lg:p-2 lg:border dark:border-zinc-600 rounded-xl hover:bg-zinc-50 hover:dark:bg-zinc-800"
   >
     <div class="aspect-[3/2] w-24 shrink-0 overflow-hidden rounded-lg">
       <img
