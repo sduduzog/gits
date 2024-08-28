@@ -1,9 +1,9 @@
 <h1 class="mt-8 p-2 text-4xl font-light">Events</h1>
-<div class="mt-8 grid w-full gap-8 overflow-hidden p-2">
+<div class="mt-8 grid w-full gap-8 overflow-hidden p-2 lg:grid-cols-3 lg:gap-4">
   <.link
     :for={event <- @events}
     navigate={~p"/events/#{event.masked_id}"}
-    class="flex items-center gap-2 rounded-xl hover:bg-zinc-50 hover:dark:bg-zinc-800"
+    class="flex items-center gap-2 lg:p-2 lg:border rounded-xl hover:bg-zinc-50 hover:dark:bg-zinc-800"
   >
     <div class="aspect-[3/2] w-24 shrink-0 overflow-hidden rounded-lg">
       <img
@@ -29,7 +29,7 @@
           <%= event.starts_at |> Timex.format!("%a, %e %b, %I:%M%p", :strftime) %>
         </span>
       </div>
-      <span class="truncate text-lg font-semibold"><%= event.name %></span>
+      <span class="truncate text-lg font-medium"><%= event.name %></span>
       <span
         :if={not is_nil(event.minimum_ticket_price)}
         class="whitespace-nowrap text-xs font-medium text-zinc-500 dark:text-zinc-400"
