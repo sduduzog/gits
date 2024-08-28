@@ -39,6 +39,9 @@
           Beta
         </span>
       </div>
+      <div class="flex gap-4">
+        <.link :for={nav <- navigation} navigate={nav.href}><%= nav.label %></.link>
+      </div>
     </div>
     <div class="max-w-screen-xl dark:bg-zinc-900 dark:text-zinc-50 xl:mx-auto">
       <%= @inner_content %>
