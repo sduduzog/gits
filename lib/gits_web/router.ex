@@ -30,7 +30,6 @@ defmodule GitsWeb.Router do
     auth_routes_for Gits.Auth.User, to: AuthController
 
     get "/", PageController, :home
-    get "/search", PageController, :search
     get "/events", PageController, :events
     get "/settings", PageController, :settings
     get "/organizers", PageController, :organizers
@@ -41,6 +40,7 @@ defmodule GitsWeb.Router do
     get "/healthz", PageController, :healthz
     get "/beta", PageController, :beta
 
+    resources "/search", SearchController, only: [:index]
     resources "/accounts", AccountController, only: [:index, :new, :create]
 
     get "/sign-in", AuthController, :sign_in

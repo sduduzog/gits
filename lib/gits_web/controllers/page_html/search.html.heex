@@ -1,4 +1,10 @@
-<h1 class="mt-8 p-2 text-4xl font-light">Events</h1>
+<.form :let={f} for={%{}} method="get" class="p-2">
+  <div class="mx-auto flex max-w-screen-md items-center gap-3 overflow-hidden rounded-xl border pl-3">
+    <.icon name="hero-magnifying-glass-micro" />
+    <input class="grow py-3 pr-3 text-sm focus:outline-none" name={f[:query].name} />
+  </div>
+</.form>
+<!-- <h1 class="mt-8 p-2 text-4xl font-light">Events</h1> -->
 <div class="mt-8 grid w-full gap-8 overflow-hidden p-2 lg:grid-cols-3 lg:gap-4">
   <.link
     :for={event <- @events}
