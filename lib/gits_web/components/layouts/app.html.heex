@@ -30,7 +30,7 @@
     }
   ] %>
   <div class="grid-rows-[1fr_auto] grid h-screen lg:grid-rows-[auto_1fr]">
-    <div class="hidden p-2 lg:mx-auto lg:flex lg:w-full lg:max-w-screen-xl">
+    <div class="hidden items-center p-2 py-8 lg:mx-auto lg:flex lg:w-full lg:max-w-screen-xl">
       <div class="relative flex grow">
         <.link navigate="/" class="text-2xl font-black italic text-zinc-800 dark:text-zinc-100">
           GiTS
@@ -39,8 +39,23 @@
           Beta
         </span>
       </div>
-      <div class="flex gap-4">
-        <.link :for={nav <- navigation} navigate={nav.href}><%= nav.label %></.link>
+      <div class="flex gap-8">
+        <.link
+          :for={nav <- navigation |> Enum.filter(&(&1.label != :home))}
+          class={[
+            "flex items-center gap-2 rounded-lg text-sm py-2 px-3 font-medium capitalize",
+            if(nav.current,
+              do: "text-zinc-800 bg-zinc-100 dark:bg-zinc-700 dark:text-zinc-200",
+              else: "text-zinc-400 dark:text-zinc-500"
+            )
+          ]}
+          navigate={nav.href}
+        >
+          <.icon name={nav.icon} />
+          <span class="">
+            <%= nav.label %>
+          </span>
+        </.link>
       </div>
     </div>
     <div class="max-w-screen-xl dark:bg-zinc-900 dark:text-zinc-50 xl:mx-auto">
