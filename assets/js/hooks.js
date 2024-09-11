@@ -1,5 +1,13 @@
 import { TurnstileHook } from 'phoenix_turnstile';
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
+import {
+  computePosition,
+  flip,
+  shift,
+  autoUpdate,
+  offset,
+} from '@floating-ui/dom';
+
 
 const scanSize = 260;
 const scanConfig = {
@@ -53,8 +61,32 @@ const CopyLinkButton = {
   }
 }
 
+const Dropdown = {
+  mounted() {
+    const dropdownButton = this.el.querySelector('button[data-dropdown]');
+    const dropdownOptions = this.el.querySelector('div[data-dropdown]');
+
+    this.cleanup = autoUpdate(dropdownButton, dropdownOptions, () => {
+      computePosition(this.el, dropdownOptions, {
+        placement: 'bottom-end',
+        middleware: [flip(), offset(10), shift({ padding: 5 })],
+      }).then(({ x, y }) => {
+        Object.assign(dropdownOptions.style, {
+          left: `${x}px`,
+          top: `${y}px`,
+        });
+      });
+    });
+  },
+  destroyed() {
+    this.cleanup?.();
+  },
+};
+
+
 export const Hooks = {
   QrScanner,
   Turnstile: TurnstileHook,
-  CopyLinkButton
+  CopyLinkButton,
+  Dropdown
 };

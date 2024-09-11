@@ -22,13 +22,6 @@ import { Socket } from 'phoenix';
 import { LiveSocket } from 'phoenix_live_view';
 import topbar from '../vendor/topbar';
 
-import {
-  computePosition,
-  flip,
-  shift,
-  autoUpdate,
-  offset,
-} from '@floating-ui/dom';
 
 import { Hooks } from './hooks';
 
@@ -36,51 +29,11 @@ let csrfToken = document
   .querySelector("meta[name='csrf-token']")
   .getAttribute('content');
 
-const Dropdown = {
-  mounted() {
-    const dropdownButton = this.el.querySelector('button[data-dropdown]');
-    const dropdownOptions = this.el.querySelector('div[data-dropdown]');
-
-    this.cleanup = autoUpdate(dropdownButton, dropdownOptions, () => {
-      computePosition(this.el, dropdownOptions, {
-        placement: 'bottom-end',
-        middleware: [flip(), offset(10), shift({ padding: 5 })],
-      }).then(({ x, y }) => {
-        Object.assign(dropdownOptions.style, {
-          left: `${x}px`,
-          top: `${y}px`,
-        });
-      });
-    });
-  },
-  destroyed() {
-    this.cleanup?.();
-  },
-};
 
 let liveSocket = new LiveSocket('/live', Socket, {
   longPollFallbackMs: 2500,
   params: { _csrf_token: csrfToken },
   hooks: {
-    Dropdown: Dropdown,
-    DropdownButton: {
-      mounted() {
-        const dropdown = this.el.querySelector('[data-dropdown]');
-        this.cleanup = autoUpdate(this.el, dropdown, () => {
-          computePosition(this.el, dropdown, {
-            middleware: [flip(), shift({ padding: 5 })],
-          }).then(({ x, y }) => {
-            Object.assign(dropdown.style, {
-              left: `${x}px`,
-              top: `${y}px`,
-            });
-          });
-        });
-      },
-      destroyed() {
-        this.cleanup?.();
-      },
-    },
     HeaderOpacityOnScroll: {
       mounted() {
         document.addEventListener('scroll', function () {

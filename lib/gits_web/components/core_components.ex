@@ -22,115 +22,105 @@ defmodule GitsWeb.CoreComponents do
   alias Phoenix.LiveView.JS
   import GitsWeb.Gettext
 
-  attr :signed_in, :boolean, default: false
+  attr :label, :string, required: true
+  attr :href, :string, required: true
+
+  def user_dropdown_menu_item(assigns) do
+    ~H"""
+    <a
+      href={@href}
+      class="block px-4 py-2 text-sm text-gray-700 hover:bg-zinc-100 hover:text-zinc-900"
+      role="menuitem"
+      tabindex="-1"
+    >
+      <%= @label %>
+    </a>
+    """
+  end
+
+  def header_dropdown_options(%{current_user: %User{}} = assigns) do
+    ~H"""
+    <div class="px-4 py-3" role="none">
+      <p class="text-sm" role="none">Signed in as</p>
+      <p class="truncate text-sm font-medium text-gray-900" role="none">
+        <%= @current_user.email %>
+      </p>
+    </div>
+    <div class="py-1" role="none">
+      <.user_dropdown_menu_item :if={false} label="Messages" href={~p"/sign-in"} />
+      <.user_dropdown_menu_item label="My Tickets" href={~p"/my/tickets"} />
+      <.user_dropdown_menu_item :if={false} label="Wishlists" href={~p"/sign-in"} />
+    </div>
+    <div class="py-1" role="none">
+      <.user_dropdown_menu_item label="Host an event" href={~p"/register"} />
+      <.user_dropdown_menu_item label="Account" href={~p"/sign-in"} />
+    </div>
+
+    <div class="py-1" role="none">
+      <.user_dropdown_menu_item label="Help Center" href={~p"/sign-in"} />
+      <.user_dropdown_menu_item label="Log Out" href={~p"/sign-out"} />
+    </div>
+    """
+  end
+
+  def header_dropdown_options(assigns) do
+    ~H"""
+    <div class="py-1" role="none">
+      <.user_dropdown_menu_item label="Sign Up" href={~p"/register"} />
+      <.user_dropdown_menu_item label="Log In" href={~p"/sign-in"} />
+    </div>
+    <div class="py-1" role="none">
+      <.user_dropdown_menu_item label="Host an event" href={~p"/register"} />
+      <.user_dropdown_menu_item label="Help Center" href={~p"/sign-in"} />
+    </div>
+    """
+  end
 
   def header(assigns) do
-    user = assigns.user
-
-    assigns =
-      case user do
-        nil ->
-          assigns
-          |> assign(:signed_in, false)
-          |> assign(:menu, [
-            [
-              %{
-                label: "Register",
-                to: ~p"/register",
-                icon: "hero-arrow-right-end-on-rectangle-mini"
-              },
-              %{
-                label: "Sign in",
-                to: ~p"/sign-in",
-                icon: "hero-arrow-right-end-on-rectangle-mini"
-              }
-            ]
-          ])
-
-        %User{} = user ->
-          assigns
-          |> assign(:signed_in, true)
-          |> assign(:email, user.email)
-          |> assign(:menu, [
-            [
-              %{label: "My Tickets", to: ~p"/my/tickets", icon: "hero-ticket-mini"}
-              # %{label: "Profile", to: ~p"/my/profile", icon: "hero-user-mini"}
-            ],
-            [
-              %{
-                label: "Sign out",
-                to: ~p"/sign-out",
-                icon: "hero-arrow-left-start-on-rectangle-mini"
-              }
-            ]
-          ])
-      end
-
     ~H"""
-    <div
-      class="sticky top-0 z-20 bg-white bg-red-400 bg-opacity-0 p-2 text-sm font-medium transition-all"
-      phx-hook="HeaderOpacityOnScroll"
-      id="homepage_header"
-    >
-      <div class="mx-auto flex max-w-screen-xl items-center gap-4">
+    <header class="hidden p-4 lg:block">
+      <div class="hidden items-center lg:flex">
         <div class="relative flex grow">
-          <.link navigate="/" class="text-xl font-black italic text-zinc-800">
+          <.link navigate="/" class="text-xl font-black italic text-zinc-800 dark:text-zinc-100">
             GiTS
           </.link>
-          <span class="text-[12px] leading-2 absolute -top-1 left-14 inline-flex items-center rounded-md px-1 font-medium text-yellow-800">
+          <span class="text-[12px] leading-2 absolute -top-0.5 left-12 inline-flex items-center rounded-md px-1 font-medium text-yellow-800 dark:text-yellow-300">
             Beta
           </span>
         </div>
-        <div
-          class="relative inline-block text-left md:hidden"
-          id="header_menu"
-          phx-hook="Dropdown"
-          phx-click-away={JS.hide(to: "#header_menu>div[data-dropdown]")}
-        >
-          <button
-            class="flex rounded-lg p-1.5 hover:bg-zinc-200"
-            phx-click={JS.toggle(to: "#header_menu>div[data-dropdown]")}
-            data-dropdown
-          >
-            <.icon name="hero-bars-2-mini" />
-          </button>
+
+        <div class="flex items-center gap-4">
+          <.link class="text-sm hover:bg-zinc-50 font-medium py-1 px-2 inline-flex rounded-lg">
+            Host an event
+          </.link>
           <div
-            class="absolute top-0 right-0 z-20 hidden w-56 divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-            role="menu"
-            aria-orientation="vertical"
-            aria-labelledby="menu-button"
-            tabindex="-1"
-            data-dropdown
+            class="relative"
+            id="user-dropdown"
+            phx-click-away={JS.hide(to: "div[data-dropdown]")}
+            phx-hook="Dropdown"
           >
-            <div :if={@signed_in} class="px-4 py-3" role="none">
-              <p class="text-sm" role="none">Signed in as</p>
-              <p class="truncate text-sm font-medium text-gray-900" role="none"><%= @email %></p>
-            </div>
-            <div :for={group <- @menu} class="py-1" role="none">
-              <.link
-                :for={item <- group}
-                navigate={item.to}
-                class="block px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-100 hover:text-zinc-900"
-                role="menuitem"
-                tabindex="-1"
-              >
-                <%= item.label %>
-              </.link>
+            <button
+              class="size-10 flex overflow-hidden rounded-2xl"
+              phx-click={JS.toggle(to: "div[data-dropdown]")}
+              data-dropdown
+            >
+              <img src="/images/placeholder.png" alt="" class="size-full object-cover" />
+            </button>
+
+            <div
+              data-dropdown
+              class="hiddenx absolute z-10 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+              role="menu"
+              aria-orientation="vertical"
+              aria-labelledby="menu-button"
+              tabindex="-1"
+            >
+              <.header_dropdown_options current_user={@current_user} />
             </div>
           </div>
         </div>
-        <div class="hidden max-w-screen-2xl gap-8 lg:flex xl:gap-12">
-          <.link
-            :for={item <- @menu |> Enum.flat_map(& &1)}
-            navigate={item.to}
-            class="flex items-center gap-1.5"
-          >
-            <.icon name={item.icon} />
-            <span class=""><%= item.label %></span>
-          </.link>
-        </div>
       </div>
-    </div>
+    </header>
     """
   end
 
