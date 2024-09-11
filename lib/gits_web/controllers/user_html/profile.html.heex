@@ -1,2 +1,33 @@
-<h1 class="mt-8 p-2 text-4xl font-light">Profile</h1>
-<div>Hello</div>
+<h1 class="p-4 text-4xl font-light">Profile</h1>
+<div class="flex items-center gap-8 p-4">
+  <div class="size-14 overflow-hidden rounded-full bg-zinc-50">
+    <img src="/images/placeholder.png" class="size-full object-cover" alt="" />
+  </div>
+  <div :if={@current_user} class="grid">
+    <span class="font-medium"><%= @current_user.display_name %></span>
+    <span class="text-sm text-zinc-500"><%= @current_user.email %></span>
+  </div>
+</div>
+<div class="xplace-items-start grid gap-4 p-2 md:px-0">
+  <div class="inline-flex items-center gap-4 rounded-xl px-4 py-3 opacity-40">
+    <.icon name="hero-cog-6-tooth" />
+    <span>Preferences</span>
+  </div>
+
+  <div class="inline-flex items-center gap-4 rounded-xl px-4 py-3 hover:bg-zinc-50 dark:hover:bg-zinc-800">
+    <.icon name="hero-user-group" />
+    <span>Organizers Hub</span>
+  </div>
+
+  <hr class="w-full" />
+
+  <div class="grid place-items-start items-center gap-4 gap-4 rounded-xl">
+    <.link
+      :for={item <- [%{label: "Sign Out", href: ~p"/sign-out"}]}
+      navigate={item.href}
+      class="rounded-md px-2 py-1 text-sm text-zinc-500 hover:bg-zinc-50"
+    >
+      <%= item.label %>
+    </.link>
+  </div>
+</div>

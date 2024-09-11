@@ -29,8 +29,8 @@
       current: @current_tab == :profile
     }
   ] %>
-  <div class="grid-rows-[1fr_auto] grid h-screen lg:grid-rows-[auto_1fr]">
-    <div class="hidden w-full items-center p-2 py-8 lg:mx-auto lg:flex lg:w-full lg:max-w-screen-xl">
+  <div class="grid-rows-[1fr_auto] grid h-screen overflow-auto lg:grid-rows-[auto_1fr]">
+    <div class="hidden w-full items-center p-2 py-4 lg:mx-auto lg:flex lg:w-full lg:max-w-screen-lg">
       <div class="relative flex grow">
         <.link navigate="/" class="text-2xl font-black italic text-zinc-800 dark:text-zinc-100">
           GiTS
@@ -43,7 +43,7 @@
         <.link
           :for={nav <- navigation |> Enum.filter(&(&1.label != :home))}
           class={[
-            "flex items-center gap-2 rounded-lg text-sm py-2 px-3 font-medium capitalize",
+            "flex items-center gap-2 rounded-lg text-sm py-2 px-3 font-medium hover:text-zinc-700 dark:hover:text-zinc-400 capitalize",
             if(nav.current,
               do: "text-zinc-800 bg-zinc-100 dark:bg-zinc-700 dark:text-zinc-200",
               else: "text-zinc-400 dark:text-zinc-500"
@@ -58,7 +58,7 @@
         </.link>
       </div>
     </div>
-    <div class="w-full max-w-screen-xl dark:bg-zinc-900 dark:text-zinc-50 xl:mx-auto">
+    <div class="flex w-full max-w-screen-lg flex-col gap-4 dark:bg-zinc-900 dark:text-zinc-50 xl:mx-auto">
       <%= @inner_content %>
     </div>
     <div class="sticky bottom-0 flex w-full justify-evenly border-t bg-white p-1.5 dark:border-t-zinc-700 dark:bg-zinc-900 lg:hidden">
@@ -80,7 +80,7 @@
     </div>
   </div>
 <% else %>
-  <.header signed_in={not is_nil(@current_user)} />
+  <.header signed_in={not is_nil(@current_user)} user={@current_user} />
   <div class="min-h-[calc(100dvh-theme(space.40))] mx-auto flex w-full max-w-screen-xl grow flex-col justify-center gap-10 rounded-lg bg-white dark:bg-white">
     <%= @inner_content %>
   </div>

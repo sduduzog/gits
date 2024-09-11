@@ -74,7 +74,7 @@ defmodule GitsWeb.CoreComponents do
     >
       <div class="mx-auto flex max-w-screen-xl items-center gap-4">
         <div class="relative flex grow">
-          <.link navigate="/" class="text-2xl font-black italic text-zinc-800">
+          <.link navigate="/" class="text-xl font-black italic text-zinc-800">
             GiTS
           </.link>
           <span class="text-[12px] leading-2 absolute -top-1 left-14 inline-flex items-center rounded-md px-1 font-medium text-yellow-800">

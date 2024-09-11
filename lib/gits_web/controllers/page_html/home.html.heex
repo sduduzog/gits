@@ -1,4 +1,6 @@
 <%= if FunWithFlags.enabled?(:beta, for: @current_user) do %>
+  <h1 class="p-2 text-4xl font-light sm:px-0">Upcoming</h1>
+  <div class="border px-2 sm:px-0 "></div>
 <% else %>
   <div class="fixed inset-0 overflow-hidden bg-zinc-50 blur-3xl">
     <div class="size-72 fixed -top-16 -left-16 animate-pulse rounded-full bg-purple-300 opacity-50 mix-blend-multiply blur-3xl lg:size-[40rem]">
@@ -10,7 +12,7 @@
   </div>
 
   <div class="flex min-h-screen flex-col">
-    <.header user={@current_user} />
+    <.header signed_in={@current_user} user={@current_user} />
 
     <div class="relative grid gap-8 p-4 pt-8 md:text-center lg:pt-40">
       <h1 class="text-5xl font-semibold leading-tight md:text-6xl">
