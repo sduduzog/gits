@@ -17,7 +17,7 @@ defmodule GitsWeb.EventLive.Feature do
   end
 
   defp format_datetime(starts_at) do
-    starts_at |> Timex.format!("%A %e %b, %I:%M%p", :strftime)
+    starts_at |> Timex.format!("%a %e %b, %I:%M%p", :strftime)
   end
 
   defp format_end_date(ends_at, starts_at) do
@@ -254,58 +254,85 @@ defmodule GitsWeb.EventLive.Feature do
   def render(assigns) do
     ~H"""
     <%= if FunWithFlags.enabled?(:beta, for: @current_user) do %>
-      <.header />
-      <div class="space-y-4 lg:mx-auto lg:max-w-screen-lg lg:space-y-8">
-        <div class="aspect-[3/2] overflow-hidden md:aspect-[2/1] lg:rounded-2xl">
-          <img
-            loading="eager"
-            src={Gits.Bucket.get_feature_image_path(@event.account_id, @event.id)}
-            alt="Event's featured image"
-            class="size-full object-cover md:transition-transform md:duration-300 md:hover:scale-110"
-          />
-        </div>
-        <div class="flex flex-col gap-4 lg:flex-row lg:gap-8">
-          <div class="grid grow gap-6 px-4 lg:px-0">
-            <div>
-              <h1 class="text-xl font-semibold"><%= @event.name %></h1>
-            </div>
-            <div class="grid gap-6">
-              <div class="flex gap-4">
-                <.icon name="hero-calendar-days-mini" />
-                <div>
-                  <span class="text-sm font-medium">
-                    <%= ticket_dates_from_event(@event) %>
-                  </span>
-                </div>
-              </div>
-
-              <div class="flex gap-4">
-                <.icon name="hero-map-pin-mini" />
-                <div class="grid">
-                  <span class="font-medium leading-tight text-zinc-800 dark:text-zinc-200">
-                    <%= @event.address.display_name %>
-                  </span>
-                  <span class="text-xs text-zinc-600 dark:text-zinc-400">
-                    <%= @event.address.short_format_address %>
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div class="space-y-2 text-sm">
-              <p class="max-w-screen-md whitespace-pre-line"><%= @event.description %></p>
+      <.header current_user={@current_user} />
+      <div class="mx-auto max-w-screen-xl gap-12 pb-20 lg:flex lg:pb-4">
+        <div class="">
+          <div class="lg:sticky lg:top-4">
+            <div class="aspect-[3/2] shrink-0 overflow-hidden lg:w-[30rem] lg:rounded-2xl">
+              <img
+                loading="eager"
+                src={Gits.Bucket.get_feature_image_path(@event.account_id, @event.id)}
+                alt="Event's featured image"
+                class="size-full object-cover md:transition-transform md:duration-300 md:hover:scale-110"
+              />
             </div>
           </div>
-          <div class="sticky inset-x-0 bottom-0 shrink-0 lg:min-w-96 lg:static">
-            <div class="sticky top-0 flex items-center justify-between border-t bg-white p-4 lg:rounded-2xl lg:border">
-              <div>
-                <span class="font-medium">
-                  <%= resolve_price_range_label(@event) %>
-                </span>
+        </div>
+        <div class="space-y-4 p-4 lg:space-y-8 lg:p-0">
+          <div class="grid">
+            <h1 class="text-2xl font-medium lg:text-5xl"><%= @event.name %></h1>
+            <div class="flex gap-4">
+              <span class="text-lg text-zinc-600 dark:text-zinc-200">
+                <%= @event.address.display_name %>
+              </span>
+            </div>
+            <div class="flex">
+              <span class="font-medium lg:text-lg">
+                <%= ticket_dates_from_event(@event) %>
+              </span>
+            </div>
+            <div class="mt-4 flex gap-4">
+              <div class="flex flex-wrap gap-4">
+                <span class="rounded-3xl border border-zinc-400 px-2.5 py-0.5 text-sm">18+</span>
               </div>
-              <button class="min-w-40 rounded-lg bg-zinc-900 px-4 py-3 text-sm font-medium text-zinc-50">
-                Get Tickets
+            </div>
+          </div>
+
+          <div class="fixed inset-x-0 bottom-0 z-10 flex items-center border-t bg-white p-4 lg:static lg:rounded-2xl lg:border">
+            <div class="grow">
+              <span class="text-xl font-medium">
+                <%= resolve_price_range_label(@event) %>
+              </span>
+            </div>
+            <button class="min-w-20 rounded-lg bg-zinc-900 px-4 py-3 text-sm font-medium text-zinc-50 lg:min-w-40">
+              Get Tickets
+            </button>
+          </div>
+          <div class="space-y-2 py-2 text-zinc-600 lg:py-4">
+            <span class="text-lg font-medium text-zinc-900">About the event</span>
+            <p class="max-w-screen-md whitespace-pre-line text-zinc-600"><%= @event.description %></p>
+          </div>
+
+          <div class="space-y-2 text-zinc-600">
+            <div class="flex gap-4">
+              <.icon name="hero-megaphone" />
+              <span class="pt-0.5 text-sm">Presented by <%= @event.host %></span>
+            </div>
+
+            <div class="flex gap-8">
+              <.icon name="hero-information-circle" />
+              <ul class="list-disc space-y-2 pt-0.5 text-sm">
+                <li>18+ Only</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="space-y-2 text-zinc-600">
+            <span class="text-lg font-medium text-zinc-900">Venue</span>
+            <p class="text-xl"><%= @event.address.display_name %></p>
+            <div>
+              <span><%= @event.address.short_format_address %></span>
+              <button>
+                <.icon name="hero-square-2-stack" />
               </button>
             </div>
+            <.link
+              href={@event.address.google_maps_uri}
+              class="inline-flex items-center py-1 gap-2 px-2 rounded-lg bg-zinc-50 hover:bg-zinc-100 text-sm font-medium"
+            >
+              <.icon name="hero-map-pin-micro" />
+              <span>Open in maps</span>
+            </.link>
           </div>
         </div>
       </div>

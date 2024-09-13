@@ -78,7 +78,7 @@ defmodule GitsWeb.CoreComponents do
 
   def header(assigns) do
     ~H"""
-    <header class="hidden p-4 lg:block">
+    <header class="hidden p-6 lg:block">
       <div class="hidden items-center lg:flex">
         <div class="relative flex grow">
           <.link navigate="/" class="text-xl font-black italic text-zinc-800 dark:text-zinc-100">
@@ -109,7 +109,7 @@ defmodule GitsWeb.CoreComponents do
 
             <div
               data-dropdown
-              class="hiddenx absolute z-10 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+              class="absolute z-10 hidden w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
               role="menu"
               aria-orientation="vertical"
               aria-labelledby="menu-button"

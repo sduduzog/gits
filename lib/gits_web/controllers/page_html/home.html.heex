@@ -1,4 +1,4 @@
-<div class="grid gap-8 p-4 py-20">
+<div class="grid gap-8 p-4 pt-40">
   <h1 class="text-5xl font-semibold md:text-6xl">
     Unlock Unforgettable Experiences
   </h1>
@@ -14,6 +14,48 @@
     </.link>
   </div>
 </div>
+<%= if Enum.any?(@events) do %>
+  <h2 class="p-4 text-4xl font-light">Coming up</h2>
+
+  <div>
+    <.link
+      :for={event <- @events}
+      navigate={~p"/events/#{event.masked_id}"}
+      class="aspect-[4/5] group relative shrink-0 overflow-hidden rounded-2xl shadow-sm w-56"
+    >
+      <img
+        loading="eager"
+        src={Gits.Bucket.get_listing_image_path(event.account_id, event.id)}
+        alt=""
+        class="size-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-110"
+      />
+
+      <GitsWeb.EventLive.EventComponents.floating_event_date
+        day={event.starts_at |> Timex.format!("%e", :strftime)}
+        month={event.starts_at |> Timex.format!("%b", :strftime)}
+      />
+
+      <div class="absolute inset-x-2 bottom-2 space-y-1.5 rounded-xl bg-white p-2 px-2.5 shadow-md">
+        <span class="p0.5 line-clamp-2 text-sm font-medium"><%= event.name %></span>
+        <div class="flex items-center justify-between gap-1">
+          <span class="flex items-center gap-1 truncate text-sm">
+            <.icon name="hero-map-pin-micro" class="shrink-0 opacity-50" />
+            <span :if={not is_nil(event.address)} class="truncate">
+              <%= event.address.city %>
+            </span>
+          </span>
+          <span
+            :if={not is_nil(event.minimum_ticket_price)}
+            class="block whitespace-nowrap rounded-lg border p-1 px-1.5 text-sm font-medium"
+          >
+            <%= resolve_price_summary_label(event) %>
+          </span>
+        </div>
+      </div>
+    </.link>
+  </div>
+<% else %>
+<% end %>
 <div :if={false} class="flex min-h-screen flex-col">
   <div class="relative grid gap-8 p-4 pt-8 md:text-center lg:pt-40">
     <h1 class="text-5xl font-semibold leading-tight md:text-6xl">
