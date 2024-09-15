@@ -1,8 +1,6 @@
-<div class="h-screen gap-4 overflow-auto bg-white p-4 pt-20 lg:flex lg:px-12">
-  <.flash_group flash={@flash} />
-  <main class="mx-auto w-full space-y-8 sm:max-w-md">
-    <a href="/" class="font-poppins text-2xl font-black italic">GiTS</a>
+<.flash_group flash={@flash} />
+<div class="flex h-screen gap-4 overflow-auto bg-white p-4">
+  <main class="flex w-full items-center justify-center space-y-8">
     <%= @inner_content %>
   </main>
-  <aside class="hidden grow p-4 lg:block"></aside>
 </div>

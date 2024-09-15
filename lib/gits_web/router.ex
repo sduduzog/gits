@@ -33,6 +33,7 @@ defmodule GitsWeb.Router do
     get "/events", PageController, :events
     get "/settings", PageController, :settings
     get "/organizers", PageController, :organizers
+    get "/host-with-us", PageController, :host
     get "/privacy", PageController, :privacy
     get "/terms", PageController, :terms
     get "/faq", PageController, :faq
@@ -41,9 +42,9 @@ defmodule GitsWeb.Router do
     get "/beta", PageController, :beta
 
     resources "/search", SearchController, only: [:index]
-    resources "/accounts", AccountController, only: [:index, :new, :create]
+    resources "/accounts", AccountController, only: [:index]
 
-    get "/sign-in", AuthController, :sign_in
+    # get "/sign-in", AuthController, :sign_in
     get "/register", AuthController, :register
     get "/forgot-password", AuthController, :forgot_password
     post "/resend-verification", AuthController, :resend_verification_email
@@ -64,6 +65,8 @@ defmodule GitsWeb.Router do
       live "/events/:id/tickets/:basket_id", EventLive.Tickets
       live "/events/:id/tickets/:basket_id/summary", EventLive.TicketsSummary
       live "/events/:id/tickets/:basket_id/checkout", EventLive.Checkout
+
+      live "/accounts/setup", AccountLive.SetupWizard
 
       live "/attendees/scanner/:account_id/:event_id", ScanAttendeeLive
       live "/accounts/:slug", DashboardLive.Home
@@ -99,11 +102,8 @@ defmodule GitsWeb.Router do
 
     ash_authentication_live_session :authentication_forbidden,
       on_mount: {GitsWeb.LiveUserAuth, :live_no_user} do
+      live "/sign-in", AuthLive.SignIn
       live "/password-reset/:token", AuthLive.PasswordReset
-    end
-
-    ash_authentication_live_session :authentication_redirect,
-      on_mount: {GitsWeb.LiveUserAuth, :live_redirect} do
     end
   end
 

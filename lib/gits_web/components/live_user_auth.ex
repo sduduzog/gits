@@ -14,7 +14,14 @@ defmodule GitsWeb.LiveUserAuth do
     if socket.assigns[:current_user] do
       {:cont, socket}
     else
-      {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/sign-in")}
+      socket =
+        socket
+        |> Phoenix.LiveView.attach_hook(:redirect_and_halt, :handle_params, fn _, url, socket ->
+          return_to = URI.parse(url) |> Map.get(:path)
+          {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/sign-in?return_to=#{return_to}")}
+        end)
+
+      {:cont, socket}
     end
   end
 

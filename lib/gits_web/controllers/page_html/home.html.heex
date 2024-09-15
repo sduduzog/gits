@@ -6,134 +6,14 @@
     We offer better security, faster check-in, and lower costs. Whether it’s concerts, conferences, festivals, or sports events, we’ve got you covered.
   </p>
   <div class="flex gap-8 font-medium">
-    <.link navigate={~p"/accounts/new"} class="rounded-lg border-zinc-600 text-sm hover:underline">
+    <.link
+      navigate={~p"/accounts/setup"}
+      class="rounded-lg border-zinc-600 text-sm hover:underline"
+    >
       Host an event with us &rarr;
     </.link>
     <.link :if={FunWithFlags.enabled?(:why_choose_button)} class="hover:underline">
       Why choose <span class="font-black italic text-zinc-700">GiTS</span>?
     </.link>
-  </div>
-</div>
-<%= if Enum.any?(@events) do %>
-  <h2 class="p-4 text-4xl font-light">Coming up</h2>
-
-  <div>
-    <.link
-      :for={event <- @events}
-      navigate={~p"/events/#{event.masked_id}"}
-      class="aspect-[4/5] group relative shrink-0 overflow-hidden rounded-2xl shadow-sm w-56"
-    >
-      <img
-        loading="eager"
-        src={Gits.Bucket.get_listing_image_path(event.account_id, event.id)}
-        alt=""
-        class="size-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-110"
-      />
-
-      <GitsWeb.EventLive.EventComponents.floating_event_date
-        day={event.starts_at |> Timex.format!("%e", :strftime)}
-        month={event.starts_at |> Timex.format!("%b", :strftime)}
-      />
-
-      <div class="absolute inset-x-2 bottom-2 space-y-1.5 rounded-xl bg-white p-2 px-2.5 shadow-md">
-        <span class="p0.5 line-clamp-2 text-sm font-medium"><%= event.name %></span>
-        <div class="flex items-center justify-between gap-1">
-          <span class="flex items-center gap-1 truncate text-sm">
-            <.icon name="hero-map-pin-micro" class="shrink-0 opacity-50" />
-            <span :if={not is_nil(event.address)} class="truncate">
-              <%= event.address.city %>
-            </span>
-          </span>
-          <span
-            :if={not is_nil(event.minimum_ticket_price)}
-            class="block whitespace-nowrap rounded-lg border p-1 px-1.5 text-sm font-medium"
-          >
-            <%= resolve_price_summary_label(event) %>
-          </span>
-        </div>
-      </div>
-    </.link>
-  </div>
-<% else %>
-<% end %>
-<div :if={false} class="flex min-h-screen flex-col">
-  <div class="relative grid gap-8 p-4 pt-8 md:text-center lg:pt-40">
-    <h1 class="text-5xl font-semibold leading-tight md:text-6xl">
-      Unlock Unforgettable Experiences
-    </h1>
-    <p class="mx-auto max-w-xl font-light text-zinc-800 lg:text-xl">
-      We offer better security, faster check-in, and lower costs. Whether it’s concerts, conferences, festivals, or sports events, we’ve got you covered.
-    </p>
-    <div class="flex items-center gap-8 font-medium md:mx-auto md:justify-center">
-      <.link
-        navigate={~p"/accounts/new"}
-        class="border-2 rounded-lg border-zinc-600 p-3 px-4 hover:underline"
-      >
-        Sell your event tickets
-      </.link>
-      <.link :if={FunWithFlags.enabled?(:why_choose_button)} class="hover:underline">
-        Why choose <span class="font-black italic text-zinc-700">GiTS</span>?
-      </.link>
-    </div>
-  </div>
-
-  <div class="relative w-full bg-gradient-to-t from-white to-transparent py-0">
-    <.simple_form
-      :if={FunWithFlags.enabled?(:search_bar)}
-      action="/events"
-      for={%{}}
-      method="get"
-      class="mx-auto flex max-w-screen-lg items-center p-4 gap-2"
-    >
-      <input
-        name="q"
-        type="search"
-        class="bg-white/50 w-full rounded-md border-none bg-zinc-50 p-4 text-sm outline-none ring-1 ring-zinc-200 focus-visible:ring-zinc-400"
-        placeholder="Search for an event, city, etc"
-      />
-    </.simple_form>
-    <div class="min-h-96 mx-auto max-w-screen-lg pt-8">
-      <h2 :if={Enum.any?(@events)} class="px-4 text-xl font-medium">Coming up</h2>
-      <div class="flex gap-8 overflow-x-auto p-4">
-        <.link
-          :for={event <- @events}
-          navigate={~p"/events/#{event.masked_id}"}
-          class="aspect-[4/5] group relative shrink-0 overflow-hidden rounded-2xl shadow-sm w-56"
-        >
-          <img
-            loading="eager"
-            src={Gits.Bucket.get_listing_image_path(event.account_id, event.id)}
-            alt=""
-            class="size-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-110"
-          />
-
-          <GitsWeb.EventLive.EventComponents.floating_event_date
-            day={event.starts_at |> Timex.format!("%e", :strftime)}
-            month={event.starts_at |> Timex.format!("%b", :strftime)}
-          />
-
-          <div class="absolute inset-x-2 bottom-2 space-y-1.5 rounded-xl bg-white p-2 px-2.5 shadow-md">
-            <span class="p0.5 line-clamp-2 text-sm font-medium"><%= event.name %></span>
-            <div class="flex items-center justify-between gap-1">
-              <span class="flex items-center gap-1 truncate text-sm">
-                <.icon name="hero-map-pin-micro" class="shrink-0 opacity-50" />
-                <span :if={not is_nil(event.address)} class="truncate">
-                  <%= event.address.city %>
-                </span>
-              </span>
-              <span
-                :if={not is_nil(event.minimum_ticket_price)}
-                class="block whitespace-nowrap rounded-lg border p-1 px-1.5 text-sm font-medium"
-              >
-                <%= resolve_price_summary_label(event) %>
-              </span>
-            </div>
-          </div>
-        </.link>
-      </div>
-    </div>
-  </div>
-  <div class="relative grow bg-white p-6">
-    <.footer />
   </div>
 </div>

@@ -50,7 +50,11 @@ defmodule GitsWeb.UserController do
         |> render(:tickets)
 
       _ ->
-        conn |> redirect(to: ~p"/sign-in?return_to=/my/tickets")
+        conn
+        |> assign(:instances, [])
+        |> render(:tickets)
+
+        # conn |> redirect(to: ~p"/sign-in?return_to=/my/tickets")
     end
   end
 

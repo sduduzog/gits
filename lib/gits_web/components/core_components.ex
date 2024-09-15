@@ -70,7 +70,6 @@ defmodule GitsWeb.CoreComponents do
       <.user_dropdown_menu_item label="Log In" href={~p"/sign-in"} />
     </div>
     <div class="py-1" role="none">
-      <.user_dropdown_menu_item label="Host an event" href={~p"/register"} />
       <.user_dropdown_menu_item label="Help Center" href={~p"/sign-in"} />
     </div>
     """
@@ -91,7 +90,13 @@ defmodule GitsWeb.CoreComponents do
 
         <div class="flex items-center gap-4">
           <.link class="text-sm hover:bg-zinc-50 font-medium py-1 px-2 inline-flex rounded-lg">
-            Host an event
+            Expore events
+          </.link>
+          <.link
+            navigate={~p"/host-with-us"}
+            class="text-sm hover:bg-zinc-50 font-medium py-1 px-2 inline-flex rounded-lg"
+          >
+            Host with us
           </.link>
           <div
             class="relative"

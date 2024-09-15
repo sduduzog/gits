@@ -255,6 +255,11 @@ defmodule GitsWeb.EventLive.Feature do
     ~H"""
     <%= if FunWithFlags.enabled?(:beta, for: @current_user) do %>
       <.header current_user={@current_user} />
+      <div class="absolute inset-x-0 top-0 flex p-2 lg:hidden">
+        <button class="rounded-full bg-white p-2" onclick="history.back()">
+          <.icon name="hero-chevron-left-mini" />
+        </button>
+      </div>
       <div class="mx-auto max-w-screen-xl gap-12 pb-20 lg:flex lg:pb-4">
         <div class="">
           <div class="lg:sticky lg:top-4">
@@ -319,10 +324,10 @@ defmodule GitsWeb.EventLive.Feature do
 
           <div class="space-y-2 text-zinc-600">
             <span class="text-lg font-medium text-zinc-900">Venue</span>
-            <p class="text-xl"><%= @event.address.display_name %></p>
+            <p class="text-xl text-zinc-900"><%= @event.address.display_name %></p>
             <div>
               <span><%= @event.address.short_format_address %></span>
-              <button>
+              <button class="inline-block rounded-lg p-0.5">
                 <.icon name="hero-square-2-stack" />
               </button>
             </div>

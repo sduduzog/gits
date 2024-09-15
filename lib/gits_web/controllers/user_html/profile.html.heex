@@ -1,33 +1,54 @@
-<h1 class="p-4 text-4xl font-light">Profile</h1>
-<div class="flex items-center gap-8 p-4">
-  <div class="size-14 overflow-hidden rounded-full bg-zinc-50">
-    <img src="/images/placeholder.png" class="size-full object-cover" alt="" />
-  </div>
-  <div :if={@current_user} class="grid">
-    <span class="font-medium"><%= @current_user.display_name %></span>
-    <span class="text-sm text-zinc-500"><%= @current_user.email %></span>
-  </div>
-</div>
-<div class="xplace-items-start grid gap-4 p-2 md:px-0">
-  <div class="inline-flex items-center gap-4 rounded-xl px-4 py-3 opacity-40">
-    <.icon name="hero-cog-6-tooth" />
-    <span>Preferences</span>
-  </div>
+<div class="mx-auto max-w-screen-lg space-y-8 pt-8 lg:p-0">
+  <h1 class="p-4 text-4xl font-medium">Profile</h1>
+  <div class="lg:flex lg:items-start lg:gap-20">
+    <div>
+      <div class="grid place-items-center">
+        <img src="/images/placeholder.png" alt="" class="size-48 rounded-full object-cover" />
+        <div class="flex -translate-y-6 items-center gap-2 rounded-full border bg-white px-4 py-2">
+          <.icon name="hero-camera-mini" />
+          <span class="text-sm">Edit</span>
+        </div>
+      </div>
+    </div>
+    <div class="grid grow gap-4 lg:grid-cols-3 lg:gap-8">
+      <div class="flex items-center gap-4 p-4 lg:grid lg:rounded-xl lg:border">
+        <.icon name="hero-identification" />
+        <span class="grow lg:font-medium">Personal Info</span>
+        <.icon name="hero-chevron-right-mini" class="lg:hidden" />
+      </div>
 
-  <div class="inline-flex items-center gap-4 rounded-xl px-4 py-3 hover:bg-zinc-50 dark:hover:bg-zinc-800">
-    <.icon name="hero-user-group" />
-    <span>Organizers Hub</span>
-  </div>
+      <div class="flex items-center gap-4 p-4 lg:grid lg:rounded-xl lg:border">
+        <.icon name="hero-shield-check" />
+        <span class="grow lg:font-medium">Login &amp; Security</span>
+        <.icon name="hero-chevron-right-mini" class="lg:hidden" />
+      </div>
 
-  <hr class="w-full" />
+      <div class="flex items-center gap-4 p-4 lg:grid lg:rounded-xl lg:border">
+        <.icon name="hero-megaphone" />
+        <span class="grow lg:font-medium">Notification</span>
+        <.icon name="hero-chevron-right-mini" class="lg:hidden" />
+      </div>
 
-  <div class="grid place-items-start items-center gap-4 gap-4 rounded-xl">
-    <.link
-      :for={item <- [%{label: "Sign Out", href: ~p"/sign-out"}]}
-      navigate={item.href}
-      class="rounded-md px-2 py-1 text-sm text-zinc-500 hover:bg-zinc-50"
-    >
-      <%= item.label %>
-    </.link>
+      <div class="p-4 lg:hidden">
+        <.link navigate={~p"/host-with-us"} class="rounded-xl border p-4 py-6 w-full block">
+          <div class="grid gap-2">
+            <span class="font-medium">Host with us</span>
+            <span class="text-sm text-zinc-600">It's simple to setup and start earning</span>
+          </div>
+        </.link>
+      </div>
+
+      <h2 class="px-4 text-2xl font-medium lg:hidden">Support</h2>
+
+      <div class="flex items-center gap-4 p-4 lg:grid lg:rounded-xl lg:border ">
+        <.icon name="hero-question-mark-circle" />
+        <span class="grow lg:font-medium">Help Center</span>
+        <.icon name="hero-chevron-right-mini" class="lg:hidden" />
+      </div>
+
+      <div class="col-span-full p-4 lg:hidden">
+        <button class="w-full rounded-lg border px-4 py-3">Log out</button>
+      </div>
+    </div>
   </div>
 </div>
