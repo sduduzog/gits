@@ -1,26 +1,40 @@
 defmodule GitsWeb.AuthController do
   use GitsWeb, :controller
-  use AshAuthentication.Phoenix.Controller
 
   alias AshAuthentication.AddOn.Confirmation
   alias Gits.Auth.Senders.UserConfirmation
+  alias AshPhoenix.Form
+  alias Gits.Auth.User
 
   def sign_in(conn, params) do
+    params |> IO.inspect()
+
     with %Gits.Auth.User{} <- conn.assigns.current_user do
       redirect(conn, to: ~p"/")
     end
 
     conn =
       case params["return_to"] do
+        nil -> conn
         return_to when not is_nil(return_to) -> put_session(conn, :return_to, return_to)
-        _ -> conn
       end
 
+    email = params["email"]
+
     conn
-    |> put_layout(false)
-    |> Phoenix.LiveView.Controller.live_render(GitsWeb.AuthLive.Form,
-      session: Map.merge(params, %{"action" => "sign_in"})
+    |> assign(
+      :form,
+      Form.for_action(User, :sign_in_with_password, as: "user")
+      |> case do
+        form when not is_nil(email) ->
+          Form.set_data(form, %{email: email})
+
+        form ->
+          form
+      end
     )
+    |> put_layout(html: :auth)
+    |> render(:sign_in)
   end
 
   def register(conn, params) do
@@ -58,7 +72,6 @@ defmodule GitsWeb.AuthController do
 
     conn
     |> delete_session(:return_to)
-    |> store_in_session(user)
     |> assign(:current_user, user)
     |> redirect(to: return_to)
   end
@@ -113,5 +126,15 @@ defmodule GitsWeb.AuthController do
         |> put_flash(:error, "Please try submitting again")
         |> redirect(to: ~p"/email-not-verified")
     end
+  end
+
+  def sign_out(conn, _) do
+    # return_to = get_session(conn, :return_to) || ~p"/"
+
+    return_to = ~p"/"
+
+    conn
+    |> clear_session()
+    |> redirect(to: return_to)
   end
 end

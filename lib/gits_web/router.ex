@@ -1,9 +1,9 @@
 defmodule GitsWeb.Router do
   use GitsWeb, :router
-  use AshAuthentication.Phoenix.Router
 
   import Phoenix.LiveDashboard.Router
   import Plug.BasicAuth
+  import GitsWeb.AuthPlug
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -26,9 +26,6 @@ defmodule GitsWeb.Router do
   scope "/", GitsWeb do
     pipe_through :browser
 
-    sign_out_route AuthController
-    auth_routes_for Gits.Auth.User, to: AuthController
-
     get "/", PageController, :home
     get "/events", PageController, :events
     get "/settings", PageController, :settings
@@ -44,54 +41,52 @@ defmodule GitsWeb.Router do
     resources "/search", SearchController, only: [:index]
     resources "/accounts", AccountController, only: [:index]
 
-    # get "/sign-in", AuthController, :sign_in
+    get "/sign-in", AuthController, :sign_in
     get "/register", AuthController, :register
     get "/forgot-password", AuthController, :forgot_password
     post "/resend-verification", AuthController, :resend_verification_email
     get "/email-not-verified", AuthController, :email_not_verified
-    sign_out_route AuthController
-    auth_routes_for Gits.Auth.User, to: AuthController
+    get "/sign-out", AuthController, :sign_out
 
     get "/bucket/*keys", PageController, :bucket
 
-    ash_authentication_live_session :authentication_optional,
+    live_session :authentication_optional,
       on_mount: {GitsWeb.LiveUserAuth, :live_user_optional} do
       live "/events/:id", EventLive.Feature
       live "/ticket-invite/:invite_id", EventLive.Invite
+      live "/accounts/setup", AccountLive.SetupWizard
     end
 
-    ash_authentication_live_session :authentication_required,
+    live_session :authentication_required,
       on_mount: {GitsWeb.LiveUserAuth, :live_user_required} do
       live "/events/:id/tickets/:basket_id", EventLive.Tickets
       live "/events/:id/tickets/:basket_id/summary", EventLive.TicketsSummary
       live "/events/:id/tickets/:basket_id/checkout", EventLive.Checkout
 
-      live "/accounts/setup", AccountLive.SetupWizard
-
       live "/attendees/scanner/:account_id/:event_id", ScanAttendeeLive
-      live "/accounts/:slug", DashboardLive.Home
-      live "/accounts/:slug/events", DashboardLive.Events
-      live "/accounts/:slug/events/new", DashboardLive.ManageEvent
-      live "/accounts/:slug/events/:event_id", DashboardLive.Event
-      live "/accounts/:slug/events/:event_id/edit", DashboardLive.ManageEvent
-      live "/accounts/:slug/events/:event_id/scan", DashboardLive.ScanTickets
+      # live "/accounts/:slug", DashboardLive.Home
+      # live "/accounts/:slug/events", DashboardLive.Events
+      # live "/accounts/:slug/events/new", DashboardLive.ManageEvent
+      # live "/accounts/:slug/events/:event_id", DashboardLive.Event
+      # live "/accounts/:slug/events/:event_id/edit", DashboardLive.ManageEvent
+      # live "/accounts/:slug/events/:event_id/scan", DashboardLive.ScanTickets
 
-      live "/accounts/:slug/events/:event_id/tickets/:ticket_id/invites",
-           DashboardLive.TicketInvites
-
-      live "/accounts/:slug/events/:event_id/tickets/:ticket_id/invites/email",
-           DashboardLive.TicketInvitesViaEmail
-
-      live "/accounts/:slug/events/:event_id/address", DashboardLive.UpdateEventAddress
-      live "/accounts/:slug/events/:event_id/upload-graphics", DashboardLive.UploadGraphic
-      live "/accounts/:slug/events/:event_id/attendees", DashboardLive.Attendees, :list
-      live "/accounts/:slug/events/:event_id/attendees/scan", DashboardLive.Attendees, :scan
-      live "/accounts/:slug/team", DashboardLive.Team
-      live "/accounts/:slug/team/invites/new", DashboardLive.TeamInviteNewMember
-      live "/accounts/:slug/team/invites/:invite_id", DashboardLive.TeamInvite
-      live "/accounts/:slug/settings", DashboardLive.Settings
-      live "/accounts/:slug/settings/paystack", DashboardLive.SetupPaystack
-      live "/accounts/:slug/test", DashboardLive.Dashboard
+      # live "/accounts/:slug/events/:event_id/tickets/:ticket_id/invites",
+      #      DashboardLive.TicketInvites
+      #
+      # live "/accounts/:slug/events/:event_id/tickets/:ticket_id/invites/email",
+      #      DashboardLive.TicketInvitesViaEmail
+      #
+      # live "/accounts/:slug/events/:event_id/address", DashboardLive.UpdateEventAddress
+      # live "/accounts/:slug/events/:event_id/upload-graphics", DashboardLive.UploadGraphic
+      # live "/accounts/:slug/events/:event_id/attendees", DashboardLive.Attendees, :list
+      # live "/accounts/:slug/events/:event_id/attendees/scan", DashboardLive.Attendees, :scan
+      # live "/accounts/:slug/team", DashboardLive.Team
+      # live "/accounts/:slug/team/invites/new", DashboardLive.TeamInviteNewMember
+      # live "/accounts/:slug/team/invites/:invite_id", DashboardLive.TeamInvite
+      # live "/accounts/:slug/settings", DashboardLive.Settings
+      # live "/accounts/:slug/settings/paystack", DashboardLive.SetupPaystack
+      # live "/accounts/:slug/test", DashboardLive.Dashboard
 
       live "/portal/support", SupportLive
       live "/portal/support/users", SupportLive, :users
@@ -100,11 +95,15 @@ defmodule GitsWeb.Router do
       live "/portal/support/events", SupportLive, :events
     end
 
-    ash_authentication_live_session :authentication_forbidden,
+    live_session :authentication_forbidden,
       on_mount: {GitsWeb.LiveUserAuth, :live_no_user} do
-      live "/sign-in", AuthLive.SignIn
       live "/password-reset/:token", AuthLive.PasswordReset
     end
+  end
+
+  scope "/auth" do
+    pipe_through :browser
+    forward "/", GitsWeb.AuthPlug
   end
 
   scope "/my", GitsWeb do

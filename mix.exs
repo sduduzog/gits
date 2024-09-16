@@ -72,7 +72,6 @@ defmodule Gits.MixProject do
       {:ash_phoenix, "~> 2.0"},
       {:ash_postgres, "~> 2.1"},
       {:ash_authentication, "~> 4.0"},
-      {:ash_authentication_phoenix, "~> 2.0"},
       {:ash_archival, "~> 1.0"},
       {:phoenix_turnstile, "~> 1.1"},
       {:tailwind_formatter, "~> 0.4.0", only: [:dev, :test], runtime: false},

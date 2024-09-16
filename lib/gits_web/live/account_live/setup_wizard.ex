@@ -3,7 +3,7 @@ defmodule GitsWeb.AccountLive.SetupWizard do
 
   def render(assigns) do
     ~H"""
-    <div>setup wizard</div>
+    <div>setup wizard <%= is_nil(@current_user) %></div>
     """
   end
 end
