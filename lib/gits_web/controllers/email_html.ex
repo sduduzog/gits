@@ -1,7 +1,6 @@
 defmodule GitsWeb.EmailHTML do
   use GitsWeb, :html
   use GitsWeb, :verified_routes
-  use PhoenixHTMLHelpers
   alias Gits.EmailTemplates
 
   def test(_assigns) do

@@ -21,13 +21,7 @@ defmodule GitsWeb.PageController do
     |> assign(:events, events)
     |> assign(:page_title, "Home")
     |> assign(:current_tab, :home)
-    |> render(:home,
-      layout:
-        if(FunWithFlags.enabled?(:beta, for: conn.assigns.current_user),
-          do: {GitsWeb.Layouts, :app},
-          else: false
-        )
-    )
+    |> render(:home)
   end
 
   def search(conn, _) do

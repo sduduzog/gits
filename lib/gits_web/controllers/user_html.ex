@@ -1,7 +1,6 @@
 defmodule GitsWeb.UserHTML do
   alias Gits.Storefront.Event
   use GitsWeb, :html
-  use PhoenixHTMLHelpers
 
   embed_templates "user_html/*"
 

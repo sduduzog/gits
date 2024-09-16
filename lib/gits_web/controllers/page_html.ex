@@ -1,6 +1,5 @@
 defmodule GitsWeb.PageHTML do
   use GitsWeb, :html
-  use PhoenixHTMLHelpers
 
   alias Gits.Storefront.Event
 

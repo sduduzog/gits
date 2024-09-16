@@ -1,6 +1,5 @@
 defmodule GitsWeb.AuthLive.PasswordReset do
   use GitsWeb, :live_view
-  use PhoenixHTMLHelpers
 
   alias AshPhoenix.Form
   alias Gits.Accounts

@@ -1,6 +1,5 @@
 defmodule GitsWeb.AuthLive.ForgotPassword do
   use GitsWeb, :live_view
-  use PhoenixHTMLHelpers
 
   alias AshPhoenix.Form
   alias Gits.Auth.User
