@@ -1,24 +1,15 @@
 <div class="grid w-full max-w-sm gap-4">
   <p class="my-4">
-    <.link navigate="/" class="text-xl font-black italic">GiTS</.link>
+    <.link navigate="/" class="text-xl inline-block font-black italic">
+      <img src="/images/gits_logo.png" alt="GiTS" class="h-auto w-12" />
+    </.link>
   </p>
-  <h1 class="text-3xl font-medium">Welcome back</h1>
-  <.form :let={f} for={@form} class="grid" action={~p"/request-magic-link"} method="post">
-    <label class="grid gap-1 text-sm">
-      <span>Email</span>
-      <input
-        type="text"
-        name={f[:email].name}
-        value={f[:email].value}
-        class="rounded-lg px-4 py-3 text-sm"
-      />
-    </label>
-    <Turnstile.widget data-appearance="interaction-only" class="mt-4" />
-    <button
-      type="submit"
-      class="mt-4 rounded-lg bg-zinc-900 px-4 py-3 text-sm font-medium text-zinc-50"
-    >
-      Send me a magic link
-    </button>
-  </.form>
+  <h1 class="text-3xl font-medium">Check your inbox</h1>
+  <p class="text-zinc-500">
+    We've sent you a magic link<span :if={@email}>&nbsp;to <span class="font-medium text-zinc-700"><%= @email %></span></span>.
+    <br />Please click the link to confirm your address.
+  </p>
+  <p>
+    <.link navigate="/" class="text-sm hover:underline">Back to GiTS &rarr;</.link>
+  </p>
 </div>

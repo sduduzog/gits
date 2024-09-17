@@ -1,6 +1,8 @@
 <div class="grid w-full max-w-sm gap-4">
   <p class="my-4">
-    <.link navigate="/" class="text-xl font-black italic">GiTS</.link>
+    <.link navigate="/" class="text-xl inline-block font-black italic">
+      <img src="/images/gits_logo.png" alt="GiTS" class="h-auto w-12" />
+    </.link>
   </p>
   <h1 class="text-3xl font-medium">Welcome back</h1>
   <.form :let={f} for={@form} class="grid" action={~p"/request-magic-link"} method="post">

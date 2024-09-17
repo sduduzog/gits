@@ -61,7 +61,7 @@ defmodule Gits.EmailTemplates do
                   <table style="width: 100%;" cellpadding="0" cellspacing="0" role="none">
                     <tr>
                       <td style="font-size: 14px; padding: 24px;">
-                        <p style="width: 60px">
+                        <p style="width: 50px">
                           <a
                             style="text-decoration: none; color: #09090b;"
                             href={static_url(GitsWeb.Endpoint, ~p"/")}

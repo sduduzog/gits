@@ -45,6 +45,7 @@ defmodule GitsWeb.Router do
     get "/register", AuthController, :register
     get "/forgot-password", AuthController, :forgot_password
     post "/request-magic-link", AuthController, :request_magic_link
+    get "/magic-link-sent", AuthController, :magic_link_sent
     post "/resend-verification", AuthController, :resend_verification_email
     get "/email-not-verified", AuthController, :email_not_verified
     get "/sign-out", AuthController, :sign_out

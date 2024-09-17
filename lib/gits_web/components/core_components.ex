@@ -80,9 +80,10 @@ defmodule GitsWeb.CoreComponents do
     <header class="hidden p-6 lg:block">
       <div class="hidden items-center lg:flex">
         <div class="relative flex grow">
-          <.link navigate="/" class="text-xl font-black italic text-zinc-800 dark:text-zinc-100">
-            GiTS
+          <.link navigate="/" class="text-xl inline-block font-black italic">
+            <img src="/images/gits_logo.png" alt="GiTS" class="h-auto w-12" />
           </.link>
+
           <span class="text-[12px] leading-2 absolute -top-0.5 left-12 inline-flex items-center rounded-md px-1 font-medium text-yellow-800 dark:text-yellow-300">
             Beta
           </span>
