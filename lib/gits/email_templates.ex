@@ -19,6 +19,7 @@ defmodule Gits.EmailTemplates do
       <a
         style="text-decoration: none; font-weight: 600; color: #fafafa; background-color: #18181b; padding: 10px 15px; border-radius: 10px;"
         href={@url}
+        target="_blank"
       >
         Sign in now
       </a>
@@ -27,8 +28,6 @@ defmodule Gits.EmailTemplates do
   end
 
   def layout(assigns) do
-    assigns = assigns |> assign(:base_url, url(~p"/"))
-
     ~H"""
     <!DOCTYPE html>
     <html lang="en">
@@ -62,8 +61,18 @@ defmodule Gits.EmailTemplates do
                   <table style="width: 100%;" cellpadding="0" cellspacing="0" role="none">
                     <tr>
                       <td style="font-size: 14px; padding: 24px;">
-                        <p style="font-size: 16px; font-weight: 900; font-style: italic;">
-                          <a style="text-decoration: none; color: #09090b;" href={@base_url}>GiTS</a>
+                        <p style="width: 60px">
+                          <a
+                            style="text-decoration: none; color: #09090b;"
+                            href={static_url(GitsWeb.Endpoint, ~p"/")}
+                            target="_blank"
+                          >
+                            <img
+                              src={static_url(GitsWeb.Endpoint, ~p"/images/gits_logo.png")}
+                              style="height: auto; width: 100%;"
+                              alt="GiTS"
+                            />
+                          </a>
                         </p>
 
                         <h1 style="font-size: 24px; font-weight: 600; margin: 0 0 24px;">
