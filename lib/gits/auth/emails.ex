@@ -47,6 +47,26 @@ defmodule Gits.Auth.Emails do
     |> to(to_string(to))
     |> subject("Sign in to GiTS")
     |> html_body(body)
+    |> deliver()
+  end
+
+  def deliver_email_confirmation_link(to, token) do
+    body = Gits.EmailTemplates.render_magic_link(token)
+
+    new()
+    |> from({"GiTS", "hey@gits.co.za"})
+    |> to(to_string(to))
+    |> subject("Sign in to GiTS")
+    |> html_body(body)
+    |> deliver()
+  end
+
+  defp deliver(%Swoosh.Email{} = email) do
+    email
     |> Gits.Mailer.deliver()
+    |> case do
+      {:ok, _} -> :ok
+      {:error, _} -> :error
+    end
   end
 end

@@ -36,25 +36,6 @@ defmodule GitsWeb.AuthController do
   end
 
   def request_magic_link(conn, params) do
-    # case Turnstile.verify(params, conn.remote_ip) do
-    #   {:ok, _} ->
-    #     strategy = AshAuthentication.Info.strategy!(User, :magic_link)
-    #
-    #     # AshAuthentication.Strategy.routes(strategy)
-    #     # |> IO.inspect()
-    #
-    #     User |> Ash.Query.for_read(:read)
-    #
-    #     user_params =
-    #       params["user"]
-    #
-    #     AshAuthentication.Strategy.action(strategy, :request, %{"email" => user_params["email"]})
-    #     |> IO.inspect()
-    #
-    #     conn
-    #
-    #   {:error, _} ->
-    #     conn
     user_params = params["user"]
 
     form =
@@ -62,12 +43,17 @@ defmodule GitsWeb.AuthController do
       |> Form.for_action(:request_magic_link, as: "user")
       |> Form.validate(user_params)
 
-    with true <- Regex.match?(~r/@/, user_params["email"]),
+    email = user_params["email"]
+
+    with true <- Regex.match?(~r/@/, email),
          {:ok, _} <- Turnstile.verify(params, conn.remote_ip),
          %Form{valid?: true} <- Form.validate(form, user_params),
-         :ok <- create_user_via_email(user_params["email"]) do
-      IO.puts("cheese")
-      conn |> redirect(to: ~p"/sign-in")
+         :exists <- create_user_via_email(email) do
+      strategy = AshAuthentication.Info.strategy!(User, :magic_link)
+
+      AshAuthentication.Strategy.action(strategy, :request, %{"email" => email})
+
+      conn |> redirect(to: ~p"/magic-link-sent?to=#{email}")
     else
       error ->
         IO.inspect(error)
@@ -81,12 +67,43 @@ defmodule GitsWeb.AuthController do
         |> put_layout(html: :auth)
         |> render(:sign_in)
     end
-
-    conn |> redirect(to: ~p"/sign-in")
   end
 
   defp create_user_via_email(email) do
-    :ok
+    [username, _] =
+      email
+      |> String.split("@")
+
+    random_password =
+      :crypto.strong_rand_bytes(16)
+      |> :base64.encode()
+
+    User
+    |> Ash.Changeset.for_create(
+      :register_with_password,
+      %{
+        display_name: username,
+        email: email,
+        password: random_password
+      },
+      context: %{private: %{ash_authentication?: true}}
+    )
+    |> Ash.create()
+    |> case do
+      {:ok, _} ->
+        :created
+
+      {:error,
+       %Ash.Error.Invalid{
+         errors: [
+           %Ash.Error.Changes.InvalidChanges{fields: [:email], message: "has already been taken"}
+         ]
+       }} ->
+        :exists
+
+      _ ->
+        :error
+    end
   end
 
   def magic_link_sent(conn, params) do

@@ -1,19 +1,4 @@
 defmodule GitsWeb.CoreComponents do
-  @moduledoc """
-  Provides core UI components.
-
-  At first glance, this module may seem daunting, but its goal is to provide
-  core building blocks for your application, such as modals, tables, and
-  forms. The components consist mostly of markup and are well-documented
-  with doc strings and declarative assigns. You may customize and style
-  them in any way you want, based on your application growth and needs.
-
-  The default components use Tailwind CSS, a utility-first CSS framework.
-  See the [Tailwind CSS documentation](https://tailwindcss.com) to learn
-  how to customize them or feel free to swap in another framework altogether.
-
-  Icons are provided by [heroicons](https://heroicons.com). See `icon/1` for usage.
-  """
   use Phoenix.Component
   use GitsWeb, :verified_routes
 
@@ -66,8 +51,7 @@ defmodule GitsWeb.CoreComponents do
   def header_dropdown_options(assigns) do
     ~H"""
     <div class="py-1" role="none">
-      <.user_dropdown_menu_item label="Sign Up" href={~p"/register"} />
-      <.user_dropdown_menu_item label="Log In" href={~p"/sign-in"} />
+      <.user_dropdown_menu_item label="Sign In" href={~p"/sign-in"} />
     </div>
     <div class="py-1" role="none">
       <.user_dropdown_menu_item label="Help Center" href={~p"/sign-in"} />
@@ -81,7 +65,11 @@ defmodule GitsWeb.CoreComponents do
       <div class="hidden items-center lg:flex">
         <div class="relative flex grow">
           <.link navigate="/" class="text-xl inline-block font-black italic">
-            <img src="/images/gits_logo.png" alt="GiTS" class="h-auto w-12" />
+            <img
+              src={static_path(GitsWeb.Endpoint, ~p"/images/gits_logo.png")}
+              alt="GiTS"
+              class="h-auto w-12"
+            />
           </.link>
 
           <span class="text-[12px] leading-2 absolute -top-0.5 left-12 inline-flex items-center rounded-md px-1 font-medium text-yellow-800 dark:text-yellow-300">

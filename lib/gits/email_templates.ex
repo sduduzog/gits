@@ -64,7 +64,7 @@ defmodule Gits.EmailTemplates do
                         <p style="width: 50px">
                           <a
                             style="text-decoration: none; color: #09090b;"
-                            href={static_url(GitsWeb.Endpoint, ~p"/")}
+                            href={url(GitsWeb.Endpoint, ~p"/")}
                             target="_blank"
                           >
                             <img

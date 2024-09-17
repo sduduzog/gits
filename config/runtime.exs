@@ -75,20 +75,11 @@ if config_env() == :prod do
     ],
     secret_key_base: secret_key_base
 
-  config :gits, :base_url, "https://#{host}"
-
   config :phoenix_turnstile,
     site_key: env!("TURNSTILE_SITE_KEY"),
     secret_key: env!("TURNSTILE_SECRET_KEY")
 
-  domain = env!("MAILGUN_DOMAIN", :string)
-  api_key = env!("MAILGUN_API_KEY", :string)
-
   config :gits, Gits.Mailer,
-    adapter: Swoosh.Adapters.Mailgun,
-    api_key: api_key,
-    domain: domain,
-    base_url: "https://api.eu.mailgun.net/v3"
-
-  config :gits, :sender_email, "hey@#{domain}"
+    adapter: Swoosh.Adapters.Sendgrid,
+    api_key: env!("SENDGRID_API_KEY", :string)
 end
