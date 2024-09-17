@@ -7,8 +7,6 @@ defmodule GitsWeb.AuthController do
   alias Gits.Auth.User
 
   def sign_in(conn, params) do
-    params |> IO.inspect()
-
     with %Gits.Auth.User{} <- conn.assigns.current_user do
       redirect(conn, to: ~p"/")
     end
@@ -24,7 +22,7 @@ defmodule GitsWeb.AuthController do
     conn
     |> assign(
       :form,
-      Form.for_action(User, :sign_in_with_password, as: "user")
+      Form.for_action(User, :request_magic_link, as: "user")
       |> case do
         form when not is_nil(email) ->
           Form.set_data(form, %{email: email})
@@ -35,6 +33,31 @@ defmodule GitsWeb.AuthController do
     )
     |> put_layout(html: :auth)
     |> render(:sign_in)
+  end
+
+  def request_magic_link(conn, params) do
+    case Turnstile.verify(params, conn.remote_ip) do
+      {:ok, _} ->
+        strategy = AshAuthentication.Info.strategy!(User, :magic_link)
+
+        # AshAuthentication.Strategy.routes(strategy)
+        # |> IO.inspect()
+
+        User |> Ash.Query.for_read(:read)
+
+        user_params =
+          params["user"]
+
+        AshAuthentication.Strategy.action(strategy, :request, %{"email" => user_params["email"]})
+        |> IO.inspect()
+
+        conn
+
+      {:error, _} ->
+        conn
+    end
+
+    conn |> redirect(to: ~p"/sign-in")
   end
 
   def register(conn, params) do

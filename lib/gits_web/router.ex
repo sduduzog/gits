@@ -44,6 +44,7 @@ defmodule GitsWeb.Router do
     get "/sign-in", AuthController, :sign_in
     get "/register", AuthController, :register
     get "/forgot-password", AuthController, :forgot_password
+    post "/request-magic-link", AuthController, :request_magic_link
     post "/resend-verification", AuthController, :resend_verification_email
     get "/email-not-verified", AuthController, :email_not_verified
     get "/sign-out", AuthController, :sign_out
@@ -54,7 +55,6 @@ defmodule GitsWeb.Router do
       on_mount: {GitsWeb.LiveUserAuth, :live_user_optional} do
       live "/events/:id", EventLive.Feature
       live "/ticket-invite/:invite_id", EventLive.Invite
-      live "/accounts/setup", AccountLive.SetupWizard
     end
 
     live_session :authentication_required,
@@ -62,6 +62,8 @@ defmodule GitsWeb.Router do
       live "/events/:id/tickets/:basket_id", EventLive.Tickets
       live "/events/:id/tickets/:basket_id/summary", EventLive.TicketsSummary
       live "/events/:id/tickets/:basket_id/checkout", EventLive.Checkout
+
+      live "/accounts/setup", AccountLive.SetupWizard
 
       live "/attendees/scanner/:account_id/:event_id", ScanAttendeeLive
       # live "/accounts/:slug", DashboardLive.Home

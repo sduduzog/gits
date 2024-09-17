@@ -34,4 +34,5 @@ kill_signal = 'SIGTERM'
     path = '/healthz'
 
 [[vm]]
-  size = 'shared-cpu-2x'
+  size = 'shared-cpu-1x'
+  memory = '512'

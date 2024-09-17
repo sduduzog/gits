@@ -60,7 +60,7 @@ config :gits, GitsWeb.Endpoint,
       ~r"priv/gettext/.*(po)$",
       ~r"priv/pages/*/*.(md)$",
       ~r"priv/faqs/*/*.(md)$",
-      ~r"lib/gits/email_templates/.*(heex)$",
+      ~r"lib/gits/email_templates.ex$",
       ~r"lib/gits_web/(controllers|live|components)/.*(ex|heex)$"
     ]
   ]

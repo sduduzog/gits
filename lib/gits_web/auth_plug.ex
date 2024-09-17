@@ -3,7 +3,9 @@ defmodule GitsWeb.AuthPlug do
   use GitsWeb, :verified_routes
   import Phoenix.Controller
 
-  def handle_success(conn, _activity, user, token) do
+  def handle_success(conn, activity, user, token) do
+    activity |> IO.inspect()
+
     if is_api_request?(conn) do
       conn
       |> send_resp(
@@ -24,7 +26,10 @@ defmodule GitsWeb.AuthPlug do
     end
   end
 
-  def handle_failure(conn, _activity, _reason) do
+  def handle_failure(conn, activity, reason) do
+    activity |> IO.inspect()
+    reason |> IO.inspect()
+
     if is_api_request?(conn) do
       conn
       |> send_resp(

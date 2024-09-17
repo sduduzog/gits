@@ -10,9 +10,9 @@
       page_title={assigns[:page_title] || "Home"}
     />
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
+    <Turnstile.script />
     <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
     </script>
-    <Turnstile.script />
   </head>
 
   <body class="font-poppins min-h-dvh bg-white leading-tight antialiased dark:bg-zinc-900 dark:text-zinc-50">

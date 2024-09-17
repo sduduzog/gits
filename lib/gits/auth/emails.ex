@@ -38,4 +38,15 @@ defmodule Gits.Auth.Emails do
     |> html_body(body)
     |> Gits.Mailer.deliver()
   end
+
+  def deliver_magic_link(to, token) do
+    body = Gits.EmailTemplates.render_magic_link(token)
+
+    new()
+    |> from({"GiTS", "hey@gits.co.za"})
+    |> to(to_string(to))
+    |> subject("Sign in to GiTS")
+    |> html_body(body)
+    |> Gits.Mailer.deliver()
+  end
 end

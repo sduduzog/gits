@@ -33,6 +33,11 @@ defmodule Gits.Auth.User do
           sender Gits.Auth.Senders.PasswordReset
         end
       end
+
+      magic_link do
+        identity_field :email
+        sender Gits.Auth.Senders.SendMagicLink
+      end
     end
 
     tokens do
