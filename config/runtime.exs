@@ -70,6 +70,8 @@ if config_env() == :prod do
     secret_key: env!("TURNSTILE_SECRET_KEY")
 
   config :gits, Gits.Mailer,
-    adapter: Swoosh.Adapters.Sendgrid,
-    api_key: env!("SENDGRID_API_KEY", :string)
+    adapter: Swoosh.Adapters.Mailgun,
+    api_key: env!("MAILGUN_API_KEY", :string),
+    base_url: env!("MAILGUN_BASE_URL", :string),
+    domain: host
 end
