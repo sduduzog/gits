@@ -41,12 +41,7 @@ config :gits, :bucket_name, env!("BUCKET_NAME")
 config :logger, level: env!("LOG_LEVEL", :atom, :info)
 
 if config_env() == :prod do
-  database_url =
-    System.get_env("DATABASE_URL") ||
-      raise """
-      environment variable DATABASE_URL is missing.
-      For example: ecto://USER:PASS@HOST/DATABASE
-      """
+  database_url = env!("DATABASE_URL")
 
   maybe_ipv6 = if System.get_env("ECTO_IPV6") in ~w(true 1), do: [:inet6], else: []
 
@@ -55,12 +50,7 @@ if config_env() == :prod do
     pool_size: env!("POOL_SIZE", :integer, 1),
     socket_options: maybe_ipv6
 
-  secret_key_base =
-    System.get_env("SECRET_KEY_BASE") ||
-      raise """
-      environment variable SECRET_KEY_BASE is missing.
-      You can generate one by calling: mix phx.gen.secret
-      """
+  secret_key_base = env!("SECRET_KEY_BASE", :string)
 
   host = env!("PHX_HOST", :string)
   port = env!("PORT", :integer, 4000)

@@ -16,6 +16,7 @@ defmodule Gits.Auth.User do
     strategies do
       magic_link do
         identity_field :email
+        single_use_token? false
         sender Gits.Auth.Senders.SendMagicLink
       end
     end
