@@ -3,8 +3,15 @@ defmodule Gits.EmailTemplates do
   use GitsWeb, :verified_routes
 
   def render_magic_link(token) do
-    %{url: url(~p"/auth/user/magic_link?token=#{token}")}
+    %{token: token}
     |> magic_link()
+    |> Phoenix.HTML.Safe.to_iodata()
+    |> IO.iodata_to_binary()
+  end
+
+  def render_email_confirmation_link(token) do
+    %{token: token}
+    |> email_confirmation_link()
     |> Phoenix.HTML.Safe.to_iodata()
     |> IO.iodata_to_binary()
   end
@@ -18,7 +25,25 @@ defmodule Gits.EmailTemplates do
       <br />
       <a
         style="text-decoration: none; font-weight: 600; color: #fafafa; background-color: #18181b; padding: 10px 15px; border-radius: 10px;"
-        href={@url}
+        href={unverified_url(GitsWeb.Endpoint, ~p"/auth/user/magic_link?token=#{@token}")}
+        target="_blank"
+      >
+        Sign in now
+      </a>
+    </.layout>
+    """
+  end
+
+  def email_confirmation_link(assigns) do
+    ~H"""
+    <.layout preheader="Hey! Welcome!">
+      <p style="margin: 10px 0; line-height: 20px">
+        If you didn't request this e-mail, there's nothing to worry about — you can safely ignore it.
+      </p>
+      <br />
+      <a
+        style="text-decoration: none; font-weight: 600; color: #fafafa; background-color: #18181b; padding: 10px 15px; border-radius: 10px;"
+        href={unverified_url(GitsWeb.Endpoint, ~p"/auth/user/confirm/?confirm=#{@token}")}
         target="_blank"
       >
         Sign in now

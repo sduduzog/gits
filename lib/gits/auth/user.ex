@@ -13,27 +13,7 @@ defmodule Gits.Auth.User do
   end
 
   authentication do
-    add_ons do
-      confirmation :confirm do
-        monitor_fields [:email]
-        sender Gits.Auth.Senders.UserConfirmation
-      end
-    end
-
     strategies do
-      password :password do
-        identity_field :email
-        registration_enabled? true
-        confirmation_required? false
-        sign_in_token_lifetime {24, :hours}
-
-        register_action_accept [:display_name]
-
-        resettable do
-          sender Gits.Auth.Senders.PasswordReset
-        end
-      end
-
       magic_link do
         identity_field :email
         sender Gits.Auth.Senders.SendMagicLink
@@ -52,6 +32,10 @@ defmodule Gits.Auth.User do
     default_accept :*
     defaults [:read]
 
+    create :register_with_email do
+      accept [:display_name, :email]
+    end
+
     update :send_confirmation_email do
       require_atomic? false
       accept []
@@ -60,6 +44,10 @@ defmodule Gits.Auth.User do
 
   policies do
     bypass AshAuthentication.Checks.AshAuthenticationInteraction do
+      authorize_if always()
+    end
+
+    policy action(:register_with_email) do
       authorize_if always()
     end
 
@@ -72,7 +60,6 @@ defmodule Gits.Auth.User do
   attributes do
     uuid_primary_key :id
     attribute :email, :ci_string, allow_nil?: false, public?: true
-    attribute :hashed_password, :string, allow_nil?: false, sensitive?: true
     attribute :display_name, :string, allow_nil?: false, public?: true
   end
 
@@ -98,6 +85,6 @@ defimpl FunWithFlags.Actor, for: Gits.Auth.User do
 end
 
 defimpl FunWithFlags.Group, for: Gits.Auth.User do
-  def in?(%{email: email, confirmed_at: confirmed_at}, :admins),
-    do: not is_nil(confirmed_at) and Regex.match?(~r/@(bar.com|gits.co.za)$/, email)
+  def in?(%{email: email}, :admins),
+    do: Regex.match?(~r/@(bar.com|gits.co.za)$/, email)
 end

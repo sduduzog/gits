@@ -1,6 +1,7 @@
 defmodule GitsWeb.AuthController do
   use GitsWeb, :controller
 
+  alias Gits.Auth.Senders.SendEmailConfirmationLink
   alias AshAuthentication.AddOn.Confirmation
   alias Gits.Auth.Senders.UserConfirmation
   alias AshPhoenix.Form
@@ -48,13 +49,16 @@ defmodule GitsWeb.AuthController do
     with true <- Regex.match?(~r/@/, email),
          {:ok, _} <- Turnstile.verify(params, conn.remote_ip),
          %Form{valid?: true} <- Form.validate(form, user_params),
-         :exists <- create_user_via_email(email) do
+         :ok <- create_user_via_email(email) do
       strategy = AshAuthentication.Info.strategy!(User, :magic_link)
 
       AshAuthentication.Strategy.action(strategy, :request, %{"email" => email})
 
       conn |> redirect(to: ~p"/magic-link-sent?to=#{email}")
     else
+      :created ->
+        conn |> redirect(to: ~p"/magic-link-sent?to=#{email}")
+
       error ->
         IO.inspect(error)
 
@@ -74,24 +78,19 @@ defmodule GitsWeb.AuthController do
       email
       |> String.split("@")
 
-    random_password =
-      :crypto.strong_rand_bytes(16)
-      |> :base64.encode()
-
     User
     |> Ash.Changeset.for_create(
-      :register_with_password,
+      :register_with_email,
       %{
         display_name: username,
-        email: email,
-        password: random_password
+        email: email
       },
       context: %{private: %{ash_authentication?: true}}
     )
     |> Ash.create()
     |> case do
-      {:ok, _} ->
-        :created
+      {:ok, _user} ->
+        :ok
 
       {:error,
        %Ash.Error.Invalid{
@@ -99,9 +98,10 @@ defmodule GitsWeb.AuthController do
            %Ash.Error.Changes.InvalidChanges{fields: [:email], message: "has already been taken"}
          ]
        }} ->
-        :exists
+        :ok
 
-      _ ->
+      {:error, err} ->
+        err |> IO.inspect()
         :error
     end
   end

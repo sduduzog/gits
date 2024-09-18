@@ -7,7 +7,6 @@
     :ash_phoenix,
     :ash_postgres,
     :ash_authentication,
-    :ash_authentication_phoenix,
     :ash_state_machine,
     :ash_archival,
     :ash_paper_trail

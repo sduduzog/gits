@@ -52,7 +52,7 @@ if config_env() == :prod do
 
   config :gits, Gits.Repo,
     url: database_url,
-    pool_size: env!("POOL_SIZE", :integer, 2),
+    pool_size: env!("POOL_SIZE", :integer, 1),
     socket_options: maybe_ipv6
 
   secret_key_base =
