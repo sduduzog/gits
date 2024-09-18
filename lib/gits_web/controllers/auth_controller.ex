@@ -50,9 +50,11 @@ defmodule GitsWeb.AuthController do
          {:ok, _} <- Turnstile.verify(params, conn.remote_ip),
          %Form{valid?: true} <- Form.validate(form, user_params),
          :ok <- create_user_via_email(email) do
-      strategy = AshAuthentication.Info.strategy!(User, :magic_link)
+      strategy =
+        AshAuthentication.Info.strategy!(User, :magic_link)
 
       AshAuthentication.Strategy.action(strategy, :request, %{"email" => email})
+      |> IO.inspect()
 
       conn |> redirect(to: ~p"/magic-link-sent?to=#{email}")
     else
