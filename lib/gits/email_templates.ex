@@ -71,7 +71,6 @@ defmodule Gits.EmailTemplates do
         />
       </head>
       <body style="margin: 0; width: 100%; padding: 0; background-color: #ffffff; -webkit-font-smoothing: antialiased; word-break: break-word;">
-        <div style="display: none;"><%= @preheader %></div>
         <div
           style="font-family: Poppins, Arial, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif"
           role="article"
