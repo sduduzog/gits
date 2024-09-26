@@ -33,6 +33,7 @@ defmodule GitsWeb.Router do
     get "/host-with-us", PageController, :host
     get "/privacy", PageController, :privacy
     get "/terms", PageController, :terms
+    get "/help", PageController, :help
     get "/faq", PageController, :faq
     get "/assets/:filename", PageController, :assets
     get "/healthz", PageController, :healthz
@@ -60,11 +61,11 @@ defmodule GitsWeb.Router do
 
     live_session :authentication_required,
       on_mount: {GitsWeb.LiveUserAuth, :live_user_required} do
+      live "/accounts/setup", AccountLive.SetupWizard
+
       live "/events/:id/tickets/:basket_id", EventLive.Tickets
       live "/events/:id/tickets/:basket_id/summary", EventLive.TicketsSummary
       live "/events/:id/tickets/:basket_id/checkout", EventLive.Checkout
-
-      live "/accounts/setup", AccountLive.SetupWizard
 
       live "/attendees/scanner/:account_id/:event_id", ScanAttendeeLive
       # live "/accounts/:slug", DashboardLive.Home
@@ -112,7 +113,8 @@ defmodule GitsWeb.Router do
   scope "/my", GitsWeb do
     pipe_through :browser
     get "/profile", UserController, :profile
-    get "/profile/settings", UserController, :settings
+    get "/profile/edit", UserController, :edit_profile
+    get "/profile/login-and-security", UserController, :login_and_security
     get "/tickets", UserController, :tickets
     get "/tickets/past", UserController, :past_tickets
     get "/tickets/:token", UserController, :ticket

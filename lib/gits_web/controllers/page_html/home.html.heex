@@ -6,10 +6,7 @@
     We offer better security, faster check-in, and lower costs. Whether it’s concerts, conferences, festivals, or sports events, we’ve got you covered.
   </p>
   <div class="flex gap-8 font-medium">
-    <.link
-      navigate={~p"/accounts/setup"}
-      class="rounded-lg border-zinc-600 text-sm hover:underline"
-    >
+    <.link navigate={~p"/host-with-us"} class="rounded-lg border-zinc-600 text-sm hover:underline">
       Host an event with us &rarr;
     </.link>
     <.link :if={FunWithFlags.enabled?(:why_choose_button)} class="hover:underline">

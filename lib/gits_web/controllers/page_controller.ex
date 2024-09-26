@@ -93,6 +93,10 @@ defmodule GitsWeb.PageController do
     render(conn, :privacy)
   end
 
+  def help(conn, _params) do
+    render(conn, :help)
+  end
+
   def assets(conn, params) do
     conn |> redirect(external: Bucket.get_image_url(params["filename"]))
   end

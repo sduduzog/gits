@@ -13,21 +13,27 @@
       </div>
     </div>
     <div class="grid grow gap-4 lg:grid-cols-3 lg:gap-8">
-      <div class="flex items-center gap-4 p-4 lg:grid lg:rounded-xl lg:border">
+      <.link
+        navigate={~p"/my/profile/edit"}
+        class="flex items-center gap-4 p-4 lg:grid lg:rounded-xl lg:border"
+      >
         <.icon name="hero-identification" />
-        <span class="grow lg:font-medium">Personal Info</span>
+        <span class="grow lg:font-medium">Edit Profile</span>
         <.icon name="hero-chevron-right-mini" class="lg:hidden" />
-      </div>
+      </.link>
 
-      <div class="flex items-center gap-4 p-4 lg:grid lg:rounded-xl lg:border">
+      <.link
+        navigate={~p"/my/profile/login-and-security"}
+        class="flex items-center gap-4 p-4 lg:grid lg:rounded-xl lg:border"
+      >
         <.icon name="hero-shield-check" />
         <span class="grow lg:font-medium">Login &amp; Security</span>
         <.icon name="hero-chevron-right-mini" class="lg:hidden" />
-      </div>
+      </.link>
 
-      <div class="flex items-center gap-4 p-4 lg:grid lg:rounded-xl lg:border">
+      <div :if={false} class="flex items-center gap-4 p-4 lg:grid lg:rounded-xl lg:border">
         <.icon name="hero-megaphone" />
-        <span class="grow lg:font-medium">Notification</span>
+        <span class="grow lg:font-medium">Notifications</span>
         <.icon name="hero-chevron-right-mini" class="lg:hidden" />
       </div>
 
@@ -42,11 +48,14 @@
 
       <h2 class="px-4 text-2xl font-medium lg:hidden">Support</h2>
 
-      <div class="flex items-center gap-4 p-4 lg:grid lg:rounded-xl lg:border ">
+      <.link
+        navigate={~p"/help"}
+        class="flex items-center gap-4 p-4 lg:grid lg:rounded-xl lg:border "
+      >
         <.icon name="hero-question-mark-circle" />
         <span class="grow lg:font-medium">Help Center</span>
         <.icon name="hero-chevron-right-mini" class="lg:hidden" />
-      </div>
+      </.link>
 
       <div class="col-span-full p-4 lg:hidden">
         <button class="w-full rounded-lg border px-4 py-3">Log out</button>

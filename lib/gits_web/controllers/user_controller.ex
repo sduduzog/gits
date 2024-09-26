@@ -62,7 +62,7 @@ defmodule GitsWeb.UserController do
     %{current_user: user} = conn.assigns
 
     case user do
-      nil ->
+      false ->
         conn
         |> redirect(to: ~p"/sign-in?return_to=/my/profile")
 
@@ -72,6 +72,14 @@ defmodule GitsWeb.UserController do
         |> assign(:page_title, "Profile")
         |> render(:profile)
     end
+  end
+
+  def edit_profile(conn, _) do
+    conn |> render(:edit_profile)
+  end
+
+  def login_and_security(conn, _) do
+    conn |> render(:login_and_security)
   end
 
   def settings(conn, _) do
