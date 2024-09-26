@@ -5,35 +5,46 @@ defmodule GitsWeb.AccountLive.SetupWizard do
     {:ok, socket, layout: false}
   end
 
+  def handle_event("stuff", _unsigned_params, socket) do
+    {:noreply, socket |> push_navigate(to: "/h/test/dashboard")}
+  end
+
   def render(assigns) do
     ~H"""
-    <div class="h-dvh grid-rows-[auto_1fr_auto] mx-auto grid max-w-screen-md p-4 lg:py-10">
-      <div class="">
-        <h2 class="sr-only">Steps</h2>
-        <div>
-          <p class="text-xs font-medium text-gray-500">1/0 - Create an account</p>
-          <div class="mt-4 overflow-hidden rounded-full bg-zinc-200">
-            <div class="h-2 w-4/5 rounded-full bg-zinc-600"></div>
-          </div>
+    <div class="mx-auto grid max-w-screen-md gap-10 bg-white p-4 lg:py-10">
+      <div class="space-y-10 pt-10">
+        <h1 class="text-4xl font-medium">Let's setup your host account</h1>
+        <div class="grid gap-8">
+          <label for="" class="grid gap-1">
+            <span class="text-sm font-medium text-zinc-600">Host name</span>
+            <input type="text" class="w-full rounded-lg px-4 py-3 text-sm" />
+          </label>
+
+          <label for="" class="grid gap-1">
+            <span class="text-sm font-medium text-zinc-600">Handle</span>
+            <div class="flex items-center rounded-lg border border-zinc-400 pl-4">
+              <span class="text-sm text-zinc-500">gits.co.za/h/</span>
+              <input
+                type="text"
+                class="w-full rounded-lg border-none py-3 pr-4 pl-0 text-sm focus-visible:ring-0"
+              />
+            </div>
+          </label>
         </div>
       </div>
-      <div class="grid pt-10">
-        <h1 class="text-4xl font-medium">Hello there</h1>
-      </div>
-      <div class="flex items-center gap-4">
+
+      <div class="flex items-center justify-between gap-4">
         <.link
           navigate={~p"/"}
           class="px-2 font-medium hover:bg-zinc-50 rounded-lg text-zinc-900 py-1 text-sm"
-          onclick="history.back()"
         >
           Cancel
         </.link>
-        <div role="none" class="grow"></div>
-        <button class="flex gap-2 rounded-lg bg-zinc-100 px-4 py-3 font-medium text-zinc-900">
-          <span class="text-sm">Back</span>
-        </button>
 
-        <button class="flex gap-2 rounded-lg bg-zinc-900 px-4 py-3 font-medium text-zinc-50">
+        <button
+          class="min-w-40 flex justify-center gap-2 rounded-lg bg-zinc-900 px-4 py-3 font-medium text-zinc-50"
+          phx-click="stuff"
+        >
           <span class="text-sm">Continue</span>
           <.icon name="hero-arrow-right-mini" />
         </button>

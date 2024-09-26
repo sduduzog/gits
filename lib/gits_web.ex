@@ -65,6 +65,20 @@ defmodule GitsWeb do
     end
   end
 
+  def host_live_view do
+    quote do
+      use Phoenix.LiveView,
+        layout: {GitsWeb.Layouts, :host}
+
+      unquote(html_helpers())
+
+      def ok(socket, false), do: {:ok, socket, layout: false}
+      def ok(socket, layout), do: {:ok, socket, layout: {GitsWeb.Layouts, layout}}
+      def ok(socket), do: {:ok, socket}
+      def noreply(socket), do: {:noreply, socket}
+    end
+  end
+
   def dashboard_live_view do
     quote do
       unquote(live_view())

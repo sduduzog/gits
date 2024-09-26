@@ -120,6 +120,15 @@ defmodule GitsWeb.Router do
     get "/tickets/:token", UserController, :ticket
   end
 
+  scope "/h", GitsWeb do
+    pipe_through :browser
+
+    live_session :dashboard_authentication_required,
+      on_mount: {GitsWeb.LiveUserAuth, :live_user_required} do
+      live "/:slug/dashboard", HostLive.Dashboard
+    end
+  end
+
   scope "/admin" do
     pipe_through [:browser, :office]
 

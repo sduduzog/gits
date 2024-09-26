@@ -37,12 +37,11 @@ defmodule GitsWeb.CoreComponents do
       <.user_dropdown_menu_item :if={false} label="Wishlists" href={~p"/sign-in"} />
     </div>
     <div class="py-1" role="none">
-      <.user_dropdown_menu_item label="Host an event" href={~p"/register"} />
-      <.user_dropdown_menu_item label="Account" href={~p"/sign-in"} />
+      <.user_dropdown_menu_item label="Host an event" href={~p"/host-with-us"} />
     </div>
 
     <div class="py-1" role="none">
-      <.user_dropdown_menu_item label="Help Center" href={~p"/sign-in"} />
+      <.user_dropdown_menu_item label="Help Center" href={~p"/help"} />
       <.user_dropdown_menu_item label="Log Out" href={~p"/sign-out"} />
     </div>
     """
