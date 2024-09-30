@@ -1,0 +1,33 @@
+<.flash_group flash={@flash} />
+<div class="h-dvh grid-rows-[auto_1fr] grid gap-2 bg-white p-2">
+  <header class="flex items-center gap-4 divide-x p-1">
+    <div class="flex">
+      <.link navigate="/" class="text-xl inline-block font-black italic">
+        <img
+          src={static_path(GitsWeb.Endpoint, ~p"/images/gits_logo.png")}
+          alt="GiTS"
+          class="h-auto w-12"
+        />
+      </.link>
+    </div>
+    <div class="flex grow items-center justify-between pl-4">
+      <h1 class="text-lg font-semibold">
+        <%= assigns[:title] || "Panel" %>
+      </h1>
+      <div class="flex gap-4">
+        <button phx-click="help" class="size-9 inline-flex items-center justify-center rounded-lg">
+          <.icon name="hero-information-circle" />
+        </button>
+        <button
+          phx-click="close"
+          class="size-9 inline-flex items-center justify-center rounded-lg"
+        >
+          <.icon name="hero-x-mark" />
+        </button>
+      </div>
+    </div>
+  </header>
+  <main class="bg-white p-1">
+    <%= @inner_content %>
+  </main>
+</div>

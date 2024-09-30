@@ -1,5 +1,24 @@
+<.flash_group flash={@flash} />
+<% navigation_items = [
+  %{
+    label: "Dashboard",
+    icon: "hero-rectangle-group-mini",
+    current: Enum.any?([GitsWeb.HostLive.Dashboard], &(&1 == @socket.view)),
+    href: ~p"/h/test/dashboard"
+  },
+  %{
+    label: "Events",
+    icon: "hero-calendar-days-mini",
+    current:
+      Enum.any?(
+        [GitsWeb.HostLive.EventList, GitsWeb.HostLive.EventOverview],
+        &(&1 == @socket.view)
+      ),
+    href: ~p"/h/test/events"
+  }
+] %>
 <div class="h-dvh grid-rows-[auto_1fr] grid gap-2 bg-white p-2 lg:bg-zinc-50">
-  <header class="flex items-center gap-4 divide-x p-2">
+  <header class="flex items-center gap-4 divide-x p-1">
     <div class="flex">
       <.link navigate="/" class="text-xl inline-block font-black italic">
         <img
@@ -17,34 +36,69 @@
         <.icon name="hero-chevron-down-mini" />
       </div>
       <div class="hidden gap-4 lg:flex">
-        <div class="flex items-center gap-2 rounded-xl bg-zinc-200 p-2 px-3 text-zinc-950">
-          <.icon name="hero-rectangle-group-mini" />
-          <span class="text-sm font-medium">Overview</span>
-        </div>
-        <div class="flex items-center gap-2 rounded-xl p-2 px-3 text-zinc-500 hover:bg-zinc-100">
-          <.icon name="hero-calendar-days-mini" />
-          <span class="text-sm font-medium">Events</span>
-        </div>
+        <.link
+          :for={item <- navigation_items}
+          navigate={item.href}
+          class={[
+            "flex items-center gap-2 rounded-xl p-2 px-4",
+            if(item.current,
+              do: "bg-white text-zinc-950 ring-1 ring-zinc-200",
+              else: "text-zinc-500"
+            )
+          ]}
+        >
+          <.icon name={item.icon} />
+          <span class="text-sm font-medium"><%= item.label %></span>
+        </.link>
       </div>
-      <div>
-        <button class="flex items-center gap-2 rounded-lg p-1.5 lg:px-2">
-          <.icon name="hero-question-mark-circle" />
-          <span class="hidden text-sm font-medium lg:inline-flex">Help</span>
+      <div class="flex gap-2 lg:gap-4">
+        <button class="size-9 inline-flex items-center justify-center rounded-lg border">
+          <.icon name="hero-bell" />
+        </button>
+        <button class="size-9 inline-flex items-center justify-center rounded-lg border">
+          <.icon name="hero-cog-6-tooth" />
         </button>
       </div>
       <div class="lg:hidden">
-        <button class="inline-flex rounded-lg p-2">
+        <button
+          class="inline-flex rounded-lg p-2"
+          phx-click={JS.toggle(to: "#host_dashboard_options")}
+        >
           <.icon name="hero-bars-3" />
         </button>
       </div>
-    </div>
-    <div class="hidden pl-4 lg:flex">
-      <button>
-        <span class="text-sm">Create</span>
-      </button>
     </div>
   </header>
   <main class="bg-white p-2 lg:rounded-xl lg:shadow-sm">
     <%= @inner_content %>
   </main>
+</div>
+<div class="fixed inset-0 hidden bg-white p-2" id="host_dashboard_options">
+  <div class="flex w-full items-center gap-4 p-1">
+    <div class="flex grow">
+      <.link navigate="/" class="text-xl inline-block font-black italic">
+        <img
+          src={static_path(GitsWeb.Endpoint, ~p"/images/gits_logo.png")}
+          alt="GiTS"
+          class="h-auto w-12"
+        />
+      </.link>
+    </div>
+    <button class="inline-flex rounded-lg p-2" phx-click={JS.hide(to: "#host_dashboard_options")}>
+      <.icon name="hero-x-mark" />
+    </button>
+  </div>
+  <div class="grid gap-4">
+    <.link
+      :for={item <- navigation_items}
+      navigate={item.href}
+      class={[
+        "flex gap-4 rounded-lg p-4",
+        if(item.current, do: "text-zinc-950 bg-zinc-50", else: "text-zinc-600")
+      ]}
+    >
+      <.icon name={item.icon} />
+      <span class="text-sm font-medium"><%= item.label %></span>
+    </.link>
+  </div>
 </div>

@@ -68,29 +68,6 @@ defmodule GitsWeb.Router do
       live "/events/:id/tickets/:basket_id/checkout", EventLive.Checkout
 
       live "/attendees/scanner/:account_id/:event_id", ScanAttendeeLive
-      # live "/accounts/:slug", DashboardLive.Home
-      # live "/accounts/:slug/events", DashboardLive.Events
-      # live "/accounts/:slug/events/new", DashboardLive.ManageEvent
-      # live "/accounts/:slug/events/:event_id", DashboardLive.Event
-      # live "/accounts/:slug/events/:event_id/edit", DashboardLive.ManageEvent
-      # live "/accounts/:slug/events/:event_id/scan", DashboardLive.ScanTickets
-
-      # live "/accounts/:slug/events/:event_id/tickets/:ticket_id/invites",
-      #      DashboardLive.TicketInvites
-      #
-      # live "/accounts/:slug/events/:event_id/tickets/:ticket_id/invites/email",
-      #      DashboardLive.TicketInvitesViaEmail
-      #
-      # live "/accounts/:slug/events/:event_id/address", DashboardLive.UpdateEventAddress
-      # live "/accounts/:slug/events/:event_id/upload-graphics", DashboardLive.UploadGraphic
-      # live "/accounts/:slug/events/:event_id/attendees", DashboardLive.Attendees, :list
-      # live "/accounts/:slug/events/:event_id/attendees/scan", DashboardLive.Attendees, :scan
-      # live "/accounts/:slug/team", DashboardLive.Team
-      # live "/accounts/:slug/team/invites/new", DashboardLive.TeamInviteNewMember
-      # live "/accounts/:slug/team/invites/:invite_id", DashboardLive.TeamInvite
-      # live "/accounts/:slug/settings", DashboardLive.Settings
-      # live "/accounts/:slug/settings/paystack", DashboardLive.SetupPaystack
-      # live "/accounts/:slug/test", DashboardLive.Dashboard
 
       live "/portal/support", SupportLive
       live "/portal/support/users", SupportLive, :users
@@ -120,12 +97,17 @@ defmodule GitsWeb.Router do
     get "/tickets/:token", UserController, :ticket
   end
 
-  scope "/h", GitsWeb do
+  scope "/h/:slug", GitsWeb do
     pipe_through :browser
 
     live_session :dashboard_authentication_required,
       on_mount: {GitsWeb.LiveUserAuth, :live_user_required} do
-      live "/:slug/dashboard", HostLive.Dashboard
+      live "/dashboard", HostLive.Dashboard
+      live "/create-event", HostLive.ManageEvent, :create
+      live "/events/:event_id/upload-feature-graphic", HostLive.UploadFeatureGraphic
+      live "/events/:event_id/manage", HostLive.ManageEvent, :edit
+      live "/events/:event_id", HostLive.EventOverview
+      live "/events", HostLive.EventList
     end
   end
 

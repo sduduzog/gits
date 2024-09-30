@@ -9,6 +9,28 @@ defmodule GitsWeb.HostLive.Dashboard do
     ~H"""
     <div class="mx-auto grid max-w-screen-xl items-start gap-10 lg:grid-cols-12">
       <h1 class="col-span-full pt-5 text-2xl font-semibold">Dashboard</h1>
+
+      <div class="col-span-full rounded-md bg-blue-50 p-4">
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <.icon name="hero-information-circle-mini" class="text-blue-400" />
+          </div>
+          <div class="ml-3 flex-1 md:flex md:justify-between">
+            <p class="text-sm text-blue-700">
+              Create your first event. We'll guide you through the whole experience.
+            </p>
+            <p class="mt-3 text-sm md:mt-0 md:ml-6">
+              <.link
+                navigate={~p"/h/test/create-event"}
+                class="whitespace-nowrap font-medium text-blue-700 hover:text-blue-600"
+              >
+                Create first event <span aria-hidden="true"> &rarr;</span>
+              </.link>
+            </p>
+          </div>
+        </div>
+      </div>
+
       <div class="grid gap-4 lg:col-span-full lg:grid-cols-4">
         <h2 class="col-span-full text-xl font-semibold">Ticket Sales</h2>
         <div class="grid gap-2 rounded-xl border p-4">
@@ -43,12 +65,12 @@ defmodule GitsWeb.HostLive.Dashboard do
         <div class="grid gap-2 rounded-xl border p-4"></div>
       </div>
 
-      <div class="grid gap-4 lg:col-span-8">
+      <div :if={false} class="grid gap-4 lg:col-span-8">
         <h2 class="col-span-full text-xl font-semibold">Latest Reviews</h2>
         <div class="grid gap-2 rounded-xl border p-4"></div>
       </div>
 
-      <div class="grid gap-4 lg:col-span-4">
+      <div :if={false} class="grid gap-4 lg:col-span-4">
         <h2 class="col-span-full text-xl font-semibold">Average Rating</h2>
         <div class="grid gap-2 rounded-xl border p-4"></div>
       </div>
