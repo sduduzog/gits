@@ -10,28 +10,37 @@ defmodule GitsWeb.HostLive.Dashboard do
     <div class="mx-auto grid max-w-screen-xl items-start gap-10 lg:grid-cols-12">
       <h1 class="col-span-full pt-5 text-2xl font-semibold">Dashboard</h1>
 
-      <div class="col-span-full rounded-md bg-blue-50 p-4">
-        <div class="flex">
-          <div class="flex-shrink-0">
-            <.icon name="hero-information-circle-mini" class="text-blue-400" />
+      <div class="col-span-full grid items-end justify-between gap-4 rounded-3xl border p-4 lg:flex lg:p-8">
+        <div class="flex flex-col items-start gap-4">
+          <div class="relative inline-flex rounded-full bg-zinc-100 p-8 text-zinc-400">
+            <div class="bg-zinc-500/10 absolute bottom-0 left-20 h-8 w-32 rounded-full"></div>
+            <svg xmlns="http://www.w3.org/2000/svg" class="size-14" viewBox="0 0 14 14">
+              <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="13" height="9" x=".5" y="4.24" rx=".5" /><circle
+                  cx="4.25"
+                  cy="7.99"
+                  r="1.25"
+                /><path d="m3.75 13.24l4.7-4a1.32 1.32 0 0 1 1.87.15l3.07 3.68M3.5 4.24L6.25 1.1a1 1 0 0 1 1.5 0l2.75 3.14" />
+              </g>
+            </svg>
           </div>
-          <div class="ml-3 flex-1 md:flex md:justify-between">
-            <p class="text-sm text-blue-700">
-              Create your first event. We'll guide you through the whole experience.
-            </p>
-            <p class="mt-3 text-sm md:mt-0 md:ml-6">
-              <.link
-                navigate={~p"/h/test/create-event"}
-                class="whitespace-nowrap font-medium text-blue-700 hover:text-blue-600"
-              >
-                Create first event <span aria-hidden="true"> &rarr;</span>
-              </.link>
-            </p>
-          </div>
+
+          <h1 class="text-5xl font-medium">Create your first event</h1>
+          <p class="text-zinc-500 lg:max-w-96">
+            Start by adding the details of your event and reach your audience in no time!
+          </p>
+        </div>
+        <div>
+          <button
+            phx-click={JS.navigate(~p"/h/test/create-event")}
+            class="rounded-xl bg-zinc-950 p-4 text-zinc-50"
+          >
+            <span class="text-sm font-medium">Create event</span>
+          </button>
         </div>
       </div>
 
-      <div class="grid gap-4 lg:col-span-full lg:grid-cols-4">
+      <div :if={false} class="grid gap-4 lg:col-span-full lg:grid-cols-4">
         <h2 class="col-span-full text-xl font-semibold">Ticket Sales</h2>
         <div class="grid gap-2 rounded-xl border p-4">
           <h3 class="text-sm font-semibold">Generated Revenue</h3>
@@ -43,7 +52,7 @@ defmodule GitsWeb.HostLive.Dashboard do
         </div>
       </div>
 
-      <div class="grid gap-4 lg:col-span-4">
+      <div :if={false} class="grid gap-4 lg:col-span-4">
         <h2 class="col-span-full text-xl font-semibold">Upcoming Events</h2>
         <div class="grid gap-2 rounded-xl border p-4">
           <div :for={_ <- []} class="flex w-full items-center gap-2 truncate">
@@ -60,7 +69,7 @@ defmodule GitsWeb.HostLive.Dashboard do
         </div>
       </div>
 
-      <div class="grid gap-4 lg:col-span-8">
+      <div :if={false} class="grid gap-4 lg:col-span-8">
         <h2 class="col-span-full text-xl font-semibold">Next Event</h2>
         <div class="grid gap-2 rounded-xl border p-4"></div>
       </div>
