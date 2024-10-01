@@ -53,7 +53,6 @@ defmodule GitsWeb.PageController do
 
   def host(conn, _) do
     conn
-    |> put_layout(false)
     |> render(:host)
   end
 

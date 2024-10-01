@@ -12,9 +12,10 @@ defmodule GitsWeb.HostLive.Dashboard do
 
       <div class="col-span-full grid items-end justify-between gap-4 rounded-3xl border p-4 lg:flex lg:p-8">
         <div class="flex flex-col items-start gap-4">
-          <div class="relative inline-flex rounded-full bg-zinc-100 p-8 text-zinc-400">
-            <div class="bg-zinc-500/10 absolute bottom-0 left-20 h-8 w-32 rounded-full"></div>
-            <svg xmlns="http://www.w3.org/2000/svg" class="size-14" viewBox="0 0 14 14">
+          <div class="bg-zinc-500/5 relative inline-flex rounded-full border border-zinc-200 p-8">
+            <div class="bg-zinc-500/5 absolute bottom-0 left-28 h-10 w-40 rounded-full border border-zinc-200">
+            </div>
+            <svg xmlns="http://www.w3.org/2000/svg" class="size-20 text-zinc-300" viewBox="0 0 14 14">
               <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
                 <rect width="13" height="9" x=".5" y="4.24" rx=".5" /><circle
                   cx="4.25"

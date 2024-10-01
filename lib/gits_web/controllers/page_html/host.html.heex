@@ -1,19 +1,45 @@
-<div class="grid-rows-[1fr_auto] h-dvh grid">
-  <div class="flex flex-wrap items-center gap-2 self-center p-4">
-    <h1 class="grow text-5xl font-medium">Host with us</h1>
+<div class="grid w-full gap-16 p-4 pt-20">
+  <div>
+    <h1 class="w-full grow text-5xl font-bold lg:text-6xl">Host with us</h1>
+    <h2 class="w-full max-w-md text-lg text-zinc-600">
+      For a seamless event ticketing and management. Enhance the event experience for promoters, and thier audiences
+    </h2>
   </div>
-  <div class="flex justify-between p-4">
-    <button
-      onclick="history.back()"
-      class="min-w-20 rounded-xl px-4 py-3 text-sm font-medium text-zinc-900 hover:bg-zinc-50"
-    >
-      Back
-    </button>
-    <.link
-      navigate={~p"/accounts/setup"}
-      class="min-w-20 rounded-xl bg-zinc-900 px-4 py-3 text-sm font-medium text-zinc-50"
-    >
-      Get Started
-    </.link>
+
+  <dl class="grid max-w-2xl grid-cols-1 gap-8 text-base leading-7 sm:grid-cols-2 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+    <div>
+      <dt class="font-semibold text-gray-900">Exceptional customer service</dt>
+      <dd class="mt-1 text-gray-600">
+        We’ll handle ticketing, fan queries, and refunds so you can concentrate on making your event incredible.
+      </dd>
+    </div>
+
+    <div>
+      <dt class="font-semibold text-gray-900">Complete event control</dt>
+      <dd class="mt-1 text-gray-600">
+        From hosting a club night to putting on a gig, it’s easy to manage events with our cutting edge tools.
+      </dd>
+    </div>
+
+    <div>
+      <dt class="font-semibold text-gray-900">Built for fans</dt>
+      <dd class="mt-1 text-gray-600">
+        From personalised recommendations to refunds, GiTS has the smoothest ticketing experience on the market.
+      </dd>
+    </div>
+  </dl>
+
+  <div class="grid w-full gap-y-6 lg:flex lg:items-center lg:justify-between">
+    <h2 class="w-full text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+      Ready to dive in?<br />Start your journey with us today.
+    </h2>
+    <div class="flex items-center gap-x-6 lg:shrink-0">
+      <a
+        href="/accounts/setup"
+        class="rounded-md bg-zinc-950 px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-zinc-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600"
+      >
+        Get started
+      </a>
+    </div>
   </div>
 </div>
