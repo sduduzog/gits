@@ -7,13 +7,13 @@ defmodule GitsWeb.DemoPricingCalculator do
     <div class="grid items-start gap-4 rounded-2xl">
       <h2 class="w-full text-right text-4xl font-semibold">Straighforward pricing</h2>
       <p class="ml-auto w-full max-w-sm text-right font-medium text-zinc-600">
-        GiTS charges a single fee per transaction for paid tickets, avoiding per-ticket commission or service fees.
+        GiTS charges 4% per transaction, avoiding per-ticket commission or service fees.
       </p>
 
       <form phx-change="validate" class="grid gap-2">
         <h3 class="col-span-full text-lg font-semibold">Try our order calculator</h3>
-        <div class="flex flex-wrap items-start gap-4 lg:gap-8">
-          <div class="grid-cols-[4fr_6fr] grid w-full gap-4 rounded-xl border p-4 lg:grid-cols-[theme(space.72)_theme(space.40)_theme(space.64)] lg:w-auto">
+        <div class="grid-cols-[auto_auto] grid gap-4 lg:flex lg:items-start lg:justify-start lg:gap-8">
+          <div class="col-span-full grid w-full gap-4 rounded-xl border p-4 lg:grid-cols-[theme(space.72)_theme(space.40)_theme(space.64)] lg:w-auto">
             <div class="col-span-full grid gap-2 lg:col-auto">
               <span class="font-semibold">Ticket Price</span>
               <div class="flex font-medium">
@@ -46,6 +46,7 @@ defmodule GitsWeb.DemoPricingCalculator do
                 class="w-full accent-zinc-900"
               />
             </div>
+
             <div class="grid w-full gap-2">
               <span class="font-semibold">Order Total</span>
               <div class="flex font-medium">
@@ -65,19 +66,19 @@ defmodule GitsWeb.DemoPricingCalculator do
             </div>
           </div>
 
-          <div class="mt-4 grid grow gap-2 lg:max-w-64">
+          <div class="grid shrink-0 grow gap-2 lg:max-w-64 lg:mt-4">
             <span>What you get</span>
             <div class="flex font-medium">
               <span class="text-sm">R</span>
-              <span class="text-5xl"><%= @results.theirs %></span>
+              <span class="text-4xl"><%= @results.theirs %></span>
             </div>
           </div>
 
-          <div class="mt-4 grid grow gap-2 lg:max-w-40">
-            <span>What we take</span>
-            <div class="flex font-medium">
+          <div class="grid shrink-0 grow gap-2 lg:max-w-40 lg:mt-4">
+            <span class="self-end text-right">What we take</span>
+            <div class="flex justify-end font-medium">
               <span class="text-sm">R</span>
-              <span class="text-5xl"><%= @results.ours %></span>
+              <span class="text-4xl"><%= @results.ours %></span>
             </div>
           </div>
         </div>
@@ -88,7 +89,7 @@ defmodule GitsWeb.DemoPricingCalculator do
 
   def mount(_params, _session, socket) do
     price = "50"
-    count = "2"
+    count = "10"
 
     socket
     |> assign(:price, price)
@@ -109,18 +110,9 @@ defmodule GitsWeb.DemoPricingCalculator do
     price = price |> Decimal.new()
     count = count |> Decimal.new()
 
-    rand_tax =
-      if Decimal.gt?(price, Decimal.new("10")) do
-        Decimal.new("1")
-      else
-        Decimal.new("0")
-      end
-
     total_price = price |> Decimal.mult(count)
 
-    paystack_cut = total_price |> Decimal.mult(Decimal.new("0.029")) |> Decimal.add(rand_tax)
-    gits_cut = total_price |> Decimal.mult(Decimal.new("0.01"))
-    our_cut = paystack_cut |> Decimal.add(gits_cut)
+    our_cut = total_price |> Decimal.mult(Decimal.new("0.05"))
 
     their_cut = total_price |> Decimal.sub(our_cut)
 
