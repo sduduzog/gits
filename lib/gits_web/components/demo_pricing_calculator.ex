@@ -13,7 +13,7 @@ defmodule GitsWeb.DemoPricingCalculator do
       <form phx-change="validate" class="grid gap-2">
         <h3 class="col-span-full text-lg font-semibold">Try our order calculator</h3>
         <div class="flex flex-wrap items-start gap-4 lg:gap-8">
-          <div class="grid w-full grid-cols-2 gap-4 rounded-xl border p-4 lg:grid-cols-[theme(space.72)_theme(space.40)_theme(space.64)] lg:w-auto">
+          <div class="grid-cols-[4fr_6fr] grid w-full gap-4 rounded-xl border p-4 lg:grid-cols-[theme(space.72)_theme(space.40)_theme(space.64)] lg:w-auto">
             <div class="col-span-full grid gap-2 lg:col-auto">
               <span class="font-semibold">Ticket Price</span>
               <div class="flex font-medium">
@@ -32,7 +32,7 @@ defmodule GitsWeb.DemoPricingCalculator do
             </div>
 
             <div class="grid w-full gap-2">
-              <span class="font-semibold">Tickets Per Order</span>
+              <span class="font-semibold">Tickets Count</span>
               <div class="flex font-medium">
                 <span class="text-5xl"><%= @count %></span>
               </div>
@@ -127,7 +127,7 @@ defmodule GitsWeb.DemoPricingCalculator do
     %{
       ours: our_cut |> Gits.Currency.format(),
       theirs: their_cut |> Gits.Currency.format(),
-      total_price: total_price |> Gits.Currency.format()
+      total_price: total_price |> Decimal.round()
     }
   end
 end
