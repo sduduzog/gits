@@ -7,7 +7,7 @@ defmodule GitsWeb.DemoPricingCalculator do
     <div class="grid items-start gap-4 rounded-2xl">
       <h2 class="w-full text-right text-4xl font-semibold">Straighforward pricing</h2>
       <p class="ml-auto w-full max-w-sm text-right font-medium text-zinc-600">
-        GiTS charges 4% per transaction, avoiding per-ticket commission or service fees.
+        GiTS charges 5% per transaction, avoiding per-ticket commission or service fees.
       </p>
 
       <form phx-change="validate" class="grid gap-2">
@@ -89,7 +89,7 @@ defmodule GitsWeb.DemoPricingCalculator do
 
   def mount(_params, _session, socket) do
     price = "50"
-    count = "10"
+    count = "1"
 
     socket
     |> assign(:price, price)
