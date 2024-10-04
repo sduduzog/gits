@@ -62,8 +62,8 @@ export const plugins = [
 			["-mini", "/20/solid"],
 			["-micro", "/16/solid"],
 		];
-		for ([suffix, dir] of icons) {
-			for (file of readdirSync(join(iconsDir, dir))) {
+		for (const [suffix, dir] of icons) {
+			for (const file of readdirSync(join(iconsDir, dir))) {
 				const name = basename(file, ".svg") + suffix;
 				values[name] = { name, fullPath: join(iconsDir, dir, file) };
 			}
