@@ -11,7 +11,7 @@ defmodule GitsWeb.CoreComponents do
     ~H"""
     <.link
       navigate="/"
-      class="text-xl inline-flex p-2 items-center justify-center font-black italic h-10 rounded-lg shrink-0"
+      class="text-xl inline-flex p-2 items-center justify-center font-black italic h-9 rounded-lg shrink-0"
     >
       <img
         src={static_path(GitsWeb.Endpoint, ~p"/images/gits_logo.png")}
