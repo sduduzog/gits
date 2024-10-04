@@ -464,7 +464,7 @@ defmodule GitsWeb.HostLive.ManageEvent do
       end
 
     socket
-    |> push_patch(to: ~p"/h/test/events/event-id/manage?edit=#{next_step}", replace: true)
+    |> push_patch(to: ~p"/hosts/test/events/event-id/manage?edit=#{next_step}", replace: true)
     |> noreply()
   end
 
@@ -480,11 +480,11 @@ defmodule GitsWeb.HostLive.ManageEvent do
       end
 
     socket
-    |> push_patch(to: ~p"/h/test/events/event-id/manage?edit=#{next_step}", replace: true)
+    |> push_patch(to: ~p"/hosts/test/events/event-id/manage?edit=#{next_step}", replace: true)
     |> noreply()
   end
 
   def handle_event("close", _, socket) do
-    socket |> push_navigate(to: ~p"/h/test/dashboard", replace: true) |> noreply()
+    socket |> push_navigate(to: ~p"/hosts/test/dashboard", replace: true) |> noreply()
   end
 end

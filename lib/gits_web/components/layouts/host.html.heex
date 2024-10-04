@@ -4,7 +4,7 @@
     label: "Dashboard",
     icon: "hero-rectangle-group-mini",
     current: Enum.any?([GitsWeb.HostLive.Dashboard], &(&1 == @socket.view)),
-    href: ~p"/h/test/dashboard"
+    href: ~p"/hosts/test/dashboard"
   },
   %{
     label: "Events",
@@ -14,94 +14,109 @@
         [GitsWeb.HostLive.EventList, GitsWeb.HostLive.EventOverview],
         &(&1 == @socket.view)
       ),
-    href: ~p"/h/test/events"
+    href: ~p"/hosts/test/events"
+  },
+  %{
+    label: "Venues",
+    icon: "hero-user-group-mini",
+    current:
+      Enum.any?(
+        [GitsWeb.HostLive.Venues],
+        &(&1 == @socket.view)
+      ),
+    href: ~p"/hosts/test/team"
+  },
+  %{
+    label: "Team",
+    icon: "hero-user-group-mini",
+    current:
+      Enum.any?(
+        [GitsWeb.HostLive.Team],
+        &(&1 == @socket.view)
+      ),
+    href: ~p"/hosts/test/team"
+  },
+  %{
+    label: "Settings",
+    icon: "hero-cog-6-tooth-mini",
+    current:
+      Enum.any?(
+        [GitsWeb.HostLive.Settings],
+        &(&1 == @socket.view)
+      ),
+    href: ~p"/hosts/test/settings"
   }
 ] %>
-<div class="h-dvh grid-rows-[auto_1fr] grid gap-2 bg-white p-2 lg:bg-zinc-50">
-  <header class="flex items-center gap-4 divide-x p-1">
+<div class="h-dvh grid divide-x bg-white lg:grid-cols-[theme(space.72)_1fr]">
+  <aside
+    id="sidebar"
+    class="absolute inset-0 z-10 hidden flex-col gap-4 bg-white lg:static lg:flex"
+  >
     <div class="flex">
-      <.link navigate="/" class="text-xl inline-block font-black italic">
-        <img
-          src={static_path(GitsWeb.Endpoint, ~p"/images/gits_logo.png")}
-          alt="GiTS"
-          class="h-auto w-12"
-        />
+      <div class="grow p-2">
+        <.logo />
+      </div>
+      <!-- <div class="border p-4"></div> -->
+      <div class="lg:hidden">
+        <button
+          class="size-9 flex items-center justify-center rounded-lg hover:bg-zinc-50"
+          phx-click={JS.hide(to: "aside#sidebar")}
+        >
+          <.icon name="hero-x-mark" />
+        </button>
+      </div>
+    </div>
+    <div class="grow space-y-4 pt-10">
+      <.link
+        :for={item <- navigation_items}
+        navigate={item.href}
+        class={[
+          "flex items-center text-sm gap-2 rounded-lg font-medium p-2 hover:text-zinc-800 hover:bg-zinc-100",
+          if(item.current, do: "text-zinc-950 bg-zinc-50", else: "text-zinc-500")
+        ]}
+      >
+        <.icon name={item.icon} />
+        <span><%= item.label %></span>
       </.link>
     </div>
-    <div class="flex grow items-center justify-between pl-2">
-      <div class="flex w-36 gap-2 p-2">
-        <span class="truncate text-sm font-medium">
-          Treehouse Inc
+    <div class="flex items-center gap-2 rounded-lg border border-zinc-200 p-2 hover:bg-zinc-50">
+      <div class="size-10 rounded-full bg-zinc-200"></div>
+      <div class="grid grow">
+        <span class="text-sm font-medium">John Doe</span><span class="text-sm text-zinc-500">Owner</span>
+      </div>
+      <.icon name="hero-chevron-down-mini" />
+    </div>
+    <div class="border-t border-zinc-200 py-2">
+      <div class="flex items-center gap-4 rounded-lg p-2 hover:bg-zinc-100">
+        <.icon name="hero-information-circle" />
+        <span class="text-sm">Help Center</span>
+      </div>
+    </div>
+  </aside>
+  <main>
+    <header class="flex items-center p-2">
+      <div class="flex grow items-center">
+        <div class="flex items-center gap-0.5 rounded-lg p-2 text-zinc-500">
+          <span class="text-sm">Treehouse Inc</span>
+          <.icon name="hero-chevron-down-mini" />
+        </div>
+        <span class="text-sm text-zinc-500">/</span>
+        <span class="inline-flex p-2 text-sm font-medium text-zinc-500">
+          <%= Enum.find(navigation_items, & &1.current) |> Map.get(:label) %>
         </span>
-        <.icon name="hero-chevron-down-mini" />
       </div>
-      <div class="hidden gap-4 lg:flex">
-        <.link
-          :for={item <- navigation_items}
-          navigate={item.href}
-          class={[
-            "flex items-center gap-2 rounded-full p-2 px-4 border",
-            if(item.current,
-              do: "bg-white text-zinc-800 border-zinc-300",
-              else: "text-zinc-500 border-transparent"
-            )
-          ]}
-        >
-          <.icon name={item.icon} />
-          <span class="text-sm font-medium"><%= item.label %></span>
-        </.link>
-      </div>
-      <div class="flex items-center gap-2 lg:gap-4">
-        <button class="size-9 hidden items-center justify-center rounded-lg lg:inline-flex">
-          <.icon name="hero-cog-6-tooth" />
-        </button>
+      <div class="flex">
         <button
-          class="size-9 inline-flex items-center justify-center rounded-lg lg:hidden"
-          phx-click={JS.toggle(to: "#host_dashboard_options")}
+          class="size-9 flex items-center justify-center rounded-lg hover:bg-zinc-50 lg:hidden"
+          phx-click={JS.show(to: "aside#sidebar", display: "flex")}
         >
           <.icon name="hero-bars-3" />
         </button>
       </div>
-    </div>
-  </header>
-  <main class="bg-white p-2 lg:rounded-xl lg:shadow-sm">
-    <%= @inner_content %>
+    </header>
+
+    <section class="p-4">
+      <%= @inner_content %>
+    </section>
   </main>
-</div>
-<div class="fixed inset-0 hidden space-y-4 bg-white p-2" id="host_dashboard_options">
-  <div class="flex w-full items-center gap-4 p-1">
-    <div class="flex grow">
-      <.link navigate="/" class="text-xl inline-block font-black italic">
-        <img
-          src={static_path(GitsWeb.Endpoint, ~p"/images/gits_logo.png")}
-          alt="GiTS"
-          class="h-auto w-12"
-        />
-      </.link>
-    </div>
-
-    <button class="size-9 inline-flex items-center justify-center rounded-lg">
-      <.icon name="hero-cog-6-tooth" />
-    </button>
-
-    <button
-      class="size-9 inline-flex items-center justify-center rounded-lg"
-      phx-click={JS.hide(to: "#host_dashboard_options")}
-    >
-      <.icon name="hero-x-mark" />
-    </button>
-  </div>
-  <div class="grid gap-2">
-    <.link
-      :for={item <- navigation_items}
-      navigate={item.href}
-      class={[
-        "flex gap-4 rounded-lg p-4",
-        if(item.current, do: "text-zinc-950 bg-zinc-50", else: "text-zinc-600")
-      ]}
-    >
-      <.icon name={item.icon} />
-      <span class="text-sm font-medium"><%= item.label %></span>
-    </.link>
-  </div>
 </div>

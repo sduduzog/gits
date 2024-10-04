@@ -26,6 +26,51 @@ defmodule GitsWeb.Router do
   scope "/", GitsWeb do
     pipe_through :browser
 
+    live_session :authentication_required,
+      on_mount: {GitsWeb.LiveUserAuth, :live_user_required} do
+      live "/hosts/sign-up", HostLive.Onboarding, :sign_up
+      live "/hosts/:handle/onboarding/create-event", HostLive.Onboarding, :create_event
+
+      live "/hosts/:handle/onboarding/:event_id/time-and-place",
+           HostLive.Onboarding,
+           :time_and_place
+
+      live "/hosts/:handle/onboarding/:event_id/add-tickets",
+           HostLive.Onboarding,
+           :add_tickets
+
+      live "/hosts/:handle/onboarding/:event_id/payout-information",
+           HostLive.Onboarding,
+           :payout_information
+
+      live "/hosts/:handle/onboarding/:event_id/summary",
+           HostLive.Onboarding,
+           :summary
+
+      live "/hosts/:handle/onboarding", HostLive.Onboarding, :payouts
+      live "/hosts/:handle/onboarding/invite-team", HostLive.Onboarding, :invite_team
+      live "/hosts/:handle/onboarding/", HostLive.Onboarding, :payouts
+      live "/hosts/:handle/dashboard", HostLive.Dashboard
+      live "/hosts/:handle/events", HostLive.EventList
+      live "/hosts/:handle/create-event", HostLive.ManageEvent, :create
+      live "/hosts/:handle/events/:event_id/manage", HostLive.ManageEvent, :edit
+      live "/hosts/:handle/events/:event_id", HostLive.EventOverview
+      live "/hosts/:handle/settings/payouts", HostLive.Settings, :payouts
+      live "/hosts/:handle/settings", HostLive.Settings, :general
+
+      live "/events/:id/tickets/:basket_id", EventLive.Tickets
+      live "/events/:id/tickets/:basket_id/summary", EventLive.TicketsSummary
+      live "/events/:id/tickets/:basket_id/checkout", EventLive.Checkout
+
+      live "/attendees/scanner/:account_id/:event_id", ScanAttendeeLive
+
+      live "/portal/support", SupportLive
+      live "/portal/support/users", SupportLive, :users
+      live "/portal/support/jobs", SupportLive, :jobs
+      live "/portal/support/accounts", SupportLive, :accounts
+      live "/portal/support/events", SupportLive, :events
+    end
+
     get "/", PageController, :home
     get "/events", PageController, :events
     get "/settings", PageController, :settings
@@ -59,23 +104,6 @@ defmodule GitsWeb.Router do
       live "/ticket-invite/:invite_id", EventLive.Invite
     end
 
-    live_session :authentication_required,
-      on_mount: {GitsWeb.LiveUserAuth, :live_user_required} do
-      live "/accounts/setup", AccountLive.SetupWizard
-
-      live "/events/:id/tickets/:basket_id", EventLive.Tickets
-      live "/events/:id/tickets/:basket_id/summary", EventLive.TicketsSummary
-      live "/events/:id/tickets/:basket_id/checkout", EventLive.Checkout
-
-      live "/attendees/scanner/:account_id/:event_id", ScanAttendeeLive
-
-      live "/portal/support", SupportLive
-      live "/portal/support/users", SupportLive, :users
-      live "/portal/support/jobs", SupportLive, :jobs
-      live "/portal/support/accounts", SupportLive, :accounts
-      live "/portal/support/events", SupportLive, :events
-    end
-
     live_session :authentication_forbidden,
       on_mount: {GitsWeb.LiveUserAuth, :live_no_user} do
       live "/password-reset/:token", AuthLive.PasswordReset
@@ -95,20 +123,6 @@ defmodule GitsWeb.Router do
     get "/tickets", UserController, :tickets
     get "/tickets/past", UserController, :past_tickets
     get "/tickets/:token", UserController, :ticket
-  end
-
-  scope "/h/:slug", GitsWeb do
-    pipe_through :browser
-
-    live_session :dashboard_authentication_required,
-      on_mount: {GitsWeb.LiveUserAuth, :live_user_required} do
-      live "/dashboard", HostLive.Dashboard
-      live "/create-event", HostLive.ManageEvent, :create
-      live "/events/:event_id/upload-feature-graphic", HostLive.UploadFeatureGraphic
-      live "/events/:event_id/manage", HostLive.ManageEvent, :edit
-      live "/events/:event_id", HostLive.EventOverview
-      live "/events", HostLive.EventList
-    end
   end
 
   scope "/admin" do

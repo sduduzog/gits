@@ -7,6 +7,21 @@ defmodule GitsWeb.CoreComponents do
   alias Phoenix.LiveView.JS
   import GitsWeb.Gettext
 
+  def logo(assigns) do
+    ~H"""
+    <.link
+      navigate="/"
+      class="text-xl inline-flex p-2 items-center justify-center font-black italic h-10 rounded-lg shrink-0"
+    >
+      <img
+        src={static_path(GitsWeb.Endpoint, ~p"/images/gits_logo.png")}
+        alt="GiTS"
+        class="size-full object-contain"
+      />
+    </.link>
+    """
+  end
+
   attr :label, :string, required: true
   attr :href, :string, required: true
 
@@ -33,7 +48,7 @@ defmodule GitsWeb.CoreComponents do
     </div>
     <div class="py-1" role="none">
       <.user_dropdown_menu_item :if={false} label="Messages" href={~p"/sign-in"} />
-      <.user_dropdown_menu_item label="My Tickets" href={~p"/my/tickets"} />
+      <.user_dropdown_menu_item label="Tickets" href={~p"/my/tickets"} />
       <.user_dropdown_menu_item :if={false} label="Wishlists" href={~p"/sign-in"} />
     </div>
     <div class="py-1" role="none">
@@ -60,9 +75,36 @@ defmodule GitsWeb.CoreComponents do
 
   def header(assigns) do
     ~H"""
-    <header class="hidden p-6 lg:block">
+    <header class="flex items-center gap-4 p-4 lg:gap-16">
+      <div class="flex grow">
+        <.link navigate="/" class="text-xl inline-block font-black italic">
+          <img
+            src={static_path(GitsWeb.Endpoint, ~p"/images/gits_logo.png")}
+            alt="GiTS"
+            class="h-auto w-12"
+          />
+        </.link>
+      </div>
+      <div class="flex gap-4">
+        <button class="inline-flex items-center gap-2 rounded-lg p-2 hover:bg-black/5 lg:px-4">
+          <.icon name="hero-magnifying-glass" class="size-5" />
+          <span class="hidden text-sm font-medium lg:inline">Find events</span>
+        </button>
+
+        <button class="inline-flex h-9 items-center gap-2 rounded-lg border p-2 hover:bg-black/5 lg:px-4">
+          <.icon name="hero-ticket" class="size-5" />
+          <span class="hidden text-sm font-medium lg:inline">Tickets</span>
+        </button>
+      </div>
+      <div class="flex gap-6">
+        <button class="size-9 inline-flex items-center justify-center gap-2">
+          <.icon name="hero-bars-2" />
+        </button>
+      </div>
+    </header>
+    <header :if={false} class="hidden p-6 lg:block">
       <div class="hidden items-center lg:flex">
-        <div class="relative flex grow">
+        <div class="flex grow">
           <.link navigate="/" class="text-xl inline-block font-black italic">
             <img
               src={static_path(GitsWeb.Endpoint, ~p"/images/gits_logo.png")}
@@ -70,10 +112,6 @@ defmodule GitsWeb.CoreComponents do
               class="h-auto w-12"
             />
           </.link>
-
-          <span class="text-[12px] leading-2 absolute -top-0.5 left-12 inline-flex items-center rounded-md px-1 font-medium text-yellow-800 dark:text-yellow-300">
-            Beta
-          </span>
         </div>
 
         <div class="flex items-center gap-4">
@@ -87,6 +125,7 @@ defmodule GitsWeb.CoreComponents do
             Host with us
           </.link>
           <div
+            :if={false}
             class="relative"
             id="user-dropdown"
             phx-click-away={JS.hide(to: "div[data-dropdown]")}

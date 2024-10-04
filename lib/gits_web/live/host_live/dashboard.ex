@@ -2,15 +2,15 @@ defmodule GitsWeb.HostLive.Dashboard do
   use GitsWeb, :host_live_view
 
   def mount(_params, _session, socket) do
-    {:ok, socket}
+    socket |> ok()
   end
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto grid max-w-screen-xl items-start gap-10 lg:grid-cols-12">
+    <div class="grid items-start gap-10 lg:grid-cols-12">
       <h1 class="col-span-full pt-5 text-2xl font-semibold">Dashboard</h1>
 
-      <div class="col-span-full grid items-end justify-between gap-4 rounded-3xl border p-4 lg:flex lg:p-8">
+      <div class="col-span-full flex flex-wrap items-end justify-between gap-4 rounded-3xl border p-4 lg:col-span-8 lg:p-8">
         <div class="flex flex-col items-start gap-4">
           <div class="bg-zinc-500/5 relative inline-flex rounded-full border border-zinc-200 p-8">
             <div class="bg-zinc-500/5 absolute bottom-0 left-28 h-10 w-40 rounded-full border border-zinc-200">
@@ -33,8 +33,8 @@ defmodule GitsWeb.HostLive.Dashboard do
         </div>
         <div>
           <button
-            phx-click={JS.navigate(~p"/h/test/create-event")}
-            class="rounded-xl bg-zinc-950 p-4 text-zinc-50"
+            phx-click={JS.navigate(~p"/hosts/test/create-event")}
+            class="inline-flex rounded-lg bg-zinc-950 px-4 py-2 text-zinc-50"
           >
             <span class="text-sm font-medium">Create event</span>
           </button>

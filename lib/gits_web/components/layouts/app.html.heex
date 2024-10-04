@@ -4,8 +4,22 @@
     <main class="mx-auto w-full max-w-screen-2xl">
       <%= @inner_content %>
     </main>
+    <footer class="border-t px-4 py-10">
+      <div class="flex">
+        <div class="grow">
+          <.link navigate="/" class="text-xl inline-block font-black italic">
+            <img
+              src={static_path(GitsWeb.Endpoint, ~p"/images/gits_logo.png")}
+              alt="GiTS"
+              class="h-auto w-12"
+            />
+          </.link>
+        </div>
+      </div>
+      <div></div>
+    </footer>
   </div>
-  <div class="flex justify-between border-t p-2 px-8 lg:hidden">
+  <div class="flexx hidden justify-between border-t p-2 px-8">
     <.link navigate={~p"/events"} class="grid place-items-center">
       <.icon name="hero-magnifying-glass" />
       <span class="text-xs">Explore</span>

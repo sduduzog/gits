@@ -14,9 +14,9 @@ defmodule GitsWeb.DemoPricingCalculator do
       <form phx-change="validate" class="grid gap-2 py-20">
         <h3 class="col-span-full text-lg font-semibold">Try our order calculator</h3>
         <div class="grid-cols-[auto_auto] grid gap-4 lg:flex lg:items-start lg:justify-start lg:gap-8">
-          <div class="col-span-full grid w-full gap-4 rounded-xl border p-4 lg:grid-cols-[theme(space.72)_theme(space.40)_theme(space.64)] lg:w-auto">
+          <div class="col-span-full grid w-full gap-8 rounded-xl border p-4 lg:grid-cols-[theme(space.72)_theme(space.40)_theme(space.64)] lg:w-auto lg:gap-4">
             <div class="col-span-full grid gap-2 lg:col-auto">
-              <span class="font-semibold">Ticket Price</span>
+              <span class="font-semibold">Price Per Ticket</span>
               <div class="flex font-medium">
                 <span class="text-base">R</span>
                 <span class="text-5xl"><%= @price %></span>
@@ -49,7 +49,7 @@ defmodule GitsWeb.DemoPricingCalculator do
             </div>
 
             <div class="grid w-full gap-2">
-              <span class="font-semibold">Order Total</span>
+              <span class="font-semibold">The customer pays</span>
               <div class="flex font-medium">
                 <span class="text-base">R</span>
                 <span class="text-5xl"><%= @results.total_price %></span>
@@ -76,7 +76,7 @@ defmodule GitsWeb.DemoPricingCalculator do
           </div>
 
           <div class="grid shrink-0 grow gap-2 lg:max-w-40 lg:mt-4">
-            <span class="self-end text-right">What we take</span>
+            <span class="self-end text-right">Transaction cost</span>
             <div class="flex justify-end font-medium">
               <span class="text-sm">R</span>
               <span class="text-4xl"><%= @results.ours %></span>
