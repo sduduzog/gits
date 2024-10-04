@@ -59,7 +59,7 @@ defmodule GitsWeb.HostLive.OnboardingComponents do
         <textarea rows="5" class="w-full rounded-lg border-zinc-300 px-3 py-2 text-sm"></textarea>
       </label>
 
-      <fieldset class="col-span-full grid gap-4 lg:grid-cols-2">
+      <fieldset class="col-span-full grid gap-4 lg:gap-6 lg:grid-cols-2">
         <legend class="col-span-full inline-flex text-sm font-medium">
           Event visibility
         </legend>
@@ -102,7 +102,7 @@ defmodule GitsWeb.HostLive.OnboardingComponents do
 
   def onboarding_step_form(%{current: :time_and_place} = assigns) do
     ~H"""
-    <div class="grid grid-cols-2 gap-y-6 gap-4 pt-4">
+    <div class="grid grid-cols-2 gap-y-6 gap-4 lg:gap-6 pt-4">
       <label for="" class="grid gap-1">
         <span class="text-sm font-medium">Start date</span>
         <input type="datetime-local" class="w-full rounded-lg border-zinc-300 px-3 py-2 text-sm" />
@@ -113,7 +113,7 @@ defmodule GitsWeb.HostLive.OnboardingComponents do
         <input type="datetime-local" class="w-full rounded-lg border-zinc-300 px-3 py-2 text-sm" />
       </label>
 
-      <fieldset class="col-span-full grid gap-4 lg:grid-cols-2">
+      <fieldset class="col-span-full grid gap-4 lg:gap-6 lg:grid-cols-2">
         <legend class="col-span-full inline-flex text-sm font-medium">
           Event visibility
         </legend>
