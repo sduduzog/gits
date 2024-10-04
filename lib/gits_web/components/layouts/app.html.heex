@@ -1,4 +1,4 @@
-<div class="grid-rows-[1fr_auto] h-dvh mx-auto grid max-w-screen-2xl overflow-hidden lg:h-auto lg:overflow-visible">
+<div class="mx-auto grid h-dvh max-w-screen-2xl grid-rows-[1fr_auto] overflow-hidden lg:h-auto lg:overflow-visible">
   <div class="overflow-auto lg:overflow-visible">
     <.header current_user={@current_user} />
     <main class="mx-auto w-full max-w-screen-2xl">
@@ -7,7 +7,7 @@
     <footer class="border-t px-4 py-10">
       <div class="flex">
         <div class="grow">
-          <.link navigate="/" class="text-xl inline-block font-black italic">
+          <.link navigate="/" class="inline-block text-xl font-black italic">
             <img
               src={static_path(GitsWeb.Endpoint, ~p"/images/gits_logo.png")}
               alt="GiTS"

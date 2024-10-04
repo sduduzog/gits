@@ -1,19 +1,14 @@
-// See the Tailwind configuration guide for advanced usage
-// https://tailwindcss.com/docs/configuration
-
 import plugin from "tailwindcss/plugin";
-// biome-ignore lint/style/useNodejsImportProtocol: <explanation>
-import { readdirSync, readFileSync } from "fs";
-// biome-ignore lint/style/useNodejsImportProtocol: <explanation>
-import { join, basename } from "path";
+import { readdirSync, readFileSync } from "node:fs";
+import { join, basename } from "node:path";
 
-export const content = [
+const content = [
 	"./js/**/*.js",
 	"../lib/gits_web.ex",
 	"../lib/gits_web/**/*.*ex",
-	"../deps/ash_authentication_phoenix/**/*.*ex",
+	"../lib/gits_web/**/*.html",
 ];
-export const theme = {
+ const theme = {
 	extend: {
 		fontFamily: {
 			inter: ["Inter", "sans-serif"],
@@ -24,7 +19,8 @@ export const theme = {
 		},
 	},
 };
-export const plugins = [
+
+const plugins = [
 	require("@tailwindcss/forms"),
 	// Allows prefixing tailwind classes with LiveView classes to add rules
 	// only when LiveView classes are applied, for example:
@@ -97,3 +93,9 @@ export const plugins = [
 		);
 	}),
 ];
+
+export default {
+  content,
+  theme,
+  plugins
+}

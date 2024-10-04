@@ -8,6 +8,7 @@ defmodule GitsWeb.HostLive.Onboarding do
       {"Become a host", action == :sign_up},
       {"Create an event", action == :create_event},
       {"Time & place", action == :time_and_place},
+      {"Upload feature graphic", action == :upload_feature_graphic},
       {"Add tickets", action == :add_tickets},
       {"Payout information", action == :payout_information},
       {"Summary", action == :summary}
@@ -15,13 +16,15 @@ defmodule GitsWeb.HostLive.Onboarding do
   end
 
   defp current_title(action) do
-    %{sign_up: "Become a host", create_event: "Create an event"} |> Map.get(action)
+    %{sign_up: "Become a host", create_event: "Create an event", time_and_place: "Time & Date"}
+    |> Map.get(action)
   end
 
   defp current_subtitle(action) do
     %{
-      sign_up: "Create your host account to begin",
-      create_event: "Start crafting your event experience",
+      sign_up: "Create your host account to begin.",
+      create_event: "Start crafting your event experience.",
+      time_and_place: "Specify when and where your event will be taking place",
       payout_information: "Provide your banking information for seamless payouts."
     }
     |> Map.get(action)
@@ -39,7 +42,7 @@ defmodule GitsWeb.HostLive.Onboarding do
       </:steps>
       <.onboarding_step_form current={@live_action}>
         <button
-          :if={@live_action != :sign_up}
+          :if={@live_action != :sign_up and @live_action != :create_event}
           class="rounded-lg px-4 py-2 text-zinc-950 hover:bg-zinc-50"
           phx-click="skip"
         >
@@ -66,6 +69,12 @@ defmodule GitsWeb.HostLive.Onboarding do
     |> noreply()
   end
 
+  def handle_event("close", _, %{assigns: %{live_action: :create_event}} = socket) do
+    socket
+    |> push_navigate(to: ~p"/hosts/test/dashboard", replace: true)
+    |> noreply()
+  end
+
   def handle_event("close", _, socket) do
     socket
     |> push_navigate(to: ~p"/host-with-us", replace: true)
@@ -89,6 +98,12 @@ defmodule GitsWeb.HostLive.Onboarding do
   end
 
   def handle_event("continue", _, %{assigns: %{live_action: :time_and_place}} = socket) do
+    socket
+    |> push_navigate(to: ~p"/hosts/test/onboarding/event_id/upload-feature-graphic")
+    |> noreply()
+  end
+
+  def handle_event("continue", _, %{assigns: %{live_action: :upload_feature_graphic}} = socket) do
     socket
     |> push_navigate(to: ~p"/hosts/test/onboarding/event_id/add-tickets")
     |> noreply()

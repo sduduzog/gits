@@ -35,6 +35,10 @@ defmodule GitsWeb.Router do
            HostLive.Onboarding,
            :time_and_place
 
+      live "/hosts/:handle/onboarding/:event_id/upload-feature-graphic",
+           HostLive.Onboarding,
+           :upload_feature_graphic
+
       live "/hosts/:handle/onboarding/:event_id/add-tickets",
            HostLive.Onboarding,
            :add_tickets
