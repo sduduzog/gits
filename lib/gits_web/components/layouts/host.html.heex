@@ -15,39 +15,72 @@
         &(&1 == @socket.view)
       ),
     href: ~p"/hosts/test/events"
-  },
-  %{
-    label: "Venues",
-    icon: "hero-user-group-mini",
-    current:
-      Enum.any?(
-        [GitsWeb.HostLive.Venues],
-        &(&1 == @socket.view)
-      ),
-    href: ~p"/hosts/test/team"
-  },
-  %{
-    label: "Team",
-    icon: "hero-user-group-mini",
-    current:
-      Enum.any?(
-        [GitsWeb.HostLive.Team],
-        &(&1 == @socket.view)
-      ),
-    href: ~p"/hosts/test/team"
-  },
-  %{
-    label: "Settings",
-    icon: "hero-cog-6-tooth-mini",
-    current:
-      Enum.any?(
-        [GitsWeb.HostLive.Settings],
-        &(&1 == @socket.view)
-      ),
-    href: ~p"/hosts/test/settings"
   }
 ] %>
-<div class="h-dvh grid divide-x bg-white lg:grid-cols-[theme(space.72)_1fr]">
+<div>
+  <aside class="fixed inset-0 hidden h-dvh flex-col gap-8 p-2 lg:static lg:flex lg:h-auto lg:flex-row lg:items-center">
+    <div class="inline-flex items-center justify-between">
+      <.logo />
+      <button class="inline-flex size-9 items-center justify-center lg:hidden">
+        <.icon name="hero-x-mark" />
+      </button>
+    </div>
+    <div class="flex w-full gap-2 rounded-lg border p-4 lg:max-w-56 lg:px-3 lg:py-2">
+      <span class="grow text-sm font-medium">Treehouse Inc</span>
+      <.icon name="hero-chevron-down-mini" class="shrink-0" />
+    </div>
+    <nav class="flex grow flex-col gap-2 lg:flex-row lg:items-center lg:justify-end lg:gap-0.5">
+      <.link
+        :for={i <- navigation_items}
+        navigate={i.href}
+        class={[
+          "rounded-lg p-4 gap-4 inline-flex lg:py-2",
+          if(i.current,
+            do: "text-zinc-950 bg-zinc-100",
+            else: "text-zinc-400 hover:text-zinc-600 hover:bg-zinc-50"
+          )
+        ]}
+      >
+        <.icon name={i.icon} class="shrink-0 lg:hidden" />
+        <span class="text-sm font-medium"><%= i.label %></span>
+      </.link>
+    </nav>
+    <div class="grid gap-4 lg:flex">
+      <div class="inline-flex items-center gap-3 self-start p-4 lg:hidden lg:size-9 lg:p-0">
+        <.icon name="hero-lifebuoy" />
+        <span class="text-sm">Support</span>
+      </div>
+
+      <div class="inline-flex items-center gap-3 self-start p-4 lg:hidden lg:size-9 lg:p-0">
+        <.icon name="hero-cog-6-tooth" />
+        <span class="text-sm">Settings</span>
+      </div>
+      <div class="flex items-center gap-4 border-t px-4 py-2 lg:size-9 lg:rounded-full lg:p-0">
+        <img
+          src={static_path(GitsWeb.Endpoint, ~p"/images/placeholder.png")}
+          alt="Profile image"
+          class="size-9 rounded-full object-cover"
+        />
+        <div class="grid *:text-sm *:leading-tight lg:hidden">
+          <span class="font-medium">Joe Ghatty</span>
+          <span class="text-zinc-500">jghatty@hotmail.com</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <header class="flex items-start p-2 lg:p-4">
+    <h1 class="grow items-center text-2xl font-semibold">
+      <%= navigation_items |> Enum.find(& &1.current) |> Map.get(:label) %>
+    </h1>
+    <button class="flex size-9 items-center lg:hidden justify-center rounded-lg">
+      <.icon name="hero-bars-3" />
+    </button>
+  </header>
+  <main class="p-2 lg:p-4">
+    <%= @inner_content %>
+  </main>
+</div>
+<div :if={false} class="grid h-dvh divide-x bg-white lg:grid-cols-[theme(space.72)_1fr]">
   <aside
     id="sidebar"
     class="absolute inset-0 z-10 hidden flex-col gap-4 bg-white lg:static lg:flex"
@@ -59,7 +92,7 @@
       <!-- <div class="border p-4"></div> -->
       <div class="lg:hidden">
         <button
-          class="size-9 flex items-center justify-center rounded-lg hover:bg-zinc-50"
+          class="flex size-9 items-center justify-center rounded-lg hover:bg-zinc-50"
           phx-click={JS.hide(to: "aside#sidebar")}
         >
           <.icon name="hero-x-mark" />
@@ -107,7 +140,7 @@
       </div>
       <div class="flex">
         <button
-          class="size-9 flex items-center justify-center rounded-lg hover:bg-zinc-50 lg:hidden"
+          class="flex size-9 items-center justify-center rounded-lg hover:bg-zinc-50 lg:hidden"
           phx-click={JS.show(to: "aside#sidebar", display: "flex")}
         >
           <.icon name="hero-bars-3" />

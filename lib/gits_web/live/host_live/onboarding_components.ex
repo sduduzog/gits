@@ -227,37 +227,55 @@ defmodule GitsWeb.HostLive.OnboardingComponents do
 
   def onboarding_step_form(%{current: :payout_preferences} = assigns) do
     ~H"""
-    <div class="grid grid-cols-2 gap-8 pt-4">
-      <div class="col-span-full space-y-2">
-        <label class="col-span-full grid gap-1">
-          <span class="text-sm font-medium">Name</span>
-          <input type="text" class="w-full rounded-lg border-zinc-300 px-3 py-2 text-sm" />
-        </label>
+    <div class="grid gap-6 pt-4 grid-cols-[2fr_3fr]">
+      <label class="col-span-full grid gap-1">
+        <span class="text-sm font-medium">Account Holder</span>
+        <input type="text" class="w-full rounded-lg border-zinc-300 px-3 py-2 text-sm" />
+      </label>
 
-        <label class="col-span-full grid gap-1">
-          <div class="flex items-center rounded-lg border border-zinc-300 pl-3">
-            <span class="text-sm text-zinc-500">gits.co.za/hosts/</span>
-            <input
-              type="text"
-              class="w-full rounded-lg border-none py-2 pl-0 pr-3 text-sm focus-visible:ring-0"
-            />
+      <label class="grid gap-1">
+        <span class="text-sm font-medium">Bank</span>
+        <input type="text" class="w-full rounded-lg border-zinc-300 px-3 py-2 text-sm" />
+      </label>
+
+      <label class="grid gap-1">
+        <span class="text-sm font-medium">Account Number</span>
+        <input type="text" class="w-full rounded-lg border-zinc-300 px-3 py-2 text-sm" />
+      </label>
+
+      <fieldset class="col-span-full grid gap-4 lg:grid-cols-2 lg:gap-6">
+        <legend class="col-span-full inline-flex text-sm font-medium">
+          Payout schedule
+        </legend>
+
+        <label class="mt-1 flex gap-2 rounded-lg border px-3 py-2 has-[:checked]:ring-2 has-[:checked]:ring-zinc-600">
+          <input type="radio" name="event-location" checked class="peer sr-only" />
+          <div class="grid grow gap-1">
+            <span class="text-sm font-medium text-zinc-950">Automatic</span>
+            <span class="text-sm text-zinc-500">
+              Only people with the link to the event will be able to see it
+            </span>
           </div>
+          <.icon
+            name="hero-check-circle-mini"
+            class="shrink-0 text-zinc-700 opacity-0 peer-checked:opacity-100"
+          />
         </label>
-      </div>
 
-      <div class="col-span-full grid grid-cols-[auto_1fr] items-center gap-1 gap-x-4">
-        <span class="col-span-full w-full text-sm font-medium">Upload logo</span>
-        <div class="aspect-square w-24 rounded-xl bg-zinc-200"></div>
-        <div class="inline-grid">
-          <label class="inline-flex">
-            <span class="sr-only">Choose logo</span>
-            <input
-              type="file"
-              class="w-full text-sm font-medium file:mr-4 file:h-9 file:rounded-lg file:border file:border-solid file:border-zinc-300 file:bg-white file:px-4 file:py-2 hover:file:bg-zinc-50"
-            />
-          </label>
-        </div>
-      </div>
+        <label class="mt-1 flex gap-2 rounded-lg border px-3 py-2 has-[:disabled]:opacity-60 has-[:checked]:ring-2 has-[:checked]:ring-zinc-600">
+          <input type="radio" name="event-location" disabled class="peer sr-only" />
+          <div class="grid grow gap-1">
+            <span class="text-sm font-medium text-zinc-950">Manual</span>
+            <span class="text-sm text-zinc-500">
+              The event will be publicly discoverable on the platform
+            </span>
+          </div>
+          <.icon
+            name="hero-check-circle-mini"
+            class="shrink-0 text-zinc-700 opacity-0 peer-checked:opacity-100"
+          />
+        </label>
+      </fieldset>
 
       <div class="col-span-full flex justify-end gap-6">
         <%= render_slot(@inner_block) %>
