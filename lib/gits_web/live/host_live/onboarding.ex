@@ -3,31 +3,39 @@ defmodule GitsWeb.HostLive.Onboarding do
   import GitsWeb.HostLive.Components
   import GitsWeb.HostLive.OnboardingComponents
 
-  defp wizard_steps(action) do
+  defp mapped_wizard_steps() do
     [
-      {"Become a host", action == :sign_up},
-      {"Create an event", action == :create_event},
-      {"Time & place", action == :time_and_place},
-      {"Upload feature graphic", action == :upload_feature_graphic},
-      {"Add tickets", action == :add_tickets},
-      {"Payout information", action == :payout_information},
-      {"Summary", action == :summary}
+      {"Become a host", "Create your host account to begin.", :sign_up},
+      {"Create an event", "Start crafting your event experience.", :create_event},
+      {"Time & place", "Specify when and where your event will be taking place.",
+       :time_and_place},
+      {"Upload feature graphic", "Upload an image to feature on your event page.",
+       :upload_feature_graphic},
+      {"Add tickets", "Setup ticket types and pricing for your event.", :add_tickets},
+      {"Payout preferences", "Provide your banking information for seamless payouts.",
+       :payout_preferences},
+      {"Summary", "Verify your event details and make any final changes.", :summary}
     ]
   end
 
-  defp current_title(action) do
-    %{sign_up: "Become a host", create_event: "Create an event", time_and_place: "Time & Date"}
-    |> Map.get(action)
+  defp wizard_steps(current_action) do
+    mapped_wizard_steps()
+    |> Enum.map(fn {_, _, action} = step -> {step, action == current_action} end)
   end
 
-  defp current_subtitle(action) do
-    %{
-      sign_up: "Create your host account to begin.",
-      create_event: "Start crafting your event experience.",
-      time_and_place: "Specify when and where your event will be taking place",
-      payout_information: "Provide your banking information for seamless payouts."
-    }
-    |> Map.get(action)
+  defp get_current_step(current_action) do
+    mapped_wizard_steps()
+    |> Enum.find(fn {_, _, action} -> action == current_action end)
+  end
+
+  defp current_title(current_action) do
+    get_current_step(current_action)
+    |> (fn {title, _, _} -> title end).()
+  end
+
+  defp current_subtitle(current_action) do
+    get_current_step(current_action)
+    |> (fn {_, subtitle, _} -> subtitle end).()
   end
 
   def render(assigns) do
@@ -35,8 +43,8 @@ defmodule GitsWeb.HostLive.Onboarding do
     <.wizard_wrapper title={current_title(@live_action)} subtitle={current_subtitle(@live_action)}>
       <:steps>
         <.wizard_step
-          :for={{label, current} <- wizard_steps(@live_action)}
-          label={label}
+          :for={{{title, _, _}, current} <- wizard_steps(@live_action)}
+          label={title}
           current={current}
         />
       </:steps>
@@ -111,11 +119,11 @@ defmodule GitsWeb.HostLive.Onboarding do
 
   def handle_event("continue", _, %{assigns: %{live_action: :add_tickets}} = socket) do
     socket
-    |> push_navigate(to: ~p"/hosts/test/onboarding/event_id/payout-information")
+    |> push_navigate(to: ~p"/hosts/test/onboarding/event_id/payout-preferences")
     |> noreply()
   end
 
-  def handle_event("continue", _, %{assigns: %{live_action: :payout_information}} = socket) do
+  def handle_event("continue", _, %{assigns: %{live_action: :payout_preferences}} = socket) do
     socket
     |> push_navigate(to: ~p"/hosts/test/onboarding/event_id/summary")
     |> noreply()

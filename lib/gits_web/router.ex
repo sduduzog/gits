@@ -43,9 +43,9 @@ defmodule GitsWeb.Router do
            HostLive.Onboarding,
            :add_tickets
 
-      live "/hosts/:handle/onboarding/:event_id/payout-information",
+      live "/hosts/:handle/onboarding/:event_id/payout-preferences",
            HostLive.Onboarding,
-           :payout_information
+           :payout_preferences
 
       live "/hosts/:handle/onboarding/:event_id/summary",
            HostLive.Onboarding,
