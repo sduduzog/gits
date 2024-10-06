@@ -26,14 +26,18 @@ defmodule GitsWeb.HostLive.SignUp do
         </div>
       </div>
 
-      <div class="flex items-center justify-end gap-4">
+      <div class="flex items-center justify-end lg:gap-4">
         <button
           class="flex justify-center gap-2 rounded-lg bg-zinc-900 px-4 py-2 font-medium text-zinc-50"
           phx-click="continue"
         >
-          <span class="text-sm">Continue</span>
+          <span class="text-sm">Sign up</span>
           <.icon name="hero-arrow-right-mini" />
         </button>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <div :for={_ <- []} class="border aspect-square"></div>
       </div>
     </div>
     """

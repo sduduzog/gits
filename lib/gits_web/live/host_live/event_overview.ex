@@ -61,12 +61,6 @@ defmodule GitsWeb.HostLive.EventOverview do
 
         <div class="col-span-full flex justify-between">
           <h2 class="text-xl">Sessions</h2>
-          <.link
-            navigate={~p"/h/test/events/event-id/sessions/add"}
-            class="text-sm font-medium underline"
-          >
-            Add Session
-          </.link>
         </div>
 
         <div class="grid gap-8 rounded-xl border p-4">

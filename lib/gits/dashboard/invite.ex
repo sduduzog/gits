@@ -9,32 +9,9 @@ defmodule Gits.Dashboard.Invite do
 
   alias Gits.Dashboard.Member
 
-  attributes do
-    uuid_primary_key :id
-
-    attribute :email, :ci_string, allow_nil?: false, public?: true
-
-    attribute :role, :atom do
-      constraints one_of: [:admin, :sales_manager, :attendee_support]
-      allow_nil? false
-      public? true
-    end
-
-    create_timestamp :created_at, public?: true
-
-    update_timestamp :updated_at, public?: true
-  end
-
-  relationships do
-    belongs_to :account, Gits.Dashboard.Account
-    belongs_to :member, Gits.Dashboard.Member
-
-    belongs_to :user, Gits.Auth.User do
-      domain Gits.Auth
-      define_attribute? false
-      source_attribute :email
-      destination_attribute :email
-    end
+  postgres do
+    table "account_invites"
+    repo Gits.Repo
   end
 
   state_machine do
@@ -156,9 +133,32 @@ defmodule Gits.Dashboard.Invite do
     # end
   end
 
-  postgres do
-    table "account_invites"
-    repo Gits.Repo
+  attributes do
+    uuid_primary_key :id
+
+    attribute :email, :ci_string, allow_nil?: false, public?: true
+
+    attribute :role, :atom do
+      constraints one_of: [:admin, :sales_manager, :attendee_support]
+      allow_nil? false
+      public? true
+    end
+
+    create_timestamp :created_at, public?: true
+
+    update_timestamp :updated_at, public?: true
+  end
+
+  relationships do
+    belongs_to :account, Gits.Dashboard.Account
+    belongs_to :member, Gits.Dashboard.Member
+
+    belongs_to :user, Gits.Auth.User do
+      domain Gits.Auth
+      define_attribute? false
+      source_attribute :email
+      destination_attribute :email
+    end
   end
 
   identities do

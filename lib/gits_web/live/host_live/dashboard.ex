@@ -7,9 +7,38 @@ defmodule GitsWeb.HostLive.Dashboard do
 
   def render(assigns) do
     ~H"""
-    <div class="grid items-start gap-10 lg:grid-cols-12">
-      <h1 class="col-span-full pt-5 text-2xl font-semibold">Dashboard</h1>
+    <div class="flex p-2 lg:px-4 gap-8">
+      <span
+        :for={i <- ["1 day", "3 days", "Week", "Month"]}
+        class="text-sm text-zinc-400 first:text-zinc-950 rounded-lg first:font-medium"
+      >
+        <%= i %>
+      </span>
+    </div>
+    <div class="lg:flex px-2 lg:px-4">
+      <div class="grow grid gap-4 gap-y-10 lg:grid-cols-4">
+        <div class="grid gap-1">
+          <span class="text-zinc-600">Revenue</span>
+          <span class="text-3xl font-medium">R 0.00</span>
+        </div>
 
+        <div class="grid gap-1">
+          <span class="text-zinc-600">Unique Customers</span>
+          <span class="text-3xl font-medium">0</span>
+        </div>
+
+        <div class="grid gap-1">
+          <span class="text-zinc-600">Event Page Views</span>
+          <span class="text-3xl font-medium">0</span>
+        </div>
+
+        <div class="grid gap-1">
+          <span class="text-zinc-600">Conversion Rate</span>
+          <span class="text-3xl font-medium">0%</span>
+        </div>
+      </div>
+    </div>
+    <div :if={false} class="grid items-start gap-10 lg:grid-cols-12">
       <div class="col-span-full flex flex-wrap items-end justify-between gap-4 rounded-3xl border p-4 lg:col-span-8 lg:p-8">
         <div class="flex flex-col items-start gap-4">
           <div class="bg-zinc-500/5 relative inline-flex rounded-full border border-zinc-200 p-8">

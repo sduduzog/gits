@@ -30,7 +30,7 @@ defmodule GitsWeb.HostLive.Components do
   def wizard_wrapper(assigns) do
     ~H"""
     <div class="mx-auto max-w-screen-xl items-start justify-between gap-8 lg:flex">
-      <div class="flex justify-between py-4 lg:grid lg:gap-8 lg:pt-16">
+      <div class="flex justify-between py-4 lg:grid lg:gap-8 lg:sticky lg:top-0 lg:pt-16">
         <%= render_slot(@steps) %>
       </div>
       <div class="grid w-full max-w-screen-sm gap-8 lg:pt-14">
