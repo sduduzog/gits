@@ -7,7 +7,7 @@ defmodule GitsWeb.HostLive.EventList do
 
   def render(assigns) do
     ~H"""
-    <div class="lg:p-4 p-2 flex items-center justify-end">
+    <div class="flex items-center justify-end">
       <div class="flex grow gap-8">
         <span
           :for={i <- ["All", "Drafts", "Published"]}
@@ -24,7 +24,7 @@ defmodule GitsWeb.HostLive.EventList do
         <span class="text-sm font-medium">New event</span>
       </button>
     </div>
-    <div class="divide-y divide-zinc-100 p-2 lg:p-4">
+    <div class="divide-y divide-zinc-100">
       <div :for={_ <- 1..3} class="py-4 flex gap-4 items-center">
         <div class="aspect-[3/2] h-20 bg-zinc-200 rounded-xl"></div>
         <div class="grid w-full gap-1.5 grow">

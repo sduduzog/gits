@@ -7,7 +7,7 @@ defmodule GitsWeb.HostLive.Dashboard do
 
   def render(assigns) do
     ~H"""
-    <div class="flex p-2 lg:p-4 gap-8">
+    <div class="flex gap-8">
       <span
         :for={i <- ["1 day", "3 days", "Week", "Month"]}
         class="text-sm text-zinc-400 first:text-zinc-950 rounded-lg first:font-medium"
@@ -15,7 +15,7 @@ defmodule GitsWeb.HostLive.Dashboard do
         <%= i %>
       </span>
     </div>
-    <div class="lg:flex px-2 lg:px-4">
+    <div class="lg:flex">
       <div class="grow grid gap-4 gap-y-10 lg:grid-cols-4">
         <div class="grid gap-1">
           <span class="text-zinc-600">Revenue</span>
@@ -113,6 +113,220 @@ defmodule GitsWeb.HostLive.Dashboard do
         <h2 class="col-span-full text-xl font-semibold">Average Rating</h2>
         <div class="grid gap-2 rounded-xl border p-4"></div>
       </div>
+    </div>
+    <div class="overflow-hidden hidden">
+      <h2>Transactions</h2>
+      <table class="w-full text-left">
+        <thead class="sr-only">
+          <tr>
+            <th>Amount</th>
+            <th class="hidden sm:table-cell">Client</th>
+            <th>More details</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="relative py-5 pr-6">
+              <div class="flex gap-x-6">
+                <svg
+                  class="hidden h-6 w-5 flex-none text-gray-400 sm:block"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  aria-hidden="true"
+                  data-slot="icon"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm-.75-4.75a.75.75 0 0 0 1.5 0V8.66l1.95 2.1a.75.75 0 1 0 1.1-1.02l-3.25-3.5a.75.75 0 0 0-1.1 0L6.2 9.74a.75.75 0 1 0 1.1 1.02l1.95-2.1v4.59Z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <div class="flex-auto">
+                  <div class="flex items-start gap-x-3">
+                    <div class="text-sm font-medium leading-6 text-gray-900">$7,600.00 USD</div>
+                    <div class="rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+                      Paid
+                    </div>
+                  </div>
+                  <div class="mt-1 text-xs leading-5 text-gray-500">$500.00 tax</div>
+                </div>
+              </div>
+              <div class="absolute bottom-0 right-full h-px w-screen bg-gray-100"></div>
+              <div class="absolute bottom-0 left-0 h-px w-screen bg-gray-100"></div>
+            </td>
+            <td class="hidden py-5 pr-6 sm:table-cell">
+              <div class="text-sm leading-6 text-gray-900">Reform</div>
+              <div class="mt-1 text-xs leading-5 text-gray-500">Website redesign</div>
+            </td>
+            <td class="py-5 text-right">
+              <div :if={false} class="flex justify-end">
+                <a
+                  href="#"
+                  class="text-sm font-medium leading-6 text-indigo-600 hover:text-indigo-500"
+                >
+                  View<span class="hidden sm:inline"> transaction</span>
+                  <span class="sr-only">
+                    , invoice #00012, Reform
+                  </span>
+                </a>
+              </div>
+              <div class="mt-1 text-xs leading-5 text-gray-500">
+                Invoice <span class="text-gray-900">#00012</span>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td class="relative py-5 pr-6">
+              <div class="flex gap-x-6">
+                <svg
+                  class="hidden h-6 w-5 flex-none text-gray-400 sm:block"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  aria-hidden="true"
+                  data-slot="icon"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm.75-11.25a.75.75 0 0 0-1.5 0v4.59L7.3 9.24a.75.75 0 0 0-1.1 1.02l3.25 3.5a.75.75 0 0 0 1.1 0l3.25-3.5a.75.75 0 1 0-1.1-1.02l-1.95 2.1V6.75Z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <div class="flex-auto">
+                  <div class="flex items-start gap-x-3">
+                    <div class="text-sm font-medium leading-6 text-gray-900">$10,000.00 USD</div>
+                    <div class="rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
+                      Withdraw
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="absolute bottom-0 right-full h-px w-screen bg-gray-100"></div>
+              <div class="absolute bottom-0 left-0 h-px w-screen bg-gray-100"></div>
+            </td>
+            <td class="hidden py-5 pr-6 sm:table-cell">
+              <div class="text-sm leading-6 text-gray-900">Tom Cook</div>
+              <div class="mt-1 text-xs leading-5 text-gray-500">Salary</div>
+            </td>
+            <td class="py-5 text-right">
+              <div :if={false} class="flex justify-end">
+                <a
+                  href="#"
+                  class="text-sm font-medium leading-6 text-indigo-600 hover:text-indigo-500"
+                >
+                  View<span class="hidden sm:inline"> transaction</span>
+                  <span class="sr-only">
+                    , invoice #00011, Tom Cook
+                  </span>
+                </a>
+              </div>
+              <div class="mt-1 text-xs leading-5 text-gray-500">
+                Invoice <span class="text-gray-900">#00011</span>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td class="relative py-5 pr-6">
+              <div class="flex gap-x-6">
+                <svg
+                  class="hidden h-6 w-5 flex-none text-gray-400 sm:block"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  aria-hidden="true"
+                  data-slot="icon"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M15.312 11.424a5.5 5.5 0 0 1-9.201 2.466l-.312-.311h2.433a.75.75 0 0 0 0-1.5H3.989a.75.75 0 0 0-.75.75v4.242a.75.75 0 0 0 1.5 0v-2.43l.31.31a7 7 0 0 0 11.712-3.138.75.75 0 0 0-1.449-.39Zm1.23-3.723a.75.75 0 0 0 .219-.53V2.929a.75.75 0 0 0-1.5 0V5.36l-.31-.31A7 7 0 0 0 3.239 8.188a.75.75 0 1 0 1.448.389A5.5 5.5 0 0 1 13.89 6.11l.311.31h-2.432a.75.75 0 0 0 0 1.5h4.243a.75.75 0 0 0 .53-.219Z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <div class="flex-auto">
+                  <div class="flex items-start gap-x-3">
+                    <div class="text-sm font-medium leading-6 text-gray-900">$2,000.00 USD</div>
+                    <div class="rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
+                      Overdue
+                    </div>
+                  </div>
+                  <div class="mt-1 text-xs leading-5 text-gray-500">$130.00 tax</div>
+                </div>
+              </div>
+              <div class="absolute bottom-0 right-full h-px w-screen bg-gray-100"></div>
+              <div class="absolute bottom-0 left-0 h-px w-screen bg-gray-100"></div>
+            </td>
+            <td class="hidden py-5 pr-6 sm:table-cell">
+              <div class="text-sm leading-6 text-gray-900">Tuple</div>
+              <div class="mt-1 text-xs leading-5 text-gray-500">Logo design</div>
+            </td>
+            <td class="py-5 text-right">
+              <div :if={false} class="flex justify-end">
+                <a
+                  href="#"
+                  class="text-sm font-medium leading-6 text-indigo-600 hover:text-indigo-500"
+                >
+                  View<span class="hidden sm:inline"> transaction</span>
+                  <span class="sr-only">
+                    , invoice #00009, Tuple
+                  </span>
+                </a>
+              </div>
+              <div class="mt-1 text-xs leading-5 text-gray-500">
+                Invoice <span class="text-gray-900">#00009</span>
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <td class="relative py-5 pr-6">
+              <div class="flex gap-x-6">
+                <svg
+                  class="hidden h-6 w-5 flex-none text-gray-400 sm:block"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  aria-hidden="true"
+                  data-slot="icon"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm-.75-4.75a.75.75 0 0 0 1.5 0V8.66l1.95 2.1a.75.75 0 1 0 1.1-1.02l-3.25-3.5a.75.75 0 0 0-1.1 0L6.2 9.74a.75.75 0 1 0 1.1 1.02l1.95-2.1v4.59Z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <div class="flex-auto">
+                  <div class="flex items-start gap-x-3">
+                    <div class="text-sm font-medium leading-6 text-gray-900">$14,000.00 USD</div>
+                    <div class="rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+                      Paid
+                    </div>
+                  </div>
+                  <div class="mt-1 text-xs leading-5 text-gray-500">$900.00 tax</div>
+                </div>
+              </div>
+              <div class="absolute bottom-0 right-full h-px w-screen bg-gray-100"></div>
+              <div class="absolute bottom-0 left-0 h-px w-screen bg-gray-100"></div>
+            </td>
+            <td class="hidden py-5 pr-6 sm:table-cell">
+              <div class="text-sm leading-6 text-gray-900">SavvyCal</div>
+              <div class="mt-1 text-xs leading-5 text-gray-500">Website redesign</div>
+            </td>
+            <td class="py-5 text-right">
+              <div :if={false} class="flex justify-end">
+                <a
+                  href="#"
+                  class="text-sm font-medium leading-6 text-indigo-600 hover:text-indigo-500"
+                >
+                  View<span class="hidden sm:inline"> transaction</span>
+                  <span class="sr-only">
+                    , invoice #00010, SavvyCal
+                  </span>
+                </a>
+              </div>
+              <div class="mt-1 text-xs leading-5 text-gray-500">
+                Invoice <span class="text-gray-900">#00010</span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
     """
   end

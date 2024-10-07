@@ -55,7 +55,10 @@ defmodule GitsWeb.Router do
       live "/hosts/:handle/dashboard", HostLive.Dashboard
       live "/hosts/:handle/events", HostLive.EventList
 
-      live "/hosts/:handle/events/:event_id", HostLive.EventOverview
+      live "/hosts/:handle/events/:event_id", HostLive.Event, :overview
+      live "/hosts/:handle/events/:event_id/attendees", HostLive.Event, :attendees
+      live "/hosts/:handle/events/:event_id/guests", HostLive.Event, :guests
+
       live "/hosts/:handle/settings/payouts", HostLive.Settings, :payouts
       live "/hosts/:handle/settings", HostLive.Settings, :general
 

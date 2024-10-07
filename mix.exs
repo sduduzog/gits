@@ -32,6 +32,7 @@ defmodule Gits.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:nanoid, "~> 2.0"},
       {:ash_slug, "~> 0.1"},
       {:nimble_totp, "~> 1.0"},
       {:nimble_publisher, "~> 1.0"},

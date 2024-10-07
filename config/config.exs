@@ -53,6 +53,10 @@ config :gits, Oban,
   queues: [default: 1, mailers: 1],
   repo: Gits.Repo
 
+config :nanoid,
+  size: 8,
+  alphabet: "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
 # plugins: [{Oban.Plugins.Cron, crontab: [{"* * * * *", Gits.Workers.SweepWaitlist}]}]
 
 config :fun_with_flags, :cache, enabled: false, ttl: 120

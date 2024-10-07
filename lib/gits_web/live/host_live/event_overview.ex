@@ -7,16 +7,18 @@ defmodule GitsWeb.HostLive.EventOverview do
 
   def render(assigns) do
     ~H"""
-    <div class="flex p-2 lg:p-4 gap-8">
+    <div class="flex p-2 lg:p-0 gap-8">
       <span
-        :for={i <- ["Attendees"]}
+        :for={i <- ["Overview", "Attendees", "Guests"]}
         class="text-sm text-zinc-400 first:text-zinc-950 rounded-lg first:font-medium"
       >
         <%= i %>
       </span>
     </div>
 
-    <div></div>
+    <div>
+      <h2>Recent orders</h2>
+    </div>
     """
   end
 end
