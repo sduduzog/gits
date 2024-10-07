@@ -8,7 +8,7 @@ defmodule GitsWeb.HostLive.CreateEvent do
   def render(assigns) do
     ~H"""
     <div class="mx-auto max-w-screen-md lg:pt-8">
-      <h1 class="grow items-center truncate text-xl font-semibold">
+      <h1 class="grow items-center truncate text-2xl font-semibold">
         Create a new event
       </h1>
 
@@ -20,7 +20,7 @@ defmodule GitsWeb.HostLive.CreateEvent do
 
         <label class="col-span-full grid gap-1">
           <span class="text-sm font-medium">Describe the event?</span>
-          <textarea rows="15" class="w-full rounded-lg border-zinc-300 px-3 py-2 text-sm"></textarea>
+          <textarea rows="5" class="w-full rounded-lg border-zinc-300 px-3 py-2 text-sm"></textarea>
         </label>
 
         <fieldset class="col-span-full grid gap-4 lg:grid-cols-2 lg:gap-6">
@@ -56,6 +56,11 @@ defmodule GitsWeb.HostLive.CreateEvent do
             />
           </label>
         </fieldset>
+        <div class="flex col-span-full justify-end">
+          <button class="text-zinc-50 bg-zinc-950 px-4 rounded-lg py-2">
+            <span class="text-sm font-semibold">Create</span>
+          </button>
+        </div>
       </div>
     </div>
     """
