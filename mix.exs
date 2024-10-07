@@ -72,7 +72,7 @@ defmodule Gits.MixProject do
       {:ash_phoenix, "~> 2.0"},
       {:ash_postgres, "~> 2.1"},
       {:ash_authentication, "~> 4.0"},
-      {:ash_archival, "~> 1.0"},
+      {:ash_archival, "~> 1.0.3"},
       {:phoenix_turnstile, "~> 1.1"},
       {:sqids, "~> 0.1.0"},
       {:slugify, "~> 1.3"},

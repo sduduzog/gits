@@ -30,30 +30,31 @@ defmodule GitsWeb.Router do
       on_mount: {GitsWeb.LiveUserAuth, :live_user_required} do
       live "/hosts/get-started", HostLive.ManageEvent, :create_event
 
-      live "/hosts/:handle/onboarding/:event_id/time-and-place",
+      live "/hosts/:handle/events/new", HostLive.ManageEvent, :create_event
+
+      live "/hosts/:handle/events/:event_id/manage/time-and-place",
            HostLive.ManageEvent,
            :time_and_place
 
-      live "/hosts/:handle/onboarding/:event_id/upload-feature-graphic",
+      live "/hosts/:handle/events/:event_id/manage/upload-feature-graphic",
            HostLive.ManageEvent,
            :upload_feature_graphic
 
-      live "/hosts/:handle/onboarding/:event_id/add-tickets",
+      live "/hosts/:handle/events/:event_id/manage/add-tickets",
            HostLive.ManageEvent,
            :add_tickets
 
-      live "/hosts/:handle/onboarding/:event_id/payout-preferences",
+      live "/hosts/:handle/events/:event_id/manage/payout-preferences",
            HostLive.ManageEvent,
            :payout_preferences
 
-      live "/hosts/:handle/onboarding/:event_id/summary",
+      live "/hosts/:handle/events/:event_id/manage/summary",
            HostLive.ManageEvent,
            :summary
 
       live "/hosts/:handle/dashboard", HostLive.Dashboard
       live "/hosts/:handle/events", HostLive.EventList
-      live "/hosts/:handle/create-event", HostLive.ManageEvent, :create_event
-      live "/hosts/:handle/events/:event_id/manage", HostLive.ManageEvent, :edit
+
       live "/hosts/:handle/events/:event_id", HostLive.EventOverview
       live "/hosts/:handle/settings/payouts", HostLive.Settings, :payouts
       live "/hosts/:handle/settings", HostLive.Settings, :general

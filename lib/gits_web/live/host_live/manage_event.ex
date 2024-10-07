@@ -92,39 +92,33 @@ defmodule GitsWeb.HostLive.ManageEvent do
     socket |> push_navigate(to: ~p"/hosts/test/dashboard", replace: true) |> noreply()
   end
 
-  def handle_event("continue", _, %{assigns: %{live_action: :sign_up}} = socket) do
-    socket
-    |> push_navigate(to: ~p"/hosts/test/onboarding/create-event")
-    |> noreply()
-  end
-
   def handle_event("continue", _, %{assigns: %{live_action: :create_event}} = socket) do
     socket
-    |> push_navigate(to: ~p"/hosts/test/onboarding/event_id/time-and-place")
+    |> push_navigate(to: ~p"/hosts/test/events/event_id/manage/time-and-place")
     |> noreply()
   end
 
   def handle_event("continue", _, %{assigns: %{live_action: :time_and_place}} = socket) do
     socket
-    |> push_navigate(to: ~p"/hosts/test/onboarding/event_id/upload-feature-graphic")
+    |> push_navigate(to: ~p"/hosts/test/events/event_id/manage/upload-feature-graphic")
     |> noreply()
   end
 
   def handle_event("continue", _, %{assigns: %{live_action: :upload_feature_graphic}} = socket) do
     socket
-    |> push_navigate(to: ~p"/hosts/test/onboarding/event_id/add-tickets")
+    |> push_navigate(to: ~p"/hosts/test/events/event_id/manage/add-tickets")
     |> noreply()
   end
 
   def handle_event("continue", _, %{assigns: %{live_action: :add_tickets}} = socket) do
     socket
-    |> push_navigate(to: ~p"/hosts/test/onboarding/event_id/payout-preferences")
+    |> push_navigate(to: ~p"/hosts/test/events/event_id/manage/payout-preferences")
     |> noreply()
   end
 
   def handle_event("continue", _, %{assigns: %{live_action: :payout_preferences}} = socket) do
     socket
-    |> push_navigate(to: ~p"/hosts/test/onboarding/event_id/summary")
+    |> push_navigate(to: ~p"/hosts/test/events/event_id/manage/summary")
     |> noreply()
   end
 

@@ -25,7 +25,13 @@ config :spark,
   ]
 
 config :gits,
-  ash_domains: [Gits.Auth, Gits.Dashboard, Gits.Storefront, Gits.Admissions, Gits.Support],
+  ash_domains: [
+    Gits.Auth,
+    Gits.Dashboard,
+    Gits.Storefront,
+    Gits.Admissions,
+    Gits.Support
+  ],
   ecto_repos: [Gits.Repo]
 
 config :ash, :utc_datetime_type, :datetime

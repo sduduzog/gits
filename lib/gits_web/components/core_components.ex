@@ -75,7 +75,7 @@ defmodule GitsWeb.CoreComponents do
 
   def header(assigns) do
     ~H"""
-    <header class="flex items-center gap-4 p-4 lg:gap-16">
+    <header class="flex items-center gap-4 p-2 lg:gap-16">
       <div class="flex grow">
         <.link navigate="/" class="text-xl inline-block font-black italic">
           <img

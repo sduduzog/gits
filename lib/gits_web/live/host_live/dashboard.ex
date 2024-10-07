@@ -7,7 +7,7 @@ defmodule GitsWeb.HostLive.Dashboard do
 
   def render(assigns) do
     ~H"""
-    <div class="flex p-2 lg:px-4 gap-8">
+    <div class="flex p-2 lg:p-4 gap-8">
       <span
         :for={i <- ["1 day", "3 days", "Week", "Month"]}
         class="text-sm text-zinc-400 first:text-zinc-950 rounded-lg first:font-medium"
@@ -62,7 +62,7 @@ defmodule GitsWeb.HostLive.Dashboard do
         </div>
         <div>
           <button
-            phx-click={JS.navigate(~p"/hosts/test/create-event")}
+            phx-click={JS.navigate(~p"/hosts/test/events/new")}
             class="inline-flex rounded-lg bg-zinc-950 px-4 py-2 text-zinc-50"
           >
             <span class="text-sm font-medium">Create event</span>

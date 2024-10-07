@@ -49,7 +49,7 @@
           :for={nav <- navigation}
           navigate={nav.href}
           class={[
-            "md:flex hidden focus-visible:ring-2 focus:outline-none focus-visible:ring-zinc-500 focus-visible:ring-1 items-center gap-2 rounded-2xl py-2 pr-4 pl-3 text-sm",
+            "md:flex hidden focus:outline-none focus-visible:ring-zinc-500 focus-visible:ring-1 items-center gap-2 rounded-2xl py-2 pr-4 pl-3 text-sm",
             if(nav.current,
               do:
                 "bg-white ring-1 ring-zinc-200 dark:ring-zinc-600 dark:bg-slate-800 text-zinc-700 dark:text-zinc-200",
@@ -64,7 +64,7 @@
       <div class="flex items-center gap-4">
         <.link
           navigate={~p"/accounts/#{@slug}/settings"}
-          class="hidden items-center gap-2 rounded-xl focus-visible:ring-2 focus:outline-none focus-visible:ring-zinc-500 focus-visible:ring-1 p-2.5 text-sm text-zinc-500 hover:bg-black/5 md:flex"
+          class="hidden items-center gap-2 rounded-xl focus:outline-none focus-visible:ring-zinc-500 focus-visible:ring-1 p-2.5 text-sm text-zinc-500 hover:bg-black/5 md:flex"
         >
           <.icon name="hero-cog-6-tooth" />
         </.link>

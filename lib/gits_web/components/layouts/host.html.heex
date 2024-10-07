@@ -19,7 +19,7 @@
 ] %>
 <aside
   id="sidebar"
-  class="fixed inset-0 bg-white z-10 hidden h-dvh flex-col gap-8 lg:gap-12 p-2 lg:static lg:flex lg:h-auto lg:flex-row lg:items-center"
+  class="fixed inset-0 bg-white z-10 lg:mx-auto lg:max-w-screen-2xl hidden h-dvh flex-col gap-8 lg:gap-12 p-2 lg:static lg:flex lg:h-auto lg:flex-row lg:items-center"
 >
   <div class="inline-flex items-center justify-between lg:w-full lg:max-w-36">
     <.logo />
@@ -73,9 +73,9 @@
     </div>
   </div>
 </aside>
-<header class="flex items-center p-2 lg:p-4">
-  <h1 class="grow items-center lg:p-0 text-2xl font-semibold">
-    <%= navigation_items |> Enum.find(& &1.current) |> Map.get(:label) %>
+<header class="flex items-center p-2 lg:p-4 mx-auto max-w-screen-2xl">
+  <h1 class="grow items-center truncate lg:p-0 text-xl font-semibold">
+    <%= assigns[:page_title] || navigation_items |> Enum.find(& &1.current) |> Map.get(:label) %>
   </h1>
   <button
     class="flex size-9 items-center lg:hidden justify-center rounded-lg"
@@ -84,6 +84,6 @@
     <.icon name="hero-bars-3" />
   </button>
 </header>
-<main class="space-y-8">
+<main class="space-y-8 mx-auto max-w-screen-2xl">
   <%= @inner_content %>
 </main>
