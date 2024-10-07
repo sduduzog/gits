@@ -25,30 +25,30 @@ import topbar from "../vendor/topbar";
 import { Hooks } from "./hooks";
 
 const csrfToken = document
-	.querySelector("meta[name='csrf-token']")
-	.getAttribute("content");
+  .querySelector("meta[name='csrf-token']")
+  .getAttribute("content");
 
 const liveSocket = new LiveSocket("/live", Socket, {
-	longPollFallbackMs: 2500,
-	params: { _csrf_token: csrfToken },
-	hooks: {
-		HeaderOpacityOnScroll: {
-			mounted() {
-				document.addEventListener("scroll", () => {
-					if (window.scrollY > 20) {
-						const header = document.getElementById("homepage_header");
-						header.classList.add("bg-opacity-100");
-						header.classList.remove("bg-opacity-0");
-					} else {
-						const header = document.getElementById("homepage_header");
-						header.classList.add("bg-opacity-0");
-						header.classList.remove("bg-opacity-100");
-					}
-				});
-			},
-		},
-		...Hooks,
-	},
+  longPollFallbackMs: 2500,
+  params: { _csrf_token: csrfToken },
+  hooks: {
+    HeaderOpacityOnScroll: {
+      mounted() {
+        document.addEventListener("scroll", () => {
+          if (window.scrollY > 20) {
+            const header = document.getElementById("homepage_header");
+            header.classList.add("bg-opacity-100");
+            header.classList.remove("bg-opacity-0");
+          } else {
+            const header = document.getElementById("homepage_header");
+            header.classList.add("bg-opacity-0");
+            header.classList.remove("bg-opacity-100");
+          }
+        });
+      },
+    },
+    ...Hooks,
+  },
 });
 
 // Show progress bar on live navigation and form submits

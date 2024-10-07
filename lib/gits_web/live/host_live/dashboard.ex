@@ -114,7 +114,7 @@ defmodule GitsWeb.HostLive.Dashboard do
         <div class="grid gap-2 rounded-xl border p-4"></div>
       </div>
     </div>
-    <div class="overflow-hidden hidden">
+    <div class="overflow-hidden">
       <h2>Transactions</h2>
       <table class="w-full text-left">
         <thead class="sr-only">

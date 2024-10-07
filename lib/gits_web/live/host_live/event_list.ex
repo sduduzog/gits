@@ -7,7 +7,7 @@ defmodule GitsWeb.HostLive.EventList do
 
   def render(assigns) do
     ~H"""
-    <div class="flex items-center justify-end">
+    <div class="flex items-start justify-end">
       <div class="flex grow gap-8">
         <span
           :for={i <- ["All", "Drafts", "Published"]}
