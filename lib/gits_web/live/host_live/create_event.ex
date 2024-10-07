@@ -18,6 +18,10 @@ defmodule GitsWeb.HostLive.CreateEvent do
           <input type="text" class="w-full rounded-lg border-zinc-300 px-3 py-2 text-sm" />
         </label>
 
+        <div class="col-span-full pb-8">
+          <div id="editor" class="h-full" phx-hook="QuillEditor"></div>
+        </div>
+
         <label class="col-span-full grid gap-1">
           <span class="text-sm font-medium">Describe the event?</span>
           <textarea rows="5" class="w-full rounded-lg border-zinc-300 px-3 py-2 text-sm"></textarea>
