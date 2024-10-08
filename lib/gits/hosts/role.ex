@@ -1,5 +1,6 @@
-defmodule Gits.Hosts.Host do
-  alias Gits.Hosts.Role
+defmodule Gits.Hosts.Role do
+  alias Gits.Hosts.{Host, RoleType}
+
   alias Gits.Auth
   alias Gits.Auth.User
 
@@ -16,15 +17,17 @@ defmodule Gits.Hosts.Host do
     attribute :name, :string, allow_nil?: false
     attribute :slug, :string, allow_nil?: false
 
+    attribute :type, RoleType
+
     create_timestamp :created_at
     update_timestamp :updated_at
   end
 
   relationships do
-    belongs_to :owner, User do
+    belongs_to :user, User do
       domain Auth
     end
 
-    has_many :roles, Role
+    belongs_to :host, Host
   end
 end

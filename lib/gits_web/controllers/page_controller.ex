@@ -8,17 +8,9 @@ defmodule GitsWeb.PageController do
   alias Gits.Storefront.Event
 
   def home(conn, _) do
-    events =
-      Event
-      |> Ash.Query.for_read(:read)
-      |> Ash.Query.filter(starts_at >= fragment("now()") and visibility == :public)
-      |> Ash.Query.load([:minimum_ticket_price, :maximum_ticket_price, :address, :masked_id])
-      |> Ash.read!(actor: conn.assigns.current_user)
-
     conn
     |> assign(:slug, "/")
     |> assign(:title, "/")
-    |> assign(:events, events)
     |> assign(:page_title, "Home")
     |> assign(:current_tab, :home)
     |> render(:home)

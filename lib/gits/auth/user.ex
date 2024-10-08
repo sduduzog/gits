@@ -1,5 +1,6 @@
 defmodule Gits.Auth.User do
-  alias Gits.Storefront.Customer
+  alias Gits.Hosts
+  alias Gits.Hosts.Role
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
@@ -65,11 +66,9 @@ defmodule Gits.Auth.User do
   end
 
   relationships do
-    has_one :member, Gits.Dashboard.Member do
-      domain Gits.Dashboard
+    has_many :roles, Role do
+      domain Hosts
     end
-
-    has_one :customer, Gits.Storefront.Customer
   end
 
   identities do

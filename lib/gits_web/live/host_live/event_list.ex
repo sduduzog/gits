@@ -7,22 +7,46 @@ defmodule GitsWeb.HostLive.EventList do
 
   def render(assigns) do
     ~H"""
-    <div class="flex items-start justify-end">
-      <div class="flex grow gap-8">
-        <span
-          :for={i <- ["All", "Drafts", "Published"]}
-          class="text-sm text-zinc-400 first:text-zinc-950 rounded-lg first:font-medium"
+    <% navigation_items = [
+      %{
+        label: "All",
+        current: @live_action == :all,
+        href: ~p"/hosts/test/events/all"
+      },
+      %{
+        label: "Published",
+        current: @live_action == :published,
+        href: ~p"/hosts/test/events"
+      },
+      %{
+        label: "Drafts",
+        current: @live_action == :drafts,
+        href: ~p"/hosts/test/events/drafts"
+      }
+    ] %>
+
+    <div class="flex flex-wrap items-start justify-end">
+      <div class="flex p-2 lg:p-0 grow gap-8">
+        <.link
+          :for={i <- navigation_items}
+          patch={i.href}
+          replace={true}
+          class={[
+            "text-sm text-zinc-400 rounded-lg font-medium",
+            if(i.current, do: "text-zinc-950", else: "text-zinc-400")
+          ]}
         >
-          <%= i %>
-        </span>
+          <%= i.label %>
+        </.link>
       </div>
-      <button
-        phx-click={JS.navigate(~p"/hosts/test/events/new")}
-        class="h-9 rounded-lg bg-zinc-950 inline-flex items-center gap-2 px-4 py-2 text-zinc-50 hover:bg-zinc-800"
-      >
-        <.icon name="hero-plus-mini" />
-        <span class="text-sm font-medium">New event</span>
-      </button>
+      <div>
+        <button
+          phx-click={JS.navigate(~p"/hosts/test/events/new")}
+          class="h-9 rounded-lg bg-zinc-950 inline-flex items-center gap-2 px-4 py-2 text-zinc-50 hover:bg-zinc-800"
+        >
+          <span class="text-sm font-semibold">Create event</span>
+        </button>
+      </div>
     </div>
     <div class="divide-y divide-zinc-100">
       <div :for={_ <- 1..3} class="py-4 flex gap-4 items-center">
@@ -42,5 +66,9 @@ defmodule GitsWeb.HostLive.EventList do
       </div>
     </div>
     """
+  end
+
+  def handle_params(_, _, socket) do
+    socket |> noreply()
   end
 end

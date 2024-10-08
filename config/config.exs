@@ -27,10 +27,7 @@ config :spark,
 config :gits,
   ash_domains: [
     Gits.Auth,
-    Gits.Dashboard,
-    Gits.Storefront,
-    Gits.Admissions,
-    Gits.Support
+    Gits.Hosts
   ],
   ecto_repos: [Gits.Repo]
 

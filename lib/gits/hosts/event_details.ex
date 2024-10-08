@@ -1,7 +1,5 @@
-defmodule Gits.Hosts.Host do
-  alias Gits.Hosts.Role
-  alias Gits.Auth
-  alias Gits.Auth.User
+defmodule Gits.Hosts.EventDetails do
+  alias Gits.Hosts.Event
 
   use Ash.Resource,
     domain: Gits.Hosts,
@@ -14,17 +12,14 @@ defmodule Gits.Hosts.Host do
   attributes do
     uuid_primary_key :id
     attribute :name, :string, allow_nil?: false
-    attribute :slug, :string, allow_nil?: false
+    attribute :description, :string, allow_nil?: false
+    attribute :visibility, :atom, constraints: [one_of: [:private, :public]]
 
     create_timestamp :created_at
     update_timestamp :updated_at
   end
 
   relationships do
-    belongs_to :owner, User do
-      domain Auth
-    end
-
-    has_many :roles, Role
+    belongs_to :event, Event
   end
 end

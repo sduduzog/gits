@@ -1,7 +1,5 @@
-defmodule Gits.Hosts.Host do
-  alias Gits.Hosts.Role
-  alias Gits.Auth
-  alias Gits.Auth.User
+defmodule Gits.Hosts.Event do
+  alias Gits.Hosts.{Host, PayoutAccount}
 
   use Ash.Resource,
     domain: Gits.Hosts,
@@ -13,18 +11,18 @@ defmodule Gits.Hosts.Host do
 
   attributes do
     uuid_primary_key :id
-    attribute :name, :string, allow_nil?: false
-    attribute :slug, :string, allow_nil?: false
+
+    attribute :public_id, :string, allow_nil?: false
+
+    attribute :payout_schedule, :atom, constraints: [one_of: [:auto, :manual]]
 
     create_timestamp :created_at
     update_timestamp :updated_at
   end
 
   relationships do
-    belongs_to :owner, User do
-      domain Auth
-    end
+    belongs_to :host, Host
 
-    has_many :roles, Role
+    belongs_to :payout_account, PayoutAccount
   end
 end

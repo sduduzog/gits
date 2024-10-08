@@ -30,7 +30,15 @@ defmodule GitsWeb.Router do
       on_mount: {GitsWeb.LiveUserAuth, :live_user_required} do
       live "/hosts/get-started", HostLive.Event, :settings_event_details
 
+      live "/hosts/:handle/dashboard", HostLive.Dashboard
+
+      live "/hosts/:handle/events", HostLive.EventList, :published
+      live "/hosts/:handle/events/drafts", HostLive.EventList, :drafts
+      live "/hosts/:handle/events/all", HostLive.EventList, :all
+
       live "/hosts/:handle/events/new", HostLive.Event, :settings_event_details
+
+      live "/hosts/:handle/events/:event_id", HostLive.Event, :overview
 
       live "/hosts/:handle/events/:event_id/settings/time-and-place",
            HostLive.Event,
@@ -52,10 +60,6 @@ defmodule GitsWeb.Router do
            HostLive.Event,
            :settings_summary
 
-      live "/hosts/:handle/dashboard", HostLive.Dashboard
-      live "/hosts/:handle/events", HostLive.EventList
-
-      live "/hosts/:handle/events/:event_id", HostLive.Event, :overview
       live "/hosts/:handle/events/:event_id/attendees", HostLive.Event, :attendees
 
       live "/hosts/:handle/events/:event_id/attendees/scanner",
@@ -84,6 +88,17 @@ defmodule GitsWeb.Router do
       live "/portal/support/events", SupportLive, :events
     end
 
+    live_session :authentication_optional,
+      on_mount: {GitsWeb.LiveUserAuth, :live_user_optional} do
+      live "/events/:id", StorefrontLive.EventListing
+      live "/ticket-invite/:invite_id", EventLive.Invite
+    end
+
+    live_session :authentication_forbidden,
+      on_mount: {GitsWeb.LiveUserAuth, :live_no_user} do
+      live "/password-reset/:token", AuthLive.PasswordReset
+    end
+
     get "/", PageController, :home
     get "/events", PageController, :events
     get "/settings", PageController, :settings
@@ -110,17 +125,6 @@ defmodule GitsWeb.Router do
     get "/sign-out", AuthController, :sign_out
 
     get "/bucket/*keys", PageController, :bucket
-
-    live_session :authentication_optional,
-      on_mount: {GitsWeb.LiveUserAuth, :live_user_optional} do
-      live "/events/:id", EventLive.Feature
-      live "/ticket-invite/:invite_id", EventLive.Invite
-    end
-
-    live_session :authentication_forbidden,
-      on_mount: {GitsWeb.LiveUserAuth, :live_no_user} do
-      live "/password-reset/:token", AuthLive.PasswordReset
-    end
   end
 
   scope "/auth" do

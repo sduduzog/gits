@@ -68,7 +68,7 @@ defmodule GitsWeb.HostLive.Event do
     |> (fn {_, subtitle, _} -> subtitle end).()
   end
 
-  def handle_params(unsigned_params, uri, socket) do
+  def handle_params(_unsigned_params, _uri, socket) do
     socket |> noreply()
   end
 

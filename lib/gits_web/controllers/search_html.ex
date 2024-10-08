@@ -47,7 +47,6 @@ defmodule GitsWeb.SearchHTML do
             :if={not is_nil(event.minimum_ticket_price)}
             class="whitespace-nowrap text-xs font-medium text-zinc-500 dark:text-zinc-400"
           >
-            <%= resolve_price_range_label(event) %>
           </span>
         </div>
       </.link>
@@ -64,22 +63,6 @@ defmodule GitsWeb.SearchHTML do
       "FREE"
     else
       "R#{price |> Gits.Currency.format()}"
-    end
-  end
-
-  defp resolve_price_summary_label(%Event{minimum_ticket_price: min, maximum_ticket_price: max}) do
-    if min == max do
-      "#{resolve_min_price_label(min)}"
-    else
-      "#{resolve_min_price_label(min)}+"
-    end
-  end
-
-  defp resolve_price_range_label(%Event{minimum_ticket_price: min, maximum_ticket_price: max}) do
-    if min == max do
-      "#{resolve_min_price_label(min)}"
-    else
-      "#{resolve_min_price_label(min)} - R#{max |> Gits.Currency.format()}"
     end
   end
 end
