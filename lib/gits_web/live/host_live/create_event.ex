@@ -19,12 +19,15 @@ defmodule GitsWeb.HostLive.CreateEvent do
           <input type="text" class="w-full rounded-lg border-zinc-300 px-3 py-2 text-sm" />
         </label>
 
-        <div class="col-span-full overflow-visible min-h-40">
-          <div
-            id="quill-editor"
-            phx-hook="QuillEditor"
-            class="h-[calc(100%-42px)] text-sm font-poppins block"
-          >
+        <div class="grid gap-1 col-span-full">
+          <span class="text-sm font-medium">Describe the event?</span>
+          <div class="min-h-40">
+            <div
+              id="quill-editor"
+              phx-hook="QuillEditor"
+              class="h-[calc(100%-42px)] text-sm font-poppins"
+            >
+            </div>
           </div>
         </div>
 

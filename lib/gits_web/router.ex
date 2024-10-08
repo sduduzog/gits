@@ -28,9 +28,9 @@ defmodule GitsWeb.Router do
 
     live_session :authentication_required,
       on_mount: {GitsWeb.LiveUserAuth, :live_user_required} do
-      live "/hosts/get-started", HostLive.CreateEvent
+      live "/hosts/get-started", HostLive.Event, :settings_event_details
 
-      live "/hosts/:handle/events/new", HostLive.CreateEvent
+      live "/hosts/:handle/events/new", HostLive.Event, :settings_event_details
 
       live "/hosts/:handle/events/:event_id/settings/time-and-place",
            HostLive.Event,
@@ -57,6 +57,15 @@ defmodule GitsWeb.Router do
 
       live "/hosts/:handle/events/:event_id", HostLive.Event, :overview
       live "/hosts/:handle/events/:event_id/attendees", HostLive.Event, :attendees
+
+      live "/hosts/:handle/events/:event_id/attendees/scanner",
+           HostLive.Scanner,
+           :choose_camera
+
+      live "/hosts/:handle/events/:event_id/attendees/scanner/:camera",
+           HostLive.Scanner,
+           :scan
+
       live "/hosts/:handle/events/:event_id/guests", HostLive.Event, :guests
 
       live "/hosts/:handle/settings/payouts", HostLive.Settings, :payouts

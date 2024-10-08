@@ -18,42 +18,74 @@ const QuillEditor = {
   },
 };
 
-const scanSize = 260;
-const scanConfig = {
-  qrbox: { width: scanSize, height: scanSize },
+const QrScannerCameraList = {
+  async mounted() {
+    const cameras = await Html5Qrcode.getCameras();
+    for (const camera of cameras) {
+      const element = document.createElement("span");
+      element.classList.add(
+        "text-sm",
+        "p-2",
+        "hover:bg-zinc-50",
+        "rounded-lg",
+        "font-semibold",
+      );
+
+      element.id = camera.id;
+      element.setAttribute("phx-value-id", camera.id);
+      element.innerText = camera.label;
+      element.addEventListener("click", () => {
+        this.pushEvent("camera_choice", camera);
+      });
+      this.el.appendChild(element);
+    }
+  },
 };
 
 const QrScanner = {
-  initialiseCamera() {
-    const { id, label } = this.currentCamera;
-    const span = this.el.querySelector("span#camera-label");
-    span.innerText = label;
-    this.html5QrCode = new Html5Qrcode("scanner", {
+  // initialiseCamera() {
+  //   const { id, label } = this.currentCamera;
+  //   const span = this.el.querySelector("span#camera-label");
+  //   span.innerText = label;
+  //   this.html5QrCode = new Html5Qrcode("scanner", {
+  //     formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
+  //   });
+  //   this.html5QrCode.start(id, scanConfig, async (decodedText) => {
+  //     await this.html5QrCode.stop();
+  //     this.pushEvent("scanned", decodedText);
+  //   });
+  // },
+  async mounted() {
+    const cameraId = this.el.dataset.camera;
+    const html5QrCode = new Html5Qrcode(this.el.id, {
       formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
     });
-    this.html5QrCode.start(id, scanConfig, async (decodedText) => {
-      await this.html5QrCode.stop();
-      this.pushEvent("scanned", decodedText);
+
+    const scanSize = 260;
+    const scanConfig = {
+      qrbox: { width: scanSize, height: scanSize },
+    };
+
+    html5QrCode.start(cameraId, scanConfig, async (decodedText) => {
+      console.log({ decodedText });
     });
-  },
-  async mounted() {
-    const rotateCamera = this.el.querySelector("button#rotate-camera");
-    rotateCamera.addEventListener("click", async () => {
-      const index = this.cameras.findIndex(
-        (camera) => camera.id === this.currentCamera.id,
-      );
-      const nextIndex = index === this.cameras.length - 1 ? 0 : index + 1;
-      this.currentCamera = this.cameras[nextIndex];
-      window.localStorage.setItem("camera_id", this.currentCamera.id);
-      await this.html5QrCode.stop();
-      this.initialiseCamera();
-    });
-    this.cameras = await Html5Qrcode.getCameras();
-    const id = window.localStorage.getItem("camera_id");
-    const previousCamera = this.cameras.find((camera) => camera.id === id);
-    const [camera] = this.cameras;
-    this.currentCamera = previousCamera || camera;
-    this.initialiseCamera();
+    // const rotateCamera = this.el.querySelector("button#rotate-camera");
+    // rotateCamera.addEventListener("click", async () => {
+    //   const index = this.cameras.findIndex(
+    //     (camera) => camera.id === this.currentCamera.id,
+    //   );
+    //   const nextIndex = index === this.cameras.length - 1 ? 0 : index + 1;
+    //   this.currentCamera = this.cameras[nextIndex];
+    //   window.localStorage.setItem("camera_id", this.currentCamera.id);
+    //   await this.html5QrCode.stop();
+    //   this.initialiseCamera();
+    // });
+    // this.cameras = await Html5Qrcode.getCameras();
+    // const id = window.localStorage.getItem("camera_id");
+    // const previousCamera = this.cameras.find((camera) => camera.id === id);
+    // const [camera] = this.cameras;
+    // this.currentCamera = previousCamera || camera;
+    // this.initialiseCamera();
   },
 };
 
@@ -95,6 +127,7 @@ const Dropdown = {
 export const Hooks = {
   QuillEditor,
   QrScanner,
+  QrScannerCameraList,
   Turnstile: TurnstileHook,
   CopyLinkButton,
   Dropdown,

@@ -8,43 +8,6 @@ defmodule GitsWeb.HostLive.EventComponents do
   def settings_form(%{current: :settings_event_details} = assigns) do
     ~H"""
     <div class="grid grid-cols-2 gap-6 pt-4">
-      <div class="col-span-full space-y-2">
-        <p class=" text-zinc-700 pb-4">
-          Please set up your host account to start creating and managing your events. Once completed, you’ll be directed to the event creation form.
-        </p>
-        <label class="col-span-full grid gap-1">
-          <span class="text-sm font-medium">Host name</span>
-          <input type="text" class="w-full rounded-lg border-zinc-300 px-3 py-2 text-sm" />
-        </label>
-
-        <label class="col-span-full grid gap-1">
-          <div class="flex items-center rounded-lg border border-zinc-300 pl-3">
-            <span class="text-sm text-zinc-500">gits.co.za/hosts/</span>
-            <input
-              type="text"
-              value="This is a very long value placeholder"
-              class="w-full rounded-lg border-none py-2 pl-0 pr-3 text-sm focus-visible:ring-0"
-            />
-            <.icon :if={false} name="hero-check-micro" class="shrink-0 mr-3" />
-            <.icon name="hero-arrow-path-micro" class="shrink-0 animate-spin text-zinc-400 mr-3" />
-          </div>
-        </label>
-      </div>
-
-      <div class="col-span-full grid grid-cols-[auto_1fr] items-center gap-1 gap-x-4">
-        <span class="col-span-full w-full text-sm font-medium">Upload the host logo</span>
-        <div class="aspect-square w-24 rounded-xl bg-zinc-200"></div>
-        <div class="inline-grid">
-          <label class="inline-flex">
-            <span class="sr-only">Choose logo</span>
-            <input
-              type="file"
-              class="w-full text-sm font-medium file:mr-4 file:h-9 file:rounded-lg file:border file:border-solid file:border-zinc-300 file:bg-white file:px-4 file:py-2 hover:file:bg-zinc-50"
-            />
-          </label>
-        </div>
-      </div>
-
       <label class="col-span-full grid gap-1">
         <span class="text-sm font-medium">What is the name of your event?</span>
         <input type="text" class="w-full rounded-lg border-zinc-300 px-3 py-2 text-sm" />

@@ -11,7 +11,16 @@
   },
   %{
     label: "Settings",
-    current: [:settings_time_and_place, :settings_summary] |> Enum.any?(&(&1 == @live_action)),
+    current:
+      [
+        :settings_event_details,
+        :settings_time_and_place,
+        :settings_feature_graphic,
+        :settings_tickets,
+        :settings_payout_preferences,
+        :settings_summary
+      ]
+      |> Enum.any?(&(&1 == @live_action)),
     href: ~p"/hosts/test/events/event_id/settings"
   }
 ] %>
@@ -19,7 +28,7 @@
 <div class="flex p-2 lg:p-0 gap-8">
   <.link
     :for={i <- navigation_items}
-    navigate={i.href}
+    patch={i.href}
     replace={true}
     class={[
       "text-sm text-zinc-400 rounded-lg font-medium",

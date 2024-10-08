@@ -68,6 +68,16 @@ defmodule GitsWeb.HostLive.Event do
     |> (fn {_, subtitle, _} -> subtitle end).()
   end
 
+  def handle_params(unsigned_params, uri, socket) do
+    socket |> noreply()
+  end
+
+  def handle_event("continue", _, %{assigns: %{live_action: :settings_event_details}} = socket) do
+    socket
+    |> push_navigate(to: ~p"/hosts/test/events/event_id/settings/time-and-place")
+    |> noreply()
+  end
+
   def handle_event("continue", _, %{assigns: %{live_action: :settings_time_and_place}} = socket) do
     socket
     |> push_navigate(to: ~p"/hosts/test/events/event_id/settings/feature-graphic")
