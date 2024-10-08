@@ -7,7 +7,13 @@ defmodule GitsWeb.HostLive.Scanner do
 
   def render(%{live_action: :scan} = assigns) do
     ~H"""
-    <div data-camera={@camera} class="h-dvh" id="qr-scanner" phx-hook="QrScanner"></div>
+    <div
+      data-camera={@camera}
+      class="w-screen h-dvh flex items-center justify-center"
+      id="qr-scanner"
+      phx-hook="QrScanner"
+    >
+    </div>
     """
   end
 
