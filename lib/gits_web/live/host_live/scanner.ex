@@ -7,20 +7,31 @@ defmodule GitsWeb.HostLive.Scanner do
 
   def render(%{live_action: :scan} = assigns) do
     ~H"""
-    <div
-      data-camera={@camera}
-      class="w-screen h-dvh flex items-center justify-center"
-      id="qr-scanner"
-      phx-hook="QrScanner"
-    >
+    <div>
+      <div data-camera={@camera} class="sticky top-0 w-screen" id="qr-scanner" phx-hook="QrScanner">
+      </div>
+      <div>
+        <div class="p-2">
+          <button
+            phx-click={JS.navigate(~p"/hosts/test/events/event_id/attendees", replace: true)}
+            class="inline-flex h-9 items-center rounded-lg border px-4 py-2"
+          >
+            <.icon name="hero-chevron-left-mini" />
+            <span class="text-sm font-semibold">Back</span>
+          </button>
+        </div>
+        <div class="text-3xl">
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veniam, aut sed! Numquam dolorum incidunt aliquam blanditiis aspernatur consequatur itaque atque obcaecati amet? Vero accusamus reprehenderit ipsum? Molestiae sed cumque sequi?
+        </div>
+      </div>
     </div>
     """
   end
 
   def render(assigns) do
     ~H"""
-    <div class="p-2 grid gap-4" id="camera-list" phx-hook="QrScannerCameraList">
-      <h1 class="grow p-2 items-center truncate text-2xl font-semibold">
+    <div class="grid gap-4 p-2" id="camera-list" phx-hook="QrScannerCameraList">
+      <h1 class="grow items-center truncate p-2 text-2xl font-semibold">
         Pick a camera
       </h1>
     </div>
