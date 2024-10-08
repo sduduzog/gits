@@ -49,12 +49,7 @@ const QrScanner = {
       formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
     });
 
-    const scanSize = 260;
-    const scanConfig = {
-      qrbox: { width: scanSize, height: scanSize },
-    };
-
-    html5QrCode.start(cameraId, scanConfig, async (decodedText) => {
+    html5QrCode.start(cameraId, {}, async (decodedText) => {
       console.log({ decodedText });
     });
   },
