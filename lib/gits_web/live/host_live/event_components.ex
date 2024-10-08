@@ -144,7 +144,7 @@ defmodule GitsWeb.HostLive.EventComponents do
     """
   end
 
-  def settings_form(%{current: :settings_upload_feature_graphic} = assigns) do
+  def settings_form(%{current: :settings_feature_graphic} = assigns) do
     ~H"""
     <div class="grid grid-cols-2 gap-6 pt-4">
       <fieldset class="col-span-full grid gap-4 lg:grid-cols-2">
@@ -176,7 +176,7 @@ defmodule GitsWeb.HostLive.EventComponents do
     """
   end
 
-  def onboarding_step_form(%{current: :add_tickets} = assigns) do
+  def settings_form(%{current: :settings_tickets} = assigns) do
     ~H"""
     <div class="grid grid-cols-2 gap-6 pt-4">
       <div class="col-span-full flex items-center justify-between">
@@ -221,7 +221,7 @@ defmodule GitsWeb.HostLive.EventComponents do
     """
   end
 
-  def onboarding_step_form(%{current: :payout_preferences} = assigns) do
+  def settings_form(%{current: :settings_payout_preferences} = assigns) do
     ~H"""
     <div class="grid gap-6 pt-4 grid-cols-[2fr_3fr]">
       <label class="col-span-full grid gap-1">

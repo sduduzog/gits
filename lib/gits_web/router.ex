@@ -36,13 +36,13 @@ defmodule GitsWeb.Router do
            HostLive.Event,
            :settings_time_and_place
 
-      live "/hosts/:handle/events/:event_id/settings/upload-feature-graphic",
+      live "/hosts/:handle/events/:event_id/settings/feature-graphic",
            HostLive.Event,
-           :settings_upload_feature_graphic
+           :settings_feature_graphic
 
-      live "/hosts/:handle/events/:event_id/settings/add-tickets",
+      live "/hosts/:handle/events/:event_id/settings/tickets",
            HostLive.Event,
-           :settigns_add_tickets
+           :settings_tickets
 
       live "/hosts/:handle/events/:event_id/settings/payout-preferences",
            HostLive.Event,

@@ -1,7 +1,6 @@
 defmodule GitsWeb.HostLive.Event do
   use GitsWeb, :host_live_view
 
-  import GitsWeb.HostLive.Components
   import GitsWeb.HostLive.EventComponents
 
   embed_templates "event_templates/*"
@@ -40,9 +39,9 @@ defmodule GitsWeb.HostLive.Event do
        :settings_event_details},
       {"Time & place", "Specify when and where your event will be taking place.",
        :settings_time_and_place},
-      {"Upload feature graphic", "Upload an image to feature on your event page.",
-       :settings_upload_feature_graphic},
-      {"Add tickets", "Setup ticket types and pricing for your event.", :settings_add_tickets},
+      {"Feature graphic", "Upload an image to feature on your event page.",
+       :settings_feature_graphic},
+      {"Tickets", "Setup ticket types and pricing for your event.", :settings_tickets},
       {"Payout preferences", "Provide your banking information for seamless payouts.",
        :settings_payout_preferences},
       {"Summary", "Verify your event details and make any final changes.", :settings_summary}
@@ -71,27 +70,27 @@ defmodule GitsWeb.HostLive.Event do
 
   def handle_event("continue", _, %{assigns: %{live_action: :settings_time_and_place}} = socket) do
     socket
-    |> push_navigate(to: ~p"/hosts/test/events/event_id/settings/upload-feature-graphic")
+    |> push_navigate(to: ~p"/hosts/test/events/event_id/settings/feature-graphic")
+    |> noreply()
+  end
+
+  def handle_event("continue", _, %{assigns: %{live_action: :settings_feature_graphic}} = socket) do
+    socket
+    |> push_navigate(to: ~p"/hosts/test/events/event_id/settings/tickets")
+    |> noreply()
+  end
+
+  def handle_event("continue", _, %{assigns: %{live_action: :settings_tickets}} = socket) do
+    socket
+    |> push_navigate(to: ~p"/hosts/test/events/event_id/settings/payout-preferences")
     |> noreply()
   end
 
   def handle_event(
         "continue",
         _,
-        %{assigns: %{live_action: :settings_upload_feature_graphic}} = socket
+        %{assigns: %{live_action: :settings_payout_preferences}} = socket
       ) do
-    socket
-    |> push_navigate(to: ~p"/hosts/test/events/event_id/settings/add-tickets")
-    |> noreply()
-  end
-
-  def handle_event("continue", _, %{assigns: %{live_action: :settings_add_tickets}} = socket) do
-    socket
-    |> push_navigate(to: ~p"/hosts/test/events/event_id/settings/payout-preferences")
-    |> noreply()
-  end
-
-  def handle_event("continue", _, %{assigns: %{live_action: :payout_preferences}} = socket) do
     socket
     |> push_navigate(to: ~p"/hosts/test/events/event_id/settings")
     |> noreply()
