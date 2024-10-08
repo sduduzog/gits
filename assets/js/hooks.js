@@ -49,7 +49,7 @@ const QrScanner = {
       formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
     });
 
-    html5QrCode.start(cameraId, {}, async (decodedText) => {
+    html5QrCode.start(cameraId, { aspectRatio: 1 }, async (decodedText) => {
       console.log({ decodedText });
     });
   },
