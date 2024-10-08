@@ -86,15 +86,15 @@ defmodule GitsWeb.CoreComponents do
         </.link>
       </div>
       <div class="flex gap-4">
-        <button class="inline-flex items-center gap-2 rounded-lg p-2 hover:bg-black/5 lg:px-4">
-          <.icon name="hero-magnifying-glass" class="size-5" />
-          <span class="hidden text-sm font-medium lg:inline">Find events</span>
-        </button>
-
-        <button class="inline-flex h-9 items-center gap-2 rounded-lg border p-2 hover:bg-black/5 lg:px-4">
-          <.icon name="hero-ticket" class="size-5" />
-          <span class="hidden text-sm font-medium lg:inline">Tickets</span>
-        </button>
+        <!-- <button class="inline-flex items-center gap-2 rounded-lg p-2 hover:bg-black/5 lg:px-4"> -->
+        <!--   <.icon name="hero-magnifying-glass" class="size-5" /> -->
+        <!--   <span class="hidden text-sm font-medium lg:inline">Find events</span> -->
+        <!-- </button> -->
+        <!---->
+        <!-- <button class="inline-flex h-9 items-center gap-2 rounded-lg border p-2 hover:bg-black/5 lg:px-4"> -->
+        <!--   <.icon name="hero-ticket" class="size-5" /> -->
+        <!--   <span class="hidden text-sm font-medium lg:inline">Tickets</span> -->
+        <!-- </button> -->
       </div>
       <div class="flex gap-6">
         <button class="size-9 inline-flex items-center justify-center gap-2">
