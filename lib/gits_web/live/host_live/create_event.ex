@@ -2,6 +2,7 @@ defmodule GitsWeb.HostLive.CreateEvent do
   use GitsWeb, :host_live_view
 
   def mount(_params, _session, socket) do
+    {"Create an event", "Start crafting your event experience.", :create_event}
     socket |> ok(:host_panel)
   end
 
@@ -18,14 +19,14 @@ defmodule GitsWeb.HostLive.CreateEvent do
           <input type="text" class="w-full rounded-lg border-zinc-300 px-3 py-2 text-sm" />
         </label>
 
-        <div class="col-span-full pb-8">
-          <div id="editor" class="h-full" phx-hook="QuillEditor"></div>
+        <div class="col-span-full overflow-visible min-h-40">
+          <div
+            id="quill-editor"
+            phx-hook="QuillEditor"
+            class="h-[calc(100%-42px)] text-sm font-poppins block"
+          >
+          </div>
         </div>
-
-        <label class="col-span-full grid gap-1">
-          <span class="text-sm font-medium">Describe the event?</span>
-          <textarea rows="5" class="w-full rounded-lg border-zinc-300 px-3 py-2 text-sm"></textarea>
-        </label>
 
         <fieldset class="col-span-full grid gap-4 lg:grid-cols-2 lg:gap-6">
           <legend class="col-span-full inline-flex text-sm font-medium">
@@ -61,8 +62,11 @@ defmodule GitsWeb.HostLive.CreateEvent do
           </label>
         </fieldset>
         <div class="flex col-span-full justify-end">
-          <button class="text-zinc-50 bg-zinc-950 px-4 rounded-lg py-2">
-            <span class="text-sm font-semibold">Create</span>
+          <button
+            phx-click={JS.navigate(~p"/hosts/test/events/event_id/settings/time-and-place")}
+            class="text-zinc-50 bg-zinc-950 px-4 rounded-lg py-2"
+          >
+            <span class="text-sm font-semibold">Create event</span>
           </button>
         </div>
       </div>

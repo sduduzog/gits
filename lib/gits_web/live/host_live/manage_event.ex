@@ -94,31 +94,31 @@ defmodule GitsWeb.HostLive.ManageEvent do
 
   def handle_event("continue", _, %{assigns: %{live_action: :create_event}} = socket) do
     socket
-    |> push_navigate(to: ~p"/hosts/test/events/event_id/manage/time-and-place")
+    |> push_navigate(to: ~p"/hosts/test/events/event_id/settings/time-and-place")
     |> noreply()
   end
 
   def handle_event("continue", _, %{assigns: %{live_action: :time_and_place}} = socket) do
     socket
-    |> push_navigate(to: ~p"/hosts/test/events/event_id/manage/upload-feature-graphic")
+    |> push_navigate(to: ~p"/hosts/test/events/event_id/settings/upload-feature-graphic")
     |> noreply()
   end
 
   def handle_event("continue", _, %{assigns: %{live_action: :upload_feature_graphic}} = socket) do
     socket
-    |> push_navigate(to: ~p"/hosts/test/events/event_id/manage/add-tickets")
+    |> push_navigate(to: ~p"/hosts/test/events/event_id/settings/add-tickets")
     |> noreply()
   end
 
   def handle_event("continue", _, %{assigns: %{live_action: :add_tickets}} = socket) do
     socket
-    |> push_navigate(to: ~p"/hosts/test/events/event_id/manage/payout-preferences")
+    |> push_navigate(to: ~p"/hosts/test/events/event_id/settings/payout-preferences")
     |> noreply()
   end
 
   def handle_event("continue", _, %{assigns: %{live_action: :payout_preferences}} = socket) do
     socket
-    |> push_navigate(to: ~p"/hosts/test/events/event_id/manage/summary")
+    |> push_navigate(to: ~p"/hosts/test/events/event_id/settings/summary")
     |> noreply()
   end
 

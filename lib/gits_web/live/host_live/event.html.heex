@@ -1,0 +1,35 @@
+<% navigation_items = [
+  %{
+    label: "Overview",
+    current: @live_action == :overview,
+    href: ~p"/hosts/test/events/event_id/"
+  },
+  %{
+    label: "Attendees",
+    current: @live_action == :attendees,
+    href: ~p"/hosts/test/events/event_id/attendees"
+  },
+  %{
+    label: "Settings",
+    current: [:settings_time_and_place, :settings_summary] |> Enum.any?(&(&1 == @live_action)),
+    href: ~p"/hosts/test/events/event_id/settings"
+  }
+] %>
+
+<div class="flex p-2 lg:p-0 gap-8">
+  <.link
+    :for={i <- navigation_items}
+    navigate={i.href}
+    replace={true}
+    class={[
+      "text-sm text-zinc-400 rounded-lg font-medium",
+      if(i.current, do: "text-zinc-950", else: "text-zinc-400")
+    ]}
+  >
+    <%= i.label %>
+  </.link>
+</div>
+
+<div class="py-2 grid gap-4">
+  <.event_body tab={@live_action} />
+</div>

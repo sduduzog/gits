@@ -32,25 +32,25 @@ defmodule GitsWeb.Router do
 
       live "/hosts/:handle/events/new", HostLive.CreateEvent
 
-      live "/hosts/:handle/events/:event_id/manage/time-and-place",
-           HostLive.ManageEvent,
-           :time_and_place
+      live "/hosts/:handle/events/:event_id/settings/time-and-place",
+           HostLive.Event,
+           :settings_time_and_place
 
-      live "/hosts/:handle/events/:event_id/manage/upload-feature-graphic",
-           HostLive.ManageEvent,
-           :upload_feature_graphic
+      live "/hosts/:handle/events/:event_id/settings/upload-feature-graphic",
+           HostLive.Event,
+           :settings_upload_feature_graphic
 
-      live "/hosts/:handle/events/:event_id/manage/add-tickets",
-           HostLive.ManageEvent,
-           :add_tickets
+      live "/hosts/:handle/events/:event_id/settings/add-tickets",
+           HostLive.Event,
+           :settigns_add_tickets
 
-      live "/hosts/:handle/events/:event_id/manage/payout-preferences",
-           HostLive.ManageEvent,
-           :payout_preferences
+      live "/hosts/:handle/events/:event_id/settings/payout-preferences",
+           HostLive.Event,
+           :settings_payout_preferences
 
-      live "/hosts/:handle/events/:event_id/manage",
-           HostLive.ManageEvent,
-           :summary
+      live "/hosts/:handle/events/:event_id/settings",
+           HostLive.Event,
+           :settings_summary
 
       live "/hosts/:handle/dashboard", HostLive.Dashboard
       live "/hosts/:handle/events", HostLive.EventList
