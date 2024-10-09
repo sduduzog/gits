@@ -1,15 +1,22 @@
 <div class="grid gap-4 lg:grid-cols-[minmax(auto,48rem)_auto] lg:gap-x-12 lg:pt-10">
   <div class="grid w-full max-w-3xl gap-4 p-2">
-    <div class="aspect-[3/2] w-full rounded-xl bg-zinc-200 sm:mx-auto sm:max-w-lg lg:max-w-full">
+    <div class="bg-zinc-200x aspect-[3/2] w-full rounded-xl bg-zinc-200 sm:mx-auto sm:max-w-lg lg:max-w-full">
     </div>
   </div>
 
   <div class="bg-white p-2 lg:sticky lg:top-24">
     <div class="grid gap-4">
       <div class="flex items-center gap-2">
-        <.icon name="hero-calendar" class="size-5" />
-        <span class="text-sm"> Saturday 12 October 2024</span>
+        <span class="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">
+          You're going
+        </span>
+
+        <div class="flex items-center gap-2">
+          <.icon name="hero-calendar" class="size-5" />
+          <span class="text-sm"> Saturday 12 October 2024</span>
+        </div>
       </div>
+
       <h1 class="text-2xl font-semibold">The Ultimate Cheese Festival</h1>
       <div class="space-y-2">
         <div class="text-lg font-medium">
@@ -59,6 +66,7 @@
           </div>
         </div>
         <div class="flex flex-wrap gap-4">
+          <!-- https://miafrica.net/event-categories-a-comprehensive-guide-to-understanding-types-of-events/ -->
           <span
             :for={i <- ["18+ Only", "Seminar"]}
             class="inline-flex items-center gap-x-1.5 rounded-md px-2 py-1 text-xs font-medium text-gray-900 ring-1 ring-inset ring-gray-200"
@@ -74,26 +82,53 @@
   </div>
   <div class="grid gap-2 p-2">
     <h3 class="text-lg font-medium">About this event</h3>
-    <div class="space-y-2">
+    <div class="space-y-2 text-zinc-700">
       <p>
         Lorem ipsum dolor sit, amet consectetur adipisicing elit. Assumenda rem omnis vero, ea adipisci nulla praesentium illo magni sequi libero totam delectus voluptatum eaque repellendus soluta dicta incidunt, laudantium veniam!
       </p>
-
-      <p>
-        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Assumenda rem omnis vero, ea adipisci nulla praesentium illo magni sequi libero totam delectus voluptatum eaque repellendus soluta dicta incidunt, laudantium veniam!
-      </p>
-
-      <p>
-        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Assumenda rem omnis vero, ea adipisci nulla praesentium illo magni sequi libero totam delectus voluptatum eaque repellendus soluta dicta incidunt, laudantium veniam!
-      </p>
-
-      <p>
-        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Assumenda rem omnis vero, ea adipisci nulla praesentium illo magni sequi libero totam delectus voluptatum eaque repellendus soluta dicta incidunt, laudantium veniam!
-      </p>
-
-      <p>
-        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Assumenda rem omnis vero, ea adipisci nulla praesentium illo magni sequi libero totam delectus voluptatum eaque repellendus soluta dicta incidunt, laudantium veniam!
-      </p>
+    </div>
+  </div>
+</div>
+<div class="fixed inset-0 z-20 flex max-h-dvh flex-col-reverse overflow-auto bg-black/10 lg:overflow-hidden">
+  <div class="relative lg:m-auto grid max-h-dvh max-w-md gap-4 overflow-auto bg-white px-2 py-4 shadow-md lg:max-w-lg lg:rounded-xl lg:p-10">
+    <div class="grid gap-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="text-xl font-semibold">Get tickets</span>
+        </div>
+        <button class="size-9 rounded-lg lg:right-4 lg:top-4">
+          <.icon name="hero-x-mark" />
+        </button>
+      </div>
+    </div>
+    <div class="grid gap-8 border-b border-zinc-100 py-4">
+      <div :for={i <- ["Early Access", "General"]} class="grid gap-2 rounded-xl">
+        <span class="font-semibold"><%= i %></span>
+        <p class="text-sm text-zinc-500">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, tempora recusandae? Esse, harum!
+        </p>
+        <div class="flex items-center justify-between">
+          <div class="flex items-center">
+            <button class="inline-flex size-10 items-center justify-center rounded-lg border">
+              <.icon name="hero-minus" class="size-5" />
+            </button>
+            <span class="w-12 text-center text-xl font-medium tabular-nums">99</span>
+            <button class="inline-flex size-10 items-center justify-center rounded-lg border">
+              <.icon name="hero-minus" class="size-5" />
+            </button>
+          </div>
+          <span class="text-sm font-medium">R 50.00 each</span>
+        </div>
+      </div>
+    </div>
+    <div class="grid gap-4">
+      <div class="flex justify-between font-semibold">
+        <span>Total</span>
+        <span>R 100.00</span>
+      </div>
+      <button class="rounded-lg bg-zinc-950 p-4 text-zinc-50">
+        <span class="font-semibold text-sm">Confirm & Pay</span>
+      </button>
     </div>
   </div>
 </div>
