@@ -1,6 +1,9 @@
 <div class="grid gap-4 lg:grid-cols-[minmax(auto,48rem)_auto] min-h-dvh items-start lg:gap-x-12 lg:pt-10">
-  <div class="grid gap-6 w-full max-w-3xl lg:gap-4 items-start p-2 lg:grid-cols-2">
-    <div :for={i <- ["Early Bird", "General"]} class="space-y-2 lg:rounded-2xl lg:border lg:p-4">
+  <div class="grid w-full max-w-3xl lg:gap-4 items-start p-2 lg:grid-cols-2">
+    <div
+      :for={i <- ["Early Bird", "General"]}
+      class="lg:rounded-2xl grid gap-2 lg:border py-6 lg:p-4"
+    >
       <div class="flex w-full items-center justify-between text-xl font-medium">
         <span class="text-zinc-600"><%= i %></span>
         <span class="text-zinc-800"><%= "R 200.00" %></span>

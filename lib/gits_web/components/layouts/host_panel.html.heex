@@ -1,19 +1,17 @@
 <.flash_group flash={@flash} />
-<div class="grid h-dvh grid-rows-[auto_1fr] gap-2 bg-white">
-  <header class="flex w-full items-center gap-4 p-2">
-    <div class="flex grow">
-      <.logo />
-    </div>
-    <div class="flex gap-4">
-      <button phx-click="help" class="inline-flex size-9 items-center justify-center rounded-lg">
-        <.icon name="hero-information-circle" />
-      </button>
+
+<div class="grid h-dvh grid-rows-[auto_1fr] gap-2 bg-white p-2">
+  <header class="flex items-center w-full divide-x">
+    <div class="flex px-2">
       <button phx-click="close" class="inline-flex size-9 items-center justify-center rounded-lg">
         <.icon name="hero-x-mark" />
       </button>
     </div>
+    <div class="px-4">
+      <h1 class="font-medium"><%= assigns[:page_title] || "Untitled" %></h1>
+    </div>
   </header>
-  <main class="bg-white px-4 py-2">
+  <main class="bg-white pt-12 lg:px-12">
     <%= @inner_content %>
   </main>
 </div>
