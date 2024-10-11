@@ -35,7 +35,7 @@ defmodule GitsWeb.HostLive.GetStarted do
       </div>
 
       <div class="col-span-full grid grid-cols-[auto_1fr] items-center gap-1 gap-x-4">
-        <span class="col-span-full w-full text-sm font-medium">Upload the host logo</span>
+        <span class="col-span-full w-full text-sm font-medium">Upload your logo</span>
         <div class="aspect-square w-24 rounded-xl bg-zinc-200"></div>
         <div class="inline-grid">
           <label class="inline-flex">
