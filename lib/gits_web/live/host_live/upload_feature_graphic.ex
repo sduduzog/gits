@@ -1,7 +1,7 @@
 defmodule GitsWeb.HostLive.UploadFeatureGraphic do
   use GitsWeb, :host_live_view
 
-  def mount(params, session, socket) do
+  def mount(_params, _session, socket) do
     {:ok, socket}
   end
 

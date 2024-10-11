@@ -13,8 +13,14 @@ defmodule Gits.Hosts.Host do
 
   attributes do
     uuid_primary_key :id
-    attribute :name, :string, allow_nil?: false
-    attribute :slug, :string, allow_nil?: false
+    attribute :name, :string, public?: true, allow_nil?: false
+
+    attribute :handle, :string,
+      public?: true,
+      allow_nil?: false,
+      constraints: [match: ~r"^[a-z0-9](-?[a-z0-9])*$", min_length: 3]
+
+    attribute :logo, :string, public?: true
 
     create_timestamp :created_at
     update_timestamp :updated_at

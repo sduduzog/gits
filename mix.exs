@@ -75,7 +75,6 @@ defmodule Gits.MixProject do
       {:ash_authentication, "~> 4.0"},
       {:ash_archival, "~> 1.0.3"},
       {:phoenix_turnstile, "~> 1.1"},
-      {:sqids, "~> 0.1.0"},
       {:slugify, "~> 1.3"},
       {:eqrcode, "~> 0.1.10"},
       {:timex, "~> 3.7"},

@@ -51,8 +51,8 @@ config :gits, Oban,
   repo: Gits.Repo
 
 config :nanoid,
-  size: 8,
-  alphabet: "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+  size: 12,
+  alphabet: "0123456789abcdefghijklmnopqrstuvwxyz"
 
 # plugins: [{Oban.Plugins.Cron, crontab: [{"* * * * *", Gits.Workers.SweepWaitlist}]}]
 
