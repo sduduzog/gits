@@ -5,7 +5,13 @@ defmodule Gits.Hosts.Host do
 
   use Ash.Resource,
     domain: Gits.Hosts,
+    data_layer: AshPostgres.DataLayer,
     extensions: [AshArchival.Resource]
+
+  postgres do
+    repo Gits.Repo
+    table "hosts"
+  end
 
   actions do
     defaults [:read, :destroy, create: :*, update: :*]

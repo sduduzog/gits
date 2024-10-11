@@ -1,10 +1,16 @@
 import Config
 
+config :ash,
+  include_embedded_source_by_default?: false,
+  default_page_type: :keyset,
+  policies: [no_filter_static_forbidden_reads?: false]
+
 config :spark,
   formatter: [
     remove_parens?: true,
     "Ash.Resource": [
       section_order: [
+        :postgres,
         :resource,
         :code_interface,
         :actions,
@@ -26,6 +32,7 @@ config :spark,
 
 config :gits,
   ash_domains: [
+    Gits.Support,
     Gits.Auth,
     Gits.Hosts
   ],
@@ -47,7 +54,7 @@ config :gits, time_zone: "Africa/Johannesburg"
 
 config :gits, Oban,
   engine: Oban.Engines.Basic,
-  queues: [default: 1, mailers: 1],
+  queues: [default: 1],
   repo: Gits.Repo
 
 config :nanoid,

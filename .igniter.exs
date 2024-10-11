@@ -5,5 +5,6 @@
 [
   module_location: :outside_matching_folder,
   source_folders: ["lib", "test/support"],
-  dont_move_files: []
+  dont_move_files: [],
+  extensions: []
 ]

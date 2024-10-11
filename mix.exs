@@ -71,7 +71,7 @@ defmodule Gits.MixProject do
       {:bandit, "~> 1.2"},
       {:picosat_elixir, "~> 0.2.0"},
       {:ash_phoenix, "~> 2.0"},
-      {:ash_postgres, "~> 2.1"},
+      {:ash_postgres, "~> 2.0"},
       {:ash_authentication, "~> 4.0"},
       {:ash_archival, "~> 1.0.3"},
       {:phoenix_turnstile, "~> 1.1"},
@@ -87,8 +87,7 @@ defmodule Gits.MixProject do
       {:hackney, "~> 1.20"},
       {:sweet_xml, "~> 0.7.4"},
       {:phoenix_seo, "~> 0.1.9"},
-      {:mjml_eex, "~> 0.10.0"},
-      {:oban, "~> 2.17"},
+      {:oban, "~> 2.0"},
       {:oban_live_dashboard, "~> 0.1.0"},
       {:mock, "~> 0.3.8", only: :test},
       {:power_assert, "~> 0.3.0", only: :test},
@@ -97,7 +96,7 @@ defmodule Gits.MixProject do
       {:fun_with_flags, "~> 1.11"},
       {:fun_with_flags_ui, "~> 1.0"},
       {:ex_base58, "~> 0.6"},
-      {:igniter, "~> 0.1"}
+      {:igniter, "~> 0.3"}
     ]
   end
 
@@ -112,14 +111,15 @@ defmodule Gits.MixProject do
       setup: ["deps.get", "ecto.setup", "assets.setup", "assets.build"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
+      test: ["ash.setup --quiet", "test"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
       "assets.build": ["tailwind gits", "esbuild gits"],
       "assets.deploy": [
         "tailwind gits --minify",
         "esbuild gits --minify",
         "phx.digest"
-      ]
+      ],
+      "ash.setup": ["ash.setup", "run priv/repo/seeds.exs"]
     ]
   end
 end
