@@ -116,35 +116,37 @@ defmodule GitsWeb.HostLive.GetStarted do
   end
 
   def handle_event("save", unsigned_params, socket) do
-    %{form: form} = socket.assigns
+    %{form: form, current_user: user} = socket.assigns
 
-    consume_uploaded_entries(socket, :logo, fn %{path: path}, _entry ->
-      bucket_name = Application.get_env(:gits, :bucket_name)
+    filename =
+      consume_uploaded_entries(socket, :logo, fn %{path: path}, _entry ->
+        bucket_name = Application.get_env(:gits, :bucket_name)
 
-      filename = Nanoid.generate(24) <> ".jpg"
+        filename = Nanoid.generate(24) <> ".jpg"
 
-      Image.open!(path)
-      |> Image.thumbnail!("256x256", fit: :cover)
-      |> Image.stream!(suffix: ".jpg", buffer_size: 5_242_880, quality: 100)
-      |> ExAws.S3.upload(
-        bucket_name,
-        filename,
-        content_type: "image/jpeg",
-        cache_control: "public,max-age=3600"
-      )
-      |> ExAws.request()
+        Image.open!(path)
+        |> Image.thumbnail!("256x256", fit: :cover)
+        |> Image.stream!(suffix: ".jpg", buffer_size: 5_242_880, quality: 100)
+        |> ExAws.S3.upload(
+          bucket_name,
+          filename,
+          content_type: "image/jpeg",
+          cache_control: "public,max-age=3600"
+        )
+        |> ExAws.request()
 
-      {:ok, filename}
-    end)
-    |> case do
-      [logo_filename] ->
-        form
-        |> Form.validate(Map.merge(unsigned_params["host"], %{"logo" => logo_filename}))
+        {:ok, filename}
+      end)
+      |> case do
+        [filename] ->
+          filename
 
-      [] ->
-        form
-    end
-    |> Form.validate(unsigned_params["host"])
+        [] ->
+          nil
+      end
+
+    form
+    |> Form.validate(Map.merge(unsigned_params["host"], %{"logo" => filename, owner: user}))
     |> Form.submit()
     |> case do
       {:ok, host} -> socket |> push_navigate(to: ~p"/hosts/#{host.handle}/events/new")

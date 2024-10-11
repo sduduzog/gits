@@ -14,7 +14,18 @@ defmodule Gits.Hosts.Host do
   end
 
   actions do
-    defaults [:read, :destroy, create: :*, update: :*]
+    defaults [:read, :destroy, update: :*]
+
+    create :create do
+      primary? true
+      accept :*
+
+      argument :owner, :map do
+        allow_nil? false
+      end
+
+      change manage_relationship(:owner, type: :append)
+    end
   end
 
   attributes do
@@ -35,6 +46,7 @@ defmodule Gits.Hosts.Host do
   relationships do
     belongs_to :owner, User do
       domain Auth
+      allow_nil? false
     end
 
     has_many :roles, Role
