@@ -40,12 +40,21 @@
           <span>Total</span>
           <span>R 400.00</span>
         </div>
-        <button
-          phx-click={JS.navigate(~p"/events/test/order/order_id")}
-          class="w-full rounded-lg bg-zinc-950 p-4 text-zinc-50"
-        >
-          <span class="font-semibold">Checkout</span>
-        </button>
+        <div class="grid grid-cols-[2fr_5fr] gap-2">
+          <button
+            phx-click={JS.navigate(~p"/events/test", replace: true)}
+            class="w-full rounded-lg bg-zinc-50 p-4 text-zinc-950"
+          >
+            <span class="font-semibold">Cancel</span>
+          </button>
+
+          <button
+            phx-click={JS.navigate(~p"/events/test/order/order_id")}
+            class="w-full rounded-lg bg-zinc-950 p-4 text-zinc-50"
+          >
+            <span class="font-semibold">Checkout</span>
+          </button>
+        </div>
       </div>
     </div>
   </div>
