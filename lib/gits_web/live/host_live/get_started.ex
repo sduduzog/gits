@@ -2,14 +2,7 @@ defmodule GitsWeb.HostLive.GetStarted do
   alias Gits.Hosts.Host
   alias AshPhoenix.Form
   use GitsWeb, :host_live_view
-
-  def mount(_params, _session, socket) do
-    socket
-    |> assign(:uploaded_files, [])
-    |> allow_upload(:logo, accept: ~w(.jpg .jpeg .png .webp), max_entries: 1)
-    |> assign(:page_title, "Get started")
-    |> ok(:host_panel)
-  end
+  require Ash.Query
 
   def render(assigns) do
     ~H"""
@@ -85,7 +78,38 @@ defmodule GitsWeb.HostLive.GetStarted do
         </button>
       </div>
     </.form>
+    <div :if={Enum.any?(@hosts)} class="mx-auto grid max-w-xl gap-2 grid-cols-2">
+      <span class="col-span-full text-sm text-zinc-500">Or continue with</span>
+      <.link
+        :for={host <- @hosts}
+        navigate={~p"/hosts/#{host.handle}/events/new"}
+        class="border rounded-xl p-4"
+      >
+        <div class="flex items-center gap-4 justify-between">
+          <span class="text-sm"><%= host.name %></span>
+          <.icon name="hero-arrow-long-right-mini" />
+        </div>
+        <span class=" text-sm text-zinc-500">Owner</span>
+      </.link>
+    </div>
     """
+  end
+
+  def mount(_params, _session, socket) do
+    %{current_user: user} = socket.assigns
+
+    socket
+    |> assign(
+      :hosts,
+      Host
+      |> Ash.Query.filter(owner.id == ^user.id)
+      |> Ash.read!()
+      |> IO.inspect()
+    )
+    |> assign(:uploaded_files, [])
+    |> allow_upload(:logo, accept: ~w(.jpg .jpeg .png .webp), max_entries: 1)
+    |> assign(:page_title, "Get started")
+    |> ok(:host_panel)
   end
 
   def handle_params(_unsigned_params, _uri, socket) do
