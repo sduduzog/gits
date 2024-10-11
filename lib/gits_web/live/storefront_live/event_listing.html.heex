@@ -6,13 +6,13 @@
 
   <div class="bg-white p-2 lg:sticky lg:top-24">
     <div class="grid gap-4">
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-4">
         <span class="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">
           You're going
         </span>
 
         <div class="flex items-center gap-2">
-          <.icon name="hero-calendar" class="size-5" />
+          <.icon name="hero-calendar-days" class="size-5" />
           <span class="text-sm"> Saturday 12 October 2024</span>
         </div>
       </div>
@@ -24,7 +24,10 @@
           <span>&dash;</span>
           <span>R 50.00</span>
         </div>
-        <button class="w-full rounded-lg bg-zinc-950 p-4 text-zinc-50">
+        <button
+          phx-click={JS.navigate(~p"/events/test/order/order_id")}
+          class="w-full rounded-lg bg-zinc-950 p-4 text-zinc-50"
+        >
           <span class="font-semibold">Get tickets</span>
         </button>
       </div>
@@ -89,8 +92,11 @@
     </div>
   </div>
 </div>
-<div class="fixed inset-0 z-20 flex max-h-dvh flex-col-reverse overflow-auto bg-black/10 lg:overflow-hidden">
-  <div class="relative lg:m-auto grid max-h-dvh max-w-md gap-4 overflow-auto bg-white px-2 py-4 shadow-md lg:max-w-lg lg:rounded-xl lg:p-10">
+<div
+  :if={false}
+  class="fixed inset-0 z-20 flex max-h-dvh flex-col-reverse overflow-auto bg-black/10 lg:overflow-hidden"
+>
+  <div class="relative lg:m-auto grid max-h-dvh max-w-md gap-4 overflow-auto bg-white p-4 shadow-md lg:max-w-lg lg:rounded-xl lg:p-10">
     <div class="grid gap-4">
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-2">

@@ -75,6 +75,8 @@ defmodule GitsWeb.Router do
       live "/hosts/:handle/settings/payouts", HostLive.Settings, :payouts
       live "/hosts/:handle/settings", HostLive.Settings, :general
 
+      live "/events/:id/order/:order_id", StorefrontLive.EventTicketsOrder
+
       live "/events/:id/tickets/:basket_id", EventLive.Tickets
       live "/events/:id/tickets/:basket_id/summary", EventLive.TicketsSummary
       live "/events/:id/tickets/:basket_id/checkout", EventLive.Checkout
