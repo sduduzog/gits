@@ -58,16 +58,17 @@
       <span class="text-sm">Settings</span>
     </div>
     <div class="p-1">
-      <div class="flex items-center gap-4 border p-4 lg:w-64 lg:py-1 rounded-xl">
+      <div class="flex items-center gap-4 border p-4 lg:w-64 lg:py-1 lg:px-2 rounded-xl">
         <img
           src={static_path(GitsWeb.Endpoint, ~p"/images/placeholder.png")}
           alt="Profile image"
           class="size-9 rounded-full object-cover"
         />
-        <div class="grid *:text-sm *:leading-tight lg:*:text-xs">
+        <div class="grid *:text-sm *:leading-tight grow lg:*:text-xs">
           <span class="font-medium">Joe Ghatty</span>
           <span class="text-zinc-500">jghatty@hotmail.com</span>
         </div>
+        <.icon name="hero-chevron-up-down-mini" class="text-zinc-500" />
       </div>
     </div>
   </div>
