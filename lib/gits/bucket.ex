@@ -53,11 +53,10 @@ defmodule Gits.Bucket do
     end
   end
 
-  def get_image_url(hash) do
+  def get_image_url(filename) do
     presigned_url_options = Application.get_env(:gits, :presigned_url_options)
 
     bucket_name = Application.get_env(:gits, :bucket_name)
-    filename = "#{hash}.jpg"
 
     with {:ok, _} <- ExAws.S3.head_object(bucket_name, filename) |> ExAws.request(),
          {:ok, signed_url} <-

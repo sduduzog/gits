@@ -1,12 +1,25 @@
 defmodule GitsWeb.HostLive.Event do
+  alias Gits.Hosts.Host
   use GitsWeb, :host_live_view
+  require Ash.Query
 
   import GitsWeb.HostLive.EventComponents
 
   embed_templates "event_templates/*"
 
-  def mount(_params, _session, socket) do
-    socket |> assign(:page_title, "The Ultimate Cheese Festival") |> ok()
+  def mount(params, _session, socket) do
+    host =
+      Host
+      |> Ash.Query.filter(handle == ^params["handle"])
+      |> Ash.read_first!()
+      |> IO.inspect()
+
+    socket
+    |> assign(:host_handle, host.handle)
+    |> assign(:host_name, host.name)
+    |> assign(:host_logo, host.logo)
+    |> assign(:page_title, "The Ultimate Cheese Festival")
+    |> ok()
   end
 
   defp event_body(%{tab: :overview} = assigns) do
@@ -74,25 +87,33 @@ defmodule GitsWeb.HostLive.Event do
 
   def handle_event("continue", _, %{assigns: %{live_action: :settings_event_details}} = socket) do
     socket
-    |> push_navigate(to: ~p"/hosts/test/events/event_id/settings/time-and-place")
+    |> push_navigate(
+      to: ~p"/hosts/#{socket.assigns.host_handle}/events/event_id/settings/time-and-place"
+    )
     |> noreply()
   end
 
   def handle_event("continue", _, %{assigns: %{live_action: :settings_time_and_place}} = socket) do
     socket
-    |> push_navigate(to: ~p"/hosts/test/events/event_id/settings/feature-graphic")
+    |> push_navigate(
+      to: ~p"/hosts/#{socket.assigns.host_handle}/events/event_id/settings/feature-graphic"
+    )
     |> noreply()
   end
 
   def handle_event("continue", _, %{assigns: %{live_action: :settings_feature_graphic}} = socket) do
     socket
-    |> push_navigate(to: ~p"/hosts/test/events/event_id/settings/tickets")
+    |> push_navigate(
+      to: ~p"/hosts/#{socket.assigns.host_handle}/events/event_id/settings/tickets"
+    )
     |> noreply()
   end
 
   def handle_event("continue", _, %{assigns: %{live_action: :settings_tickets}} = socket) do
     socket
-    |> push_navigate(to: ~p"/hosts/test/events/event_id/settings/payout-preferences")
+    |> push_navigate(
+      to: ~p"/hosts/#{socket.assigns.host_handle}/events/event_id/settings/payout-preferences"
+    )
     |> noreply()
   end
 
@@ -102,13 +123,13 @@ defmodule GitsWeb.HostLive.Event do
         %{assigns: %{live_action: :settings_payout_preferences}} = socket
       ) do
     socket
-    |> push_navigate(to: ~p"/hosts/test/events/event_id/settings")
+    |> push_navigate(to: ~p"/hosts/#{socket.assigns.host_handle}/events/event_id/settings")
     |> noreply()
   end
 
   def handle_event("continue", _, %{assigns: %{live_action: :settings_summary}} = socket) do
     socket
-    |> push_navigate(to: ~p"/hosts/test/dashboard")
+    |> push_navigate(to: ~p"/hosts/#{socket.assigns.host_handle}/dashboard")
     |> noreply()
   end
 end

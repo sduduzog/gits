@@ -4,7 +4,7 @@
     label: "Dashboard",
     icon: "hero-rectangle-group-mini",
     current: Enum.any?([GitsWeb.HostLive.Dashboard], &(&1 == @socket.view)),
-    href: ~p"/hosts/test/dashboard"
+    href: ~p"/hosts/#{@host_handle}/dashboard"
   },
   %{
     label: "Events",
@@ -14,12 +14,12 @@
         [GitsWeb.HostLive.EventList, GitsWeb.HostLive.Event],
         &(&1 == @socket.view)
       ),
-    href: ~p"/hosts/test/events"
+    href: ~p"/hosts/#{@host_handle}/events"
   }
 ] %>
 <aside
   id="sidebar"
-  class="fixed inset-0 z-10 hiddenx flex h-dvh flex-col gap-6 lg:gap-12 bg-white p-2 lg:static lg:mx-auto lg:flex lg:h-auto lg:max-w-screen-xl lg:flex-row lg:items-center lg:p-0"
+  class="fixed inset-0 z-10 hidden h-dvh flex-col gap-6 bg-white p-2 lg:static lg:mx-auto lg:flex lg:h-auto lg:max-w-screen-xl lg:flex-row lg:items-center lg:gap-12 lg:p-0"
 >
   <div class="inline-flex items-center justify-between">
     <.logo />
@@ -58,15 +58,25 @@
       <span class="text-sm">Settings</span>
     </div>
     <div class="p-1">
-      <div class="flex items-center gap-4 border p-4 lg:w-64 lg:py-1 lg:px-2 rounded-xl">
-        <img
-          src={static_path(GitsWeb.Endpoint, ~p"/images/placeholder.png")}
-          alt="Profile image"
-          class="size-9 rounded-full object-cover"
-        />
-        <div class="grid *:text-sm *:leading-tight grow lg:*:text-xs">
-          <span class="font-medium">Joe Ghatty</span>
-          <span class="text-zinc-500">jghatty@hotmail.com</span>
+      <div class="flex items-center gap-4 rounded-xl border p-4 lg:w-64 lg:px-2 lg:py-1">
+        <%= if assigns[:host_logo] do %>
+          <img
+            src={Gits.Bucket.get_image_url(@host_logo)}
+            alt="Profile image"
+            class="size-9 rounded-full object-cover"
+          />
+        <% else %>
+          <img
+            src={static_path(GitsWeb.Endpoint, ~p"/images/placeholder.png")}
+            alt="Profile image"
+            class="size-9 rounded-full object-cover"
+          />
+        <% end %>
+        <div class="grid grow *:text-sm *:leading-tight lg:*:text-xs">
+          <span class="font-medium">
+            <%= @current_user.display_name || @current_user.email %>
+          </span>
+          <span class="text-zinc-500"><%= assigns[:host_name] %></span>
         </div>
         <.icon name="hero-chevron-up-down-mini" class="text-zinc-500" />
       </div>

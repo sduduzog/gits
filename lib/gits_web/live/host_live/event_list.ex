@@ -1,8 +1,22 @@
 defmodule GitsWeb.HostLive.EventList do
+  alias Gits.Hosts.Host
   use GitsWeb, :host_live_view
 
-  def mount(_params, _session, socket) do
-    socket |> ok()
+  require Ash.Query
+
+  def mount(params, _session, socket) do
+    host =
+      Host
+      |> Ash.Query.filter(handle == ^params["handle"])
+      |> Ash.read_first!()
+      |> IO.inspect()
+
+    socket
+    |> assign(:host_handle, host.handle)
+    |> assign(:host_name, host.name)
+    |> assign(:host_logo, host.logo)
+    |> assign(:page_title, "The Ultimate Cheese Festival")
+    |> ok()
   end
 
   def render(assigns) do
@@ -11,17 +25,17 @@ defmodule GitsWeb.HostLive.EventList do
       %{
         label: "All",
         current: @live_action == :all,
-        href: ~p"/hosts/test/events/all"
+        href: ~p"/hosts/#{@host_handle}/events/all"
       },
       %{
         label: "Published",
         current: @live_action == :published,
-        href: ~p"/hosts/test/events"
+        href: ~p"/hosts/#{@host_handle}/events"
       },
       %{
         label: "Drafts",
         current: @live_action == :drafts,
-        href: ~p"/hosts/test/events/drafts"
+        href: ~p"/hosts/#{@host_handle}/events/drafts"
       }
     ] %>
 
@@ -41,7 +55,7 @@ defmodule GitsWeb.HostLive.EventList do
       </div>
       <div>
         <button
-          phx-click={JS.navigate(~p"/hosts/test/events/new")}
+          phx-click={JS.navigate(~p"/hosts/#{@host_handle}/events/new")}
           class="h-9 rounded-lg bg-zinc-950 inline-flex items-center gap-2 px-4 py-2 text-zinc-50 hover:bg-zinc-800"
         >
           <span class="text-sm font-semibold">Create event</span>
@@ -53,7 +67,9 @@ defmodule GitsWeb.HostLive.EventList do
         <div class="aspect-[3/2] h-20 bg-zinc-200 rounded-xl"></div>
         <div class="grid w-full gap-1.5 grow">
           <h2 class="font-semibold truncate">
-            <.link navigate={~p"/hosts/test/events/event_id"}>The Ultimate Cheese Festival</.link>
+            <.link navigate={~p"/hosts/#{@host_handle}/events/event_id"}>
+              The Ultimate Cheese Festival
+            </.link>
           </h2>
           <span class="text-sm text-zinc-500">5 Nov 2024, at 4:30 PM</span>
           <span class="text-sm text-zinc-500">5/40 tickets sold</span>

@@ -1,8 +1,22 @@
 defmodule GitsWeb.HostLive.Dashboard do
+  alias Gits.Hosts.Host
   use GitsWeb, :host_live_view
 
-  def mount(_params, _session, socket) do
-    socket |> ok()
+  require Ash.Query
+
+  def mount(params, _session, socket) do
+    host =
+      Host
+      |> Ash.Query.filter(handle == ^params["handle"])
+      |> Ash.read_first!()
+      |> IO.inspect()
+
+    socket
+    |> assign(:host_handle, host.handle)
+    |> assign(:host_name, host.name)
+    |> assign(:host_logo, host.logo)
+    |> assign(:page_title, "The Ultimate Cheese Festival")
+    |> ok()
   end
 
   def render(assigns) do
@@ -15,7 +29,7 @@ defmodule GitsWeb.HostLive.Dashboard do
         <%= i %>
       </span>
     </div>
-    <div class="lg:flex">
+    <div class="lg:flex py-4">
       <div class="grow grid gap-4 gap-y-10 lg:grid-cols-4">
         <div class="grid gap-1">
           <span class="text-zinc-600">Revenue</span>
@@ -114,7 +128,7 @@ defmodule GitsWeb.HostLive.Dashboard do
         <div class="grid gap-2 rounded-xl border p-4"></div>
       </div>
     </div>
-    <div class="overflow-hidden">
+    <div :if={false} class="overflow-hidden">
       <h2>Transactions</h2>
       <table class="w-full text-left">
         <thead class="sr-only">

@@ -2,12 +2,12 @@
   %{
     label: "Overview",
     current: @live_action == :overview,
-    href: ~p"/hosts/test/events/event_id/"
+    href: ~p"/hosts/#{@host_handle}/events/event_id/"
   },
   %{
     label: "Attendees",
     current: @live_action == :attendees,
-    href: ~p"/hosts/test/events/event_id/attendees"
+    href: ~p"/hosts/#{@host_handle}/events/event_id/attendees"
   },
   %{
     label: "Settings",
@@ -21,7 +21,7 @@
         :settings_summary
       ]
       |> Enum.any?(&(&1 == @live_action)),
-    href: ~p"/hosts/test/events/event_id/settings"
+    href: ~p"/hosts/#{@host_handle}/events/event_id/settings"
   }
 ] %>
 
