@@ -19,7 +19,7 @@
 ] %>
 <aside
   id="sidebar"
-  class="fixed inset-0 z-10 hidden h-dvh flex-col gap-6 bg-white p-2 lg:static lg:mx-auto lg:flex lg:h-auto lg:max-w-screen-xl lg:flex-row lg:items-center lg:px-0"
+  class="fixed inset-0 z-10 hiddenx flex h-dvh flex-col gap-6 lg:gap-12 bg-white p-2 lg:static lg:mx-auto lg:flex lg:h-auto lg:max-w-screen-xl lg:flex-row lg:items-center lg:p-0"
 >
   <div class="inline-flex items-center justify-between">
     <.logo />
@@ -30,20 +30,16 @@
       <.icon name="hero-x-mark" />
     </button>
   </div>
-  <div class="flex gap-2 rounded-lg p-4 lg:px-3 lg:py-2">
-    <span class="grow text-sm font-medium">Treehouse Inc</span>
-    <.icon name="hero-chevron-down-mini" class="shrink-0" />
-  </div>
-  <nav class="flex grow flex-col gap-2 lg:flex-row lg:items-center lg:justify-end lg:gap-0.5">
+  <nav class="flex grow flex-col gap-2 lg:flex-row lg:items-center lg:gap-0.5">
     <.link
       :for={i <- navigation_items}
       navigate={i.href}
       replace={true}
       class={[
-        "rounded-lg p-4 gap-4 inline-flex lg:py-2",
+        "rounded-lg p-4 gap-4 inline-flex font-semibold lg:py-2 text-zinc-950",
         if(i.current,
-          do: "text-zinc-950 bg-zinc-100",
-          else: "text-zinc-400 hover:text-zinc-600 hover:bg-zinc-50"
+          do: "bg-black/5",
+          else: "hover:bg-black/5"
         )
       ]}
     >
@@ -61,15 +57,17 @@
       <.icon name="hero-cog-6-tooth" />
       <span class="text-sm">Settings</span>
     </div>
-    <div class="flex items-center gap-4 border-t px-4 py-2 lg:size-9 lg:rounded-full lg:p-0">
-      <img
-        src={static_path(GitsWeb.Endpoint, ~p"/images/placeholder.png")}
-        alt="Profile image"
-        class="size-9 rounded-full object-cover"
-      />
-      <div class="grid *:text-sm *:leading-tight lg:hidden">
-        <span class="font-medium">Joe Ghatty</span>
-        <span class="text-zinc-500">jghatty@hotmail.com</span>
+    <div class="p-1">
+      <div class="flex items-center gap-4 border p-4 lg:w-64 lg:py-1 rounded-xl">
+        <img
+          src={static_path(GitsWeb.Endpoint, ~p"/images/placeholder.png")}
+          alt="Profile image"
+          class="size-9 rounded-full object-cover"
+        />
+        <div class="grid *:text-sm *:leading-tight lg:*:text-xs">
+          <span class="font-medium">Joe Ghatty</span>
+          <span class="text-zinc-500">jghatty@hotmail.com</span>
+        </div>
       </div>
     </div>
   </div>
