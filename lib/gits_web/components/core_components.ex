@@ -75,15 +75,9 @@ defmodule GitsWeb.CoreComponents do
 
   def header(assigns) do
     ~H"""
-    <header class="flex items-center gap-4 p-2 lg:gap-16">
+    <header class="flex items-center gap-4 p-2 lg:px-0 lg:gap-16">
       <div class="flex grow">
-        <.link navigate="/" class="text-xl inline-block font-black italic">
-          <img
-            src={static_path(GitsWeb.Endpoint, ~p"/images/gits_logo.png")}
-            alt="GiTS"
-            class="h-auto w-12"
-          />
-        </.link>
+        <.logo />
       </div>
       <div class="flex gap-4">
         <!-- <button class="inline-flex items-center gap-2 rounded-lg p-2 hover:bg-black/5 lg:px-4"> -->
