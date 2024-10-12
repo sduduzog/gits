@@ -79,21 +79,12 @@ defmodule GitsWeb.CoreComponents do
       <div class="flex grow">
         <.logo />
       </div>
-      <div class="flex gap-4">
-        <!-- <button class="inline-flex items-center gap-2 rounded-lg p-2 hover:bg-black/5 lg:px-4"> -->
-        <!--   <.icon name="hero-magnifying-glass" class="size-5" /> -->
-        <!--   <span class="hidden text-sm font-medium lg:inline">Find events</span> -->
-        <!-- </button> -->
-        <!---->
-        <!-- <button class="inline-flex h-9 items-center gap-2 rounded-lg border p-2 hover:bg-black/5 lg:px-4"> -->
-        <!--   <.icon name="hero-ticket" class="size-5" /> -->
-        <!--   <span class="hidden text-sm font-medium lg:inline">Tickets</span> -->
-        <!-- </button> -->
-      </div>
-      <div class="flex gap-6">
+      <div class="flex gap-4"></div>
+      <div class="flex gap-6 relative">
         <button class="size-9 inline-flex items-center justify-center gap-2">
           <.icon name="hero-bars-2" />
         </button>
+        <div class="absolute border p-4 top-full right-2"></div>
       </div>
     </header>
     <header :if={false} class="hidden p-6 lg:block">
@@ -135,7 +126,7 @@ defmodule GitsWeb.CoreComponents do
 
             <div
               data-dropdown
-              class="absolute z-10 hidden w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+              class="absolute z-10 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
               role="menu"
               aria-orientation="vertical"
               aria-labelledby="menu-button"

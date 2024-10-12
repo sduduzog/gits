@@ -1,4 +1,5 @@
 defmodule GitsWeb.HostLive.GetStarted do
+  alias Gits.Auth.User
   alias Gits.Hosts.Host
   alias AshPhoenix.Form
   use GitsWeb, :host_live_view
@@ -95,9 +96,7 @@ defmodule GitsWeb.HostLive.GetStarted do
     """
   end
 
-  def mount(_params, _session, socket) do
-    %{current_user: user} = socket.assigns
-
+  def mount(_params, _session, %{assigns: %{current_user: %User{} = user}} = socket) do
     socket
     |> assign(
       :hosts,
@@ -110,6 +109,10 @@ defmodule GitsWeb.HostLive.GetStarted do
     |> allow_upload(:logo, accept: ~w(.jpg .jpeg .png .webp), max_entries: 1)
     |> assign(:page_title, "Get started")
     |> ok(:host_panel)
+  end
+
+  def mount(_params, _session, socket) do
+    socket |> ok(:host_panel)
   end
 
   def handle_params(_unsigned_params, _uri, socket) do
