@@ -11,7 +11,7 @@
     icon: "hero-calendar-days",
     current:
       Enum.any?(
-        [GitsWeb.HostLive.EventList, GitsWeb.HostLive.Event],
+        [GitsWeb.HostLive.EventList, GitsWeb.HostLive.Event, GitsWeb.HostLive.ManageEvent],
         &(&1 == @socket.view)
       ),
     href: ~p"/hosts/#{@host_handle}/events"
@@ -84,7 +84,7 @@
       </div>
     </div>
   </aside>
-  <main class="mx-auto max-w-screen-xl grow flex flex-col gap-4 w-full">
+  <main class="mx-auto max-h-dvh overflow-auto max-w-screen-xl grow flex flex-col gap-4 w-full">
     <div class="flex lg:hidden justify-between items-start p-2">
       <.logo />
       <button class="size-9 rounded-lg" phx-click={JS.show(to: "aside#sidebar", display: "flex")}>

@@ -13,6 +13,15 @@ import Quill from "quill";
 const QuillEditor = {
   mounted() {
     this.quill = new Quill(this.el, {
+      modules: {
+        toolbar: [
+          [{ header: [1, 2, 3, false] }],
+          ["bold"],
+          ["link"],
+          [{ list: "ordered" }, { list: "bullet" }],
+          ["clean"],
+        ],
+      },
       theme: "snow",
     });
   },

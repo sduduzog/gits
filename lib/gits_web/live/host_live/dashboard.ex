@@ -15,7 +15,7 @@ defmodule GitsWeb.HostLive.Dashboard do
     |> assign(:host_handle, host.handle)
     |> assign(:host_name, host.name)
     |> assign(:host_logo, host.logo)
-    |> assign(:page_title, "The Ultimate Cheese Festival")
+    |> assign(:page_title, "Dashboard")
     |> ok()
   end
 
@@ -54,7 +54,7 @@ defmodule GitsWeb.HostLive.Dashboard do
         </div>
         <div>
           <button
-            phx-click={JS.navigate(~p"/hosts/#{@host_handle}/events/new")}
+            phx-click={JS.navigate(~p"/hosts/#{@host_handle}/events/create-new")}
             class="inline-flex rounded-lg bg-zinc-950 px-4 py-2 text-zinc-50"
           >
             <span class="text-sm font-semibold">Create event</span>

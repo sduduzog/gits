@@ -14,7 +14,7 @@ defmodule GitsWeb.HostLive.EventList do
     |> assign(:host_handle, host.handle)
     |> assign(:host_name, host.name)
     |> assign(:host_logo, host.logo)
-    |> assign(:page_title, "The Ultimate Cheese Festival")
+    |> assign(:page_title, "Events")
     |> ok()
   end
 
@@ -45,7 +45,7 @@ defmodule GitsWeb.HostLive.EventList do
         class="flex items-center gap-2 rounded-lg h-9 px-2"
       >
         <.icon name="hero-chevron-left" class="size-5" />
-        <span class="text-sm font-medium lg:inline hidden">Back</span>
+        <span class="text-sm font-semibold lg:inline hidden">Back</span>
       </.link>
 
       <div class="flex grow items-center border-l pl-4 text-sm font-medium">
@@ -55,7 +55,7 @@ defmodule GitsWeb.HostLive.EventList do
 
       <button class="flex size-9 lg:w-auto items-center gap-2 justify-center rounded-lg lg:px-4">
         <.icon name="hero-megaphone" class="size-5" />
-        <span class="text-sm hidden lg:inline">Help</span>
+        <span class="text-sm hidden font-semibold lg:inline">Help</span>
       </button>
 
       <button
@@ -63,7 +63,7 @@ defmodule GitsWeb.HostLive.EventList do
         class="flex border size-9 lg:w-auto items-center gap-2 justify-center rounded-lg lg:px-4"
       >
         <.icon name="hero-plus" class="size-5" />
-        <span class="text-sm hidden lg:inline">Create event</span>
+        <span class="text-sm hidden font-semibold lg:inline">Create event</span>
       </button>
     </div>
 
