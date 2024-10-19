@@ -48,7 +48,7 @@ defmodule GitsWeb.HostLive.Settings do
     """
   end
 
-  def render(assigns) do
+  def renders(assigns) do
     ~H"""
     <div class="space-y-8">
       <h1 class="col-span-full pt-5 text-2xl font-semibold">Settings</h1>
@@ -75,6 +75,12 @@ defmodule GitsWeb.HostLive.Settings do
       </div>
       <.section current={@live_action} />
     </div>
+    """
+  end
+
+  def render(assigns) do
+    ~H"""
+    <div>settings</div>
     """
   end
 

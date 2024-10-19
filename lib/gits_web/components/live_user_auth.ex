@@ -1,4 +1,6 @@
 defmodule GitsWeb.LiveUserAuth do
+  require Ash.Query
+  alias Gits.Hosts.Host
   import Phoenix.Component
   use GitsWeb, :verified_routes
 
@@ -32,8 +34,26 @@ defmodule GitsWeb.LiveUserAuth do
     |> assign_new(current_subject_name, fn -> current_subject end)
   end
 
+  defp socket_with_host(socket, params) do
+    case params do
+      %{"handle" => handle} ->
+        {:ok, host} =
+          Host
+          |> Ash.Query.filter(handle == ^handle)
+          |> Ash.read_one()
+
+        socket
+        |> assign_new(:host_handle, fn -> handle end)
+        |> assign_new(:host, fn -> host end)
+
+      _ ->
+        socket
+    end
+  end
+
   def on_mount(:live_user_optional, _params, session, socket) do
-    socket = socket_with_current_subject(session, socket)
+    socket =
+      socket_with_current_subject(session, socket)
 
     if socket.assigns[:current_user] do
       {:cont, socket}
@@ -42,8 +62,10 @@ defmodule GitsWeb.LiveUserAuth do
     end
   end
 
-  def on_mount(:live_user_required, _params, session, socket) do
-    socket = socket_with_current_subject(session, socket)
+  def on_mount(:live_user_required, params, session, socket) do
+    socket =
+      socket_with_current_subject(session, socket)
+      |> socket_with_host(params)
 
     if socket.assigns[:current_user] do
       {:cont, socket}

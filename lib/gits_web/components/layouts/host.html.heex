@@ -20,7 +20,7 @@
     label: "Settings",
     icon: "hero-cog-6-tooth",
     current: Enum.any?([GitsWeb.HostLive.Settings], &(&1 == @socket.view)),
-    href: ~p"/hosts/#{@host_handle}/dashboard"
+    href: ~p"/hosts/#{@host_handle}/settings"
   }
 ] %>
 
@@ -61,8 +61,8 @@
       <div class="rounded-lg border items-center gap-2 p-2 flex">
         <div class="size-9 rounded-full bg-zinc-200"></div>
         <div class="grow grid text-sm font-medium">
-          <span>John Doe</span>
-          <span class="text-zinc-500">Treehouse Inc</span>
+          <span><%= @current_user.display_name %></span>
+          <span class="text-zinc-500"><%= @host.name %></span>
         </div>
         <.icon name="hero-chevron-up-down-mini" class="shrink-0 text-zinc-500" />
       </div>

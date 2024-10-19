@@ -21,7 +21,7 @@ defmodule GitsWeb.HostLive.Dashboard do
 
   def render(assigns) do
     ~H"""
-    <div class="flex gap-8">
+    <div :if={false} class="flex gap-8">
       <span
         :for={i <- ["1 day", "3 days", "Week", "Month"]}
         class="text-sm text-zinc-400 first:text-zinc-950 rounded-lg first:font-medium"
@@ -29,7 +29,7 @@ defmodule GitsWeb.HostLive.Dashboard do
         <%= i %>
       </span>
     </div>
-    <div class="lg:flex py-4">
+    <div :if={false} class="lg:flex py-4">
       <div class="grow grid gap-4 gap-y-10 lg:grid-cols-4">
         <div class="grid gap-1">
           <span class="text-zinc-600">Revenue</span>
