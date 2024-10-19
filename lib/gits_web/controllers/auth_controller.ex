@@ -1,9 +1,6 @@
 defmodule GitsWeb.AuthController do
   use GitsWeb, :controller
 
-  alias Gits.Auth.Senders.SendEmailConfirmationLink
-  alias AshAuthentication.AddOn.Confirmation
-  alias Gits.Auth.Senders.UserConfirmation
   alias AshPhoenix.Form
   alias Gits.Auth.User
 
@@ -48,8 +45,7 @@ defmodule GitsWeb.AuthController do
 
     with true <- Regex.match?(~r/@/, email),
          {:ok, _} <- Turnstile.verify(params, conn.remote_ip),
-         %Form{valid?: true} <- Form.validate(form, user_params),
-         :ok <- create_user_via_email(email) do
+         %Form{valid?: true} <- Form.validate(form, user_params) do
       strategy =
         AshAuthentication.Info.strategy!(User, :magic_link)
 
@@ -72,39 +68,6 @@ defmodule GitsWeb.AuthController do
         |> put_flash(:error, "Invalid email")
         |> put_layout(html: :auth)
         |> render(:sign_in)
-    end
-  end
-
-  defp create_user_via_email(email) do
-    [username, _] =
-      email
-      |> String.split("@")
-
-    User
-    |> Ash.Changeset.for_create(
-      :register_with_email,
-      %{
-        display_name: username,
-        email: email
-      },
-      context: %{private: %{ash_authentication?: true}}
-    )
-    |> Ash.create()
-    |> case do
-      {:ok, _user} ->
-        :ok
-
-      {:error,
-       %Ash.Error.Invalid{
-         errors: [
-           %Ash.Error.Changes.InvalidChanges{fields: [:email], message: "has already been taken"}
-         ]
-       }} ->
-        :ok
-
-      {:error, err} ->
-        err |> IO.inspect()
-        :error
     end
   end
 
@@ -175,44 +138,5 @@ defmodule GitsWeb.AuthController do
   def email_not_verified(conn, _params) do
     # conn |> render(:email_not_verified)
     conn |> render(:email_sent)
-  end
-
-  def resend_verification_email(conn, params) do
-    case Turnstile.verify(params, conn.remote_ip) do
-      {:ok, _} ->
-        if conn.assigns.current_user && conn.assigns.current_user.confirmed_at == nil do
-          changeset =
-            Ash.Changeset.for_update(conn.assigns.current_user, :send_confirmation_email)
-
-          strategy =
-            AshAuthentication.Info.strategy!(conn.assigns.current_user, :confirm)
-
-          {:ok, token} =
-            Confirmation.confirmation_token(
-              strategy,
-              changeset,
-              changeset.data
-            )
-
-          UserConfirmation.send(changeset.data, token, [])
-        end
-
-        conn |> render(:email_sent)
-
-      {:error, _} ->
-        conn
-        |> put_flash(:error, "Please try submitting again")
-        |> redirect(to: ~p"/email-not-verified")
-    end
-  end
-
-  def sign_out(conn, _) do
-    # return_to = get_session(conn, :return_to) || ~p"/"
-
-    return_to = ~p"/"
-
-    conn
-    |> clear_session()
-    |> redirect(to: return_to)
   end
 end

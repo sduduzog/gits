@@ -33,23 +33,10 @@ defmodule Gits.Auth.User do
   actions do
     default_accept :*
     defaults [:read]
-
-    create :register_with_email do
-      accept [:display_name, :email]
-    end
-
-    update :send_confirmation_email do
-      require_atomic? false
-      accept []
-    end
   end
 
   policies do
     bypass AshAuthentication.Checks.AshAuthenticationInteraction do
-      authorize_if always()
-    end
-
-    policy action(:register_with_email) do
       authorize_if always()
     end
 
@@ -76,15 +63,4 @@ defmodule Gits.Auth.User do
       eager_check_with Gits.Auth
     end
   end
-end
-
-defimpl FunWithFlags.Actor, for: Gits.Auth.User do
-  def id(%{id: id}) do
-    "user:#{id}"
-  end
-end
-
-defimpl FunWithFlags.Group, for: Gits.Auth.User do
-  def in?(%{email: email}, :admins),
-    do: Regex.match?(~r/@(bar.com|gits.co.za)$/, email)
 end
