@@ -58,12 +58,15 @@
       </.link>
     </nav>
     <div class="p-4 lg:p-2">
-      <div class="rounded-lg relative border items-center gap-2 p-2 flex">
-        <div class="rounded-xl shadow-lg border p-1 absolute inset-x-0 bg-white bottom-full -translate-y-2">
-          <div class="flex items-center bg-zinc-50 rounded-md p-4 lg:p-2">
-            <span class="grow text-sm">Log out</span>
-            <.icon name="hero-arrow-right-start-on-rectangle" class="size-5 shrink-0" />
-          </div>
+      <div
+        phx-click-away={JS.hide(to: "#sidebar_dropdown")}
+        phx-click={JS.toggle(to: "#sidebar_dropdown")}
+        class="rounded-lg relative border items-center gap-2 p-2 flex"
+      >
+        <div
+          id="sidebar_dropdown"
+          class="rounded-xl shadow-lg hidden border p-1 absolute inset-x-0 bg-white bottom-full -translate-y-2"
+        >
           <.link
             navigate={~p"/sign-out"}
             class="flex items-center bg-zinc-50 rounded-md p-4 lg:p-2"
