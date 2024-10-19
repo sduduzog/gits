@@ -60,7 +60,7 @@ defmodule GitsWeb.HostLive.Onboarding do
     |> ok(:host_panel)
   end
 
-  def handle_params(unsigned_params, uri, socket) do
+  def handle_params(_unsigned_params, _uri, socket) do
     Host
     |> Ash.Query.filter(owner.id == ^socket.assigns.current_user.id)
     |> Ash.read()
@@ -72,9 +72,6 @@ defmodule GitsWeb.HostLive.Onboarding do
 
       _ ->
         socket
-        |> assign(:page_title, "Create a host account")
-        |> assign(:uploaded_files, [])
-        |> allow_upload(:logo, accept: ~w(.jpg .jpeg .png .webp), max_entries: 1)
         |> noreply()
     end
   end

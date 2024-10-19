@@ -77,7 +77,7 @@ defmodule GitsWeb.LiveUserAuth do
           {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/sign-in?return_to=#{return_to}")}
         end)
 
-      {:cont, socket}
+      {:cont, assign(socket, :current_user, nil)}
     end
   end
 
