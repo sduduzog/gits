@@ -26,7 +26,7 @@
 
 <div class="flex min-h-dvh w-full gap-8">
   <aside
-    class="fixed hidden inset-0 z-10 lg:flex w-full flex-col gap-6 bg-white lg:static lg:max-w-64"
+    class="fixed hiddenx flex inset-0 z-10 lg:flex w-full flex-col gap-6 bg-white lg:static lg:max-w-64"
     id="sidebar"
   >
     <div class="flex justify-between items-start p-2">
@@ -58,7 +58,20 @@
       </.link>
     </nav>
     <div class="p-4 lg:p-2">
-      <div class="rounded-lg border items-center gap-2 p-2 flex">
+      <div class="rounded-lg relative border items-center gap-2 p-2 flex">
+        <div class="rounded-xl shadow-lg border p-1 absolute inset-x-0 bg-white bottom-full -translate-y-2">
+          <div class="flex items-center bg-zinc-50 rounded-md p-4 lg:p-2">
+            <span class="grow text-sm">Log out</span>
+            <.icon name="hero-arrow-right-start-on-rectangle" class="size-5 shrink-0" />
+          </div>
+          <.link
+            navigate={~p"/sign-out"}
+            class="flex items-center bg-zinc-50 rounded-md p-4 lg:p-2"
+          >
+            <span class="grow text-sm">Log out</span>
+            <.icon name="hero-arrow-right-start-on-rectangle" class="size-5 shrink-0" />
+          </.link>
+        </div>
         <div class="size-9 rounded-full bg-zinc-200"></div>
         <div class="grow grid text-sm font-medium">
           <span><%= @current_user.display_name %></span>
