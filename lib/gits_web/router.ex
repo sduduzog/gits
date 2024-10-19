@@ -36,7 +36,7 @@ defmodule GitsWeb.Router do
       live "/hosts/:handle/events/drafts", HostLive.EventList, :drafts
       live "/hosts/:handle/events/all", HostLive.EventList, :all
 
-      live "/hosts/:handle/events/new", HostLive.Event, :settings_event_details
+      live "/hosts/:handle/events/create-new", HostLive.ManageEvent, :create
 
       live "/hosts/:handle/events/:event_id", HostLive.Event, :overview
 

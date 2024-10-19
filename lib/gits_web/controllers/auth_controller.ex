@@ -29,7 +29,7 @@ defmodule GitsWeb.AuthController do
           form
       end
     )
-    |> put_layout(html: :auth)
+    |> put_layout(false)
     |> render(:sign_in)
   end
 
@@ -50,7 +50,6 @@ defmodule GitsWeb.AuthController do
         AshAuthentication.Info.strategy!(User, :magic_link)
 
       AshAuthentication.Strategy.action(strategy, :request, %{"email" => email})
-      |> IO.inspect()
 
       conn |> redirect(to: ~p"/magic-link-sent?to=#{email}")
     else

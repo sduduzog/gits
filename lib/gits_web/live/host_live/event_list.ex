@@ -9,7 +9,6 @@ defmodule GitsWeb.HostLive.EventList do
       Host
       |> Ash.Query.filter(handle == ^params["handle"])
       |> Ash.read_first!()
-      |> IO.inspect()
 
     socket
     |> assign(:host_handle, host.handle)
@@ -58,19 +57,19 @@ defmodule GitsWeb.HostLive.EventList do
         <.icon name="hero-megaphone" class="size-5" />
         <span class="text-sm hidden lg:inline">Help</span>
       </button>
-    </div>
 
-    <div class="flex w-full items-start p-2">
-      <h1 class="grow text-2xl font-semibold">Events</h1>
       <button
-        phx-click={JS.navigate(~p"/hosts/#{@host_handle}/events/new")}
-        class="inline-flex h-9 items-center gap-2 rounded-lg bg-zinc-950 px-4 py-2 text-zinc-50 hover:bg-zinc-800"
+        phx-click={JS.navigate(~p"/hosts/#{@host_handle}/events/create-new")}
+        class="flex border size-9 lg:w-auto items-center gap-2 justify-center rounded-lg lg:px-4"
       >
-        <span class="text-sm font-semibold">Create event</span>
+        <.icon name="hero-plus" class="size-5" />
+        <span class="text-sm hidden lg:inline">Create event</span>
       </button>
     </div>
 
-    <div class="flex flex-wrap items-start justify-end p-2">
+    <h1 class="p-2 text-2xl font-semibold">Events</h1>
+
+    <div class="flex flex-wrap items-start justify-endx p-2">
       <div class="flex grow gap-8 p-2 lg:p-0">
         <.link
           :for={i <- navigation_items}
