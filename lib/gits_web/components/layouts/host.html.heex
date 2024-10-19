@@ -2,13 +2,13 @@
 <% navigation_items = [
   %{
     label: "Dashboard",
-    icon: "hero-rectangle-group-mini",
+    icon: "hero-rectangle-group",
     current: Enum.any?([GitsWeb.HostLive.Dashboard], &(&1 == @socket.view)),
     href: ~p"/hosts/#{@host_handle}/dashboard"
   },
   %{
     label: "Events",
-    icon: "hero-calendar-days-mini",
+    icon: "hero-calendar-days",
     current:
       Enum.any?(
         [GitsWeb.HostLive.EventList, GitsWeb.HostLive.Event],
@@ -17,6 +17,7 @@
     href: ~p"/hosts/#{@host_handle}/events"
   }
 ] %>
+
 <aside
   :if={false}
   id="sidebar"
@@ -84,17 +85,47 @@
     </div>
   </div>
 </aside>
-<header :if={false} class="mx-auto flex max-w-screen-xl items-center p-2 lg:pt-8">
-  <h1 class="grow items-center truncate text-xl font-semibold">
-    <%= assigns[:page_title] || navigation_items |> Enum.find(& &1.current) |> Map.get(:label) %>
-  </h1>
-  <button
-    class="flex size-9 items-center justify-center rounded-lg lg:hidden"
-    phx-click={JS.show(to: "#sidebar", display: "flex")}
-  >
-    <.icon name="hero-bars-3" />
-  </button>
-</header>
-<main :if={false} class="mx-auto max-w-screen-xl space-y-4 px-2 pt-8">
-  <%= @inner_content %>
-</main>
+<div class="flex min-h-dvh w-full gap-8">
+  <aside class="fixed inset-0 z-10 flex w-full flex-col gap-8 bg-white lg:static lg:max-w-56">
+    <div>
+      <div>
+        <.logo />
+      </div>
+    </div>
+    <nav class="flex w-full grow flex-col gap-2">
+      <.link
+        :for={i <- navigation_items}
+        navigate={i.href}
+        replace={true}
+        class={[
+          "px-2 gap-4 inline-flex group text-zinc-500",
+          if(i.current,
+            do: "is-active border-l-2 border-zinc-500",
+            else: ""
+          )
+        ]}
+      >
+        <div class="flex w-full items-center gap-2 rounded-lg px-2 py-4 group-hover:bg-zinc-50 group-[.is-active]:bg-zinc-100 group-[.is-active]:text-zinc-950 lg:py-2">
+          <.icon name={i.icon} class="size-5 shrink-0" />
+          <span class="text-sm font-semibold"><%= i.label %></span>
+        </div>
+      </.link>
+    </nav>
+    <div class="grid">
+      <div class="inline-flex gap-2 border-l-2 border-zinc-500 px-2">
+        <div class="inline-flex grow items-center gap-2 rounded-lg bg-zinc-50 px-2 py-4 hover:bg-zinc-100 lg:p-2">
+          <.icon name="hero-cog-6-tooth" class="size-5" />
+          <span>Settings</span>
+        </div>
+      </div>
+    </div>
+    <div class="p-4 lg:p-2">
+      <div class="rounded-lg border p-4 lg:border-0 lg:p-2">
+        <div class="size-9 rounded-full bg-zinc-200"></div>
+      </div>
+    </div>
+  </aside>
+  <main class="mx-auto max-w-screen-xl grow space-y-4 px-2 pt-8">
+    <%= @inner_content %>
+  </main>
+</div>
