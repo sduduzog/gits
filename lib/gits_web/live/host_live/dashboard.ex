@@ -21,7 +21,15 @@ defmodule GitsWeb.HostLive.Dashboard do
 
   def render(assigns) do
     ~H"""
-    <h1 class="p-2 mt-1 text-2xl font-semibold">Dashboard</h1>
+    <div class="p-2 flex items-center">
+      <div class="grow flex items-center text-sm"></div>
+
+      <button class="flex gap-2 items-center h-9 px-4 rounded-lg">
+        <.icon name="hero-megaphone" class="size-5" />
+        <span class="text-sm">Help</span>
+      </button>
+    </div>
+    <h1 class="p-2 text-2xl font-semibold">Welcome back</h1>
     <div class="grid items-start gap-10 lg:grid-cols-12 p-2">
       <div class="col-span-full flex flex-wrap items-end justify-between gap-4 rounded-3xl border p-4 lg:p-8">
         <div class="flex flex-col items-start gap-4">
@@ -46,7 +54,7 @@ defmodule GitsWeb.HostLive.Dashboard do
         </div>
         <div>
           <button
-            phx-click={JS.navigate(~p"/hosts/test/events/new")}
+            phx-click={JS.navigate(~p"/hosts/#{@host_handle}/events/new")}
             class="inline-flex rounded-lg bg-zinc-950 px-4 py-2 text-zinc-50"
           >
             <span class="text-sm font-semibold">Create event</span>

@@ -80,7 +80,14 @@ defmodule GitsWeb.HostLive.Settings do
 
   def render(assigns) do
     ~H"""
-    <div>settings</div>
+    <h1 class="p-2 mt-1 text-2xl font-semibold">Settings</h1>
+    <div class="p-2">
+      <h2 class="text-base font-semibold leading-7 text-gray-900">General</h2>
+      <p class="mt-1 text-sm leading-6 text-gray-600">
+        This information will be displayed publicly.
+      </p>
+      <div class=""></div>
+    </div>
     """
   end
 

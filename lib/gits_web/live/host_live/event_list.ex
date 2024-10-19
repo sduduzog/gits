@@ -39,10 +39,39 @@ defmodule GitsWeb.HostLive.EventList do
       }
     ] %>
 
-    <h1 class="p-2 mt-1 text-2xl font-semibold">Events</h1>
+    <div class="flex items-center gap-2 p-2">
+      <.link
+        replace={true}
+        navigate={~p"/hosts/#{@host_handle}/dashboard"}
+        class="flex items-center gap-2 rounded-lg h-9 px-2"
+      >
+        <.icon name="hero-chevron-left" class="size-5" />
+        <span class="text-sm font-medium lg:inline hidden">Back</span>
+      </.link>
+
+      <div class="flex grow items-center border-l pl-4 text-sm font-medium">
+        <span>Events</span>
+        <!-- <.icon name="hero-slash-micro" /> -->
+      </div>
+
+      <button class="flex size-9 lg:w-auto items-center gap-2 justify-center rounded-lg lg:px-4">
+        <.icon name="hero-megaphone" class="size-5" />
+        <span class="text-sm hidden lg:inline">Help</span>
+      </button>
+    </div>
+
+    <div class="flex w-full items-start p-2">
+      <h1 class="grow text-2xl font-semibold">Events</h1>
+      <button
+        phx-click={JS.navigate(~p"/hosts/#{@host_handle}/events/new")}
+        class="inline-flex h-9 items-center gap-2 rounded-lg bg-zinc-950 px-4 py-2 text-zinc-50 hover:bg-zinc-800"
+      >
+        <span class="text-sm font-semibold">Create event</span>
+      </button>
+    </div>
 
     <div class="flex flex-wrap items-start justify-end p-2">
-      <div class="flex p-2 lg:p-0 grow gap-8">
+      <div class="flex grow gap-8 p-2 lg:p-0">
         <.link
           :for={i <- navigation_items}
           patch={i.href}
@@ -55,20 +84,13 @@ defmodule GitsWeb.HostLive.EventList do
           <%= i.label %>
         </.link>
       </div>
-      <div>
-        <button
-          phx-click={JS.navigate(~p"/hosts/#{@host_handle}/events/new")}
-          class="h-9 rounded-lg bg-zinc-950 inline-flex items-center gap-2 px-4 py-2 text-zinc-50 hover:bg-zinc-800"
-        >
-          <span class="text-sm font-semibold">Create event</span>
-        </button>
-      </div>
+      <div></div>
     </div>
     <div class="divide-y divide-zinc-100 p-2">
-      <div :for={_ <- 1..3} class="py-4 flex gap-4 items-center">
-        <div class="aspect-[3/2] h-20 bg-zinc-200 rounded-xl"></div>
-        <div class="grid w-full gap-1.5 grow">
-          <h2 class="font-semibold truncate">
+      <div :for={_ <- []} class="flex items-center gap-4 py-4">
+        <div class="aspect-[3/2] h-20 rounded-xl bg-zinc-200"></div>
+        <div class="grid w-full grow gap-1.5">
+          <h2 class="truncate font-semibold">
             <.link navigate={~p"/hosts/#{@host_handle}/events/event_id"}>
               The Ultimate Cheese Festival
             </.link>
@@ -77,7 +99,7 @@ defmodule GitsWeb.HostLive.EventList do
           <span class="text-sm text-zinc-500">5/40 tickets sold</span>
         </div>
         <div class="">
-          <button class="size-9 inline-flex items-center justify-center">
+          <button class="inline-flex size-9 items-center justify-center">
             <.icon name="hero-ellipsis-vertical-mini" />
           </button>
         </div>
