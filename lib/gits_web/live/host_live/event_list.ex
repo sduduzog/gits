@@ -39,7 +39,9 @@ defmodule GitsWeb.HostLive.EventList do
       }
     ] %>
 
-    <div class="flex flex-wrap items-start justify-end">
+    <h1 class="p-2 mt-1 text-2xl font-semibold">Events</h1>
+
+    <div class="flex flex-wrap items-start justify-end p-2">
       <div class="flex p-2 lg:p-0 grow gap-8">
         <.link
           :for={i <- navigation_items}
@@ -62,7 +64,7 @@ defmodule GitsWeb.HostLive.EventList do
         </button>
       </div>
     </div>
-    <div class="divide-y divide-zinc-100">
+    <div class="divide-y divide-zinc-100 p-2">
       <div :for={_ <- 1..3} class="py-4 flex gap-4 items-center">
         <div class="aspect-[3/2] h-20 bg-zinc-200 rounded-xl"></div>
         <div class="grid w-full gap-1.5 grow">
