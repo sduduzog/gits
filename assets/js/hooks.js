@@ -11,19 +11,47 @@ import {
 import Quill from "quill";
 
 const QuillEditor = {
-  mounted() {
-    this.quill = new Quill(this.el, {
+  _setup() {
+    const onTextChange = (delta, oldDelta, source) => {
+      console.log(this.quill.getSemanticHTML());
+    };
+
+    this.quill?.off("text-change", onTextChange);
+
+    const editor = document.createElement("div");
+    editor.style.height = "calc(100% - 48px)";
+
+    const hiddenField = document.createElement("input");
+    hiddenField.type = "hidden";
+    hiddenField.name = this.el.dataset.name;
+
+    this.el.appendChild(editor);
+    this.el.appendChild(hiddenField);
+
+    const quill = new Quill(editor, {
       modules: {
         toolbar: [
-          [{ header: [1, 2, 3, false] }],
-          ["bold"],
-          ["link"],
-          [{ list: "ordered" }, { list: "bullet" }],
-          ["clean"],
+          //   [{ header: [1, 2, 3, false] }],
+          //   ["bold"],
+          //   ["link"],
+          //   [{ list: "ordered" }, { list: "bullet" }],
+          //   ["bold"],
+          //   ["link"],
+          //   [{ list: "ordered" }, { list: "bullet" }],
+          // ["clean"],
         ],
       },
       theme: "snow",
     });
+
+    quill.on("text-change", onTextChange);
+    this.quill = quill;
+  },
+  mounted() {
+    this._setup();
+  },
+  updated() {
+    this._setup();
   },
 };
 

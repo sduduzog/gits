@@ -9,7 +9,6 @@ defmodule GitsWeb.HostLive.Dashboard do
       Host
       |> Ash.Query.filter(handle == ^params["handle"])
       |> Ash.read_first!()
-      |> IO.inspect()
 
     socket
     |> assign(:host_handle, host.handle)

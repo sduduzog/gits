@@ -1,12 +1,25 @@
 defmodule Gits.Hosts.Event do
-  alias Gits.Hosts.{Host, PayoutAccount}
+  alias Gits.Hosts.{EventDetails, Host, PayoutAccount}
 
   use Ash.Resource,
     domain: Gits.Hosts,
+    data_layer: AshPostgres.DataLayer,
     extensions: [AshArchival.Resource]
 
+  postgres do
+    table "events"
+    repo Gits.Repo
+  end
+
   actions do
-    defaults [:read, :destroy, create: :*, update: :*]
+    defaults [:read, :destroy, update: :*]
+
+    create :create do
+      primary? true
+      argument :details, :map, allow_nil?: false
+      change manage_relationship(:details, type: :create)
+      change set_attribute(:public_id, &Nanoid.generate/0)
+    end
   end
 
   attributes do
@@ -22,7 +35,8 @@ defmodule Gits.Hosts.Event do
 
   relationships do
     belongs_to :host, Host
-
     belongs_to :payout_account, PayoutAccount
+
+    has_one :details, EventDetails
   end
 end

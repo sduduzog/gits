@@ -3,7 +3,13 @@ defmodule Gits.Hosts.PayoutAccount do
 
   use Ash.Resource,
     domain: Gits.Hosts,
+    data_layer: AshPostgres.DataLayer,
     extensions: [AshArchival.Resource]
+
+  postgres do
+    table "payout_accounts"
+    repo Gits.Repo
+  end
 
   actions do
     defaults [:read, :destroy, create: :*, update: :*]

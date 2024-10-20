@@ -1,4 +1,6 @@
 defmodule GitsWeb.HostLive.ManageEvent do
+  alias Gits.Hosts.Event
+  alias AshPhoenix.Form
   use GitsWeb, :host_live_view
 
   def render(assigns) do
@@ -6,7 +8,7 @@ defmodule GitsWeb.HostLive.ManageEvent do
     <div class="flex items-center gap-2 p-2">
       <.link
         replace={true}
-        navigate={~p"/hosts/#{@host_handle}/dashboard"}
+        navigate={~p"/hosts/#{@host_handle}/events"}
         class="flex items-center gap-2 rounded-lg h-9 px-2"
       >
         <.icon name="hero-chevron-left" class="size-5" />
@@ -53,63 +55,97 @@ defmodule GitsWeb.HostLive.ManageEvent do
       </div>
 
       <div class="lg:mt-0 mt-4">
-        <div class="grid grow items-tart grid-cols-2 gap-6 px-2">
-          <label class="col-span-full grid gap-1">
-            <span class="text-sm font-medium">What is the name of your event?</span>
-            <input type="text" class="w-full rounded-lg border-zinc-300 px-3 py-2 text-sm" />
-          </label>
+        <.form
+          :let={f}
+          id="create-event-form"
+          for={@form}
+          class="grid grow grid-cols-2 gap-6 px-2"
+          phx-submit="continue"
+          phx-change="validate"
+          phx-auto-recover="validate"
+        >
+          <.inputs_for :let={df} field={f[:details]}>
+            <label class="col-span-full grid gap-1">
+              <span class="text-sm font-medium">What is the name of your event?</span>
+              <input
+                type="text"
+                name={df[:name].name}
+                value={df[:name].value}
+                class="w-full rounded-lg border-zinc-300 px-3 py-2 text-sm"
+              />
+            </label>
 
-          <label :if={false} class="col-span-full grid gap-1">
-            <span class="text-sm font-medium">Give a brief event description</span>
-            <textarea rows="5" class="w-full rounded-lg border-zinc-300 px-3 py-2 text-sm"></textarea>
-          </label>
-
-          <div class="grid gap-1 col-span-full">
-            <span class="text-sm font-medium">Give a brief event description</span>
-            <div class="col-span-full h-64">
-              <div id="editor" phx-hook="QuillEditor" class="h-[calc(100%-42px)]"></div>
+            <div class="grid gap-1 col-span-full">
+              <span class="text-sm font-medium">Give a brief event description</span>
+              <div
+                id="quill-container"
+                class="col-span-full h-64"
+                data-name={df[:description].name}
+                phx-hook="QuillEditor"
+              >
+              </div>
             </div>
+
+            <fieldset class="col-span-full grid gap-4 lg:grid-cols-2 lg:gap-6">
+              <legend class="col-span-full inline-flex text-sm font-medium">
+                Event visibility
+              </legend>
+
+              <label class="mt-1 flex gap-2 rounded-lg border px-3 py-2 has-[:checked]:ring-2 has-[:checked]:ring-zinc-600">
+                <input
+                  name={df[:visibility].name}
+                  value="private"
+                  type="radio"
+                  checked={df[:visibility].value == "private" or is_nil(df[:visibility].value)}
+                  class="peer sr-only"
+                />
+                <div class="grid grow gap-1">
+                  <span class="text-sm font-medium text-zinc-950">Private</span>
+                  <span class="text-sm text-zinc-500">
+                    Only people with the link to the event will be able to see it
+                  </span>
+                </div>
+                <.icon
+                  name="hero-check-circle-mini"
+                  class="shrink-0 text-zinc-700 opacity-0 peer-checked:opacity-100"
+                />
+              </label>
+
+              <label class="mt-1 flex gap-2 rounded-lg border px-3 py-2 has-[:disabled]:opacity-60 has-[:checked]:ring-2 has-[:checked]:ring-zinc-600">
+                <input
+                  name={df[:visibility].name}
+                  type="radio"
+                  checked={df[:visibility].value == "public"}
+                  value="public"
+                  class="peer sr-only"
+                />
+                <div class="grid grow gap-1">
+                  <span class="text-sm font-medium text-zinc-950">Public</span>
+                  <span class="text-sm text-zinc-500">
+                    The event will be publicly discoverable on the platform
+                  </span>
+                </div>
+                <.icon
+                  name="hero-check-circle-mini"
+                  class="shrink-0 text-zinc-700 opacity-0 peer-checked:opacity-100"
+                />
+              </label>
+            </fieldset>
+          </.inputs_for>
+          <div class="px-2 py-4 pb-8 flex justify-end col-span-full">
+            <button class="h-9 flex px-4 bg-zinc-950 text-zinc-50 items-center rounded-lg">
+              <span class="font-semibold text-sm">Create event</span>
+            </button>
           </div>
-
-          <fieldset class="col-span-full grid gap-4 lg:grid-cols-2 lg:gap-6">
-            <legend class="col-span-full inline-flex text-sm font-medium">
-              Event visibility
-            </legend>
-
-            <label class="mt-1 flex gap-2 rounded-lg border px-3 py-2 has-[:checked]:ring-2 has-[:checked]:ring-zinc-600">
-              <input type="radio" name="event-location" checked class="peer sr-only" />
-              <div class="grid grow gap-1">
-                <span class="text-sm font-medium text-zinc-950">Private</span>
-                <span class="text-sm text-zinc-500">
-                  Only people with the link to the event will be able to see it
-                </span>
-              </div>
-              <.icon
-                name="hero-check-circle-mini"
-                class="shrink-0 text-zinc-700 opacity-0 peer-checked:opacity-100"
-              />
-            </label>
-
-            <label class="mt-1 flex gap-2 rounded-lg border px-3 py-2 has-[:disabled]:opacity-60 has-[:checked]:ring-2 has-[:checked]:ring-zinc-600">
-              <input type="radio" name="event-location" class="peer sr-only" />
-              <div class="grid grow gap-1">
-                <span class="text-sm font-medium text-zinc-950">Public</span>
-                <span class="text-sm text-zinc-500">
-                  The event will be publicly discoverable on the platform
-                </span>
-              </div>
-              <.icon
-                name="hero-check-circle-mini"
-                class="shrink-0 text-zinc-700 opacity-0 peer-checked:opacity-100"
-              />
-            </label>
-          </fieldset>
-        </div>
+        </.form>
       </div>
     </div>
 
-    <div class="px-2 py-4">
-      <button class="h-9 flex px-4 bg-zinc-950 text-zinc-50 items-center rounded-lg">
+    <div class="px-2 py-4 pb-8 flex justify-end">
+      <button
+        class="h-9 flex px-4 bg-zinc-950 text-zinc-50 items-center rounded-lg"
+        phx-click="continue"
+      >
         <span class="font-semibold text-sm">Continue</span>
       </button>
     </div>
@@ -117,6 +153,39 @@ defmodule GitsWeb.HostLive.ManageEvent do
   end
 
   def mount(_params, _session, socket) do
-    socket |> assign(:current, false) |> ok()
+    socket
+    |> assign(:current, false)
+    |> assign(:form, current_form(socket.assigns.live_action))
+    |> ok()
+  end
+
+  def handle_event("validate", unsigned_params, socket) do
+    socket
+    |> assign(:form, socket.assigns.form |> Form.validate(unsigned_params["form"]))
+    |> noreply()
+  end
+
+  def handle_event("continue", unsigned_params, socket) do
+    socket
+    |> handle_continue(socket.assigns.live_action, unsigned_params)
+  end
+
+  defp current_form(:create) do
+    Event
+    |> Form.for_create(:create, forms: [auto?: true])
+    |> Form.add_form([:details])
+  end
+
+  defp handle_continue(socket, :create, params) do
+    socket.assigns.form
+    |> Form.validate(params["form"])
+    |> Form.submit()
+    |> case do
+      {:ok, something} -> something |> IO.inspect()
+      {:error, form} -> socket |> assign(:form, form)
+    end
+
+    socket
+    |> noreply()
   end
 end

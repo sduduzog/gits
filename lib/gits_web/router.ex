@@ -40,9 +40,9 @@ defmodule GitsWeb.Router do
 
       live "/hosts/:handle/events/:event_id", HostLive.Event, :overview
 
-      live "/hosts/:handle/events/:event_id/settings/time-and-place",
-           HostLive.Event,
-           :settings_time_and_place
+      live "/hosts/:handle/events/:event_id/manage/time-and-place",
+           HostLive.ManageEvent,
+           :time_and_place
 
       live "/hosts/:handle/events/:event_id/settings/feature-graphic",
            HostLive.Event,

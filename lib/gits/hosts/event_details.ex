@@ -1,12 +1,24 @@
 defmodule Gits.Hosts.EventDetails do
+  require Ash.Resource.Change.Builtins
   alias Gits.Hosts.Event
 
   use Ash.Resource,
     domain: Gits.Hosts,
+    data_layer: AshPostgres.DataLayer,
     extensions: [AshArchival.Resource]
 
+  postgres do
+    table "event_details"
+    repo Gits.Repo
+  end
+
   actions do
-    defaults [:read, :destroy, create: :*, update: :*]
+    defaults [:read, :destroy, update: :*]
+
+    create :create do
+      primary? true
+      accept :*
+    end
   end
 
   attributes do
