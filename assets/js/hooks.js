@@ -12,8 +12,12 @@ import Quill from "quill";
 
 const QuillEditor = {
   _setup() {
-    const onTextChange = (delta, oldDelta, source) => {
-      console.log(this.quill.getSemanticHTML());
+    const onTextChange = (_, __, source) => {
+      if (source === "user") {
+        const delta = this.quill.getContents();
+        hiddenField.value = JSON.stringify(delta);
+        hiddenField.dispatchEvent(new Event("input", { bubbles: true }));
+      }
     };
 
     this.quill?.off("text-change", onTextChange);
@@ -31,14 +35,12 @@ const QuillEditor = {
     const quill = new Quill(editor, {
       modules: {
         toolbar: [
-          //   [{ header: [1, 2, 3, false] }],
-          //   ["bold"],
-          //   ["link"],
-          //   [{ list: "ordered" }, { list: "bullet" }],
-          //   ["bold"],
-          //   ["link"],
-          //   [{ list: "ordered" }, { list: "bullet" }],
-          // ["clean"],
+          [{ header: [1, 2, 3, false] }],
+          ["bold", "italic"],
+          ["link"],
+          [{ list: "bullet" }],
+          ["bold"],
+          ["link"],
         ],
       },
       theme: "snow",
@@ -46,6 +48,9 @@ const QuillEditor = {
 
     quill.on("text-change", onTextChange);
     this.quill = quill;
+
+    const ops = JSON.parse(this.el.dataset.contents || '{"ops": []}');
+    this.quill.setContents(ops);
   },
   mounted() {
     this._setup();

@@ -23,9 +23,9 @@ defmodule Gits.Hosts.EventDetails do
 
   attributes do
     uuid_primary_key :id
-    attribute :name, :string, allow_nil?: false
-    attribute :description, :string, allow_nil?: false
-    attribute :visibility, :atom, constraints: [one_of: [:private, :public]]
+    attribute :name, :string, public?: true, allow_nil?: false
+    attribute :description, :string, public?: true, allow_nil?: false
+    attribute :visibility, :atom, public?: true, constraints: [one_of: [:private, :public]]
 
     create_timestamp :created_at
     update_timestamp :updated_at

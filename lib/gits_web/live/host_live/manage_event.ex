@@ -57,6 +57,7 @@ defmodule GitsWeb.HostLive.ManageEvent do
       <div class="lg:mt-0 mt-4">
         <.form
           :let={f}
+          phx-update="ignore"
           id="create-event-form"
           for={@form}
           class="grid grow grid-cols-2 gap-6 px-2"
@@ -81,6 +82,7 @@ defmodule GitsWeb.HostLive.ManageEvent do
                 id="quill-container"
                 class="col-span-full h-64"
                 data-name={df[:description].name}
+                data-contents={df[:description].value}
                 phx-hook="QuillEditor"
               >
               </div>
@@ -182,7 +184,7 @@ defmodule GitsWeb.HostLive.ManageEvent do
     |> Form.submit()
     |> case do
       {:ok, something} -> something |> IO.inspect()
-      {:error, form} -> socket |> assign(:form, form)
+      {:error, form} -> socket |> assign(:form, form |> IO.inspect())
     end
 
     socket
