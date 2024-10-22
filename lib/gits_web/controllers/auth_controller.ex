@@ -2,10 +2,10 @@ defmodule GitsWeb.AuthController do
   use GitsWeb, :controller
 
   alias AshPhoenix.Form
-  alias Gits.Auth.User
+  alias Gits.Accounts.User
 
   def sign_in(conn, params) do
-    with %Gits.Accounts.User{} <- conn.assigns.current_user do
+    with %User{} <- conn.assigns.current_user do
       redirect(conn, to: ~p"/")
     end
 

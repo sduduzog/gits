@@ -1,8 +1,8 @@
 defmodule Gits.Hosts.Role do
   alias Gits.Hosts.{Host, RoleType}
 
-  alias Gits.Auth
-  alias Gits.Auth.User
+  alias Gits.Accounts
+  alias Gits.Accounts.User
 
   use Ash.Resource,
     domain: Gits.Hosts,
@@ -31,7 +31,7 @@ defmodule Gits.Hosts.Role do
 
   relationships do
     belongs_to :user, User do
-      domain Auth
+      domain Accounts
     end
 
     belongs_to :host, Host
