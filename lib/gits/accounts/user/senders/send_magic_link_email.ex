@@ -5,7 +5,6 @@ defmodule Gits.Accounts.User.Senders.SendMagicLinkEmail do
 
   import Swoosh.Email
   use AshAuthentication.Sender
-  use GitsWeb, :verified_routes
 
   @impl true
   def send(user_or_email, token, _) do
@@ -23,17 +22,17 @@ defmodule Gits.Accounts.User.Senders.SendMagicLinkEmail do
         email -> email
       end
 
-    IO.puts("""
-    Hello, #{email}! Click this link to sign in:
-
-    #{url(~p"/auth/user/magic_link/?token=#{token}")}
-    """)
-
     new()
-    |> subject("Sign in to GiTS")
-    |> html_body("")
-  end
+    |> to(email)
+    |> text_body("""
+    Welcome to GiTS
 
-  def email() do
+    To finish signing in, use the following url bellow:
+
+    #{"/auth/user/magic_link?token=#{}"}
+    """)
+    |> put_provider_option(:custom_vars, %{"url" => "/auth/user/magic_link/?token=#{token}"})
+    |> put_provider_option(:template_name, "magic-link")
+    |> put_provider_option(:template_options, %{version: "initial"})
   end
 end
