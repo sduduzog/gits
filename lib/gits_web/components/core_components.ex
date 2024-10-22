@@ -367,13 +367,11 @@ defmodule GitsWeb.CoreComponents do
     ~H"""
     <button
       type={@type}
-      class={
-        Twix.tw([
-          "rounded-lg bg-zinc-900 px-3 py-2 hover:bg-zinc-700 phx-submit-loading:opacity-75",
-          "text-sm font-semibold leading-6 text-white active:text-white",
-          @class
-        ])
-      }
+      class={[
+        "rounded-lg bg-zinc-900 px-3 py-2 hover:bg-zinc-700 phx-submit-loading:opacity-75",
+        "text-sm font-semibold leading-6 text-white active:text-white",
+        @class
+      ]}
       {@rest}
     >
       <%= render_slot(@inner_block) %>
@@ -470,7 +468,7 @@ defmodule GitsWeb.CoreComponents do
 
   def input(%{type: "select"} = assigns) do
     ~H"""
-    <div phx-feedback-for={@name} class={Twix.tw(["grid max-w-3xl gap-2 text-sm", @class])}>
+    <div phx-feedback-for={@name} class={["grid max-w-3xl gap-2 text-sm", @class]}>
       <div class="flex justify-between text-zinc-600">
         <.label for={@id}><%= @label %></.label>
       </div>
@@ -492,7 +490,7 @@ defmodule GitsWeb.CoreComponents do
 
   def input(%{type: "textarea"} = assigns) do
     ~H"""
-    <div phx-feedback-for={@name} class={Twix.tw(["", @class])}>
+    <div phx-feedback-for={@name} class={["", @class]}>
       <.label for={@id}><%= @label %></.label>
       <textarea
         id={@id}
@@ -513,7 +511,7 @@ defmodule GitsWeb.CoreComponents do
   # All other inputs text, datetime-local, url, password, etc. are handled here...
   def input(assigns) do
     ~H"""
-    <div class={Twix.tw(["max-w-3xl space-y-2 text-sm", @class])}>
+    <div class={["max-w-3xl space-y-2 text-sm", @class]}>
       <div class="flex justify-between text-zinc-600">
         <.label for={@id}><%= @label %></.label>
       </div>

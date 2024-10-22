@@ -40,7 +40,7 @@ defmodule Gits.MixProject do
       {:ash_state_machine, "~> 0.2"},
       {:sentry, "~> 10.0"},
       {:phoenix_live_view, "~> 0.20"},
-      {:phoenix, "~> 1.0"},
+      {:phoenix, "~> 1.7"},
       {:ash, "~> 3.0"},
       {:phoenix_ecto, "~> 4.4"},
       {:phoenix_pubsub, "~> 2.1"},
@@ -92,8 +92,6 @@ defmodule Gits.MixProject do
       {:mock, "~> 0.3.8", only: :test},
       {:power_assert, "~> 0.3.0", only: :test},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
-      {:twix, "~> 0.3.0"},
-      {:ex_base58, "~> 0.6"},
       {:igniter, "~> 0.3"}
     ]
   end
