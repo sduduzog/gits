@@ -36,7 +36,7 @@ defmodule GitsWeb.Router do
       live "/hosts/:handle/events/drafts", HostLive.EventList, :drafts
       live "/hosts/:handle/events/all", HostLive.EventList, :all
 
-      live "/hosts/:handle/events/create-new", HostLive.ManageEvent, :create
+      live "/hosts/:handle/events/create-new", HostLive.ManageEvent, :details
 
       live "/hosts/:handle/events/:event_id", HostLive.Event, :overview
 
@@ -93,12 +93,6 @@ defmodule GitsWeb.Router do
     live_session :authentication_optional,
       on_mount: {GitsWeb.LiveUserAuth, :live_user_optional} do
       live "/events/:id", StorefrontLive.EventListing
-      live "/ticket-invite/:invite_id", EventLive.Invite
-    end
-
-    live_session :authentication_forbidden,
-      on_mount: {GitsWeb.LiveUserAuth, :live_no_user} do
-      live "/password-reset/:token", AuthLive.PasswordReset
     end
 
     get "/", PageController, :home
@@ -118,12 +112,6 @@ defmodule GitsWeb.Router do
     resources "/accounts", AccountController, only: [:index]
 
     get "/sign-in", AuthController, :sign_in
-    get "/register", AuthController, :register
-    get "/forgot-password", AuthController, :forgot_password
-    post "/request-magic-link", AuthController, :request_magic_link
-    get "/magic-link-sent", AuthController, :magic_link_sent
-    post "/resend-verification", AuthController, :resend_verification_email
-    get "/email-not-verified", AuthController, :email_not_verified
     get "/sign-out", AuthController, :sign_out
 
     get "/bucket/*keys", PageController, :bucket

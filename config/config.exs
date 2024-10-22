@@ -32,8 +32,7 @@ config :spark,
 
 config :gits,
   ash_domains: [
-    Gits.Support,
-    Gits.Auth,
+    Gits.Accounts,
     Gits.Hosts
   ],
   ecto_repos: [Gits.Repo]

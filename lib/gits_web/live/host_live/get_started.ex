@@ -1,5 +1,5 @@
 defmodule GitsWeb.HostLive.GetStarted do
-  alias Gits.Auth.User
+  alias Gits.Accounts.User
   alias Gits.Hosts.Host
   alias AshPhoenix.Form
   use GitsWeb, :host_live_view

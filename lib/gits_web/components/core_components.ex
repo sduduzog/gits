@@ -2,7 +2,7 @@ defmodule GitsWeb.CoreComponents do
   use Phoenix.Component
   use GitsWeb, :verified_routes
 
-  alias Gits.Auth.User
+  alias Gits.Accounts.User
   alias Phoenix.HTML.Form
   alias Phoenix.LiveView.JS
   import GitsWeb.Gettext

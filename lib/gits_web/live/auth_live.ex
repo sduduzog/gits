@@ -1,6 +1,6 @@
 defmodule GitsWeb.AuthLive do
   alias AshPhoenix.Form
-  alias Gits.Auth.User
+  alias Gits.Accounts.User
   use GitsWeb, :live_view
 
   def mount(_params, _session, socket) do
@@ -16,21 +16,12 @@ defmodule GitsWeb.AuthLive do
       Form.for_action(User, :request_magic_link, as: "user")
     )
     |> assign(:disabled_submit?, true)
-    |> assign(:trigger_submit?, false)
     |> ok(false)
   end
 
   def render(assigns) do
     ~H"""
-    <.form
-      :let={f}
-      for={@form}
-      class="grid"
-      action={~p"/request-magic-link"}
-      phx-submit="submit"
-      phx-trigger-action={@trigger_submit?}
-      method="post"
-    >
+    <.form :let={f} for={@form} class="grid" phx-submit="submit" method="post">
       <h1 class="font-semibold text-5xl">Sign in</h1>
       <p class="text-zinc-500 mt-4">Enter your email address to receive a magic link</p>
       <label class="grid gap-1 mt-8 text-sm">
@@ -66,8 +57,12 @@ defmodule GitsWeb.AuthLive do
   def handle_event("submit", unsigned_params, socket) do
     case Turnstile.verify(unsigned_params) do
       {:ok, _} ->
+        strategy =
+          AshAuthentication.Info.strategy!(User, :magic_link)
+
+        AshAuthentication.Strategy.action(strategy, :request, unsigned_params["user"])
+
         socket
-        |> assign(:trigger_submit?, true)
         |> noreply()
 
       {:error, _} ->

@@ -5,7 +5,7 @@ defmodule GitsWeb.AuthController do
   alias Gits.Auth.User
 
   def sign_in(conn, params) do
-    with %Gits.Auth.User{} <- conn.assigns.current_user do
+    with %Gits.Accounts.User{} <- conn.assigns.current_user do
       redirect(conn, to: ~p"/")
     end
 
@@ -31,74 +31,6 @@ defmodule GitsWeb.AuthController do
     )
     |> put_layout(false)
     |> render(:sign_in)
-  end
-
-  def request_magic_link(conn, params) do
-    user_params = params["user"]
-
-    form =
-      User
-      |> Form.for_action(:request_magic_link, as: "user")
-      |> Form.validate(user_params)
-
-    email = user_params["email"]
-
-    with true <- Regex.match?(~r/@/, email),
-         {:ok, _} <- Turnstile.verify(params, conn.remote_ip),
-         %Form{valid?: true} <- Form.validate(form, user_params) do
-      strategy =
-        AshAuthentication.Info.strategy!(User, :magic_link)
-
-      AshAuthentication.Strategy.action(strategy, :request, %{"email" => email})
-
-      conn |> redirect(to: ~p"/magic-link-sent?to=#{email}")
-    else
-      :created ->
-        conn |> redirect(to: ~p"/magic-link-sent?to=#{email}")
-
-      error ->
-        IO.inspect(error)
-
-        conn
-        |> assign(
-          :form,
-          Form.for_action(User, :request_magic_link, as: "user")
-        )
-        |> put_flash(:error, "Invalid email")
-        |> put_layout(html: :auth)
-        |> render(:sign_in)
-    end
-  end
-
-  def magic_link_sent(conn, params) do
-    conn
-    |> assign(:email, params["to"])
-    |> put_layout(html: :auth)
-    |> render(:magic_link_sent)
-  end
-
-  def register(conn, params) do
-    with %Gits.Auth.User{} <- conn.assigns.current_user do
-      redirect(conn, to: ~p"/")
-    end
-
-    conn =
-      case params["return_to"] do
-        return_to when not is_nil(return_to) -> put_session(conn, :return_to, return_to)
-        _ -> conn
-      end
-
-    conn
-    |> put_layout(false)
-    |> Phoenix.LiveView.Controller.live_render(GitsWeb.AuthLive.Form,
-      session: Map.merge(params, %{"action" => "register"})
-    )
-  end
-
-  def forgot_password(conn, _) do
-    conn
-    |> put_layout(false)
-    |> Phoenix.LiveView.Controller.live_render(GitsWeb.AuthLive.ForgotPassword)
   end
 
   def success(conn, {:password, :reset_request}, _user, _token) do

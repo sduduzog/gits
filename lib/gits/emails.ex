@@ -1,4 +1,4 @@
-defmodule Gits.Auth.Emails do
+defmodule Gits.Emails do
   import Swoosh.Email
   use GitsWeb, :verified_routes
 

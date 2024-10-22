@@ -1,5 +1,7 @@
 defmodule GitsWeb.HostLive.EventList do
+  alias Gits.Hosts.Event
   alias Gits.Hosts.Host
+  require Ash.Query
   use GitsWeb, :host_live_view
 
   require Ash.Query
@@ -108,6 +110,10 @@ defmodule GitsWeb.HostLive.EventList do
   end
 
   def handle_params(_, _, socket) do
+    Event
+    |> Ash.read()
+    |> IO.inspect()
+
     socket |> noreply()
   end
 end
