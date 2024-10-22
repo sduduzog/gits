@@ -16,10 +16,9 @@ defmodule Gits.Hosts.Event do
 
     create :create do
       primary? true
+      accept [:host_id]
       argument :details, :map, allow_nil?: false
-      argument :host, :map, allow_nil?: false
       change manage_relationship(:details, type: :create)
-      change manage_relationship(:host, type: :append)
       change set_attribute(:public_id, &Nanoid.generate/0)
     end
   end
@@ -38,6 +37,7 @@ defmodule Gits.Hosts.Event do
   relationships do
     belongs_to :host, Host do
       allow_nil? false
+      public? true
     end
 
     belongs_to :payout_account, PayoutAccount

@@ -67,15 +67,6 @@ defmodule GitsWeb.HostLive.ManageEvent do
         <.time_and_place :if={@live_action == :time_and_place} form={@form} />
       </div>
     </div>
-
-    <div class="px-2 py-4 pb-8 flex justify-end">
-      <button
-        class="h-9 flex px-4 bg-zinc-950 text-zinc-50 items-center rounded-lg"
-        phx-click="continue"
-      >
-        <span class="font-semibold text-sm">Continue</span>
-      </button>
-    </div>
     """
   end
 
@@ -85,13 +76,11 @@ defmodule GitsWeb.HostLive.ManageEvent do
     |> ok()
   end
 
-  def handle_params(unsigned_params, _uri, socket) do
-    unsigned_params |> IO.inspect()
+  def handle_params(_unsigned_params, _uri, socket) do
     socket |> noreply()
   end
 
-  def handle_params(unsigned_params, _uri, socket) do
-    unsigned_params |> IO.inspect()
+  def handle_params(_unsigned_params, _uri, socket) do
     socket |> noreply()
   end
 
@@ -106,12 +95,6 @@ defmodule GitsWeb.HostLive.ManageEvent do
     |> handle_continue(socket.assigns.live_action, unsigned_params)
   end
 
-  defp current_form(:create) do
-    Event
-    |> Form.for_create(:create, forms: [auto?: true])
-    |> Form.add_form([:details])
-  end
-
   defp current_form(:details) do
     Event
     |> Form.for_create(:create, forms: [auto?: true])
@@ -124,9 +107,9 @@ defmodule GitsWeb.HostLive.ManageEvent do
     |> Form.add_form([:details])
   end
 
-  defp handle_continue(socket, :create, params) do
+  defp handle_continue(socket, :details, params) do
     socket.assigns.form
-    |> Form.validate(params["form"])
+    |> Form.validate(Map.put(params["form"], :host_id, socket.assigns.host.id))
     |> Form.submit()
     |> case do
       {:ok, event} ->
