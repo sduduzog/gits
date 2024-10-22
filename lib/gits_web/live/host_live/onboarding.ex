@@ -1,6 +1,7 @@
 defmodule GitsWeb.HostLive.Onboarding do
   require Ash.Query
   alias Gits.Hosts.Host
+  alias AshPhoenix.Form
 
   use GitsWeb, :live_view
 
@@ -11,7 +12,7 @@ defmodule GitsWeb.HostLive.Onboarding do
       <p class="mt-4 text-zinc-500">
         A host account will make it easy to manage events, venues, your team and everything else to make you a successful host
       </p>
-      <div>
+      <.form :let={f} for={@form} phx-submit="save">
         <div class="grid grid-cols-[auto_1fr] mt-8 items-center gap-1 gap-x-4">
           <span class="col-span-full w-full text-sm font-medium">Upload your logo</span>
           <div class="size-24 overflow-hidden rounded-xl bg-zinc-200">
@@ -40,14 +41,19 @@ defmodule GitsWeb.HostLive.Onboarding do
 
         <label class="col-span-full grid gap-1 mt-8">
           <span class="text-sm font-medium">Host name</span>
-          <input type="text" class="w-full rounded-lg border-zinc-300 px-3 py-2 text-sm" />
+          <input
+            name={f[:name].name}
+            value={f[:name].value}
+            type="text"
+            class="w-full rounded-lg border-zinc-300 px-3 py-2 text-sm"
+          />
         </label>
         <div class="mt-8">
           <button class="h-9 rounded-lg px-4 py-2 text-sm font-semibold bg-zinc-950 text-zinc-50">
             Continue
           </button>
         </div>
-      </div>
+      </.form>
     </div>
     """
   end
@@ -61,8 +67,10 @@ defmodule GitsWeb.HostLive.Onboarding do
   end
 
   def handle_params(_unsigned_params, _uri, socket) do
+    %{current_user: user} = socket.assigns
+
     Host
-    |> Ash.Query.filter(owner.id == ^socket.assigns.current_user.id)
+    |> Ash.Query.filter(owner.id == ^user.id)
     |> Ash.read()
     |> case do
       {:ok, [host]} ->
@@ -72,7 +80,57 @@ defmodule GitsWeb.HostLive.Onboarding do
 
       _ ->
         socket
+        |> assign(
+          :form,
+          Host
+          |> Form.for_create(:create, as: "host", actor: user)
+          |> Form.validate(%{"handle" => Nanoid.generate()}, target: ["handle"])
+        )
         |> noreply()
     end
+  end
+
+  def handle_event("close", _unsigned_params, socket) do
+    socket |> push_navigate(to: ~p"/") |> noreply()
+  end
+
+  def handle_event("save", unsigned_params, socket) do
+    %{form: form, current_user: user} = socket.assigns
+
+    filename =
+      consume_uploaded_entries(socket, :logo, fn %{path: path}, _entry ->
+        bucket_name = Application.get_env(:gits, :bucket_name)
+
+        filename = Nanoid.generate(24) <> ".jpg"
+
+        Image.open!(path)
+        |> Image.thumbnail!("256x256", fit: :cover)
+        |> Image.stream!(suffix: ".jpg", buffer_size: 5_242_880, quality: 100)
+        |> ExAws.S3.upload(
+          bucket_name,
+          filename,
+          content_type: "image/jpeg",
+          cache_control: "public,max-age=3600"
+        )
+        |> ExAws.request()
+
+        {:ok, filename}
+      end)
+      |> case do
+        [filename] ->
+          filename
+
+        [] ->
+          nil
+      end
+
+    form
+    |> Form.validate(Map.merge(unsigned_params["host"], %{"logo" => filename, owner: user}))
+    |> Form.submit()
+    |> case do
+      {:ok, host} -> socket |> push_navigate(to: ~p"/hosts/#{host.handle}/events/new")
+      _ -> socket
+    end
+    |> noreply()
   end
 end

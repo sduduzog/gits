@@ -45,6 +45,8 @@ config :ash, :compatible_foreign_key_types, [
 
 config :gits, time_zone: "Africa/Johannesburg"
 
+config :gits, :email, sender: {"GiTS", "localhost"}
+
 # config :ash, :policies, show_policy_breakdowns?: true
 
 # config :ash, :policies, log_policy_breakdowns: :error
@@ -62,9 +64,6 @@ config :nanoid,
   alphabet: "0123456789abcdefghijklmnopqrstuvwxyz"
 
 # plugins: [{Oban.Plugins.Cron, crontab: [{"* * * * *", Gits.Workers.SweepWaitlist}]}]
-
-config :fun_with_flags, :cache, enabled: false, ttl: 120
-config :fun_with_flags, :persistence, adapter: FunWithFlags.Store.Persistent.Ecto, repo: Gits.Repo
 
 # Configures the endpoint
 config :gits, GitsWeb.Endpoint,

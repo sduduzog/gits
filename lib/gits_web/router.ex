@@ -140,8 +140,6 @@ defmodule GitsWeb.Router do
       ecto_psql_extras_options: [long_running_queries: [threshold: "20 milliseconds"]],
       metrics: GitsWeb.Telemetry,
       additional_pages: [oban: Oban.LiveDashboard]
-
-    forward "/flags", FunWithFlags.UI.Router, namespace: "admin/flags"
   end
 
   if Application.compile_env(:gits, :dev_routes) do

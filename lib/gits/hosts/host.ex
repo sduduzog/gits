@@ -18,13 +18,14 @@ defmodule Gits.Hosts.Host do
 
     create :create do
       primary? true
-      accept :*
+      accept [:name, :logo]
 
       argument :owner, :map do
         allow_nil? false
       end
 
       change manage_relationship(:owner, type: :append)
+      change set_attribute(:handle, &Nanoid.generate/0)
     end
   end
 
