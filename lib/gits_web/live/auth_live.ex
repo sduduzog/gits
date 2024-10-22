@@ -16,42 +16,42 @@ defmodule GitsWeb.AuthLive do
       Form.for_action(User, :request_magic_link, as: "user")
     )
     |> assign(:disabled_submit?, true)
-    |> assign(:request_sent, false)
+    |> assign(:request_sent, nil)
     |> ok(false)
   end
 
   def render(assigns) do
     ~H"""
     <%= if @request_sent do %>
-      <h1 class="font-semibold text-5xl">Sign in</h1>
-      <p class="text-zinc-500 mt-4">Enter your email address to receive a magic link</p>
-
+      <h1 class="font-semibold text-5xl">Check your email!</h1>
+      <p class="text-zinc-500 mt-4">
+        A magic link has been sent to <%= @request_sent %>. Check your spam/junk folder, just in case.
+      </p>
     <% else %>
-    <.form :let={f} for={@form} class="grid" phx-submit="submit" method="post">
-      <h1 class="font-semibold text-5xl">Sign in</h1>
-      <p class="text-zinc-500 mt-4">Enter your email address to receive a magic link</p>
-      <label class="grid gap-1 mt-8 text-sm">
-        <span>Email</span>
-        <input
-          type="text"
-          name={f[:email].name}
-          value={f[:email].value}
-          class="rounded-lg px-3 py-2 text-sm"
-        />
-      </label>
-      <button
-        disabled={@disabled_submit?}
-        type="submit"
-        class="mt-6 rounded-lg bg-zinc-900 disabled:opacity-70 px-4 py-2 text-sm font-semibold text-zinc-50"
-      >
-        <span>
-          Send me a magic link
-        </span>
-      </button>
+      <.form :let={f} for={@form} class="grid" phx-submit="submit" method="post">
+        <h1 class="font-semibold text-5xl">Sign in</h1>
+        <p class="text-zinc-500 mt-4">Enter your email address to receive a magic link</p>
+        <label class="grid gap-1 mt-8 text-sm">
+          <span>Email</span>
+          <input
+            type="text"
+            name={f[:email].name}
+            value={f[:email].value}
+            class="rounded-lg px-3 py-2 text-sm"
+          />
+        </label>
+        <button
+          disabled={@disabled_submit?}
+          type="submit"
+          class="mt-6 rounded-lg bg-zinc-900 disabled:opacity-70 px-4 py-2 text-sm font-semibold text-zinc-50"
+        >
+          <span>
+            Send me a magic link
+          </span>
+        </button>
 
-      <Turnstile.widget events={[:success]} class="mt-8" />
-    </.form>
-    
+        <Turnstile.widget events={[:success]} class="mt-8" />
+      </.form>
     <% end %>
     """
   end
@@ -69,11 +69,9 @@ defmodule GitsWeb.AuthLive do
           AshAuthentication.Info.strategy!(User, :magic_link)
 
         AshAuthentication.Strategy.action(strategy, :request, unsigned_params["user"])
-        
-        
 
         socket
-        |> assign(:request_sent, true)
+        |> assign(:request_sent, unsigned_params["user"]["email"])
         |> noreply()
 
       {:error, _} ->
