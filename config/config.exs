@@ -54,7 +54,8 @@ config :gits, time_zone: "Africa/Johannesburg"
 config :gits, Oban,
   engine: Oban.Engines.Basic,
   queues: [default: 1],
-  repo: Gits.Repo
+  repo: Gits.Repo,
+  plugins: [{Oban.Plugins.Pruner, max_age: 60 * 60 * 24 * 7}]
 
 config :nanoid,
   size: 12,
@@ -90,7 +91,7 @@ config :esbuild,
   version: "0.24.0",
   gits: [
     args:
-      ~w(js/app.js --bundle --target=es2022 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
+      ~w(js/app.js --bundle --target=esnext --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
     cd: Path.expand("../assets", __DIR__),
     env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
   ]
