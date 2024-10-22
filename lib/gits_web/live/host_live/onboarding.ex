@@ -128,7 +128,7 @@ defmodule GitsWeb.HostLive.Onboarding do
     |> Form.validate(Map.merge(unsigned_params["host"], %{"logo" => filename, owner: user}))
     |> Form.submit()
     |> case do
-      {:ok, host} -> socket |> push_navigate(to: ~p"/hosts/#{host.handle}/events/new")
+      {:ok, host} -> socket |> push_navigate(to: ~p"/hosts/#{host.handle}/events/create-new")
       _ -> socket
     end
     |> noreply()

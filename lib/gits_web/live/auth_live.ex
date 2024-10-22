@@ -27,6 +27,9 @@ defmodule GitsWeb.AuthLive do
       <p class="text-zinc-500 mt-4">
         A magic link has been sent to <%= @request_sent %>. Check your spam/junk folder, just in case.
       </p>
+      <.link navigate={~p"/"} class="inline-flex gap-2 font-semibold text-sm mt-4">
+        Go to homepage &rarr;
+      </.link>
     <% else %>
       <.form :let={f} for={@form} class="grid" phx-submit="submit" method="post">
         <h1 class="font-semibold text-5xl">Sign in</h1>
