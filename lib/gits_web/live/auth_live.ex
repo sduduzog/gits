@@ -16,11 +16,17 @@ defmodule GitsWeb.AuthLive do
       Form.for_action(User, :request_magic_link, as: "user")
     )
     |> assign(:disabled_submit?, true)
+    |> assign(:request_sent, false)
     |> ok(false)
   end
 
   def render(assigns) do
     ~H"""
+    <%= if @request_sent do %>
+      <h1 class="font-semibold text-5xl">Sign in</h1>
+      <p class="text-zinc-500 mt-4">Enter your email address to receive a magic link</p>
+
+    <% else %>
     <.form :let={f} for={@form} class="grid" phx-submit="submit" method="post">
       <h1 class="font-semibold text-5xl">Sign in</h1>
       <p class="text-zinc-500 mt-4">Enter your email address to receive a magic link</p>
@@ -45,6 +51,8 @@ defmodule GitsWeb.AuthLive do
 
       <Turnstile.widget events={[:success]} class="mt-8" />
     </.form>
+    
+    <% end %>
     """
   end
 
@@ -61,8 +69,11 @@ defmodule GitsWeb.AuthLive do
           AshAuthentication.Info.strategy!(User, :magic_link)
 
         AshAuthentication.Strategy.action(strategy, :request, unsigned_params["user"])
+        
+        
 
         socket
+        |> assign(:request_sent, true)
         |> noreply()
 
       {:error, _} ->
