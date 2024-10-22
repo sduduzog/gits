@@ -93,8 +93,6 @@ defmodule Gits.MixProject do
       {:power_assert, "~> 0.3.0", only: :test},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:twix, "~> 0.3.0"},
-      {:fun_with_flags, "~> 1.11"},
-      {:fun_with_flags_ui, "~> 1.0"},
       {:ex_base58, "~> 0.6"},
       {:igniter, "~> 0.3"}
     ]
