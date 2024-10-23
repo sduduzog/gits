@@ -38,29 +38,29 @@ defmodule GitsWeb.Router do
 
       live "/hosts/:handle/events/create-new", HostLive.ManageEvent, :details
 
-      live "/hosts/:handle/events/:event_id", HostLive.Event, :overview
+      live "/hosts/:handle/events/:event_id", HostLive.EventView, :overview
 
       live "/hosts/:handle/events/:event_id/manage/time-and-place",
            HostLive.ManageEvent,
            :time_and_place
 
       live "/hosts/:handle/events/:event_id/settings/feature-graphic",
-           HostLive.Event,
+           HostLive.EventView,
            :settings_feature_graphic
 
       live "/hosts/:handle/events/:event_id/settings/tickets",
-           HostLive.Event,
+           HostLive.EventView,
            :settings_tickets
 
       live "/hosts/:handle/events/:event_id/settings/payout-preferences",
-           HostLive.Event,
+           HostLive.EventView,
            :settings_payout_preferences
 
       live "/hosts/:handle/events/:event_id/settings",
-           HostLive.Event,
+           HostLive.EventView,
            :settings_summary
 
-      live "/hosts/:handle/events/:event_id/attendees", HostLive.Event, :attendees
+      live "/hosts/:handle/events/:event_id/attendees", HostLive.EventView, :attendees
 
       live "/hosts/:handle/events/:event_id/attendees/scanner",
            HostLive.Scanner,

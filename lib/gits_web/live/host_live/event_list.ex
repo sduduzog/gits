@@ -77,10 +77,8 @@ defmodule GitsWeb.HostLive.EventList do
           :for={i <- navigation_items}
           patch={i.href}
           replace={true}
-          class={[
-            "text-sm text-zinc-400 rounded-lg font-medium",
-            if(i.current, do: "text-zinc-950", else: "text-zinc-400")
-          ]}
+          aria-selected={"#{i.current}"}
+          class="text-sm text-zinc-400 rounded-lg font-medium aria-selected:text-zinc-950 text-zinc-400"
         >
           <%= i.label %>
         </.link>
@@ -88,12 +86,12 @@ defmodule GitsWeb.HostLive.EventList do
       <div></div>
     </div>
     <div class="divide-y divide-zinc-100 p-2">
-      <div :for={_ <- []} class="flex items-center gap-4 py-4">
+      <div :for={event <- @events} class="flex items-center gap-4 py-4">
         <div class="aspect-[3/2] h-20 rounded-xl bg-zinc-200"></div>
         <div class="grid w-full grow gap-1.5">
           <h2 class="truncate font-semibold">
-            <.link navigate={~p"/hosts/#{@host_handle}/events/event_id"}>
-              The Ultimate Cheese Festival
+            <.link navigate={~p"/hosts/#{@host_handle}/events/#{event.public_id}"}>
+              <%= event.details.name %>
             </.link>
           </h2>
           <span class="text-sm text-zinc-500">5 Nov 2024, at 4:30 PM</span>
@@ -111,9 +109,11 @@ defmodule GitsWeb.HostLive.EventList do
 
   def handle_params(_, _, socket) do
     Event
+    |> Ash.Query.load(:details)
     |> Ash.read()
-    |> IO.inspect()
-
-    socket |> noreply()
+    |> case do
+      {:ok, events} -> socket |> assign(:events, events)
+    end
+    |> noreply()
   end
 end

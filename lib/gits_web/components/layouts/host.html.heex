@@ -11,7 +11,7 @@
     icon: "hero-calendar-days",
     current:
       Enum.any?(
-        [GitsWeb.HostLive.EventList, GitsWeb.HostLive.Event, GitsWeb.HostLive.ManageEvent],
+        [GitsWeb.HostLive.EventList, GitsWeb.HostLive.EventView, GitsWeb.HostLive.ManageEvent],
         &(&1 == @socket.view)
       ),
     href: ~p"/hosts/#{@host_handle}/events"
@@ -43,14 +43,17 @@
         :for={i <- items}
         navigate={i.href}
         replace={true}
+        aria-selected={"#{i.current}"}
         class={[
-          "px-2 gap-4 inline-flex group text-zinc-500 border-l-2",
+          "gap-2 inline-flex group items-center text-zinc-500",
           if(i.current,
-            do: "is-active border-zinc-500",
-            else: "border-transparent"
+            do: "is-active ",
+            else: ""
           )
         ]}
       >
+        <span class="w-1 bg-zinc-500 h-6 opacity-0 group-aria-selected:opacity-100 rounded">
+        </span>
         <div class="flex w-full items-center gap-2 rounded-lg px-2 py-4 group-hover:bg-zinc-50 group-[.is-active]:bg-zinc-100 group-[.is-active]:text-zinc-950 lg:py-2">
           <.icon name={i.icon} class="size-5 shrink-0" />
           <span class="text-sm font-semibold"><%= i.label %></span>
