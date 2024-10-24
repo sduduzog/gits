@@ -3,15 +3,10 @@
     label: "Overview",
     current: @live_action == :overview,
     href: ~p"/hosts/#{@host_handle}/events/event_id/"
-  },
-  %{
-    label: "Attendees",
-    current: @live_action == :tickets,
-    href: ~p"/hosts/#{@host_handle}/events/event_id/"
   }
 ] %>
 
-<div :if={assigns[:event]} class="flex items-center gap-2 p-2">
+<div :if={@event_id} class="flex items-center gap-2 p-2">
   <.link
     replace={true}
     navigate={~p"/hosts/#{@host_handle}/events"}
@@ -33,7 +28,9 @@
   </button>
 
   <button
-    phx-click={JS.navigate(~p"/hosts/#{@host_handle}/events/#{@event.public_id}/manage")}
+    phx-click={
+      JS.navigate(Routes.host_edit_event_path(@socket, :details, @host_handle, @event_id))
+    }
     class="flex size-9 items-center justify-center gap-2 rounded-lg border lg:w-auto lg:px-4"
   >
     <.icon name="hero-pencil-square" class="size-5" />

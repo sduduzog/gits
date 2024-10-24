@@ -1,4 +1,4 @@
-defmodule GitsWeb.HostLive.ManageEvent do
+defmodule GitsWeb.HostLive.EditEvent do
   alias Gits.Hosts.Event
   alias AshPhoenix.Form
   require Ash.Query
@@ -12,32 +12,6 @@ defmodule GitsWeb.HostLive.ManageEvent do
   attr :current, :boolean, default: false
   attr :valid, :boolean, default: false
   attr :icon, :string, default: "hero-check"
-
-  defp wizard_step(%{current_action: true} = assigns) do
-    ~H"""
-    <div
-      :for={
-        {title, action} <- [
-          {"Event details", :details},
-          {"Time & place", :time_and_place},
-          {"Feature Graphic", :foo},
-          {"Tickets", :foo},
-          {"Payout preferences", :foo},
-          {"Publish", :foo}
-        ]
-      }
-      class="flex items-center gap-2"
-    >
-      <%= if action == @current_action do %>
-        <span class="inline-block h-1 w-6 lg:w-8 rounded-full bg-blue-500"></span>
-        <span class="text-sm font-medium lg:inline"><%= title %></span>
-      <% else %>
-        <span class="inline-block h-1 lg:w-4 w-3 rounded-full bg-zinc-400 lg:ml-4"></span>
-        <span class="hidden text-sm font-medium lg:inline"><%= title %></span>
-      <% end %>
-    </div>
-    """
-  end
 
   defp wizard_step(%{current: true} = assigns) do
     ~H"""
@@ -67,7 +41,7 @@ defmodule GitsWeb.HostLive.ManageEvent do
       <div class="flex items-center gap-2 p-2">
         <.link
           replace={true}
-          navigate={~p"/hosts/#{@host_handle}/events/#{@event.public_id}"}
+          navigate={Routes.host_event_view_path(@socket, :overview, @host_handle, @event_id)}
           class="flex items-center gap-2 rounded-lg h-9 px-2"
         >
           <.icon name="hero-chevron-left" class="size-5" />
@@ -79,7 +53,7 @@ defmodule GitsWeb.HostLive.ManageEvent do
           <.icon name="hero-slash-micro" class="text-zinc-500 shrink-0" />
           <span class="text-zinc-500 truncate"><%= @event.details.name %></span>
           <.icon name="hero-slash-micro" class="shrink-0" />
-          <span class="">Manage event</span>
+          <span class="">Edit event</span>
         </div>
 
         <button class="flex size-9 lg:w-auto items-center gap-2 justify-center shrink-0 rounded-lg lg:px-4">
@@ -116,7 +90,7 @@ defmodule GitsWeb.HostLive.ManageEvent do
         <%= if assigns[:event] do %>
           <.wizard_step
             current={@live_action == :details}
-            href={Routes.host_manage_event_path(@socket, :details, @host_handle, @event.public_id)}
+            href={Routes.host_edit_event_path(@socket, :details, @host_handle, @event.public_id)}
             complete={true}
             valid={true}
             title="Event details"
@@ -124,7 +98,7 @@ defmodule GitsWeb.HostLive.ManageEvent do
           <.wizard_step
             current={@live_action == :time_and_place}
             href={
-              Routes.host_manage_event_path(@socket, :time_and_place, @host_handle, @event.public_id)
+              Routes.host_edit_event_path(@socket, :time_and_place, @host_handle, @event.public_id)
             }
             title="Time & place"
           />
@@ -140,21 +114,12 @@ defmodule GitsWeb.HostLive.ManageEvent do
             current={@live_action == :payout_preferences}
             title="Payout preferences"
           />
-          <.wizard_step
-            current={@live_action == :summary}
-            href={Routes.host_manage_event_path(@socket, :summary, @host_handle, @event.public_id)}
-            complete={true}
-            valid={@event.ready_to_publish}
-            icon="hero-rocket-launch"
-            title="Summary"
-          />
         <% else %>
           <.wizard_step current={@live_action == :details} title="Event details" />
           <.wizard_step current={@live_action == :time_and_place} title="Time & place" />
           <.wizard_step current={@live_action == :feature_graphic} title="Feature graphic" />
           <.wizard_step current={@live_action == :tickets} title="Tickets" />
           <.wizard_step current={@live_action == :payout_preferences} title="Payout preferences" />
-          <.wizard_step current={@live_action == :summary} title="Summary" />
         <% end %>
       </div>
 
@@ -172,8 +137,6 @@ defmodule GitsWeb.HostLive.ManageEvent do
   end
 
   def handle_params(%{"event_id" => event_id}, _uri, socket) do
-    IO.puts("handle params")
-
     Event
     |> Ash.Query.filter(public_id == ^event_id)
     |> Ash.Query.load([:details, :ready_to_publish])
