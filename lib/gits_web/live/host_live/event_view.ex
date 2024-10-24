@@ -1,4 +1,5 @@
 defmodule GitsWeb.HostLive.EventView do
+  alias Gits.Hosts.Event
   alias Gits.Hosts.Host
   use GitsWeb, :host_live_view
   require Ash.Query
@@ -8,6 +9,8 @@ defmodule GitsWeb.HostLive.EventView do
   embed_templates "event_templates/*"
 
   def mount(params, _session, socket) do
+    IO.puts("mounted event view")
+
     host =
       Host
       |> Ash.Query.filter(handle == ^params["handle"])
@@ -80,8 +83,15 @@ defmodule GitsWeb.HostLive.EventView do
     |> (fn {_, subtitle, _} -> subtitle end).()
   end
 
-  def handle_params(_unsigned_params, _uri, socket) do
-    socket |> noreply()
+  def handle_params(%{"event_id" => event_id}, _uri, socket) do
+    Event
+    |> Ash.Query.filter(public_id == ^event_id)
+    |> Ash.Query.load(:details)
+    |> Ash.read_one()
+    |> case do
+      {:ok, event} -> socket |> assign(:event, event)
+    end
+    |> noreply()
   end
 
   def handle_event("continue", _, %{assigns: %{live_action: :settings_event_details}} = socket) do

@@ -40,6 +40,8 @@ defmodule GitsWeb.Router do
 
       live "/hosts/:handle/events/:event_id", HostLive.EventView, :overview
 
+      live "/hosts/:handle/events/:event_id/manage/details", HostLive.ManageEvent, :details
+
       live "/hosts/:handle/events/:event_id/manage/time-and-place",
            HostLive.ManageEvent,
            :time_and_place
@@ -56,9 +58,9 @@ defmodule GitsWeb.Router do
            HostLive.EventView,
            :settings_payout_preferences
 
-      live "/hosts/:handle/events/:event_id/settings",
-           HostLive.EventView,
-           :settings_summary
+      live "/hosts/:handle/events/:event_id/manage",
+           HostLive.ManageEvent,
+           :summary
 
       live "/hosts/:handle/events/:event_id/attendees", HostLive.EventView, :attendees
 

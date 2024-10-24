@@ -6,39 +6,65 @@
   },
   %{
     label: "Attendees",
-    current: @live_action == :attendees,
-    href: ~p"/hosts/#{@host_handle}/events/event_id/attendees"
-  },
-  %{
-    label: "Settings",
-    current:
-      [
-        :settings_event_details,
-        :settings_time_and_place,
-        :settings_feature_graphic,
-        :settings_tickets,
-        :settings_payout_preferences,
-        :settings_summary
-      ]
-      |> Enum.any?(&(&1 == @live_action)),
-    href: ~p"/hosts/#{@host_handle}/events/event_id/settings"
+    current: @live_action == :tickets,
+    href: ~p"/hosts/#{@host_handle}/events/event_id/"
   }
 ] %>
 
-<div class="flex p-2 lg:p-0 gap-8">
+<div :if={assigns[:event]} class="flex items-center gap-2 p-2">
   <.link
-    :for={i <- navigation_items}
-    patch={i.href}
     replace={true}
-    class={[
-      "text-sm text-zinc-400 rounded-lg font-medium",
-      if(i.current, do: "text-zinc-950", else: "text-zinc-400")
-    ]}
+    navigate={~p"/hosts/#{@host_handle}/events"}
+    class="flex h-9 items-center gap-2 rounded-lg px-2"
   >
-    <%= i.label %>
+    <.icon name="hero-chevron-left" class="size-5" />
+    <span class="hidden text-sm font-medium lg:inline">Back</span>
   </.link>
+
+  <div class="flex grow items-center gap-2 truncate border-l pl-4 text-sm font-medium">
+    <span class="truncate text-zinc-500">Events</span>
+    <.icon name="hero-slash-micro" class="shrink-0" />
+    <span class="truncate"><%= @event.details.name %></span>
+  </div>
+
+  <button class="flex size-9 shrink-0 items-center justify-center gap-2 rounded-lg lg:w-auto lg:px-4">
+    <.icon name="hero-megaphone" class="size-5" />
+    <span class="hidden text-sm lg:inline">Help</span>
+  </button>
+
+  <button
+    phx-click={JS.navigate(~p"/hosts/#{@host_handle}/events/#{@event.public_id}/manage")}
+    class="flex size-9 items-center justify-center gap-2 rounded-lg border lg:w-auto lg:px-4"
+  >
+    <.icon name="hero-pencil-square" class="size-5" />
+    <span class="hidden text-sm font-semibold lg:inline">Manage</span>
+  </button>
 </div>
 
-<div class="py-2 grid gap-4">
-  <.event_body tab={@live_action} />
+<div class="flex gap-4 flex-col p-2 lg:flex-row">
+  <div class="border w-full lg:max-w-96 rounded-xl p-4">
+    <!-- <div>badge and buttons</div> -->
+    <div class="flex items-start gap-2">
+      <div class="bg-zinc-200 shrink-0 rounded-md aspect-[3/2] w-20"></div>
+      <div>
+        <span class="line-clamp-3 font-semibold">
+          Lorem ipsum dolor, sit amet consectetur adipisicing elit.
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="grow">
+    <div class="flex gap-8 border-b-2 border-zinc-100 items-center">
+      <!-- <span class="text-sm text-zinc-400 p-2">Jump To:</span> -->
+      <.link
+        :for={i <- navigation_items}
+        patch={i.href}
+        replace={true}
+        aria-selected={"#{i.current}"}
+        class="text-sm text-zinc-400 py-2 -mb-0.5 border-b-2 border-transparent aria-selected:text-zinc-800 aria-selected:border-zinc-500 font-medium"
+      >
+        <%= i.label %>
+      </.link>
+    </div>
+  </div>
 </div>

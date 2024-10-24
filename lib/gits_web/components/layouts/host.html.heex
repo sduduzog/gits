@@ -17,6 +17,16 @@
     href: ~p"/hosts/#{@host_handle}/events"
   },
   %{
+    label: "Orders",
+    icon: "hero-banknotes",
+    current:
+      Enum.any?(
+        [],
+        &(&1 == @socket.view)
+      ),
+    href: ~p"/hosts/#{@host_handle}/events"
+  },
+  %{
     label: "Settings",
     icon: "hero-cog-6-tooth",
     current: Enum.any?([GitsWeb.HostLive.Settings], &(&1 == @socket.view)),
@@ -36,7 +46,7 @@
       </button>
     </div>
     <nav
-      :for={items <- [navigation_items |> Enum.take(2), navigation_items |> Enum.take(-1)]}
+      :for={items <- [navigation_items |> Enum.take(3), navigation_items |> Enum.take(-1)]}
       class="flex w-full first-of-type:grow flex-col gap-2"
     >
       <.link
@@ -45,7 +55,7 @@
         replace={true}
         aria-selected={"#{i.current}"}
         class={[
-          "gap-2 inline-flex group items-center text-zinc-500",
+          "gap-2 inline-flex pr-4 pl-1 lg:px-0 group items-center text-zinc-500",
           if(i.current,
             do: "is-active ",
             else: ""

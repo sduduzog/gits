@@ -22,12 +22,15 @@ const QuillEditor = {
 
     this.quill?.off("text-change", onTextChange);
 
+    const ops = JSON.parse(this.el.dataset.contents || '{"ops": []}');
+
     const editor = document.createElement("div");
     editor.style.height = "calc(100% - 48px)";
 
     const hiddenField = document.createElement("input");
     hiddenField.type = "hidden";
     hiddenField.name = this.el.dataset.name;
+    hiddenField.value = this.el.dataset.contents;
 
     this.el.appendChild(editor);
     this.el.appendChild(hiddenField);
@@ -49,7 +52,6 @@ const QuillEditor = {
     quill.on("text-change", onTextChange);
     this.quill = quill;
 
-    const ops = JSON.parse(this.el.dataset.contents || '{"ops": []}');
     this.quill.setContents(ops);
   },
   mounted() {

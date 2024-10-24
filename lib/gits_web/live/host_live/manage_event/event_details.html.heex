@@ -39,9 +39,9 @@
       <label class="mt-1 flex gap-2 rounded-lg border px-3 py-2 has-[:checked]:ring-2 has-[:checked]:ring-zinc-600">
         <input
           name={df[:visibility].name}
-          value="private"
+          value={:private}
           type="radio"
-          checked={df[:visibility].value == "private" or is_nil(df[:visibility].value)}
+          checked={df[:visibility].value == :private or is_nil(df[:visibility].value)}
           class="peer sr-only"
         />
         <div class="grid grow gap-1">
@@ -60,8 +60,8 @@
         <input
           name={df[:visibility].name}
           type="radio"
-          checked={df[:visibility].value == "public"}
-          value="public"
+          checked={df[:visibility].value == :public}
+          value={:public}
           class="peer sr-only"
         />
         <div class="grid grow gap-1">
@@ -79,7 +79,9 @@
   </.inputs_for>
   <div class="px-2 py-4 pb-8 flex justify-end col-span-full">
     <button class="h-9 flex px-4 bg-zinc-950 text-zinc-50 items-center rounded-lg">
-      <span class="font-semibold text-sm">Create event</span>
+      <span class="font-semibold text-sm">
+        <%= if(@event_id, do: "Save", else: "Create event") %>
+      </span>
     </button>
   </div>
 </.form>

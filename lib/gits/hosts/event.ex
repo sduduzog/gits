@@ -21,6 +21,12 @@ defmodule Gits.Hosts.Event do
       change manage_relationship(:details, type: :create)
       change set_attribute(:public_id, &Nanoid.generate/0)
     end
+
+    update :details do
+      require_atomic? false
+      argument :details, :map, allow_nil?: false
+      change manage_relationship(:details, type: :direct_control)
+    end
   end
 
   attributes do
@@ -43,5 +49,9 @@ defmodule Gits.Hosts.Event do
     belongs_to :payout_account, PayoutAccount
 
     has_one :details, EventDetails
+  end
+
+  calculations do
+    calculate :ready_to_publish, :boolean, expr(false)
   end
 end

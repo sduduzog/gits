@@ -1,11 +1,19 @@
 defmodule GitsWeb.HostLive.ManageEvent do
   alias Gits.Hosts.Event
   alias AshPhoenix.Form
+  require Ash.Query
   use GitsWeb, :host_live_view
 
   embed_templates "manage_event/*"
 
-  defp wizard_steps(assigns) do
+  attr :title, :string, default: ""
+  attr :href, :string, default: nil
+  attr :complete, :boolean, default: false
+  attr :current, :boolean, default: false
+  attr :valid, :boolean, default: false
+  attr :icon, :string, default: "hero-check"
+
+  defp wizard_step(%{current_action: true} = assigns) do
     ~H"""
     <div
       :for={
@@ -31,39 +39,127 @@ defmodule GitsWeb.HostLive.ManageEvent do
     """
   end
 
+  defp wizard_step(%{current: true} = assigns) do
+    ~H"""
+    <div class="flex items-center gap-2">
+      <span class="inline-block h-1 w-6 lg:w-8 rounded-full bg-blue-500"></span>
+      <span class="text-sm font-medium lg:inline"><%= @title %></span>
+    </div>
+    """
+  end
+
+  defp wizard_step(assigns) do
+    ~H"""
+    <.link patch={@href} replace={true} class="flex items-center gap-2">
+      <%= if @valid do %>
+        <.icon name={@icon} class="size-5 text-green-500 lg:ml-3" />
+      <% else %>
+        <span class="inline-block h-1 lg:w-4 w-3 rounded-full bg-zinc-400 lg:ml-4"></span>
+      <% end %>
+      <span class="hidden text-sm font-medium lg:inline"><%= @title %></span>
+    </.link>
+    """
+  end
+
   def render(assigns) do
     ~H"""
-    <div class="flex items-center gap-2 p-2">
-      <.link
-        replace={true}
-        navigate={~p"/hosts/#{@host_handle}/events"}
-        class="flex items-center gap-2 rounded-lg h-9 px-2"
-      >
-        <.icon name="hero-chevron-left" class="size-5" />
-        <span class="text-sm font-medium lg:inline hidden">Back</span>
-      </.link>
+    <%= if assigns[:event] do %>
+      <div class="flex items-center gap-2 p-2">
+        <.link
+          replace={true}
+          navigate={~p"/hosts/#{@host_handle}/events/#{@event.public_id}"}
+          class="flex items-center gap-2 rounded-lg h-9 px-2"
+        >
+          <.icon name="hero-chevron-left" class="size-5" />
+          <span class="text-sm font-medium lg:inline hidden">Back</span>
+        </.link>
 
-      <div class="flex gap-2 grow items-center border-l truncate pl-4 text-sm font-medium">
-        <span class="text-zinc-500 truncate">Events</span>
-        <.icon name="hero-slash-micro" class="shrink-0" />
-        <span class="truncate">Create an event</span>
+        <div class="flex gap-2 grow items-center border-l truncate pl-4 text-sm font-medium">
+          <span class="text-zinc-500">Events</span>
+          <.icon name="hero-slash-micro" class="text-zinc-500 shrink-0" />
+          <span class="text-zinc-500 truncate"><%= @event.details.name %></span>
+          <.icon name="hero-slash-micro" class="shrink-0" />
+          <span class="">Manage event</span>
+        </div>
+
+        <button class="flex size-9 lg:w-auto items-center gap-2 justify-center shrink-0 rounded-lg lg:px-4">
+          <.icon name="hero-megaphone" class="size-5" />
+          <span class="text-sm hidden lg:inline">Help</span>
+        </button>
       </div>
+    <% else %>
+      <div class="flex items-center gap-2 p-2">
+        <.link
+          replace={true}
+          navigate={~p"/hosts/#{@host_handle}/events"}
+          class="flex items-center gap-2 rounded-lg h-9 px-2"
+        >
+          <.icon name="hero-chevron-left" class="size-5" />
+          <span class="text-sm font-medium lg:inline hidden">Back</span>
+        </.link>
 
-      <button class="flex size-9 lg:w-auto items-center gap-2 justify-center shrink-0 rounded-lg lg:px-4">
-        <.icon name="hero-megaphone" class="size-5" />
-        <span class="text-sm hidden lg:inline">Help</span>
-      </button>
-    </div>
+        <div class="flex gap-2 grow items-center border-l truncate pl-4 text-sm font-medium">
+          <span class="text-zinc-500">Events</span>
+          <.icon name="hero-slash-micro" class="shrink-0" />
+          <span class="">Create event</span>
+        </div>
 
-    <h1 class="p-2 text-2xl font-semibold">Create an event</h1>
+        <button class="flex size-9 lg:w-auto items-center gap-2 justify-center shrink-0 rounded-lg lg:px-4">
+          <.icon name="hero-megaphone" class="size-5" />
+          <span class="text-sm hidden lg:inline">Help</span>
+        </button>
+      </div>
+    <% end %>
 
-    <div class="grow flex lg:flex-row flex-col">
+    <div class="grow flex lg:pt-4 lg:flex-row flex-col">
       <div class="w-full lg:max-w-64 p-2 flex lg:flex-col gap-4 lg:gap-6">
-        <.wizard_steps current_action={@live_action} />
+        <%= if assigns[:event] do %>
+          <.wizard_step
+            current={@live_action == :details}
+            href={Routes.host_manage_event_path(@socket, :details, @host_handle, @event.public_id)}
+            complete={true}
+            valid={true}
+            title="Event details"
+          />
+          <.wizard_step
+            current={@live_action == :time_and_place}
+            href={
+              Routes.host_manage_event_path(@socket, :time_and_place, @host_handle, @event.public_id)
+            }
+            title="Time & place"
+          />
+          <.wizard_step
+            :if={false}
+            current={@live_action == :feature_graphic}
+            title="Feature graphic"
+            href={~p"/hosts/#{@host_handle}/events/#{@event.public_id}"}
+          />
+          <.wizard_step :if={false} current={@live_action == :tickets} title="Tickets" />
+          <.wizard_step
+            :if={false}
+            current={@live_action == :payout_preferences}
+            title="Payout preferences"
+          />
+          <.wizard_step
+            current={@live_action == :summary}
+            href={Routes.host_manage_event_path(@socket, :summary, @host_handle, @event.public_id)}
+            complete={true}
+            valid={@event.ready_to_publish}
+            icon="hero-rocket-launch"
+            title="Summary"
+          />
+        <% else %>
+          <.wizard_step current={@live_action == :details} title="Event details" />
+          <.wizard_step current={@live_action == :time_and_place} title="Time & place" />
+          <.wizard_step current={@live_action == :feature_graphic} title="Feature graphic" />
+          <.wizard_step current={@live_action == :tickets} title="Tickets" />
+          <.wizard_step current={@live_action == :payout_preferences} title="Payout preferences" />
+          <.wizard_step current={@live_action == :summary} title="Summary" />
+        <% end %>
       </div>
 
       <div class="lg:mt-0 mt-4">
-        <.event_details :if={@live_action == :details} form={@form} />
+        <.event_details :if={@live_action == :details} form={@form} event_id={@event_id} />
         <.time_and_place :if={@live_action == :time_and_place} form={@form} />
       </div>
     </div>
@@ -72,27 +168,78 @@ defmodule GitsWeb.HostLive.ManageEvent do
 
   def mount(_params, _session, socket) do
     socket
-    |> assign(:form, current_form(socket.assigns.live_action))
     |> ok()
   end
 
-  def handle_params(_unsigned_params, _uri, socket) do
-    socket |> noreply()
+  def handle_params(%{"event_id" => event_id}, _uri, socket) do
+    IO.puts("handle params")
+
+    Event
+    |> Ash.Query.filter(public_id == ^event_id)
+    |> Ash.Query.load([:details, :ready_to_publish])
+    |> Ash.read_one()
+    |> case do
+      {:ok, event} ->
+        socket
+        |> assign(:event, event)
+        |> assign(:form, current_form(socket.assigns.live_action, event))
+        |> assign(:event_id, event_id)
+    end
+    |> noreply()
   end
 
   def handle_params(_unsigned_params, _uri, socket) do
-    socket |> noreply()
+    socket
+    |> assign(:form, current_form(socket.assigns.live_action))
+    |> assign(:event_id, nil)
+    |> noreply()
   end
 
   def handle_event("validate", unsigned_params, socket) do
     socket
-    |> assign(:form, socket.assigns.form |> Form.validate(unsigned_params["form"]))
+    |> assign(
+      :form,
+      socket.assigns.form
+      |> case do
+        %{type: :update} = form ->
+          form |> Form.validate(unsigned_params["form"])
+
+        %{type: :create} = form ->
+          form
+          |> Form.validate(Map.put(unsigned_params["form"], :host_id, socket.assigns.host.id))
+      end
+    )
     |> noreply()
   end
 
   def handle_event("continue", unsigned_params, socket) do
-    socket
-    |> handle_continue(socket.assigns.live_action, unsigned_params)
+    socket.assigns.form
+    |> case do
+      %{type: :update} = form ->
+        form |> Form.validate(unsigned_params["form"])
+
+      %{type: :create} = form ->
+        form
+        |> Form.validate(Map.put(unsigned_params["form"], :host_id, socket.assigns.host.id))
+    end
+    |> Form.submit()
+    |> case do
+      {:ok, event} ->
+        socket
+        |> push_navigate(
+          to:
+            Routes.host_manage_event_path(
+              socket,
+              :time_and_place,
+              socket.assigns.host_handle,
+              event.public_id
+            )
+        )
+
+      {:error, form} ->
+        socket |> assign(:form, form)
+    end
+    |> noreply()
   end
 
   defp current_form(:details) do
@@ -101,26 +248,17 @@ defmodule GitsWeb.HostLive.ManageEvent do
     |> Form.add_form([:details])
   end
 
-  defp current_form(:time_and_place) do
-    Event
-    |> Form.for_create(:create, forms: [auto?: true])
-    |> Form.add_form([:details])
+  defp current_form(:details, event) do
+    event
+    |> Form.for_update(:details, forms: [auto?: true])
   end
 
-  defp handle_continue(socket, :details, params) do
-    socket.assigns.form
-    |> Form.validate(Map.put(params["form"], :host_id, socket.assigns.host.id))
-    |> Form.submit()
-    |> case do
-      {:ok, event} ->
-        socket
-        |> push_navigate(
-          to: ~p"/hosts/#{socket.assigns.host_handle}/events/#{event.id}/manage/time-and-place"
-        )
+  defp current_form(:time_and_place, event) do
+    event
+    |> Form.for_update(:details, forms: [auto?: true])
+  end
 
-      {:error, form} ->
-        socket |> assign(:form, form |> IO.inspect())
-    end
-    |> noreply()
+  defp current_form(_, _) do
+    nil
   end
 end
