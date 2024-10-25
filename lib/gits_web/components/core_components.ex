@@ -75,64 +75,65 @@ defmodule GitsWeb.CoreComponents do
 
   def header(assigns) do
     ~H"""
-    <header class="flex items-center gap-4 p-2 lg:px-0 lg:gap-16">
-      <div class="flex grow">
-        <.logo />
-      </div>
-      <div class="flex gap-4"></div>
-      <div class="flex gap-6 relative">
-        <button class="size-9 inline-flex items-center justify-center gap-2">
-          <.icon name="hero-bars-2" />
-        </button>
-        <div class="absolute border p-4 top-full right-2"></div>
-      </div>
-    </header>
-    <header :if={false} class="hidden p-6 lg:block">
-      <div class="hidden items-center lg:flex">
-        <div class="flex grow">
-          <.link navigate="/" class="text-xl inline-block font-black italic">
-            <img
-              src={static_path(GitsWeb.Endpoint, ~p"/images/gits_logo.png")}
-              alt="GiTS"
-              class="h-auto w-12"
-            />
-          </.link>
+    <header class="flex mx-auto max-w-screen-xl items-center gap-10">
+      <div>
+        <div>
+          <.logo />
         </div>
+      </div>
+      <div class="flex grow justify-end gap-8 p-2">
+        <button class="size-9">
+          <.icon name="hero-magnifying-glass" class="size-6" />
+        </button>
 
-        <div class="flex items-center gap-4">
-          <.link class="text-sm hover:bg-zinc-50 font-medium py-1 px-2 inline-flex rounded-lg">
-            Expore events
-          </.link>
-          <.link
-            navigate={~p"/host-with-us"}
-            class="text-sm hover:bg-zinc-50 font-medium py-1 px-2 inline-flex rounded-lg"
-          >
-            Host with us
-          </.link>
-          <div
-            :if={false}
-            class="relative"
-            id="user-dropdown"
-            phx-click-away={JS.hide(to: "div[data-dropdown]")}
-            phx-hook="Dropdown"
-          >
-            <button
-              class="size-10 flex overflow-hidden rounded-2xl"
-              phx-click={JS.toggle(to: "div[data-dropdown]")}
-              data-dropdown
-            >
-              <img src="/images/placeholder.png" alt="" class="size-full object-cover" />
+        <button class="size-9" phx-click={JS.show(to: "div#mega-options", display: "flex")}>
+          <.icon name="hero-bars-2" class="size-6" />
+        </button>
+      </div>
+      <div
+        phx-click-away={JS.hide()}
+        id="mega-options"
+        class="absolute inset-x-0 pb-4 top-0 hidden w-full bg-white shadow-lg z-10"
+      >
+        <div class="mx-auto flex w-full max-w-screen-xl flex-wrap items-center gap-10">
+          <div>
+            <.logo />
+          </div>
+          <div class="flex grow justify-end gap-4 p-2 lg:order-3">
+            <button class="size-9" phx-click={JS.hide(to: "div#mega-options")}>
+              <.icon name="hero-x-mark" class="size-6" />
             </button>
-
-            <div
-              data-dropdown
-              class="absolute z-10 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-              role="menu"
-              aria-orientation="vertical"
-              aria-labelledby="menu-button"
-              tabindex="-1"
+          </div>
+          <nav class="grid w-full lg:gap-8 p-1 lg:p-2 lg:flex gap-2 lg:w-auto">
+            <.link
+              :for={
+                {label, badge, _} <- [
+                  {"Tickets", "0", ""},
+                  {"Orders", nil, ""},
+                  {"Profile", nil, ""}
+                ]
+              }
+              class="font-medium hover:bg-black/10 transition-colors justify-between gap-2 duration-300 py-3 px-1 inline-flex items-center lg:px-2 lg:py-1 rounded-lg first:bg-black/5"
             >
-              <.header_dropdown_options current_user={@current_user} />
+              <span><%= label %></span>
+              <span
+                :if={badge}
+                class="text-sm font-medium border inline-flex justify-center items-center px-1.5 bg-zinc-400 text-white rounded-lg"
+              >
+                <%= badge %>
+              </span>
+            </.link>
+          </nav>
+
+          <div class="lg:order-4 w-full space-y-2 p-2">
+            <!-- <span class="font-medium">You are a host</span> -->
+            <div class="grid grid-cols-2 lg:grid-cols-6">
+              <div class="border place-items-start grid gap-4 w-full p-4 rounded-2xl">
+                <div class="border size-9 inline-flex items-center justify-center rounded-full">
+                  <.icon name="hero-building-office-2" class="text-zinc-400" />
+                </div>
+                <span class="font-medium">Treehouse Inc</span>
+              </div>
             </div>
           </div>
         </div>
@@ -145,14 +146,19 @@ defmodule GitsWeb.CoreComponents do
 
   def footer(assigns) do
     ~H"""
-    <div class={["p-4", @class]}>
-      <nav class="flex flex-wrap justify-center gap-8 pt-4 *:text-sm">
-        <.link navigate="/organizers">
-          Business & Organizers
-        </.link>
-        <.link :if={false} href="/faq">Frequently Asked Questions</.link>
-      </nav>
-    </div>
+    <footer class="border-t px-2 py-10">
+      <div class="flex">
+        <div>
+          <div class="grow">
+            <.logo />
+          </div>
+          <p class="max-w-96 p-2 text-sm text-zinc-500">
+            We offer better security, faster check-in, and lower costs. Whether it’s concerts, conferences, festivals, or sports events, we’ve got you covered.
+          </p>
+        </div>
+      </div>
+      <div></div>
+    </footer>
     """
   end
 

@@ -6,7 +6,7 @@ defmodule Gits.Accounts.User.Senders.SendMagicLinkEmail do
   def send(user_or_email, token, _) do
     email =
       case user_or_email do
-        %{email: email} -> email
+        %{email: email} -> email |> to_string()
         email -> email
       end
 
