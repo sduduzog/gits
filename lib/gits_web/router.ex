@@ -25,24 +25,48 @@ defmodule GitsWeb.Router do
 
   scope "/", GitsWeb do
     pipe_through :browser
+    get "/", PageController, :home
+    get "/events", PageController, :events
+    get "/settings", PageController, :settings
+    get "/organizers", PageController, :organizers
+    get "/host-with-us", PageController, :host
+    get "/privacy", PageController, :privacy
+    get "/terms", PageController, :terms
+    get "/help", PageController, :help
+    get "/faq", PageController, :faq
+    get "/assets/:filename", PageController, :assets
+    get "/healthz", PageController, :healthz
+    get "/beta", PageController, :beta
 
-    live_session :authentication_required,
+    resources "/search", SearchController, only: [:index]
+    resources "/accounts", AccountController, only: [:index]
+
+    get "/sign-in", AuthController, :sign_in
+    get "/sign-out", AuthController, :sign_out
+
+    get "/bucket/*keys", PageController, :bucket
+  end
+
+  scope "/hosts", GitsWeb do
+    pipe_through :browser
+
+    live_session :hosts_authentication_required,
       on_mount: {GitsWeb.LiveUserAuth, :live_user_required} do
-      live "/hosts/get-started", HostLive.Onboarding, :get_started
+      live "/get-started", HostLive.Onboarding, :get_started
 
-      live "/hosts/:handle/dashboard", HostLive.Dashboard
+      live "/:handle/dashboard", HostLive.Dashboard
 
-      live "/hosts/:handle/events", HostLive.ListEvents, :published
-      live "/hosts/:handle/events/drafts", HostLive.ListEvents, :drafts
-      live "/hosts/:handle/events/all", HostLive.ListEvents, :all
+      live "/:handle/events", HostLive.ListEvents, :published
+      live "/:handle/events/drafts", HostLive.ListEvents, :drafts
+      live "/:handle/events/all", HostLive.ListEvents, :all
 
-      live "/hosts/:handle/events/create-new", HostLive.EditEvent, :details
+      live "/:handle/events/create-new", HostLive.EditEvent, :details
 
-      live "/hosts/:handle/events/:event_id", HostLive.ViewEvent, :overview
+      live "/:handle/events/:public_id", HostLive.ViewEvent, :overview
 
-      live "/hosts/:handle/events/:event_id/manage/details", HostLive.EditEvent, :details
+      live "/:handle/events/:public_id/edit/details", HostLive.EditEvent, :details
 
-      live "/hosts/:handle/events/:event_id/manage/time-and-place",
+      live "/:handle/events/:public_id/edit/time-and-place",
            HostLive.EditEvent,
            :time_and_place
 
@@ -76,47 +100,16 @@ defmodule GitsWeb.Router do
 
       live "/hosts/:handle/settings/payouts", HostLive.Settings, :payouts
       live "/hosts/:handle/settings", HostLive.Settings, :general
-
-      live "/events/:id/order/:order_id", StorefrontLive.EventTicketsOrder
-
-      live "/events/:id/tickets/:basket_id", EventLive.Tickets
-      live "/events/:id/tickets/:basket_id/summary", EventLive.TicketsSummary
-      live "/events/:id/tickets/:basket_id/checkout", EventLive.Checkout
-
-      live "/attendees/scanner/:account_id/:event_id", ScanAttendeeLive
-
-      live "/portal/support", SupportLive
-      live "/portal/support/users", SupportLive, :users
-      live "/portal/support/jobs", SupportLive, :jobs
-      live "/portal/support/accounts", SupportLive, :accounts
-      live "/portal/support/events", SupportLive, :events
     end
+  end
 
-    live_session :authentication_optional,
+  scope "/events/:public_id", GitsWeb do
+    pipe_through :browser
+
+    live_session :events_authentication_optional,
       on_mount: {GitsWeb.LiveUserAuth, :live_user_optional} do
-      live "/events/:id", StorefrontLive.EventListing
+      live "/", StorefrontLive.EventListing, :index
     end
-
-    get "/", PageController, :home
-    get "/events", PageController, :events
-    get "/settings", PageController, :settings
-    get "/organizers", PageController, :organizers
-    get "/host-with-us", PageController, :host
-    get "/privacy", PageController, :privacy
-    get "/terms", PageController, :terms
-    get "/help", PageController, :help
-    get "/faq", PageController, :faq
-    get "/assets/:filename", PageController, :assets
-    get "/healthz", PageController, :healthz
-    get "/beta", PageController, :beta
-
-    resources "/search", SearchController, only: [:index]
-    resources "/accounts", AccountController, only: [:index]
-
-    get "/sign-in", AuthController, :sign_in
-    get "/sign-out", AuthController, :sign_out
-
-    get "/bucket/*keys", PageController, :bucket
   end
 
   scope "/auth" do

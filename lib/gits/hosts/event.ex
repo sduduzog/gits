@@ -11,8 +11,19 @@ defmodule Gits.Hosts.Event do
     repo Gits.Repo
   end
 
+  code_interface do
+    define :publish_event, action: :publish
+    define :get_by_public_id_for_listing, args: [:public_id]
+  end
+
   actions do
     defaults [:read, :destroy, update: :*]
+
+    read :get_by_public_id_for_listing do
+      primary? true
+      get_by [:public_id]
+      prepare build(load: [:name])
+    end
 
     create :create do
       primary? true
@@ -26,6 +37,10 @@ defmodule Gits.Hosts.Event do
       require_atomic? false
       argument :details, :map, allow_nil?: false
       change manage_relationship(:details, type: :direct_control)
+    end
+
+    update :publish do
+      change atomic_update(:published_at, expr(fragment("now()")))
     end
   end
 
@@ -53,6 +68,8 @@ defmodule Gits.Hosts.Event do
   end
 
   calculations do
+    calculate :name, :string, expr(details.name)
     calculate :ready_to_publish, :boolean, expr(false)
+    calculate :published?, :boolean, expr(not is_nil(published_at))
   end
 end

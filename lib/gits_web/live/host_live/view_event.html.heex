@@ -2,21 +2,11 @@
   %{
     label: "Overview",
     current: @live_action == :overview,
-    href: ~p"/hosts/#{@host_handle}/events/event_id/"
+    href: ~p"/hosts/#{@host_handle}/events/event_public_id/"
   }
 ] %>
 
-<div :if={@event_id} class="flex items-center gap-2 p-2">
-  <.link
-    :if={false}
-    replace={true}
-    navigate={~p"/hosts/#{@host_handle}/events"}
-    class="flex h-9 items-center gap-2 rounded-lg px-2"
-  >
-    <.icon name="hero-chevron-left" class="size-5" />
-    <span class="hidden text-sm font-medium lg:inline">Back</span>
-  </.link>
-
+<div :if={@event_public_id} class="flex items-center gap-2 p-2">
   <button onclick="history.back()" class="flex h-9 items-center gap-2 rounded-lg px-2">
     <.icon name="hero-chevron-left" class="size-5" />
     <span class="hidden text-sm font-medium lg:inline">Back</span>
@@ -25,7 +15,7 @@
   <div class="flex grow items-center gap-2 truncate border-l pl-4 text-sm font-medium">
     <span class="truncate text-zinc-500">Events</span>
     <.icon name="hero-slash-micro" class="shrink-0" />
-    <span class="truncate"><%= @event.details.name %></span>
+    <span class="truncate"><%= @event_name %></span>
   </div>
 
   <button class="flex size-9 shrink-0 items-center justify-center gap-2 rounded-lg lg:w-auto lg:px-4">
@@ -35,26 +25,37 @@
 </div>
 
 <div class="flex flex-col gap-4 p-2 lg:flex-row">
-  <div class="w-full rounded-xl border p-4 grid gap-4 lg:max-w-96">
-    <div>badge and buttons</div>
+  <div class="grid w-full gap-4 rounded-xl border p-4 lg:max-w-96">
+    <div class="flex justify-end">
+      <.link
+        target="_blank"
+        class="flex rounded-lg"
+        navigate={Routes.storefront_event_listing_path(@socket, :index, @event_public_id)}
+      >
+        <span class="sr-only">Open url</span>
+        <.icon name="hero-link-mini" />
+      </.link>
+    </div>
     <div class="flex items-start gap-2">
       <div class="aspect-[3/2] w-20 shrink-0 rounded-md bg-zinc-200"></div>
       <div>
         <span class="line-clamp-3 font-semibold">
-          Lorem ipsum dolor, sit amet consectetur adipisicing elit.
+          <%= @event_name %>
         </span>
       </div>
     </div>
-    <div class="flex gap-4 justify-end">
+    <div class="flex justify-end gap-4">
       <button
+        :if={not @event.published?}
         phx-click={
           JS.patch(
-            Routes.host_view_event_path(@socket, @live_action, @host_handle, @event_id) <>
-              "?publish=#{@event_id}"
+            Routes.host_view_event_path(@socket, @live_action, @host_handle, @event_public_id) <>
+              "?publish=#{@event_public_id}",
+            replace: true
           )
           |> show_modal("publish-event")
         }
-        class="flex h-9 grow shrink-0 items-center justify-center gap-2 rounded-lg border lg:w-auto lg:px-4"
+        class="flex bg-zinc-950 text-zinc-50 h-9 shrink-0 grow items-center justify-center gap-2 rounded-lg hover:bg-zinc-800 lg:w-auto lg:px-4"
       >
         <.icon name="hero-rocket-launch" class="size-5" />
         <span class="text-sm font-semibold">Publish</span>
@@ -62,7 +63,9 @@
 
       <button
         phx-click={
-          JS.navigate(Routes.host_edit_event_path(@socket, :details, @host_handle, @event_id))
+          JS.navigate(
+            Routes.host_edit_event_path(@socket, :details, @host_handle, @event_public_id)
+          )
         }
         class="flex size-9 shrink-0 items-center justify-center gap-2 rounded-lg border"
       >
@@ -71,11 +74,16 @@
       </button>
       <button
         phx-click={
-          JS.navigate(Routes.host_edit_event_path(@socket, :details, @host_handle, @event_id))
+          JS.patch(
+            Routes.host_view_event_path(@socket, @live_action, @host_handle, @event_public_id) <>
+              "?archive=#{@event_public_id}",
+            replace: true
+          )
+          |> show_modal("archive-event")
         }
-        class="flex size-9 shrink-0 items-center justify-center gap-2 rounded-lg border"
+        class="group flex size-9 shrink-0 items-center justify-center gap-2 rounded-lg border"
       >
-        <.icon name="hero-trash" class="size-5" />
+        <.icon name="hero-trash" class="size-5 group-hover:text-red-600" />
         <span class="sr-only">Archive</span>
       </button>
     </div>
@@ -99,11 +107,98 @@
   id="publish-event"
   show={@show_publish_modal}
   on_cancel={
-    JS.patch(Routes.host_view_event_path(@socket, @live_action, @host_handle, @event_id))
+    JS.patch(Routes.host_view_event_path(@socket, @live_action, @host_handle, @event_public_id),
+      replace: true
+    )
   }
 >
-  Hello
+  <div :if={@event_published?} class="grid gap-4">
+    <div class="flex gap-4 items-center">
+      <.icon name="hero-check-circle" class="text-green-600" />
+      <h3 class="text-lg font-semibold">Event published</h3>
+    </div>
+    <div class="text-zinc-700 text-sm space-y-2">
+      <p>
+        Congratulations, your event has been successfully published. It's now live for everyone to see!
+      </p>
+      <p>Share your event link with your audience to start promoting it right away.</p>
+    </div>
+    <div class="flex justify-end gap-4">
+      <button
+        phx-click={
+          JS.patch(
+            Routes.host_view_event_path(@socket, @live_action, @host_handle, @event_public_id),
+            replace: true
+          )
+          |> hide_modal("publish-event")
+        }
+        class="rounded-lg bg-zinc-950 px-4 py-2 text-zinc-50"
+      >
+        <span class="text-sm font-semibold">Close</span>
+      </button>
+    </div>
+  </div>
+  <div :if={not @event_published?} class="grid gap-4">
+    <h3 class="text-lg font-semibold">Ready to publish?</h3>
+    <div>
+      <p class="text-sm text-zinc-700">
+        You are about to publish this event. Once published, it will be visible to everyone with a url, and discoverable depending on the visibility setting
+      </p>
+    </div>
+    <div class="flex justify-end gap-4">
+      <button
+        class="rounded-lg px-4 py-2"
+        phx-click={
+          JS.patch(
+            Routes.host_view_event_path(@socket, @live_action, @host_handle, @event_public_id),
+            replace: true
+          )
+          |> hide_modal("publish-event")
+        }
+      >
+        <span class="text-sm font-semibold">Cancel</span>
+      </button>
+
+      <button phx-click="publish" class="rounded-lg bg-zinc-950 px-4 py-2 text-zinc-50">
+        <span class="text-sm font-semibold">Publish</span>
+      </button>
+    </div>
+  </div>
 </.modal>
-<.modal id="delete">
-  Hello
+<.modal
+  id="archive-event"
+  show={@show_archive_modal}
+  on_cancel={
+    JS.patch(Routes.host_view_event_path(@socket, @live_action, @host_handle, @event_public_id),
+      replace: true
+    )
+  }
+>
+  <div class="grid gap-4">
+    <h3 class="text-lg font-semibold">Confirm archive?</h3>
+    <div class="space-y-2 text-sm text-zinc-700">
+      <p>
+        You are about to archive this event. Archiving will remove it from active listings.
+      </p>
+      <p>Are you sure you want to proceed?</p>
+    </div>
+    <div class="flex justify-end gap-4">
+      <button
+        class="rounded-lg px-4 py-2"
+        phx-click={
+          JS.patch(
+            Routes.host_view_event_path(@socket, @live_action, @host_handle, @event_public_id),
+            replace: true
+          )
+          |> hide_modal("archive-event")
+        }
+      >
+        <span class="text-sm font-semibold">Cancel</span>
+      </button>
+
+      <button class="rounded-lg bg-red-600 px-4 py-2 text-white">
+        <span class="text-sm font-semibold">Yes, Archive</span>
+      </button>
+    </div>
+  </div>
 </.modal>

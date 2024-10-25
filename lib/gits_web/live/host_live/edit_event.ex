@@ -37,7 +37,7 @@ defmodule GitsWeb.HostLive.EditEvent do
 
   def render(assigns) do
     ~H"""
-    <%= if assigns[:event] do %>
+    <%= if @event_public_id do %>
       <div class="flex items-center gap-2 p-2">
         <button onclick="history.back()" class="flex h-9 items-center gap-2 rounded-lg px-2">
           <.icon name="hero-chevron-left" class="size-5" />
@@ -47,7 +47,7 @@ defmodule GitsWeb.HostLive.EditEvent do
         <div class="flex gap-2 grow items-center border-l truncate pl-4 text-sm font-medium">
           <span class="text-zinc-500">Events</span>
           <.icon name="hero-slash-micro" class="text-zinc-500 shrink-0" />
-          <span class="text-zinc-500 truncate"><%= @event.details.name %></span>
+          <span class="text-zinc-500 truncate"><%= @event_name %></span>
           <.icon name="hero-slash-micro" class="shrink-0" />
           <span class="">Edit event</span>
         </div>
@@ -83,10 +83,10 @@ defmodule GitsWeb.HostLive.EditEvent do
 
     <div class="grow flex lg:pt-4 lg:flex-row flex-col">
       <div class="w-full lg:max-w-64 p-2 flex lg:flex-col gap-4 lg:gap-6">
-        <%= if assigns[:event] do %>
+        <%= if @event_public_id do %>
           <.wizard_step
             current={@live_action == :details}
-            href={Routes.host_edit_event_path(@socket, :details, @host_handle, @event.public_id)}
+            href={Routes.host_edit_event_path(@socket, :details, @host_handle, @event_public_id)}
             complete={true}
             valid={true}
             title="Event details"
@@ -94,7 +94,7 @@ defmodule GitsWeb.HostLive.EditEvent do
           <.wizard_step
             current={@live_action == :time_and_place}
             href={
-              Routes.host_edit_event_path(@socket, :time_and_place, @host_handle, @event.public_id)
+              Routes.host_edit_event_path(@socket, :time_and_place, @host_handle, @event_public_id)
             }
             title="Time & place"
           />
@@ -120,7 +120,7 @@ defmodule GitsWeb.HostLive.EditEvent do
       </div>
 
       <div class="lg:mt-0 mt-4">
-        <.event_details :if={@live_action == :details} form={@form} event_id={@event_id} />
+        <.event_details :if={@live_action == :details} form={@form} event_id={@event_public_id} />
         <.time_and_place :if={@live_action == :time_and_place} form={@form} />
       </div>
     </div>
@@ -132,17 +132,17 @@ defmodule GitsWeb.HostLive.EditEvent do
     |> ok()
   end
 
-  def handle_params(%{"event_id" => event_id}, _uri, socket) do
+  def handle_params(%{"public_id" => public_id}, _uri, socket) do
     Event
-    |> Ash.Query.filter(public_id == ^event_id)
-    |> Ash.Query.load([:details, :ready_to_publish])
+    |> Ash.Query.filter(public_id == ^public_id)
+    |> Ash.Query.load([:name, :ready_to_publish, :details])
     |> Ash.read_one()
     |> case do
       {:ok, event} ->
         socket
-        |> assign(:event, event)
         |> assign(:form, current_form(socket.assigns.live_action, event))
-        |> assign(:event_id, event_id)
+        |> assign(:event_name, event.name)
+        |> assign(:event_public_id, public_id)
     end
     |> noreply()
   end
@@ -150,7 +150,7 @@ defmodule GitsWeb.HostLive.EditEvent do
   def handle_params(_unsigned_params, _uri, socket) do
     socket
     |> assign(:form, current_form(socket.assigns.live_action))
-    |> assign(:event_id, nil)
+    |> assign(:event_public_id, nil)
     |> noreply()
   end
 
