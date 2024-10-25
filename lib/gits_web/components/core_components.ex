@@ -22,57 +22,6 @@ defmodule GitsWeb.CoreComponents do
     """
   end
 
-  attr :label, :string, required: true
-  attr :href, :string, required: true
-
-  def user_dropdown_menu_item(assigns) do
-    ~H"""
-    <a
-      href={@href}
-      class="block px-4 py-2 text-sm text-gray-700 hover:bg-zinc-100 hover:text-zinc-900"
-      role="menuitem"
-      tabindex="-1"
-    >
-      <%= @label %>
-    </a>
-    """
-  end
-
-  def header_dropdown_options(%{current_user: %User{}} = assigns) do
-    ~H"""
-    <div class="px-4 py-3" role="none">
-      <p class="text-sm" role="none">Signed in as</p>
-      <p class="truncate text-sm font-medium text-gray-900" role="none">
-        <%= @current_user.email %>
-      </p>
-    </div>
-    <div class="py-1" role="none">
-      <.user_dropdown_menu_item :if={false} label="Messages" href={~p"/sign-in"} />
-      <.user_dropdown_menu_item label="Tickets" href={~p"/my/tickets"} />
-      <.user_dropdown_menu_item :if={false} label="Wishlists" href={~p"/sign-in"} />
-    </div>
-    <div class="py-1" role="none">
-      <.user_dropdown_menu_item label="Host an event" href={~p"/host-with-us"} />
-    </div>
-
-    <div class="py-1" role="none">
-      <.user_dropdown_menu_item label="Help Center" href={~p"/help"} />
-      <.user_dropdown_menu_item label="Log Out" href={~p"/sign-out"} />
-    </div>
-    """
-  end
-
-  def header_dropdown_options(assigns) do
-    ~H"""
-    <div class="py-1" role="none">
-      <.user_dropdown_menu_item label="Sign In" href={~p"/sign-in"} />
-    </div>
-    <div class="py-1" role="none">
-      <.user_dropdown_menu_item label="Help Center" href={~p"/sign-in"} />
-    </div>
-    """
-  end
-
   def header(assigns) do
     ~H"""
     <header class="mx-auto flex max-w-screen-xl items-center gap-10">
@@ -93,7 +42,7 @@ defmodule GitsWeb.CoreComponents do
       <div
         phx-click-away={JS.hide()}
         id="mega-options"
-        class="absolute inset-x-0 top-0 z-10 hidden w-full bg-white pb-4 shadow-lg"
+        class="absolute inset-x-0 top-0 z-10 hiddenx flex w-full bg-white pb-4 shadow-lg"
       >
         <div class="mx-auto flex w-full max-w-screen-xl flex-wrap items-center gap-10">
           <div>
@@ -113,7 +62,7 @@ defmodule GitsWeb.CoreComponents do
                   {"Profile", nil, ""}
                 ]
               }
-              class="inline-flex items-center justify-between gap-2 rounded-lg px-1 py-3 font-medium transition-colors duration-300 first:bg-black/5 hover:bg-black/10 lg:px-2 lg:py-1"
+              class="inline-flex items-center justify-between gap-2 rounded-lg pl-1 pr-4 py-3 font-medium transition-colors duration-300 first:bg-black/5 hover:bg-black/10 lg:px-2 lg:py-1"
             >
               <span><%= label %></span>
               <span
