@@ -31,12 +31,15 @@ defmodule GitsWeb.CoreComponents do
         </div>
       </div>
       <div class="flex grow justify-end gap-8 p-2">
-        <button class="size-9">
-          <.icon name="hero-magnifying-glass" class="size-6" />
+        <button class="size-9 items-center inline-flex justify-center">
+          <.icon name="i-lucide-search" />
         </button>
 
-        <button class="size-9" phx-click={JS.show(to: "div#mega-options", display: "flex")}>
-          <.icon name="hero-bars-2" class="size-6" />
+        <button
+          class="size-9 items-center inline-flex justify-center"
+          phx-click={JS.show(to: "div#mega-options", display: "flex")}
+        >
+          <.icon name="i-lucide-menu" />
         </button>
       </div>
       <div
@@ -50,19 +53,20 @@ defmodule GitsWeb.CoreComponents do
           </div>
           <div class="flex grow justify-end gap-4 p-2 lg:order-3">
             <button class="size-9" phx-click={JS.hide(to: "div#mega-options")}>
-              <.icon name="hero-x-mark" class="size-6" />
+              <.icon name="i-lucide-x" />
             </button>
           </div>
           <nav class="grid w-full gap-2 p-1 lg:flex lg:w-auto lg:gap-8 lg:p-2">
             <.link
               :for={
-                {label, badge, _} <- [
-                  {"Tickets", "0", ""},
-                  {"Orders", nil, ""},
-                  {"Profile", nil, ""}
+                {label, badge, href} <- [
+                  {"Tickets", "0", "/my/tickets"},
+                  {"Orders", nil, "/my/orders"},
+                  {"Profile", nil, "/my/profile"}
                 ]
               }
-              class="inline-flex items-center justify-between gap-2 rounded-lg py-3 pl-1 pr-4 font-medium transition-colors duration-300 first:bg-black/5 hover:bg-black/10 lg:px-2 lg:py-1"
+              navigate={href}
+              class="inline-flex items-center justify-between gap-2 rounded-lg py-3 pl-1 pr-3 font-medium transition-colors duration-300 first:bg-black/5 hover:bg-black/10 lg:px-2 lg:py-1"
             >
               <span><%= label %></span>
               <span
@@ -73,18 +77,6 @@ defmodule GitsWeb.CoreComponents do
               </span>
             </.link>
           </nav>
-
-          <div class="w-full space-y-2 p-2 lg:order-4">
-            <!-- <span class="font-medium">You are a host</span> -->
-            <div class="grid grid-cols-2 lg:grid-cols-6">
-              <div class="grid w-full place-items-start gap-4 rounded-2xl border p-4">
-                <div class="inline-flex size-9 items-center justify-center rounded-full border">
-                  <.icon name="hero-building-office-2" class="text-zinc-400" />
-                </div>
-                <span class="font-medium">Treehouse Inc</span>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </header>
