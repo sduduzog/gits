@@ -46,7 +46,7 @@
       </button>
     </div>
     <nav
-      :for={items <- [navigation_items |> Enum.take(3), navigation_items |> Enum.take(-1)]}
+      :for={items <- [navigation_items |> Enum.take(2), navigation_items |> Enum.take(-1)]}
       class="flex w-full first-of-type:grow flex-col gap-2"
     >
       <.link

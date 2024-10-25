@@ -35,6 +35,7 @@ defmodule Gits.Hosts.Event do
     attribute :public_id, :string, allow_nil?: false
 
     attribute :payout_schedule, :atom, constraints: [one_of: [:auto, :manual]]
+    attribute :published_at, :utc_datetime, public?: true
 
     create_timestamp :created_at
     update_timestamp :updated_at

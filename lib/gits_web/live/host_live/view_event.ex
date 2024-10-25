@@ -1,4 +1,4 @@
-defmodule GitsWeb.HostLive.EventView do
+defmodule GitsWeb.HostLive.ViewEvent do
   alias Gits.Hosts.Event
   alias Gits.Hosts.Host
   use GitsWeb, :host_live_view

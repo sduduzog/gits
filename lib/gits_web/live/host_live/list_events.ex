@@ -1,4 +1,4 @@
-defmodule GitsWeb.HostLive.EventList do
+defmodule GitsWeb.HostLive.ListEvents do
   alias Gits.Hosts.Event
   alias Gits.Hosts.Host
   require Ash.Query
@@ -95,7 +95,7 @@ defmodule GitsWeb.HostLive.EventList do
             </.link>
           </h2>
           <span class="text-sm text-zinc-500">5 Nov 2024, at 4:30 PM</span>
-          <span class="text-sm text-zinc-500">5/40 tickets sold</span>
+          <!-- <span class="text-sm text-zinc-500">5/40 tickets sold</span> -->
         </div>
         <div class="">
           <button class="inline-flex size-9 items-center justify-center">
@@ -108,12 +108,26 @@ defmodule GitsWeb.HostLive.EventList do
   end
 
   def handle_params(_, _, socket) do
-    Event
+    list_event_query(socket.assigns.live_action)
     |> Ash.Query.load(:details)
     |> Ash.read()
     |> case do
       {:ok, events} -> socket |> assign(:events, events)
     end
     |> noreply()
+  end
+
+  defp list_event_query(:drafts) do
+    Event
+    |> Ash.Query.filter(is_nil(published_at))
+  end
+
+  defp list_event_query(:all) do
+    Event
+  end
+
+  defp list_event_query(_) do
+    Event
+    |> Ash.Query.filter(not is_nil(published_at))
   end
 end

@@ -150,8 +150,6 @@ defmodule GitsWeb.CoreComponents do
         <.link navigate="/organizers">
           Business & Organizers
         </.link>
-        <.link :if={FunWithFlags.enabled?(:privacy)} href="/privacy">Privacy</.link>
-        <.link :if={FunWithFlags.enabled?(:terms)} href="/terms">Terms</.link>
         <.link :if={false} href="/faq">Frequently Asked Questions</.link>
       </nav>
     </div>

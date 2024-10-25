@@ -32,13 +32,13 @@ defmodule GitsWeb.Router do
 
       live "/hosts/:handle/dashboard", HostLive.Dashboard
 
-      live "/hosts/:handle/events", HostLive.EventList, :published
-      live "/hosts/:handle/events/drafts", HostLive.EventList, :drafts
-      live "/hosts/:handle/events/all", HostLive.EventList, :all
+      live "/hosts/:handle/events", HostLive.ListEvents, :published
+      live "/hosts/:handle/events/drafts", HostLive.ListEvents, :drafts
+      live "/hosts/:handle/events/all", HostLive.ListEvents, :all
 
       live "/hosts/:handle/events/create-new", HostLive.EditEvent, :details
 
-      live "/hosts/:handle/events/:event_id", HostLive.EventView, :overview
+      live "/hosts/:handle/events/:event_id", HostLive.ViewEvent, :overview
 
       live "/hosts/:handle/events/:event_id/manage/details", HostLive.EditEvent, :details
 

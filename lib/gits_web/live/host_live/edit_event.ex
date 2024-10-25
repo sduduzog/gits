@@ -39,14 +39,10 @@ defmodule GitsWeb.HostLive.EditEvent do
     ~H"""
     <%= if assigns[:event] do %>
       <div class="flex items-center gap-2 p-2">
-        <.link
-          replace={true}
-          navigate={Routes.host_event_view_path(@socket, :overview, @host_handle, @event_id)}
-          class="flex items-center gap-2 rounded-lg h-9 px-2"
-        >
+        <button onclick="history.back()" class="flex h-9 items-center gap-2 rounded-lg px-2">
           <.icon name="hero-chevron-left" class="size-5" />
-          <span class="text-sm font-medium lg:inline hidden">Back</span>
-        </.link>
+          <span class="hidden text-sm font-medium lg:inline">Back</span>
+        </button>
 
         <div class="flex gap-2 grow items-center border-l truncate pl-4 text-sm font-medium">
           <span class="text-zinc-500">Events</span>
