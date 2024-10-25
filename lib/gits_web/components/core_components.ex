@@ -165,19 +165,19 @@ defmodule GitsWeb.CoreComponents do
       ])
 
     ~H"""
-    <footer class="grid gap-10 bg-zinc-100 py-28">
-      <div class="mx-auto grid w-full max-w-screen-xl grid-cols-2 lg:grid-cols-5 lg:gap-8">
+    <footer class="grid gap-10 bg-zinc-100 py-10">
+      <div class="mx-auto grid w-full max-w-screen-xl lg:grid-cols-5 gap-8">
         <div :for={{icon, heading, children} <- @nav_tree} class="space-y-2 p-4">
           <div class="flex items-center gap-3">
-            <.icon name={icon} class="text-zinc-500" />
-            <span class="text-sm text-zinc-500"><%= heading %></span>
+            <.icon name={icon} class="text-zinc-500 size-4" />
+            <span class="text-xs text-zinc-500"><%= heading %></span>
           </div>
           <div class="relative grid gap-4 px-2 pt-4">
             <span class="absolute bottom-0 left-2 top-2 h-full w-[1px] bg-zinc-200"></span>
             <.link
               :for={{child, href} <- children}
               navigate={href}
-              class="border-zinc-transparent z-10 inline-flex border-l pl-5 text-sm font-medium leading-4 text-zinc-950 hover:border-zinc-500 hover:text-zinc-800"
+              class="border-zinc-transparent z-10 inline-flex border-l pl-5 text-xs font-medium leading-4 text-zinc-950 hover:border-zinc-500 hover:text-zinc-800"
             >
               <%= child %>
             </.link>
