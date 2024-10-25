@@ -48,7 +48,11 @@
     <div class="flex gap-4 justify-end">
       <button
         phx-click={
-          JS.navigate(Routes.host_edit_event_path(@socket, :details, @host_handle, @event_id))
+          JS.patch(
+            Routes.host_view_event_path(@socket, @live_action, @host_handle, @event_id) <>
+              "?publish=#{@event_id}"
+          )
+          |> show_modal("publish-event")
         }
         class="flex h-9 grow shrink-0 items-center justify-center gap-2 rounded-lg border lg:w-auto lg:px-4"
       >
@@ -91,6 +95,15 @@
     </div>
   </div>
 </div>
+<.modal
+  id="publish-event"
+  show={@show_publish_modal}
+  on_cancel={
+    JS.patch(Routes.host_view_event_path(@socket, @live_action, @host_handle, @event_id))
+  }
+>
+  Hello
+</.modal>
 <.modal id="delete">
   Hello
 </.modal>

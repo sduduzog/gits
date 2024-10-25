@@ -187,7 +187,7 @@ defmodule GitsWeb.HostLive.EditEvent do
         socket
         |> push_navigate(
           to:
-            Routes.host_manage_event_path(
+            Routes.host_edit_event_path(
               socket,
               :time_and_place,
               socket.assigns.host_handle,

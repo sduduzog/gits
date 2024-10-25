@@ -18,7 +18,7 @@ defmodule GitsWeb.HostLive.ViewEvent do
     |> ok()
   end
 
-  def handle_params(%{"event_id" => event_id}, _uri, socket) do
+  def handle_params(%{"event_id" => event_id} = unsigned_params, _uri, socket) do
     Event
     |> Ash.Query.filter(public_id == ^event_id)
     |> Ash.Query.load(:details)
@@ -26,6 +26,22 @@ defmodule GitsWeb.HostLive.ViewEvent do
     |> case do
       {:ok, event} -> socket |> assign(:event, event) |> assign(:event_id, event_id)
     end
+    |> show_publish_modal(unsigned_params)
     |> noreply()
+  end
+
+  def handle_event("publish", unsigned_params, socket) do
+    unsigned_params |> IO.inspect()
+    socket |> noreply()
+  end
+
+  defp show_publish_modal(socket, %{"publish" => _event_id}) do
+    socket
+    |> assign(:show_publish_modal, true)
+  end
+
+  defp show_publish_modal(socket, _) do
+    socket
+    |> assign(:show_publish_modal, false)
   end
 end
