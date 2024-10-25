@@ -11,7 +11,7 @@ defmodule GitsWeb.CoreComponents do
     ~H"""
     <.link
       navigate="/"
-      class="text-xl inline-flex p-2 items-center justify-center font-black italic h-9 rounded-lg shrink-0"
+      class="inline-flex h-9 shrink-0 items-center justify-center rounded-lg p-2 text-xl font-black italic"
     >
       <img
         src={static_path(GitsWeb.Endpoint, ~p"/images/gits_logo.png")}
@@ -75,7 +75,7 @@ defmodule GitsWeb.CoreComponents do
 
   def header(assigns) do
     ~H"""
-    <header class="flex mx-auto max-w-screen-xl items-center gap-10">
+    <header class="mx-auto flex max-w-screen-xl items-center gap-10">
       <div>
         <div>
           <.logo />
@@ -93,7 +93,7 @@ defmodule GitsWeb.CoreComponents do
       <div
         phx-click-away={JS.hide()}
         id="mega-options"
-        class="absolute inset-x-0 pb-4 top-0 hidden w-full bg-white shadow-lg z-10"
+        class="absolute inset-x-0 top-0 z-10 hidden w-full bg-white pb-4 shadow-lg"
       >
         <div class="mx-auto flex w-full max-w-screen-xl flex-wrap items-center gap-10">
           <div>
@@ -104,7 +104,7 @@ defmodule GitsWeb.CoreComponents do
               <.icon name="hero-x-mark" class="size-6" />
             </button>
           </div>
-          <nav class="grid w-full lg:gap-8 p-1 lg:p-2 lg:flex gap-2 lg:w-auto">
+          <nav class="grid w-full gap-2 p-1 lg:flex lg:w-auto lg:gap-8 lg:p-2">
             <.link
               :for={
                 {label, badge, _} <- [
@@ -113,23 +113,23 @@ defmodule GitsWeb.CoreComponents do
                   {"Profile", nil, ""}
                 ]
               }
-              class="font-medium hover:bg-black/10 transition-colors justify-between gap-2 duration-300 py-3 px-1 inline-flex items-center lg:px-2 lg:py-1 rounded-lg first:bg-black/5"
+              class="inline-flex items-center justify-between gap-2 rounded-lg px-1 py-3 font-medium transition-colors duration-300 first:bg-black/5 hover:bg-black/10 lg:px-2 lg:py-1"
             >
               <span><%= label %></span>
               <span
                 :if={badge}
-                class="text-sm font-medium border inline-flex justify-center items-center px-1.5 bg-zinc-400 text-white rounded-lg"
+                class="inline-flex items-center justify-center rounded-lg border bg-zinc-400 px-1.5 text-sm font-medium text-white"
               >
                 <%= badge %>
               </span>
             </.link>
           </nav>
 
-          <div class="lg:order-4 w-full space-y-2 p-2">
+          <div class="w-full space-y-2 p-2 lg:order-4">
             <!-- <span class="font-medium">You are a host</span> -->
             <div class="grid grid-cols-2 lg:grid-cols-6">
-              <div class="border place-items-start grid gap-4 w-full p-4 rounded-2xl">
-                <div class="border size-9 inline-flex items-center justify-center rounded-full">
+              <div class="grid w-full place-items-start gap-4 rounded-2xl border p-4">
+                <div class="inline-flex size-9 items-center justify-center rounded-full border">
                   <.icon name="hero-building-office-2" class="text-zinc-400" />
                 </div>
                 <span class="font-medium">Treehouse Inc</span>
@@ -145,10 +145,47 @@ defmodule GitsWeb.CoreComponents do
   attr :class, :string, default: ""
 
   def footer(assigns) do
+    assigns =
+      assigns
+      |> assign(:nav_tree, [
+        {"i-lucide-tickets", "Events & Hosting", [{"Host with us", "/host-with-us"}]},
+        {"i-lucide-headset", "Support",
+         [
+           {"I need help", "/support/help"},
+           {"FAQ", "/support/faq"},
+           {"Contact", "/contact-us"}
+         ]},
+        {"i-lucide-scale", "Legal",
+         [{"Terms of service", "/terms"}, {"Privacy Policy", "/privacy"}]},
+        {"i-lucide-at-sign", "Social",
+         [
+           {"Instagram", "https://instagram.com/gits_za"},
+           {"X (Formerly twitter)", "https://x.com/gits_za"}
+         ]}
+      ])
+
     ~H"""
-    <footer class="border-t px-2 py-10">
-      <div class="flex">
-        <div>
+    <footer class="grid gap-10 bg-zinc-100 py-28">
+      <div class="mx-auto grid w-full max-w-screen-xl grid-cols-2 lg:grid-cols-5 lg:gap-8">
+        <div :for={{icon, heading, children} <- @nav_tree} class="space-y-2 p-4">
+          <div class="flex items-center gap-3">
+            <.icon name={icon} class="text-zinc-500" />
+            <span class="text-sm text-zinc-500"><%= heading %></span>
+          </div>
+          <div class="relative grid gap-4 px-2 pt-4">
+            <span class="absolute bottom-0 left-2 top-2 h-full w-[1px] bg-zinc-200"></span>
+            <.link
+              :for={{child, href} <- children}
+              navigate={href}
+              class="border-zinc-transparent z-10 inline-flex border-l pl-5 text-sm font-medium leading-4 text-zinc-950 hover:border-zinc-500 hover:text-zinc-800"
+            >
+              <%= child %>
+            </.link>
+          </div>
+        </div>
+      </div>
+      <div class="mx-auto flex w-full max-w-screen-xl">
+        <div class="space-y-4">
           <div class="grow">
             <.logo />
           </div>
@@ -157,7 +194,11 @@ defmodule GitsWeb.CoreComponents do
           </p>
         </div>
       </div>
-      <div></div>
+      <div class="mx-auto w-full max-w-screen-xl p-2">
+        <span class="text-xs text-zinc-500">
+          &copy; 2024 PRPL Group | All Rights Reserved
+        </span>
+      </div>
     </footer>
     """
   end
@@ -193,7 +234,7 @@ defmodule GitsWeb.CoreComponents do
       data-cancel={JS.exec(@on_cancel, "phx-remove")}
       class="relative z-50 hidden"
     >
-      <div id={"#{@id}-bg"} class="bg-zinc-50/90 fixed inset-0 transition-opacity" aria-hidden="true" />
+      <div id={"#{@id}-bg"} class="fixed inset-0 bg-zinc-50/90 transition-opacity" aria-hidden="true" />
       <div
         class="fixed inset-0 overflow-y-auto"
         aria-labelledby={"#{@id}-title"}
@@ -209,9 +250,9 @@ defmodule GitsWeb.CoreComponents do
               phx-window-keydown={JS.exec("data-cancel", to: "##{@id}")}
               phx-key="escape"
               phx-click-away={JS.exec("data-cancel", to: "##{@id}")}
-              class="shadow-zinc-700/10 ring-zinc-700/10 relative hidden rounded-2xl bg-white py-6 px-8 sm:p-14 shadow-lg ring-1 transition"
+              class="relative hidden rounded-2xl bg-white px-8 py-6 shadow-lg shadow-zinc-700/10 ring-1 ring-zinc-700/10 transition sm:p-14"
             >
-              <div class="absolute top-6 right-5">
+              <div class="absolute right-5 top-6">
                 <button
                   phx-click={JS.exec("data-cancel", to: "##{@id}")}
                   type="button"
@@ -272,7 +313,7 @@ defmodule GitsWeb.CoreComponents do
         <%= @title %>
       </p>
       <p class="mt-2 text-sm leading-5"><%= msg %></p>
-      <button type="button" class="group absolute top-1 right-1 p-2" aria-label={gettext("close")}>
+      <button type="button" class="group absolute right-1 top-1 p-2" aria-label={gettext("close")}>
         <.icon name="hero-x-mark-solid" class="h-5 w-5 opacity-40 group-hover:opacity-70" />
       </button>
     </div>
@@ -673,7 +714,7 @@ defmodule GitsWeb.CoreComponents do
               class={["relative p-0", @row_click && "hover:cursor-pointer"]}
             >
               <div class="block py-4 pr-6">
-                <span class="absolute -inset-y-px right-0 -left-4 group-hover:bg-zinc-50 sm:rounded-l-xl" />
+                <span class="absolute -inset-y-px -left-4 right-0 group-hover:bg-zinc-50 sm:rounded-l-xl" />
                 <span class={["relative", i == 0 && "font-semibold text-zinc-900"]}>
                   <%= render_slot(col, @row_item.(row)) %>
                 </span>
@@ -772,6 +813,12 @@ defmodule GitsWeb.CoreComponents do
   def icon(%{name: "hero-" <> _} = assigns) do
     ~H"""
     <span class={[@name, @class]} />
+    """
+  end
+
+  def icon(assigns) do
+    ~H"""
+    <span class={[@name, @class]}></span>
     """
   end
 
