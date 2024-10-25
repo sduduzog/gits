@@ -42,7 +42,7 @@ defmodule GitsWeb.CoreComponents do
       <div
         phx-click-away={JS.hide()}
         id="mega-options"
-        class="absolute inset-x-0 top-0 z-10 hiddenx flex w-full bg-white pb-4 shadow-lg"
+        class="absolute inset-x-0 top-0 z-50 hidden w-full bg-white pb-4 shadow-lg"
       >
         <div class="mx-auto flex w-full max-w-screen-xl flex-wrap items-center gap-10">
           <div>
@@ -62,7 +62,7 @@ defmodule GitsWeb.CoreComponents do
                   {"Profile", nil, ""}
                 ]
               }
-              class="inline-flex items-center justify-between gap-2 rounded-lg pl-1 pr-4 py-3 font-medium transition-colors duration-300 first:bg-black/5 hover:bg-black/10 lg:px-2 lg:py-1"
+              class="inline-flex items-center justify-between gap-2 rounded-lg py-3 pl-1 pr-4 font-medium transition-colors duration-300 first:bg-black/5 hover:bg-black/10 lg:px-2 lg:py-1"
             >
               <span><%= label %></span>
               <span
@@ -115,10 +115,10 @@ defmodule GitsWeb.CoreComponents do
 
     ~H"""
     <footer class="grid gap-10 bg-zinc-100 py-10">
-      <div class="mx-auto grid w-full max-w-screen-xl lg:grid-cols-5 gap-8">
+      <div class="mx-auto grid w-full max-w-screen-xl gap-8 lg:grid-cols-5">
         <div :for={{icon, heading, children} <- @nav_tree} class="space-y-2 p-4">
           <div class="flex items-center gap-3">
-            <.icon name={icon} class="text-zinc-500 size-4" />
+            <.icon name={icon} class="size-4 text-zinc-500" />
             <span class="text-xs text-zinc-500"><%= heading %></span>
           </div>
           <div class="relative grid gap-4 px-2 pt-4">
