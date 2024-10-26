@@ -22,6 +22,85 @@ defmodule GitsWeb.CoreComponents do
     """
   end
 
+  def header(%{test: true} = assigns) do
+    assigns =
+      assigns
+      |> assign(:nav, [
+        {"Tickets", "0", "/my/tickets"},
+        {"Orders", nil, "/my/orders"},
+        {"Profile", nil, "/my/profile"},
+        {"Sign out", nil, "/sign-out"}
+      ])
+
+    ~H"""
+    <header class="mx-auto flex max-w-screen-xl items-center gap-10">
+      <div>
+        <div>
+          <.logo />
+        </div>
+      </div>
+      <nav class="gap-4 lg:flex hidden w-auto p-2">
+        <.link
+          :for={{label, badge, href} <- @nav}
+          navigate={href}
+          class="inline-flex items-center justify-between gap-1 rounded-lg transition-colors duration-300 first:bg-black/10 hover:bg-black/10 p-1"
+        >
+          <span class="text-sm px-1"><%= label %></span>
+          <span
+            :if={badge}
+            class="inline-flex leading-4 py-1 items-center justify-center rounded-md border bg-zinc-500 px-2 text-xs text-sm font-medium text-white"
+          >
+            <%= badge %>
+          </span>
+        </.link>
+      </nav>
+      <div class="flex items-center grow justify-end gap-4 p-2">
+        <button class="size-9 items-center inline-flex justify-center">
+          <.icon name="i-lucide-search" />
+        </button>
+
+        <button
+          class="size-9 items-center inline-flex lg:hidden justify-center"
+          phx-click={JS.show(to: "div#mega-options", display: "flex")}
+        >
+          <.icon name="i-lucide-menu" />
+        </button>
+      </div>
+      <div
+        phx-click-away={JS.hide()}
+        id="mega-options"
+        class="absolute inset-x-0 top-0 z-50 hidden w-full bg-white pb-4 shadow-md"
+      >
+        <div class="mx-auto flex w-full max-w-screen-xl flex-wrap items-center gap-10">
+          <div>
+            <.logo />
+          </div>
+          <div class="flex grow justify-end gap-4 p-2 lg:order-3">
+            <button class="size-9" phx-click={JS.hide(to: "div#mega-options")}>
+              <.icon name="i-lucide-x" />
+            </button>
+          </div>
+          <nav class="grid w-full gap-2 p-1 lg:flex lg:w-auto lg:gap-8 lg:p-2">
+            <.link
+              :for={{label, badge, href} <- @nav}
+              navigate={href}
+              class="inline-flex items-center justify-between gap-1 rounded-lg py-3 pr-3 transition-colors duration-300 first:bg-black/10 hover:bg-black/10 lg:p-1"
+            >
+              <span class="lg:text-sm px-1 text-base"><%= label %></span>
+              <span
+                :if={badge}
+                class="inline-flex leading-4 py-1 items-center justify-center rounded-lg lg:rounded-md border bg-zinc-500 px-2 lg:text-xs text-sm font-medium text-white"
+              >
+                <%= badge %>
+              </span>
+            </.link>
+          </nav>
+        </div>
+      </div>
+    </header>
+    """
+  end
+
   def header(assigns) do
     ~H"""
     <header class="mx-auto flex max-w-screen-xl items-center gap-10">
@@ -45,7 +124,7 @@ defmodule GitsWeb.CoreComponents do
       <div
         phx-click-away={JS.hide()}
         id="mega-options"
-        class="absolute inset-x-0 top-0 z-50 hidden w-full bg-white pb-4 shadow-lg"
+        class="absolute inset-x-0 top-0 z-50 hiddenx flex w-full bg-white pb-4 shadow-md"
       >
         <div class="mx-auto flex w-full max-w-screen-xl flex-wrap items-center gap-10">
           <div>
@@ -66,17 +145,20 @@ defmodule GitsWeb.CoreComponents do
                 ]
               }
               navigate={href}
-              class="inline-flex items-center justify-between gap-2 rounded-lg py-3 pl-1 pr-3 font-medium transition-colors duration-300 first:bg-black/5 hover:bg-black/10 lg:px-2 lg:py-1"
+              class="inline-flex items-center justify-between gap-1 rounded-lg py-3 pr-3 transition-colors duration-300 first:bg-black/10 hover:bg-black/10 lg:p-1"
             >
-              <span><%= label %></span>
+              <span class="lg:text-sm px-1 text-base"><%= label %></span>
               <span
                 :if={badge}
-                class="inline-flex items-center justify-center rounded-lg border bg-zinc-400 px-1.5 text-sm font-medium text-white"
+                class="inline-flex leading-4 py-1 items-center justify-center rounded-lg lg:rounded-md border bg-zinc-500 px-2 lg:text-xs text-sm font-medium text-white"
               >
                 <%= badge %>
               </span>
             </.link>
           </nav>
+          <div class="w-full flex justify-end p-4 order-last">
+            <div class="border p-4"></div>
+          </div>
         </div>
       </div>
     </header>
