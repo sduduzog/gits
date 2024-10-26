@@ -147,8 +147,6 @@ defmodule GitsWeb do
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS
 
-      alias GitsWeb.Router.Helpers, as: Routes
-
       # Routes generation with the ~p sigil
       unquote(verified_routes())
     end
@@ -160,6 +158,8 @@ defmodule GitsWeb do
         endpoint: GitsWeb.Endpoint,
         router: GitsWeb.Router,
         statics: GitsWeb.static_paths()
+
+      alias GitsWeb.Router.Helpers, as: Routes
     end
   end
 

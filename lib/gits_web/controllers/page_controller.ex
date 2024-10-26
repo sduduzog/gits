@@ -2,6 +2,8 @@ defmodule GitsWeb.PageController do
   use GitsWeb, :controller
 
   require Ash.Query
+  alias Gits.Accounts.User
+  alias Gits.Hosts.Host
   alias Gits.Bucket
   alias Gits.Dashboard.Member
   alias Gits.Documentation
@@ -41,6 +43,23 @@ defmodule GitsWeb.PageController do
     conn
     |> assign(:events, events)
     |> render(:events)
+  end
+
+  def host(%{assigns: %{current_user: %User{}}} = conn, _) do
+    Host
+    |> Ash.Query.filter(owner.id == ^conn.assigns.current_user.id)
+    |> Ash.read()
+    |> case do
+      {:ok, [%Host{handle: handle}]} ->
+        IO.puts("one host")
+
+        conn
+        |> redirect(to: Routes.host_dashboard_path(conn, :overview, handle))
+
+      _ ->
+        conn
+        |> render(:host)
+    end
   end
 
   def host(conn, _) do
