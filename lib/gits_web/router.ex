@@ -119,12 +119,13 @@ defmodule GitsWeb.Router do
 
   scope "/my", GitsWeb do
     pipe_through :browser
-    get "/profile", UserController, :profile
-    get "/profile/edit", UserController, :edit_profile
-    get "/profile/login-and-security", UserController, :login_and_security
-    get "/tickets", UserController, :tickets
-    get "/tickets/past", UserController, :past_tickets
-    get "/tickets/:token", UserController, :ticket
+
+    live_session :my_authentication_required,
+      on_mount: {GitsWeb.LiveUserAuth, :my_live} do
+      live "/tickets", MyLive, :tickets
+      live "/orders", MyLive, :orders
+      live "/profile", MyLive, :profile
+    end
   end
 
   scope "/admin" do

@@ -2,7 +2,6 @@ defmodule GitsWeb.CoreComponents do
   use Phoenix.Component
   use GitsWeb, :verified_routes
 
-  alias Gits.Accounts.User
   alias Phoenix.HTML.Form
   alias Phoenix.LiveView.JS
   import GitsWeb.Gettext
@@ -22,15 +21,31 @@ defmodule GitsWeb.CoreComponents do
     """
   end
 
-  def header(%{test: true} = assigns) do
+  attr :signed_in, :boolean, default: false
+  attr :current, :string, default: ""
+
+  def header(assigns) do
+    %{signed_in: signed_in} = assigns
+
+    nav_items =
+      case signed_in do
+        true ->
+          [
+            {"Tickets", "0", "/my/tickets"},
+            {"Orders", nil, "/my/orders"},
+            {"Profile", nil, "/my/profile"},
+            {"Sign out", nil, "/sign-out"}
+          ]
+
+        false ->
+          [
+            {"Sign in", nil, "/sign-in"}
+          ]
+      end
+
     assigns =
       assigns
-      |> assign(:nav, [
-        {"Tickets", "0", "/my/tickets"},
-        {"Orders", nil, "/my/orders"},
-        {"Profile", nil, "/my/profile"},
-        {"Sign out", nil, "/sign-out"}
-      ])
+      |> assign(:nav, nav_items)
 
     ~H"""
     <header class="mx-auto flex max-w-screen-xl items-center gap-10">
@@ -39,28 +54,29 @@ defmodule GitsWeb.CoreComponents do
           <.logo />
         </div>
       </div>
-      <nav class="gap-4 lg:flex hidden w-auto p-2">
+      <nav class="hidden w-auto gap-4 p-2 lg:flex">
         <.link
           :for={{label, badge, href} <- @nav}
           navigate={href}
-          class="inline-flex items-center justify-between gap-1 rounded-lg transition-colors duration-300 first:bg-black/10 hover:bg-black/10 p-1"
+          aria-selected={"#{label == @current}"}
+          class="inline-flex items-center justify-between gap-1 rounded-lg p-1 transition-colors duration-300 hover:bg-black/10 aria-selected:bg-black/10"
         >
-          <span class="text-sm px-1"><%= label %></span>
+          <span class="px-1 text-sm"><%= label %></span>
           <span
             :if={badge}
-            class="inline-flex leading-4 py-1 items-center justify-center rounded-md border bg-zinc-500 px-2 text-xs text-sm font-medium text-white"
+            class="inline-flex items-center justify-center rounded-md border bg-zinc-600 px-2 py-1 text-sm text-xs font-semibold leading-4 text-white"
           >
             <%= badge %>
           </span>
         </.link>
       </nav>
-      <div class="flex items-center grow justify-end gap-4 p-2">
-        <button class="size-9 items-center inline-flex justify-center">
+      <div class="flex grow items-center justify-end gap-4 p-2">
+        <button class="inline-flex size-9 items-center justify-center">
           <.icon name="i-lucide-search" />
         </button>
 
         <button
-          class="size-9 items-center inline-flex lg:hidden justify-center"
+          class="inline-flex size-9 items-center justify-center lg:hidden"
           phx-click={JS.show(to: "div#mega-options", display: "flex")}
         >
           <.icon name="i-lucide-menu" />
@@ -84,81 +100,18 @@ defmodule GitsWeb.CoreComponents do
             <.link
               :for={{label, badge, href} <- @nav}
               navigate={href}
-              class="inline-flex items-center justify-between gap-1 rounded-lg py-3 pr-3 transition-colors duration-300 first:bg-black/10 hover:bg-black/10 lg:p-1"
+              aria-selected={"#{label == @current}"}
+              class="inline-flex items-center justify-between gap-1 rounded-lg py-3 pr-3 transition-colors duration-300 hover:bg-black/10 aria-selected:bg-black/10 lg:p-1"
             >
-              <span class="lg:text-sm px-1 text-base"><%= label %></span>
+              <span class="px-1 text-base lg:text-sm"><%= label %></span>
               <span
                 :if={badge}
-                class="inline-flex leading-4 py-1 items-center justify-center rounded-lg lg:rounded-md border bg-zinc-500 px-2 lg:text-xs text-sm font-medium text-white"
+                class="inline-flex items-center justify-center rounded-lg border bg-zinc-500 px-2 py-1 text-sm font-medium leading-4 text-white lg:rounded-md lg:text-xs"
               >
                 <%= badge %>
               </span>
             </.link>
           </nav>
-        </div>
-      </div>
-    </header>
-    """
-  end
-
-  def header(assigns) do
-    ~H"""
-    <header class="mx-auto flex max-w-screen-xl items-center gap-10">
-      <div>
-        <div>
-          <.logo />
-        </div>
-      </div>
-      <div class="flex grow justify-end gap-8 p-2">
-        <button class="size-9 items-center inline-flex justify-center">
-          <.icon name="i-lucide-search" />
-        </button>
-
-        <button
-          class="size-9 items-center inline-flex justify-center"
-          phx-click={JS.show(to: "div#mega-options", display: "flex")}
-        >
-          <.icon name="i-lucide-menu" />
-        </button>
-      </div>
-      <div
-        phx-click-away={JS.hide()}
-        id="mega-options"
-        class="absolute inset-x-0 top-0 z-50 hiddenx flex w-full bg-white pb-4 shadow-md"
-      >
-        <div class="mx-auto flex w-full max-w-screen-xl flex-wrap items-center gap-10">
-          <div>
-            <.logo />
-          </div>
-          <div class="flex grow justify-end gap-4 p-2 lg:order-3">
-            <button class="size-9" phx-click={JS.hide(to: "div#mega-options")}>
-              <.icon name="i-lucide-x" />
-            </button>
-          </div>
-          <nav class="grid w-full gap-2 p-1 lg:flex lg:w-auto lg:gap-8 lg:p-2">
-            <.link
-              :for={
-                {label, badge, href} <- [
-                  {"Tickets", "0", "/my/tickets"},
-                  {"Orders", nil, "/my/orders"},
-                  {"Profile", nil, "/my/profile"}
-                ]
-              }
-              navigate={href}
-              class="inline-flex items-center justify-between gap-1 rounded-lg py-3 pr-3 transition-colors duration-300 first:bg-black/10 hover:bg-black/10 lg:p-1"
-            >
-              <span class="lg:text-sm px-1 text-base"><%= label %></span>
-              <span
-                :if={badge}
-                class="inline-flex leading-4 py-1 items-center justify-center rounded-lg lg:rounded-md border bg-zinc-500 px-2 lg:text-xs text-sm font-medium text-white"
-              >
-                <%= badge %>
-              </span>
-            </.link>
-          </nav>
-          <div class="w-full flex justify-end p-4 order-last">
-            <div class="border p-4"></div>
-          </div>
         </div>
       </div>
     </header>
