@@ -42,16 +42,16 @@ defmodule Gits.Hosts.Event do
       change atomic_update(:published_at, expr(fragment("now()")))
     end
 
-    update :tickets do
-      require_atomic? false
-      argument :types, {:array, :map}, allow_nil?: false
-      change manage_relationship(:types, :ticket_types, type: :direct_control)
-    end
-
     update :add_ticket_type do
       require_atomic? false
       argument :type, :map, allow_nil?: false
       change manage_relationship(:type, :ticket_types, type: :create)
+    end
+
+    update :edit_ticket_type do
+      require_atomic? false
+      argument :type, :map, allow_nil?: false
+      change manage_relationship(:type, :ticket_types, on_match: :update)
     end
   end
 

@@ -91,15 +91,84 @@
   <div class="lg:mt-0 mt-4 w-full">
     <.event_details :if={@live_action == :details} form={@form} event_id={@event_public_id} />
     <.time_and_place :if={@live_action == :time_and_place} form={@form} />
-    <.tickets
-      :if={@live_action == :tickets}
-      ticket_types={@ticket_types}
-      create_ticket_path={
-        Routes.host_edit_event_path(@socket, @live_action, @host_handle, @event_public_id, %{
-          new: :ticket
-        })
-      }
-    />
+
+    <div :if={@live_action == :tickets}>
+      <div class="flex p-2">
+        <h1 class="grow font-medium text-lg">Tickets</h1>
+        <button
+          class="inline-flex px-2 rounded-lg h-9 items-center border"
+          phx-click={
+            JS.patch(
+              Routes.host_edit_event_path(
+                @socket,
+                @live_action,
+                @host_handle,
+                @event_public_id,
+                %{new: :ticket}
+              ),
+              replace: true
+            )
+            |> show_modal("create_ticket")
+          }
+        >
+          <.icon name="i-lucide-plus" class="text-sm" />
+          <span class="text-sm px-2 font-semibold">New Ticket</span>
+        </button>
+      </div>
+
+      <div class="lg:p-2 space-y-1">
+        <div class="">
+          <div class="px-4 flex">
+            <span class="text-sm grow max-w-96 text-zinc-500">Name</span>
+            <div class="hidden lg:flex">
+              <span class="text-sm max-w-64 text-zinc-500 w-32">Quantity</span>
+              <span class="text-sm max-w-64 text-zinc-500">Price</span>
+            </div>
+          </div>
+        </div>
+        <div class="">
+          <div class="border-y lg:border lg:rounded-xl divide-y">
+            <div :for={type <- @ticket_types} class="p-2 flex items-center gap-4">
+              <div class="grow flex flex-wrap gap-2 px-2">
+                <span class="font-medium grow max-w-96 text-sm"><%= type.name %></span>
+                <!-- <div>Hello</div> -->
+              </div>
+
+              <button class="size-9 inline-flex justify-center rounded-lg items-center">
+                <.icon name="i-lucide-trash" class="text-sm" />
+              </button>
+
+              <button
+                class="size-9 inline-flex justify-center rounded-lg items-center"
+                phx-click={
+                  JS.patch(
+                    Routes.host_edit_event_path(
+                      @socket,
+                      @live_action,
+                      @host_handle,
+                      @event_public_id,
+                      %{edit: :ticket, id: type.id}
+                    ),
+                    replace: true
+                  )
+                  |> show_modal("edit_ticket")
+                }
+              >
+                <.icon name="i-lucide-square-pen" class="text-sm" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-2 py-4 pb-8 flex justify-end col-span-full">
+        <button class="h-9 flex px-4 bg-zinc-950 text-zinc-50 items-center rounded-lg">
+          <span class="font-semibold text-sm">
+            Continue
+          </span>
+        </button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -130,6 +199,54 @@
       phx-change="validate"
     >
       <.inputs_for :let={tf} :if={@show_create_ticket_modal} field={f[:type]}>
+        <label class="col-span-full grid gap-1">
+          <span class="text-sm font-medium">Name</span>
+          <input
+            type="text"
+            name={tf[:name].name}
+            value={tf[:name].value}
+            class="w-full rounded-lg border-zinc-300 px-3 py-2 text-sm"
+          />
+        </label>
+      </.inputs_for>
+      <div class="flex justify-end col-span-full">
+        <button class="h-9 flex px-4 bg-zinc-950 text-zinc-50 items-center rounded-lg">
+          <span class="font-semibold text-sm">
+            <%= if(true, do: "Save", else: "Create event") %>
+          </span>
+        </button>
+      </div>
+    </.form>
+  </div>
+</.modal>
+
+<.modal
+  :if={@live_action == :tickets}
+  id="edit_ticket"
+  show={@show_edit_ticket_modal}
+  on_cancel={
+    JS.patch(
+      Routes.host_edit_event_path(@socket, @live_action, @host_handle, @event_public_id),
+      replace: true
+    )
+    |> hide_modal("edit_ticket")
+  }
+>
+  <div class="grid gap-4">
+    <h3 class="text-lg font-semibold">Edit Ticket</h3>
+    <.form
+      :let={f}
+      id="edit_ticket_form"
+      for={@form}
+      class="grid grow grid-cols-2 gap-6"
+      phx-submit={
+        JS.push("tickets")
+        |> JS.exec("data-cancel", to: "#edit_ticket")
+      }
+      }
+      phx-change="validate"
+    >
+      <.inputs_for :let={tf} :if={@show_edit_ticket_modal} field={f[:type]}>
         <label class="col-span-full grid gap-1">
           <span class="text-sm font-medium">Name</span>
           <input

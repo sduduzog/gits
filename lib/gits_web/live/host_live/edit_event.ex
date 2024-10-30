@@ -1,4 +1,5 @@
 defmodule GitsWeb.HostLive.EditEvent do
+  alias Gits.Hosts.TicketType
   alias Gits.Hosts.Event
   alias AshPhoenix.Form
   require Ash.Query
@@ -55,6 +56,7 @@ defmodule GitsWeb.HostLive.EditEvent do
         |> assign(:ticket_types, event.ticket_types)
         |> assign(:event_public_id, public_id)
         |> show_create_ticket_modal(unsigned_params, event)
+        |> show_edit_ticket_modal(unsigned_params, event)
     end
     |> noreply()
   end
@@ -117,7 +119,6 @@ defmodule GitsWeb.HostLive.EditEvent do
     socket.assigns.form
     |> Form.validate(unsigned_params["form"])
     |> Form.submit()
-    |> IO.inspect()
 
     socket |> noreply()
   end
@@ -135,7 +136,7 @@ defmodule GitsWeb.HostLive.EditEvent do
 
   defp current_form(:tickets, event) do
     event
-    |> Form.for_update(:tickets, forms: [auto?: true])
+    |> Form.for_update(:update, forms: [auto?: true])
   end
 
   defp current_form(_, _) do
@@ -158,13 +159,23 @@ defmodule GitsWeb.HostLive.EditEvent do
     |> assign(:show_create_ticket_modal, false)
   end
 
-  defp show_archive_modal(socket, %{"archive" => _event_id}) do
-    socket
-    |> assign(:show_archive_modal, true)
+  defp show_edit_ticket_modal(socket, %{"edit" => "ticket", "id" => ticket_id}, event) do
+    event
+    |> Ash.load(ticket_types: [TicketType |> Ash.Query.filter(id == ^ticket_id)])
+    |> case do
+      {:ok, event} ->
+        socket
+        |> assign(
+          :form,
+          event
+          |> Form.for_update(:edit_ticket_type, forms: [auto?: true])
+        )
+        |> assign(:show_edit_ticket_modal, true)
+    end
   end
 
-  defp show_archive_modal(socket, _) do
+  defp show_edit_ticket_modal(socket, _, _) do
     socket
-    |> assign(:show_archive_modal, false)
+    |> assign(:show_edit_ticket_modal, false)
   end
 end
