@@ -2,13 +2,13 @@
 <% navigation_items = [
   %{
     label: "Dashboard",
-    icon: "hero-rectangle-group",
+    icon: "i-lucide-layout-dashboard",
     current: Enum.any?([GitsWeb.HostLive.Dashboard], &(&1 == @socket.view)),
     href: ~p"/hosts/#{@host_handle}/dashboard"
   },
   %{
     label: "Events",
-    icon: "hero-calendar-days",
+    icon: "i-lucide-calendar-range",
     current:
       Enum.any?(
         [GitsWeb.HostLive.EventList, GitsWeb.HostLive.EventView, GitsWeb.HostLive.ManageEvent],
@@ -28,7 +28,7 @@
   },
   %{
     label: "Settings",
-    icon: "hero-cog-6-tooth",
+    icon: "i-lucide-settings",
     current: Enum.any?([GitsWeb.HostLive.Settings], &(&1 == @socket.view)),
     href: ~p"/hosts/#{@host_handle}/settings"
   }
@@ -36,10 +36,10 @@
 
 <div class="flex min-h-dvh w-full gap-8">
   <aside
-    class="fixed hidden inset-0 z-10 lg:flex w-full flex-col gap-6 bg-white lg:static lg:max-w-64"
+    class="fixed inset-0 z-10 hidden w-full flex-col gap-6 bg-white lg:static lg:flex lg:max-w-64"
     id="sidebar"
   >
-    <div class="flex justify-between items-start p-2">
+    <div class="flex items-start justify-between p-2">
       <.logo />
       <button class="size-9 rounded-lg lg:hidden" phx-click={JS.hide(to: "aside#sidebar")}>
         <.icon name="hero-x-mark" />
@@ -47,7 +47,7 @@
     </div>
     <nav
       :for={items <- [navigation_items |> Enum.take(2), navigation_items |> Enum.take(-1)]}
-      class="flex w-full first-of-type:grow flex-col gap-2"
+      class="flex w-full flex-col gap-2 first-of-type:grow"
     >
       <.link
         :for={i <- items}
@@ -62,10 +62,10 @@
           )
         ]}
       >
-        <span class="w-1 bg-zinc-500 h-6 opacity-0 group-aria-selected:opacity-100 rounded">
+        <span class="h-6 w-1 rounded bg-zinc-500 opacity-0 group-aria-selected:opacity-100">
         </span>
-        <div class="flex w-full items-center gap-2 rounded-lg px-2 py-4 group-hover:bg-zinc-50 group-[.is-active]:bg-zinc-100 group-[.is-active]:text-zinc-950 lg:py-2">
-          <.icon name={i.icon} class="size-5 shrink-0" />
+        <div class="flex w-full items-center gap-3 rounded-lg px-2 py-4 group-hover:bg-zinc-50 group-[.is-active]:bg-zinc-100 group-[.is-active]:text-zinc-950 lg:py-2">
+          <.icon name={i.icon} class="shrink-0 size-5" />
           <span class="text-sm font-semibold"><%= i.label %></span>
         </div>
       </.link>
@@ -74,22 +74,22 @@
       <div
         phx-click-away={JS.hide(to: "#sidebar_dropdown")}
         phx-click={JS.toggle(to: "#sidebar_dropdown")}
-        class="rounded-lg relative border items-center gap-2 p-2 flex"
+        class="relative flex items-center gap-2 rounded-lg border p-2"
       >
         <div
           id="sidebar_dropdown"
-          class="rounded-xl shadow-lg hidden border p-1 absolute inset-x-0 bg-white bottom-full -translate-y-2"
+          class="absolute inset-x-0 bottom-full hidden -translate-y-2 rounded-xl border bg-white p-1 shadow-lg"
         >
           <.link
             navigate={~p"/sign-out"}
-            class="flex items-center bg-zinc-50 rounded-md p-4 lg:p-2"
+            class="flex items-center rounded-md bg-zinc-50 p-4 lg:p-2"
           >
             <span class="grow text-sm">Log out</span>
             <.icon name="hero-arrow-right-start-on-rectangle" class="size-5 shrink-0" />
           </.link>
         </div>
         <div class="size-9 rounded-full bg-zinc-200"></div>
-        <div class="grow grid text-sm font-medium">
+        <div class="grid grow text-sm font-medium">
           <span><%= @current_user.display_name %></span>
           <span class="text-zinc-500"><%= @host.name %></span>
         </div>
@@ -97,8 +97,8 @@
       </div>
     </div>
   </aside>
-  <main class="mx-auto max-h-dvh overflow-auto max-w-screen-xl grow flex flex-col gap-4 w-full">
-    <div class="flex lg:hidden justify-between items-start p-2">
+  <main class="mx-auto flex max-h-dvh w-full max-w-screen-xl grow flex-col gap-4 overflow-auto">
+    <div class="flex items-start justify-between p-2 lg:hidden">
       <.logo />
       <button class="size-9 rounded-lg" phx-click={JS.show(to: "aside#sidebar", display: "flex")}>
         <.icon name="hero-bars-3" />

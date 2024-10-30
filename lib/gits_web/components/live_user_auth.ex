@@ -97,4 +97,12 @@ defmodule GitsWeb.LiveUserAuth do
 
     {:cont, assign_new(socket, :current_user, fn -> nil end)}
   end
+
+  def on_mount(:host, params, session, socket) do
+    socket =
+      socket_with_current_subject(session, socket)
+      |> socket_with_host(params)
+
+    {:cont, assign_new(socket, :current_user, fn -> nil end)}
+  end
 end

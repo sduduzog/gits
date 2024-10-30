@@ -5,6 +5,7 @@ defmodule GitsWeb.MyLive do
     ~H"""
     <.header signed_in={not is_nil(@current_user)} current="Tickets" />
     <div>Tickets</div>
+    <.footer />
     """
   end
 
@@ -12,6 +13,7 @@ defmodule GitsWeb.MyLive do
     ~H"""
     <.header signed_in={not is_nil(@current_user)} current="Orders" />
     <div>orders</div>
+    <.footer />
     """
   end
 
@@ -19,6 +21,7 @@ defmodule GitsWeb.MyLive do
     ~H"""
     <.header signed_in={not is_nil(@current_user)} current="Profile" />
     <div>profile</div>
+    <.footer />
     """
   end
 

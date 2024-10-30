@@ -38,20 +38,21 @@ defmodule GitsWeb.Router do
     get "/healthz", PageController, :healthz
     get "/beta", PageController, :beta
 
-    resources "/search", SearchController, only: [:index]
     resources "/accounts", AccountController, only: [:index]
 
     get "/sign-in", AuthController, :sign_in
     get "/sign-out", AuthController, :sign_out
 
     get "/bucket/*keys", PageController, :bucket
+
+    live "/search", SearchLive, :index
   end
 
   scope "/hosts", GitsWeb do
     pipe_through :browser
 
-    live_session :hosts_authentication_required,
-      on_mount: {GitsWeb.LiveUserAuth, :live_user_required} do
+    live_session :hosts_authentication,
+      on_mount: {GitsWeb.LiveUserAuth, :host} do
       live "/get-started", HostLive.Onboarding, :get_started
 
       live "/:handle/dashboard", HostLive.Dashboard, :overview

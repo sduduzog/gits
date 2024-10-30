@@ -20,7 +20,6 @@ defmodule Gits.Hosts.Event do
     defaults [:read, :destroy, update: :*]
 
     read :get_by_public_id_for_listing do
-      primary? true
       get_by [:public_id]
       prepare build(load: [:name])
     end

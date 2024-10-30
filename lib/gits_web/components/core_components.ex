@@ -59,7 +59,7 @@ defmodule GitsWeb.CoreComponents do
           :for={{label, badge, href} <- @nav}
           navigate={href}
           aria-selected={"#{label == @current}"}
-          class="inline-flex items-center justify-between gap-1 rounded-lg p-1 transition-colors duration-300 hover:bg-black/10 aria-selected:bg-black/10"
+          class="inline-flex items-center justify-between h-9 gap-1 rounded-lg p-1 transition-colors duration-300 hover:bg-black/10 aria-selected:bg-black/10"
         >
           <span class="px-1 text-sm"><%= label %></span>
           <span
@@ -71,9 +71,9 @@ defmodule GitsWeb.CoreComponents do
         </.link>
       </nav>
       <div class="flex grow items-center justify-end gap-4 p-2">
-        <button class="inline-flex size-9 items-center justify-center">
+        <.link :if={false} navigate="/search" class="inline-flex size-9 items-center justify-center">
           <.icon name="i-lucide-search" />
-        </button>
+        </.link>
 
         <button
           class="inline-flex size-9 items-center justify-center lg:hidden"
@@ -165,7 +165,7 @@ defmodule GitsWeb.CoreComponents do
           <div class="grow">
             <.logo />
           </div>
-          <p class="max-w-96 p-2 text-sm text-zinc-500">
+          <p class="max-w-96 p-2 text-xs text-zinc-500">
             We offer better security, faster check-in, and lower costs. Whether it’s concerts, conferences, festivals, or sports events, we’ve got you covered.
           </p>
         </div>
