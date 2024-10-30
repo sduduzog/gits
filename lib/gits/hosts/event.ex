@@ -53,6 +53,12 @@ defmodule Gits.Hosts.Event do
       argument :type, :map, allow_nil?: false
       change manage_relationship(:type, :ticket_types, on_match: :update)
     end
+
+    update :archive_ticket_type do
+      require_atomic? false
+      argument :type, :map, allow_nil?: false
+      change manage_relationship(:type, :ticket_types, on_match: :destroy)
+    end
   end
 
   attributes do

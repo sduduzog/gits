@@ -134,7 +134,22 @@
                 <!-- <div>Hello</div> -->
               </div>
 
-              <button class="size-9 inline-flex justify-center rounded-lg items-center">
+              <button
+                class="size-9 inline-flex justify-center rounded-lg items-center"
+                phx-click={
+                  JS.patch(
+                    Routes.host_edit_event_path(
+                      @socket,
+                      @live_action,
+                      @host_handle,
+                      @event_public_id,
+                      %{archive: :ticket, id: type.id}
+                    ),
+                    replace: true
+                  )
+                  |> show_modal("archive_ticket")
+                }
+              >
                 <.icon name="i-lucide-trash" class="text-sm" />
               </button>
 
@@ -257,6 +272,44 @@
           />
         </label>
       </.inputs_for>
+      <div class="flex justify-end col-span-full">
+        <button class="h-9 flex px-4 bg-zinc-950 text-zinc-50 items-center rounded-lg">
+          <span class="font-semibold text-sm">
+            <%= if(true, do: "Save", else: "Create event") %>
+          </span>
+        </button>
+      </div>
+    </.form>
+  </div>
+</.modal>
+
+<.modal
+  :if={@live_action == :tickets}
+  id="archive_ticket"
+  show={@show_archive_ticket_modal}
+  on_cancel={
+    JS.patch(
+      Routes.host_edit_event_path(@socket, @live_action, @host_handle, @event_public_id),
+      replace: true
+    )
+    |> hide_modal("archive_ticket")
+  }
+>
+  <div class="grid gap-4">
+    <h3 class="text-lg font-semibold">Archive Ticket</h3>
+    <.form
+      :let={f}
+      id="archive_ticket_form"
+      for={@form}
+      class="grid grow grid-cols-2 gap-6"
+      phx-submit={
+        JS.push("tickets")
+        |> JS.exec("data-cancel", to: "#archive_ticket")
+      }
+      }
+      phx-change="validate"
+    >
+      <.inputs_for :let={tf} :if={@show_archive_ticket_modal} field={f[:type]}></.inputs_for>
       <div class="flex justify-end col-span-full">
         <button class="h-9 flex px-4 bg-zinc-950 text-zinc-50 items-center rounded-lg">
           <span class="font-semibold text-sm">

@@ -57,6 +57,7 @@ defmodule GitsWeb.HostLive.EditEvent do
         |> assign(:event_public_id, public_id)
         |> show_create_ticket_modal(unsigned_params, event)
         |> show_edit_ticket_modal(unsigned_params, event)
+        |> show_archive_ticket_modal(unsigned_params, event)
     end
     |> noreply()
   end
@@ -177,5 +178,25 @@ defmodule GitsWeb.HostLive.EditEvent do
   defp show_edit_ticket_modal(socket, _, _) do
     socket
     |> assign(:show_edit_ticket_modal, false)
+  end
+
+  defp show_archive_ticket_modal(socket, %{"archive" => "ticket", "id" => ticket_id}, event) do
+    event
+    |> Ash.load(ticket_types: [TicketType |> Ash.Query.filter(id == ^ticket_id)])
+    |> case do
+      {:ok, event} ->
+        socket
+        |> assign(
+          :form,
+          event
+          |> Form.for_update(:archive_ticket_type, forms: [auto?: true])
+        )
+        |> assign(:show_archive_ticket_modal, true)
+    end
+  end
+
+  defp show_archive_ticket_modal(socket, _, _) do
+    socket
+    |> assign(:show_archive_ticket_modal, false)
   end
 end
