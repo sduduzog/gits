@@ -1,0 +1,152 @@
+<%= if @event_public_id do %>
+  <div class="flex items-center gap-2 p-2">
+    <button onclick="history.back()" class="flex h-9 items-center gap-2 rounded-lg px-2">
+      <.icon name="hero-chevron-left" class="size-5" />
+      <span class="hidden text-sm font-medium lg:inline">Back</span>
+    </button>
+
+    <div class="flex gap-2 grow items-center border-l truncate pl-4 text-sm font-medium">
+      <span class="text-zinc-500">Events</span>
+      <.icon name="hero-slash-micro" class="text-zinc-500 shrink-0" />
+      <span class="text-zinc-500 truncate"><%= @event_name %></span>
+      <.icon name="hero-slash-micro" class="shrink-0" />
+      <span class="">Edit event</span>
+    </div>
+
+    <button class="flex size-9 lg:w-auto items-center gap-2 justify-center shrink-0 rounded-lg lg:px-4">
+      <.icon name="hero-megaphone" class="size-5" />
+      <span class="text-sm hidden lg:inline">Help</span>
+    </button>
+  </div>
+<% else %>
+  <div class="flex items-center gap-2 p-2">
+    <.link
+      replace={true}
+      navigate={~p"/hosts/#{@host_handle}/events"}
+      class="flex items-center gap-2 rounded-lg h-9 px-2"
+    >
+      <.icon name="hero-chevron-left" class="size-5" />
+      <span class="text-sm font-medium lg:inline hidden">Back</span>
+    </.link>
+
+    <div class="flex gap-2 grow items-center border-l truncate pl-4 text-sm font-medium">
+      <span class="text-zinc-500">Events</span>
+      <.icon name="hero-slash-micro" class="shrink-0" />
+      <span class="">Create event</span>
+    </div>
+
+    <button class="flex size-9 lg:w-auto items-center gap-2 justify-center shrink-0 rounded-lg lg:px-4">
+      <.icon name="hero-megaphone" class="size-5" />
+      <span class="text-sm hidden lg:inline">Help</span>
+    </button>
+  </div>
+<% end %>
+
+<div class="grow flex lg:pt-4 lg:flex-row flex-col max-w-screen-lg">
+  <div class="w-full lg:max-w-64 p-2 flex lg:flex-col gap-4 lg:gap-6">
+    <%= if @event_public_id do %>
+      <.wizard_step
+        current={@live_action == :details}
+        href={Routes.host_edit_event_path(@socket, :details, @host_handle, @event_public_id)}
+        complete={true}
+        valid={true}
+        title="Event details"
+      />
+      <.wizard_step
+        :if={false}
+        current={@live_action == :time_and_place}
+        href={
+          Routes.host_edit_event_path(@socket, :time_and_place, @host_handle, @event_public_id)
+        }
+        title="Time & place"
+      />
+
+      <.wizard_step
+        current={@live_action == :tickets}
+        title="Tickets"
+        href={Routes.host_edit_event_path(@socket, :tickets, @host_handle, @event_public_id)}
+      />
+
+      <.wizard_step
+        :if={false}
+        current={@live_action == :feature_graphic}
+        title="Feature graphic"
+        href={~p"/hosts/#{@host_handle}/events/#{@event.public_id}"}
+      />
+      <.wizard_step :if={false} current={@live_action == :tickets} title="Tickets" />
+      <.wizard_step
+        :if={false}
+        current={@live_action == :payout_preferences}
+        title="Payout preferences"
+      />
+    <% else %>
+      <.wizard_step current={@live_action == :details} title="Event details" />
+      <.wizard_step current={@live_action == :time_and_place} title="Time & place" />
+      <.wizard_step current={@live_action == :feature_graphic} title="Feature graphic" />
+      <.wizard_step current={@live_action == :tickets} title="Tickets" />
+      <.wizard_step current={@live_action == :payout_preferences} title="Payout preferences" />
+    <% end %>
+  </div>
+
+  <div class="lg:mt-0 mt-4 w-full">
+    <.event_details :if={@live_action == :details} form={@form} event_id={@event_public_id} />
+    <.time_and_place :if={@live_action == :time_and_place} form={@form} />
+    <.tickets
+      :if={@live_action == :tickets}
+      ticket_types={@ticket_types}
+      create_ticket_path={
+        Routes.host_edit_event_path(@socket, @live_action, @host_handle, @event_public_id, %{
+          new: :ticket
+        })
+      }
+    />
+  </div>
+</div>
+
+<.modal
+  :if={@live_action == :tickets}
+  id="create_ticket"
+  show={@show_create_ticket_modal}
+  on_cancel={
+    JS.patch(
+      Routes.host_edit_event_path(@socket, @live_action, @host_handle, @event_public_id),
+      replace: true
+    )
+    |> hide_modal("create_ticket")
+  }
+>
+  <div class="grid gap-4">
+    <h3 class="text-lg font-semibold">New Ticket</h3>
+    <.form
+      :let={f}
+      id="create_ticket_form"
+      for={@form}
+      class="grid grow grid-cols-2 gap-6"
+      phx-submit={
+        JS.push("tickets")
+        |> JS.exec("data-cancel", to: "#create_ticket")
+      }
+      }
+      phx-change="validate"
+    >
+      <.inputs_for :let={tf} :if={@show_create_ticket_modal} field={f[:type]}>
+        <label class="col-span-full grid gap-1">
+          <span class="text-sm font-medium">Name</span>
+          <input
+            type="text"
+            name={tf[:name].name}
+            value={tf[:name].value}
+            class="w-full rounded-lg border-zinc-300 px-3 py-2 text-sm"
+          />
+        </label>
+      </.inputs_for>
+      <div class="flex justify-end col-span-full">
+        <button class="h-9 flex px-4 bg-zinc-950 text-zinc-50 items-center rounded-lg">
+          <span class="font-semibold text-sm">
+            <%= if(true, do: "Save", else: "Create event") %>
+          </span>
+        </button>
+      </div>
+    </.form>
+  </div>
+</.modal>

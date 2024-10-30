@@ -1,9 +1,10 @@
 defmodule GitsWeb.HostLive.ViewEvent do
-  alias Gits.Hosts
   alias Gits.Hosts.Event
   alias Gits.Hosts.Host
   use GitsWeb, :host_live_view
   require Ash.Query
+
+  embed_templates "view_event_templates/*"
 
   def mount(params, _session, socket) do
     host =

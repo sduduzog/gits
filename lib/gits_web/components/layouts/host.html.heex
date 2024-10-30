@@ -34,7 +34,7 @@
   }
 ] %>
 
-<div class="flex min-h-dvh w-full gap-8">
+<div class="mx-auto flex min-h-dvh w-full max-w-screen-2xl gap-8">
   <aside
     class="fixed inset-0 z-10 hidden w-full flex-col gap-6 bg-white lg:static lg:flex lg:max-w-64"
     id="sidebar"
@@ -65,7 +65,7 @@
         <span class="h-6 w-1 rounded bg-zinc-500 opacity-0 group-aria-selected:opacity-100">
         </span>
         <div class="flex w-full items-center gap-3 rounded-lg px-2 py-4 group-hover:bg-zinc-50 group-[.is-active]:bg-zinc-100 group-[.is-active]:text-zinc-950 lg:py-2">
-          <.icon name={i.icon} class="shrink-0 size-5" />
+          <.icon name={i.icon} class="size-5 shrink-0" />
           <span class="text-sm font-semibold"><%= i.label %></span>
         </div>
       </.link>

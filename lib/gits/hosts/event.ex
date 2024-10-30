@@ -1,5 +1,5 @@
 defmodule Gits.Hosts.Event do
-  alias Gits.Hosts.{EventDetails, Host, PayoutAccount}
+  alias Gits.Hosts.{EventDetails, Host, PayoutAccount, TicketType}
 
   use Ash.Resource,
     domain: Gits.Hosts,
@@ -41,6 +41,18 @@ defmodule Gits.Hosts.Event do
     update :publish do
       change atomic_update(:published_at, expr(fragment("now()")))
     end
+
+    update :tickets do
+      require_atomic? false
+      argument :types, {:array, :map}, allow_nil?: false
+      change manage_relationship(:types, :ticket_types, type: :direct_control)
+    end
+
+    update :add_ticket_type do
+      require_atomic? false
+      argument :type, :map, allow_nil?: false
+      change manage_relationship(:type, :ticket_types, type: :create)
+    end
   end
 
   attributes do
@@ -64,6 +76,7 @@ defmodule Gits.Hosts.Event do
     belongs_to :payout_account, PayoutAccount
 
     has_one :details, EventDetails
+    has_many :ticket_types, TicketType
   end
 
   calculations do

@@ -1,7 +1,7 @@
 <% navigation_items = [
   %{
-    label: "Overview",
-    current: @live_action == :overview,
+    label: "Tickets",
+    current: @live_action == :tickets,
     href: ~p"/hosts/#{@host_handle}/events/event_public_id/"
   }
 ] %>
@@ -67,9 +67,9 @@
             Routes.host_edit_event_path(@socket, :details, @host_handle, @event_public_id)
           )
         }
-        class="flex size-9 shrink-0 items-center justify-center gap-2 rounded-lg border"
+        class="flex size-9 shrink-0 items-center justify-center gap-2 rounded-lg"
       >
-        <.icon name="hero-pencil-square" class="size-5" />
+        <.icon name="i-lucide-square-pen" class="text-sm" />
         <span class="sr-only">Edit</span>
       </button>
       <button
@@ -81,14 +81,14 @@
           )
           |> show_modal("archive-event")
         }
-        class="group flex size-9 shrink-0 items-center justify-center gap-2 rounded-lg border"
+        class="group flex size-9 shrink-0 items-center justify-center gap-2 rounded-lg"
       >
-        <.icon name="hero-trash" class="size-5 group-hover:text-red-600" />
+        <.icon name="i-lucide-trash" class="size-5 group-hover:text-red-600" />
         <span class="sr-only">Archive</span>
       </button>
     </div>
   </div>
-  <div class="grow">
+  <div class="grow space-y-4">
     <div class="flex items-center gap-8 border-b-2 border-zinc-100">
       <!-- <span class="text-sm text-zinc-400 p-2">Jump To:</span> -->
       <.link
@@ -101,6 +101,7 @@
         <%= i.label %>
       </.link>
     </div>
+    <.tickets :if={@live_action == :tickets} />
   </div>
 </div>
 <.modal

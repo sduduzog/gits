@@ -13,12 +13,7 @@ defmodule Gits.Hosts.EventDetails do
   end
 
   actions do
-    defaults [:read, :destroy, update: :*]
-
-    create :create do
-      primary? true
-      accept :*
-    end
+    defaults [:read, :destroy, update: :*, create: :*]
   end
 
   attributes do

@@ -3,7 +3,13 @@ defmodule Gits.Hosts.TicketType do
 
   use Ash.Resource,
     domain: Gits.Hosts,
+    data_layer: AshPostgres.DataLayer,
     extensions: [AshArchival.Resource]
+
+  postgres do
+    table "ticket_types"
+    repo Gits.Repo
+  end
 
   actions do
     defaults [:read, :destroy, create: :*, update: :*]
@@ -11,8 +17,7 @@ defmodule Gits.Hosts.TicketType do
 
   attributes do
     uuid_primary_key :id
-    attribute :name, :string, allow_nil?: false
-    attribute :quantity, :string, allow_nil?: false
+    attribute :name, :string, public?: true, allow_nil?: false
 
     create_timestamp :created_at
     update_timestamp :updated_at
