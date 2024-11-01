@@ -5,7 +5,11 @@ defmodule GitsWeb.StorefrontLive.EventListing do
   def mount(params, _session, socket) do
     Event.get_by_public_id_for_listing(params["public_id"])
     |> case do
-      {:ok, event} -> socket |> assign(:event_name, event.name)
+      {:ok, event} ->
+        socket
+        |> assign(:event_id, event.id)
+        |> assign(:event_public_id, params["public_id"])
+        |> assign(:event_name, event.name)
     end
     |> ok()
   end

@@ -31,9 +31,9 @@ defmodule GitsWeb.CoreComponents do
       case signed_in do
         true ->
           [
-            {"Tickets", "0", "/my/tickets"},
-            {"Orders", nil, "/my/orders"},
-            {"Profile", nil, "/my/profile"},
+            # {"Tickets", "0", "/my/tickets"},
+            # {"Orders", nil, "/my/orders"},
+            # {"Profile", nil, "/my/profile"},
             {"Sign out", nil, "/sign-out"}
           ]
 

@@ -106,6 +106,7 @@ defmodule GitsWeb.Router do
     live_session :events_authentication_optional,
       on_mount: {GitsWeb.LiveUserAuth, :live_user_optional} do
       live "/", StorefrontLive.EventListing, :index
+      live "/order", StorefrontLive.EventListing, :order
     end
   end
 

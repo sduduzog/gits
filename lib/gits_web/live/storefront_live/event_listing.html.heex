@@ -7,7 +7,7 @@
 
   <div class="lg:sticky bg-white p-2 lg:top-20">
     <div class="grid gap-4">
-      <div class="flex items-center gap-4">
+      <div :if={false} class="flex items-center gap-4">
         <span class="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">
           You're going
         </span>
@@ -20,19 +20,21 @@
 
       <h1 class="text-2xl font-semibold"><%= @event_name %></h1>
       <div class="space-y-2">
-        <div class="text-lg font-medium">
+        <div :if={false} class="text-lg font-medium">
           <span>R 50.00</span>
           <span>&dash;</span>
           <span>R 50.00</span>
         </div>
         <button
-          phx-click={JS.navigate(~p"/events/test/order/order_id", replace: true)}
+          phx-click={
+            JS.patch(~p"/events/#{@event_public_id}/order") |> show_modal("order-tickets")
+          }
           class="w-full rounded-lg bg-zinc-950 p-4 text-zinc-50"
         >
           <span class="font-semibold">Get tickets</span>
         </button>
       </div>
-      <div class="grid gap-4">
+      <div :if={false} class="grid gap-4">
         <div class="flex items-start gap-2">
           <.icon name="hero-clock" class="size-5" />
           <div class="grid text-zinc-700">
@@ -86,7 +88,7 @@
   </div>
   <div class="grid gap-2 p-2">
     <h3 class="text-lg font-medium">About this event</h3>
-    <div class="space-y-2 text-zinc-700">
+    <div :if={false} class="space-y-2 text-zinc-700">
       <p>
         Lorem ipsum dolor sit, amet consectetur adipisicing elit. Assumenda rem omnis vero, ea adipisci nulla praesentium illo magni sequi libero totam delectus voluptatum eaque repellendus soluta dicta incidunt, laudantium veniam!
       </p>
@@ -94,3 +96,16 @@
   </div>
 </div>
 <.footer />
+
+<.modal
+  id="order-tickets"
+  show={@live_action == :order}
+  on_cancel={JS.patch(Routes.storefront_event_listing_path(@socket, :index, @event_public_id))}
+>
+  <.live_component
+    :if={@live_action == :order}
+    id="order-component"
+    module={GitsWeb.StorefrontLive.OrderComponent}
+    event_id={@event_id}
+  />
+</.modal>

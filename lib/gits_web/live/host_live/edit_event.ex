@@ -86,7 +86,7 @@ defmodule GitsWeb.HostLive.EditEvent do
     |> noreply()
   end
 
-  def handle_event("continue", unsigned_params, socket) do
+  def handle_event("details", unsigned_params, socket) do
     socket.assigns.form
     |> case do
       %{type: :update} = form ->
