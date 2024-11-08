@@ -1,8 +1,9 @@
-defmodule Gits.Hosts.EventSchedule do
-  alias Gits.Hosts.{Event, Venue}
+defmodule Gits.Storefront.EventSchedule do
+  alias Gits.Storefront.{Event}
+  alias Gits.Hosting.{Venue}
 
   use Ash.Resource,
-    domain: Gits.Hosts,
+    domain: Gits.Storefront,
     extensions: [AshArchival.Resource]
 
   actions do

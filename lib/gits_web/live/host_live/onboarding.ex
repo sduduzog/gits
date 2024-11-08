@@ -1,6 +1,6 @@
 defmodule GitsWeb.HostLive.Onboarding do
   require Ash.Query
-  alias Gits.Hosts.Host
+  alias Gits.Hosting.Host
   alias AshPhoenix.Form
 
   use GitsWeb, :live_view

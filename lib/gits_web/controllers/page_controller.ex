@@ -3,7 +3,7 @@ defmodule GitsWeb.PageController do
 
   require Ash.Query
   alias Gits.Accounts.User
-  alias Gits.Hosts.Host
+  alias Gits.Hosting.Host
   alias Gits.Bucket
   alias Gits.Dashboard.Member
   alias Gits.Documentation

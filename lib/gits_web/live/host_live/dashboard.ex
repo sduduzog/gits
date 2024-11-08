@@ -1,5 +1,5 @@
 defmodule GitsWeb.HostLive.Dashboard do
-  alias Gits.Hosts.Host
+  alias Gits.Hosting.Host
   use GitsWeb, :host_live_view
 
   require Ash.Query

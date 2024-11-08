@@ -18,7 +18,7 @@
         </div>
       </div>
 
-      <h1 class="text-2xl font-semibold"><%= @event_name %></h1>
+      <h1 class="text-2xl font-semibold"><%= @event.name %></h1>
       <div class="space-y-2">
         <div :if={false} class="text-lg font-medium">
           <span>R 50.00</span>
@@ -27,7 +27,7 @@
         </div>
         <button
           phx-click={
-            JS.patch(~p"/events/#{@event_public_id}/order") |> show_modal("order-tickets")
+            JS.patch(~p"/events/#{@event.public_id}/order") |> show_modal("order-tickets")
           }
           class="w-full rounded-lg bg-zinc-950 p-4 text-zinc-50"
         >
@@ -100,12 +100,12 @@
 <.modal
   id="order-tickets"
   show={@live_action == :order}
-  on_cancel={JS.patch(Routes.storefront_event_listing_path(@socket, :index, @event_public_id))}
+  on_cancel={JS.patch(Routes.storefront_event_listing_path(@socket, :index, @event.public_id))}
 >
   <.live_component
     :if={@live_action == :order}
     id="order-component"
     module={GitsWeb.StorefrontLive.OrderComponent}
-    event_id={@event_id}
+    event_id={@event.public_id}
   />
 </.modal>

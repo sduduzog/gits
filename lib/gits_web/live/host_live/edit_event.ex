@@ -1,6 +1,5 @@
 defmodule GitsWeb.HostLive.EditEvent do
-  alias Gits.Hosts.TicketType
-  alias Gits.Hosts.Event
+  alias Gits.Storefront.{Event, TicketType}
   alias AshPhoenix.Form
   require Ash.Query
   use GitsWeb, :host_live_view

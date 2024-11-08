@@ -1,14 +1,17 @@
-defmodule Gits.Hosts.PayoutAccount do
-  alias Gits.Hosts.Host
+defmodule Gits.Hosting.Role do
+  alias Gits.Hosting.{Host, RoleType}
+
+  alias Gits.Accounts
+  alias Gits.Accounts.User
 
   use Ash.Resource,
-    domain: Gits.Hosts,
+    domain: Gits.Hosting,
     data_layer: AshPostgres.DataLayer,
     extensions: [AshArchival.Resource]
 
   postgres do
-    table "payout_accounts"
     repo Gits.Repo
+    table "host_roles"
   end
 
   actions do
@@ -17,16 +20,20 @@ defmodule Gits.Hosts.PayoutAccount do
 
   attributes do
     uuid_primary_key :id
-    attribute :business_name, :string, allow_nil?: false
-    attribute :account_number, :string, allow_nil?: false
-    attribute :settlement_bank, :string, allow_nil?: false
-    attribute :percentage_charge, :decimal, allow_nil?: false, default: 1.1
+    attribute :name, :string, allow_nil?: false
+    attribute :slug, :string, allow_nil?: false
+
+    attribute :type, RoleType
 
     create_timestamp :created_at
     update_timestamp :updated_at
   end
 
   relationships do
+    belongs_to :user, User do
+      domain Accounts
+    end
+
     belongs_to :host, Host
   end
 end

@@ -1,9 +1,9 @@
-defmodule Gits.Hosts.EventDetails do
+defmodule Gits.Storefront.EventDetails do
   require Ash.Resource.Change.Builtins
-  alias Gits.Hosts.Event
+  alias Gits.Storefront.Event
 
   use Ash.Resource,
-    domain: Gits.Hosts,
+    domain: Gits.Storefront,
     data_layer: AshPostgres.DataLayer,
     extensions: [AshArchival.Resource]
 

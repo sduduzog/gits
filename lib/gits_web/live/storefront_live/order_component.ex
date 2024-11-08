@@ -9,7 +9,6 @@ defmodule GitsWeb.StorefrontLive.OrderComponent do
   end
 
   def update(%{event_id: event_id}, socket) do
-    event_id |> IO.inspect()
     socket |> ok()
   end
 
@@ -69,8 +68,15 @@ defmodule GitsWeb.StorefrontLive.OrderComponent do
 
   def render(%{section: :tickets_summary} = assigns) do
     ~H"""
-    <div class="grid gap-4 lg:gap-8">
-      <h3 class="text-lg font-semibold">Tickets Summary</h3>
+    <div class="grid gap-4 items-start lg:grid-cols-2 lg:gap-8">
+      <h3 class="text-lg font-semibold lg:col-span-full">Tickets Summary</h3>
+      <div class="flex gap-4 border rounded-xl p-2">
+        <div class="size-10 bg-zinc-100 rounded-full"></div>
+        <div class="grid text-sm font-medium">
+          <span>John Doe</span>
+          <span class="text-zinc-500">john.doe@bar.com</span>
+        </div>
+      </div>
       <div class="grid gap-4">
         <div
           :for={
@@ -82,8 +88,6 @@ defmodule GitsWeb.StorefrontLive.OrderComponent do
           <span class="text-zinc-500"><%= ticket_type %> &times; 2</span>
           <span class="font-medium">R 50.00</span>
         </div>
-      </div>
-      <div class="grid gap-4">
         <div
           :for={
             ticket_type <-
@@ -91,15 +95,26 @@ defmodule GitsWeb.StorefrontLive.OrderComponent do
           }
           class="text-sm flex justify-between"
         >
-          <span class="font-medium"><%= ticket_type %></span>
-          <span class="font-medium">R 100.00</span>
+          <span class="font-semibold"><%= ticket_type %></span>
+          <span class="font-semibold">R 100.00</span>
         </div>
       </div>
 
-      <div class="flex items-center justify-end gap-4">
-        <span class="text-sm font-medium text-zinc-500">2 tickets for R 50.00</span>
-        <button class="rounded-lg bg-zinc-950 px-4 py-2 text-white" phx-click="package_tickets">
-          <span class="text-sm font-semibold">Continue</span>
+      <form class="grow flex lg:hidden flex-wrap lg:col-start-2">
+        <label class="grid gap-1 grow">
+          <span class="text-sm">Email address</span>
+          <input type="email" class="py-2 px-3 text-sm rounded-lg grow" />
+        </label>
+        <span></span>
+      </form>
+
+      <div class="flex items-center flex-wrap justify-end gap-x-4 gap-y-2 lg:col-span-full">
+        <!-- <span class="text-sm font-medium text-zinc-500"></span> -->
+        <button
+          class="rounded-lg border border-transparent bg-zinc-950 px-4 py-2 text-white"
+          phx-click="package_tickets"
+        >
+          <span class="text-sm font-semibold">Proceed to Payment</span>
         </button>
       </div>
     </div>

@@ -1,10 +1,10 @@
-defmodule Gits.Hosts.Host do
-  alias Gits.Hosts.Role
+defmodule Gits.Hosting.Host do
+  alias Gits.Hosting.Role
   alias Gits.Accounts
   alias Gits.Accounts.User
 
   use Ash.Resource,
-    domain: Gits.Hosts,
+    domain: Gits.Hosting,
     data_layer: AshPostgres.DataLayer,
     extensions: [AshArchival.Resource]
 

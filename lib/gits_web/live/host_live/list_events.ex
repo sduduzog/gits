@@ -1,6 +1,6 @@
 defmodule GitsWeb.HostLive.ListEvents do
-  alias Gits.Hosts.Event
-  alias Gits.Hosts.Host
+  alias Gits.Hosting.Event
+  alias Gits.Hosting.Host
   require Ash.Query
   use GitsWeb, :host_live_view
 

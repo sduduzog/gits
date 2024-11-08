@@ -1,8 +1,9 @@
-defmodule Gits.Hosts.Event do
-  alias Gits.Hosts.{EventDetails, Host, PayoutAccount, TicketType}
+defmodule Gits.Storefront.Event do
+  alias Gits.Storefront.{EventDetails, PayoutAccount, TicketType}
+  alias Gits.Hosting.{Host, PayoutAccount}
 
   use Ash.Resource,
-    domain: Gits.Hosts,
+    domain: Gits.Storefront,
     data_layer: AshPostgres.DataLayer,
     extensions: [AshArchival.Resource]
 

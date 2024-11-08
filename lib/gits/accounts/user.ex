@@ -1,6 +1,6 @@
 defmodule Gits.Accounts.User do
-  alias Gits.Hosts
-  alias Gits.Hosts.Role
+  alias Gits.Hosting
+  alias Gits.Hosting.Role
   alias Gits.Accounts.{Token}
   alias __MODULE__
 
@@ -96,7 +96,7 @@ defmodule Gits.Accounts.User do
 
   relationships do
     has_many :roles, Role do
-      domain Hosts
+      domain Hosting
     end
   end
 

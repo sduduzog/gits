@@ -1,8 +1,8 @@
-defmodule Gits.Hosts.Venue do
-  alias Gits.Hosts.Host
+defmodule Gits.Storefront.EventMedia do
+  alias Gits.Storefront.Event
 
   use Ash.Resource,
-    domain: Gits.Hosts,
+    domain: Gits.Storefront,
     extensions: [AshArchival.Resource]
 
   actions do
@@ -11,13 +11,13 @@ defmodule Gits.Hosts.Venue do
 
   attributes do
     uuid_primary_key :id
-    attribute :name, :string, allow_nil?: false
+    attribute :feature_graphic_url, :string, allow_nil?: false
 
     create_timestamp :created_at
     update_timestamp :updated_at
   end
 
   relationships do
-    belongs_to :host, Host
+    belongs_to :event, Event
   end
 end

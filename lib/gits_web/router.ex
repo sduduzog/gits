@@ -13,6 +13,16 @@ defmodule GitsWeb.Router do
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug :load_from_session
+    plug :ensure_viewer_id
+  end
+
+  defp ensure_viewer_id(conn, _opts) do
+    if get_session(conn, :viewer_id) do
+      conn
+    else
+      viewer_id = :crypto.strong_rand_bytes(20) |> Base.encode64()
+      put_session(conn, :viewer_id, viewer_id)
+    end
   end
 
   pipeline :office do
