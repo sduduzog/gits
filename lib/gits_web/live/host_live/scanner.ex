@@ -12,10 +12,7 @@ defmodule GitsWeb.HostLive.Scanner do
       </div>
       <div>
         <div class="p-2">
-          <button
-            phx-click={JS.navigate(~p"/hosts/test/events/event_id/attendees", replace: true)}
-            class="inline-flex h-9 items-center rounded-lg border px-4 py-2"
-          >
+          <button class="inline-flex h-9 items-center rounded-lg border px-4 py-2">
             <.icon name="hero-chevron-left-mini" />
             <span class="text-sm font-semibold">Back</span>
           </button>
@@ -48,7 +45,7 @@ defmodule GitsWeb.HostLive.Scanner do
     socket |> noreply()
   end
 
-  def handle_event("camera_choice", %{"id" => id}, socket) do
-    socket |> push_patch(to: ~p"/hosts/test/events/event_id/attendees/scanner/#{id}") |> noreply()
-  end
+  # def handle_event("camera_choice", %{"id" => id}, socket) do
+  #   socket |> push_patch(to: ~p"/hosts/test/events/event_id/attendees/scanner/#{id}") |> noreply()
+  # end
 end

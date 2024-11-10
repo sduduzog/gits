@@ -23,7 +23,7 @@ defmodule GitsWeb.AuthLive do
   def render(assigns) do
     ~H"""
     <%= if @request_sent do %>
-      <h1 class="font-semibold text-5xl">Check your email!</h1>
+      <h1 class="font-semibold text-3xl">Check your email!</h1>
       <p class="text-zinc-500 mt-4">
         A magic link has been sent to <%= @request_sent %>. Check your spam/junk folder, just in case.
       </p>
@@ -32,7 +32,7 @@ defmodule GitsWeb.AuthLive do
       </.link>
     <% else %>
       <.form :let={f} for={@form} class="grid" phx-submit="submit" method="post">
-        <h1 class="font-semibold text-5xl">Sign in</h1>
+        <h1 class="font-semibold text-3xl">Sign in</h1>
         <p class="text-zinc-500 mt-4">Enter your email address to receive a magic link</p>
         <label class="grid gap-1 mt-8 text-sm">
           <span>Email</span>

@@ -1,5 +1,5 @@
 defmodule Gits.Storefront.Event do
-  alias Gits.Storefront.{EventDetails, PayoutAccount, TicketType}
+  alias Gits.Storefront.{PayoutAccount, TicketType}
   alias Gits.Hosting.{Host, PayoutAccount}
 
   use Ash.Resource,
@@ -27,16 +27,15 @@ defmodule Gits.Storefront.Event do
 
     create :create do
       primary? true
-      accept [:host_id]
-      argument :details, :map, allow_nil?: false
-      change manage_relationship(:details, type: :create)
+      accept [:name, :visibility]
+
+      argument :host, :map
+      change manage_relationship(:host, type: :append)
       change set_attribute(:public_id, &Nanoid.generate/0)
     end
 
     update :details do
-      require_atomic? false
-      argument :details, :map, allow_nil?: false
-      change manage_relationship(:details, type: :direct_control)
+      accept :*
     end
 
     update :publish do
@@ -67,7 +66,11 @@ defmodule Gits.Storefront.Event do
 
     attribute :public_id, :string, allow_nil?: false
 
-    attribute :payout_schedule, :atom, constraints: [one_of: [:auto, :manual]]
+    attribute :name, :string, public?: true, allow_nil?: false
+    # attribute :description, :string, public?: true
+    attribute :visibility, :atom, public?: true, constraints: [one_of: [:private, :public]]
+
+    # attribute :payout_schedule, :atom, constraints: [one_of: [:auto, :manual]]
     attribute :published_at, :utc_datetime, public?: true
 
     create_timestamp :created_at
@@ -77,18 +80,14 @@ defmodule Gits.Storefront.Event do
   relationships do
     belongs_to :host, Host do
       allow_nil? false
-      public? true
     end
 
     belongs_to :payout_account, PayoutAccount
 
-    has_one :details, EventDetails
     has_many :ticket_types, TicketType
   end
 
   calculations do
-    calculate :name, :string, expr(details.name)
-    calculate :ready_to_publish, :boolean, expr(false)
     calculate :published?, :boolean, expr(not is_nil(published_at))
   end
 end

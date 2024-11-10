@@ -1,17 +1,17 @@
 <.flash_group flash={@flash} />
-
-<div class="grid min-h-dvh grid-rows-[auto_1fr] gap-2 bg-white p-2">
+<div class="grid min-h-[calc(100dvh-10rem)] items-start max-w-screen-xl mx-auto grid-rows-[auto_1fr] gap-8 bg-white px-2 pt-12 pb-20">
   <header class="flex items-center w-full divide-x">
     <div class="flex pr-2">
-      <button phx-click="close" class="inline-flex size-9 items-center justify-center rounded-lg">
-        <.icon name="hero-x-mark" />
+      <button
+        phx-click="close"
+        class="inline-flex border size-9 items-center justify-center rounded-lg"
+      >
+        <.icon name="i-lucide-x" />
       </button>
     </div>
-    <div class="px-4">
-      <h2 class="font-medium text-zinc-600"><%= assigns[:page_title] || "Untitled" %></h2>
-    </div>
   </header>
-  <main class="bg-white max-w-screen-lg w-full grid py-16 mx-auto">
+  <main class="bg-white gap-8 w-full grid">
     <%= @inner_content %>
   </main>
 </div>
+<.footer />

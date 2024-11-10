@@ -1,7 +1,6 @@
 defmodule GitsWeb.SearchHTML do
   use GitsWeb, :html
   require Decimal
-  alias Gits.Storefront.Event
 
   def index(assigns) do
     ~H"""
@@ -56,13 +55,5 @@ defmodule GitsWeb.SearchHTML do
 
   def get_listing_image(account_id, event_id) do
     Gits.Bucket.get_listing_image_path(account_id, event_id)
-  end
-
-  defp resolve_min_price_label(price) do
-    if Decimal.eq?(price, 0) do
-      "FREE"
-    else
-      "R#{price |> Gits.Currency.format()}"
-    end
   end
 end

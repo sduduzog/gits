@@ -51,8 +51,6 @@ defmodule GitsWeb.PageController do
     |> Ash.read()
     |> case do
       {:ok, [%Host{handle: handle}]} ->
-        IO.puts("one host")
-
         conn
         |> redirect(to: Routes.host_dashboard_path(conn, :overview, handle))
 
@@ -116,25 +114,5 @@ defmodule GitsWeb.PageController do
     {:ok, datetime} = NaiveDateTime.local_now() |> DateTime.from_naive(time_zone)
 
     conn |> json(%{datetime: datetime})
-  end
-
-  def beta(conn, %{"enable" => "true"}) do
-    if conn.assigns.current_user do
-      FunWithFlags.enable(:beta, for_actor: conn.assigns.current_user)
-    end
-
-    conn |> render(:beta)
-  end
-
-  def beta(conn, %{"enable" => "false"}) do
-    if conn.assigns.current_user do
-      FunWithFlags.disable(:beta, for_actor: conn.assigns.current_user)
-    end
-
-    conn |> render(:beta)
-  end
-
-  def beta(conn, _) do
-    conn |> render(:beta)
   end
 end

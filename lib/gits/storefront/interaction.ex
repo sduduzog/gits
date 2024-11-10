@@ -10,7 +10,10 @@ defmodule Gits.Storefront.Interaction do
 
   attributes do
     uuid_primary_key :id
-    attribute :type, :atom, public?: true, constraints: [one_of: [:view_event]]
+
+    attribute :type, :atom,
+      public?: true,
+      constraints: [one_of: [:view_event]]
 
     create_timestamp :created_at
   end

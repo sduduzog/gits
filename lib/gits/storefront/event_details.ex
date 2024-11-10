@@ -19,7 +19,7 @@ defmodule Gits.Storefront.EventDetails do
   attributes do
     uuid_primary_key :id
     attribute :name, :string, public?: true, allow_nil?: false
-    attribute :description, :string, public?: true, allow_nil?: false
+    attribute :description, :string, public?: true
     attribute :visibility, :atom, public?: true, constraints: [one_of: [:private, :public]]
 
     create_timestamp :created_at

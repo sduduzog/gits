@@ -3,33 +3,21 @@
   phx-update="ignore"
   id="create-event-form"
   for={@form}
-  class="grid grow grid-cols-2 gap-6 px-2"
-  phx-submit="continue"
+  class="grid gap-6"
+  phx-submit="details"
   phx-change="validate"
   phx-auto-recover="validate"
 >
-  <.inputs_for :let={df} field={f[:details]}>
+  <div class="grid max-w-screen-sm grid-cols-2 gap-6">
     <label class="col-span-full grid gap-1">
       <span class="text-sm font-medium">What is the name of your event?</span>
       <input
         type="text"
-        name={df[:name].name}
-        value={df[:name].value}
+        name={f[:name].name}
+        value={f[:name].value}
         class="w-full rounded-lg border-zinc-300 px-3 py-2 text-sm"
       />
     </label>
-
-    <div class="grid gap-1 col-span-full">
-      <span class="text-sm font-medium">Give a brief event description</span>
-      <div
-        id="quill-container"
-        class="col-span-full h-64"
-        data-name={df[:description].name}
-        data-contents={df[:description].value}
-        phx-hook="QuillEditor"
-      >
-      </div>
-    </div>
 
     <fieldset class="col-span-full grid gap-4 lg:grid-cols-2 lg:gap-6">
       <legend class="col-span-full inline-flex text-sm font-medium">
@@ -38,10 +26,10 @@
 
       <label class="mt-1 flex gap-2 rounded-lg border px-3 py-2 has-[:checked]:ring-2 has-[:checked]:ring-zinc-600">
         <input
-          name={df[:visibility].name}
+          name={f[:visibility].name}
           value={:private}
           type="radio"
-          checked={df[:visibility].value == :private or is_nil(df[:visibility].value)}
+          checked={f[:visibility].value == :private or is_nil(f[:visibility].value)}
           class="peer sr-only"
         />
         <div class="grid grow gap-1">
@@ -58,9 +46,9 @@
 
       <label class="mt-1 flex gap-2 rounded-lg border px-3 py-2 has-[:disabled]:opacity-60 has-[:checked]:ring-2 has-[:checked]:ring-zinc-600">
         <input
-          name={df[:visibility].name}
+          name={f[:visibility].name}
           type="radio"
-          checked={df[:visibility].value == :public}
+          checked={f[:visibility].value == :public}
           value={:public}
           class="peer sr-only"
         />
@@ -76,12 +64,13 @@
         />
       </label>
     </fieldset>
-  </.inputs_for>
-  <div class="px-2 py-4 pb-8 flex justify-end col-span-full">
-    <button class="h-9 flex px-4 bg-zinc-950 text-zinc-50 items-center rounded-lg">
-      <span class="font-semibold text-sm">
-        <%= if(@event_id, do: "Save", else: "Create event") %>
+  </div>
+  <div class="col-span-full flex gap-4 py-4 pb-8">
+    <button class="flex h-9 items-center rounded-lg bg-zinc-950 px-4 text-zinc-50">
+      <span class="text-sm font-semibold">
+        Save
       </span>
     </button>
+    <div role="none" class="grow"></div>
   </div>
 </.form>

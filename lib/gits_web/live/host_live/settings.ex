@@ -56,7 +56,7 @@ defmodule GitsWeb.HostLive.Settings do
         <.link
           :for={
             item <- [
-              %{label: "General", current: @live_action == :general, href: ~p"/hosts/test/settings"},
+              %{label: "General", current: @live_action == :general, href: ~p"/hosts/foo"},
               %{
                 label: "Payouts",
                 current: @live_action == :payouts,

@@ -22,14 +22,13 @@ defmodule GitsWeb.HostLive.ViewEvent do
   def handle_params(%{"public_id" => public_id} = unsigned_params, _uri, socket) do
     Event
     |> Ash.Query.filter(public_id == ^public_id)
-    |> Ash.Query.load([:name, :details, :published?])
+    |> Ash.Query.load([:name, :published?])
     |> Ash.read_one()
     |> case do
       {:ok, event} ->
         socket
         |> assign(:event, event)
         |> assign(:event_id, event.id)
-        |> assign(:event_public_id, public_id)
         |> assign(:event_name, event.name)
         |> assign(:event_published?, event.published?)
         |> assign(:page_title, "Dashboard - #{event.name}")

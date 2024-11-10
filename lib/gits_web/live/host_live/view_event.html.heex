@@ -1,36 +1,48 @@
 <% navigation_items = [
-  %{
-    label: "Tickets",
-    current: @live_action == :tickets,
-    href: ~p"/hosts/#{@host_handle}/events/event_public_id/"
-  }
+  # %{
+  #   label: "Tickets",
+  #   current: @live_action == :tickets,
+  #   href: ~p"/hosts/#{@host_handle}/events/event_public_id/"
+  # }
 ] %>
 
-<div :if={@event_public_id} class="flex items-center gap-2 p-2">
-  <button onclick="history.back()" class="flex h-9 items-center gap-2 rounded-lg px-2">
-    <.icon name="hero-chevron-left" class="size-5" />
-    <span class="hidden text-sm font-medium lg:inline">Back</span>
-  </button>
-
-  <div class="flex grow items-center gap-2 truncate border-l pl-4 text-sm font-medium">
-    <span class="truncate text-zinc-500">Events</span>
-    <.icon name="hero-slash-micro" class="shrink-0" />
-    <span class="truncate"><%= @event_name %></span>
+<div class="flex items-center gap-2 p-2 lg:px-0">
+  <div class="flex w-full grow items-center gap-1 text-sm">
+    <div class="flex h-9 max-w-48 items-center gap-2 rounded-lg px-1 py-0.5 hover:bg-zinc-100">
+      <div class="flex size-8 shrink-0 items-center justify-center rounded-full bg-zinc-500">
+        <span class="font-medium text-white ">
+          <%= @host.name
+          |> String.split()
+          |> Enum.map(&String.first(&1))
+          |> Enum.join()
+          |> String.upcase() %>
+        </span>
+      </div>
+      <span :if={false} class="font-semibold hidden lg:inline truncate"><%= @host.name %></span>
+      <span class="hidden truncate font-semibold lg:inline">Treehouse Inc</span>
+      <.icon name="i-lucide-chevrons-up-down" class="size-4 shrink-0 text-zinc-400" />
+    </div>
+    <span class="text-xs font-semibold text-zinc-400">/</span>
+    <.link
+      navigate={~p"/hosts/#{@host.handle}/events"}
+      class="flex h-9 items-center rounded-lg px-1 text-sm font-medium truncate text-zinc-500 hover:bg-zinc-100 hover:text-zinc-950"
+    >
+      <span>Events</span>
+    </.link>
+    <span class="text-xs font-semibold text-zinc-400">/</span>
+    <div class="flex h-9 items-center truncate rounded-lg px-1 text-sm font-medium">
+      <span class="truncate"><%= @event_name %></span>
+    </div>
   </div>
-
-  <button class="flex size-9 shrink-0 items-center justify-center gap-2 rounded-lg lg:w-auto lg:px-4">
-    <.icon name="hero-megaphone" class="size-5" />
-    <span class="hidden text-sm lg:inline">Help</span>
-  </button>
 </div>
 
 <div class="flex flex-col gap-4 p-2 lg:flex-row">
   <div class="grid w-full gap-4 rounded-xl border p-4 lg:max-w-96">
-    <div class="flex justify-end">
+    <div :if={false} class="flex justify-end">
       <.link
         target="_blank"
         class="flex rounded-lg"
-        navigate={Routes.storefront_event_listing_path(@socket, :index, @event_public_id)}
+        navigate={Routes.storefront_event_listing_path(@socket, :index, @event.public_id)}
       >
         <span class="sr-only">Open url</span>
         <.icon name="hero-link-mini" />
@@ -49,8 +61,8 @@
         :if={not @event.published?}
         phx-click={
           JS.patch(
-            Routes.host_view_event_path(@socket, @live_action, @host_handle, @event_public_id) <>
-              "?publish=#{@event_public_id}",
+            Routes.host_view_event_path(@socket, @live_action, @host_handle, @event.public_id) <>
+              "?publish=#{@event.public_id}",
             replace: true
           )
           |> show_modal("publish-event")
@@ -64,7 +76,7 @@
       <button
         phx-click={
           JS.navigate(
-            Routes.host_edit_event_path(@socket, :details, @host_handle, @event_public_id)
+            Routes.host_edit_event_path(@socket, :details, @host_handle, @event.public_id)
           )
         }
         class="flex size-9 shrink-0 items-center justify-center gap-2 rounded-lg"
@@ -75,8 +87,8 @@
       <button
         phx-click={
           JS.patch(
-            Routes.host_view_event_path(@socket, @live_action, @host_handle, @event_public_id) <>
-              "?archive=#{@event_public_id}",
+            Routes.host_view_event_path(@socket, @live_action, @host_handle, @event.public_id) <>
+              "?archive=#{@event.public_id}",
             replace: true
           )
           |> show_modal("archive-event")
@@ -107,7 +119,7 @@
   id="publish-event"
   show={@show_publish_modal}
   on_cancel={
-    JS.patch(Routes.host_view_event_path(@socket, @live_action, @host_handle, @event_public_id),
+    JS.patch(Routes.host_view_event_path(@socket, @live_action, @host_handle, @event.public_id),
       replace: true
     )
   }
@@ -127,7 +139,7 @@
       <button
         phx-click={
           JS.patch(
-            Routes.host_view_event_path(@socket, @live_action, @host_handle, @event_public_id),
+            Routes.host_view_event_path(@socket, @live_action, @host_handle, @event.public_id),
             replace: true
           )
           |> hide_modal("publish-event")
@@ -150,7 +162,7 @@
         class="rounded-lg px-4 py-2"
         phx-click={
           JS.patch(
-            Routes.host_view_event_path(@socket, @live_action, @host_handle, @event_public_id),
+            Routes.host_view_event_path(@socket, @live_action, @host_handle, @event.public_id),
             replace: true
           )
           |> hide_modal("publish-event")
@@ -169,7 +181,7 @@
   id="archive-event"
   show={@show_archive_modal}
   on_cancel={
-    JS.patch(Routes.host_view_event_path(@socket, @live_action, @host_handle, @event_public_id),
+    JS.patch(Routes.host_view_event_path(@socket, @live_action, @host_handle, @event.public_id),
       replace: true
     )
   }
@@ -187,7 +199,7 @@
         class="rounded-lg px-4 py-2"
         phx-click={
           JS.patch(
-            Routes.host_view_event_path(@socket, @live_action, @host_handle, @event_public_id),
+            Routes.host_view_event_path(@socket, @live_action, @host_handle, @event.public_id),
             replace: true
           )
           |> hide_modal("archive-event")

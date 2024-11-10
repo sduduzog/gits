@@ -8,7 +8,7 @@ defmodule GitsWeb.StorefrontLive.OrderComponent do
     |> ok()
   end
 
-  def update(%{event_id: event_id}, socket) do
+  def update(%{event_id: _event_id}, socket) do
     socket |> ok()
   end
 

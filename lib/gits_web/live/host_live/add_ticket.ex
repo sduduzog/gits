@@ -9,10 +9,7 @@ defmodule GitsWeb.HostLive.AddTicket do
     ~H"""
     <div class="mx-auto grid max-w-screen-sm gap-10">
       <div class="w-full truncate pt-5">
-        <.link
-          navigate={~p"/h/test/events/event-id"}
-          class="inline-flex items-center gap-1 truncate w-full"
-        >
+        <.link class="inline-flex items-center gap-1 truncate w-full">
           <.icon name="hero-chevron-left-mini" class="shrink-0" />
           <span class="text-sm font-medium text-zinc-800">
             The Ultimate Cheese Festival
@@ -76,10 +73,7 @@ defmodule GitsWeb.HostLive.AddTicket do
         </label>
 
         <div class="col-span-full flex justify-end gap-4">
-          <button
-            phx-click={JS.navigate(~p"/h/test/events/event-id")}
-            class="h-9 rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-zinc-50"
-          >
+          <button class="h-9 rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-zinc-50">
             <span>Create Ticket</span>
           </button>
         </div>

@@ -7,21 +7,10 @@ defmodule GitsWeb.AccountController do
 
   alias Gits.Dashboard.Account
 
-  plug :auth_guard
   plug :set_layout
 
   defp set_layout(conn, _) do
     put_layout(conn, html: :dashboard)
-  end
-
-  defp auth_guard(conn, _) do
-    if conn.assigns.current_user do
-      conn
-    else
-      conn
-      |> redirect(to: ~p"/register?return_to=#{conn.request_path <> "?" <> conn.query_string}")
-      |> halt()
-    end
   end
 
   def new(conn, _) do

@@ -24,7 +24,7 @@ defmodule Gits.Hosting.Host do
         allow_nil? false
       end
 
-      change manage_relationship(:owner, type: :append)
+      change manage_relationship(:owner, on_match: :relate)
       change set_attribute(:handle, &Nanoid.generate/0)
     end
   end

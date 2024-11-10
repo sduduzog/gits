@@ -2,7 +2,6 @@ defmodule GitsWeb.AuthPlug do
   use AshAuthentication.Plug, otp_app: :gits
   use GitsWeb, :verified_routes
   import Phoenix.Controller
-  alias Gits.Accounts.User
 
   def handle_success(conn, activity, user, token) do
     activity |> IO.inspect()
@@ -27,10 +26,7 @@ defmodule GitsWeb.AuthPlug do
     end
   end
 
-  def handle_failure(conn, activity, reason) do
-    activity |> IO.inspect()
-    reason |> IO.inspect()
-
+  def handle_failure(conn, _activity, _reason) do
     if is_api_request?(conn) do
       conn
       |> send_resp(

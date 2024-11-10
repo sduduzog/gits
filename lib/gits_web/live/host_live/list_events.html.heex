@@ -1,0 +1,82 @@
+<% navigation_items = [
+  %{
+    label: "All",
+    current: @live_action == :all,
+    href: ~p"/hosts/#{@host_handle}/events/all"
+  },
+  %{
+    label: "Published",
+    current: @live_action == :published,
+    href: ~p"/hosts/#{@host_handle}/events"
+  },
+  %{
+    label: "Drafts",
+    current: @live_action == :drafts,
+    href: ~p"/hosts/#{@host_handle}/events/drafts"
+  }
+] %>
+
+<div class="flex items-center gap-2 p-2 lg:px-0">
+  <div class="flex w-full grow items-center gap-1 text-sm">
+    <div class="flex h-9 max-w-48 items-center gap-2 rounded-lg px-1 py-0.5 hover:bg-zinc-100">
+      <div class="flex size-8 shrink-0 items-center justify-center rounded-full bg-zinc-500">
+        <span class="font-medium text-white ">
+          <%= @host.name
+          |> String.split()
+          |> Enum.map(&String.first(&1))
+          |> Enum.join()
+          |> String.upcase() %>
+        </span>
+      </div>
+      <span :if={false} class="font-semibold hidden lg:inline truncate"><%= @host.name %></span>
+      <span class="hidden truncate font-semibold lg:inline">Treehouse Inc</span>
+      <.icon name="i-lucide-chevrons-up-down" class="size-4 shrink-0 text-zinc-400" />
+    </div>
+    <span class="text-xs font-semibold text-zinc-400">/</span>
+    <div class="flex h-9 shrink-0 items-center truncate rounded-lg px-1 text-sm font-medium">
+      <span class="">Events</span>
+    </div>
+  </div>
+</div>
+
+<div class="flex gap-4 items-center p-2">
+  <div class="flex grow gap-8 p-2 lg:p-0">
+    <.link
+      :for={i <- navigation_items}
+      patch={i.href}
+      replace={true}
+      aria-selected={"#{i.current}"}
+      class="rounded-lg text-sm font-medium text-zinc-400 aria-selected:text-zinc-950"
+    >
+      <%= i.label %>
+    </.link>
+  </div>
+  <div>
+    <button
+      phx-click={JS.navigate(~p"/hosts/#{@host.handle}/events/create-new")}
+      class="h-9 gap-1 bg-zinc-950 rounded-lg inline-flex items-center text-white px-4 text-sm"
+    >
+      <.icon name="i-lucide-calendar-plus" />
+      <span class="font-semibold">Create</span>
+    </button>
+  </div>
+</div>
+<div class="divide-y divide-zinc-100 p-2">
+  <div :for={event <- @events} class="flex items-center gap-4 py-4">
+    <div class="aspect-[3/2] h-20 rounded-xl bg-zinc-200"></div>
+    <div class="grid w-full grow gap-1.5">
+      <h2 class="truncate font-semibold">
+        <.link navigate={~p"/hosts/#{@host_handle}/events/#{event.public_id}"}>
+          <%= event.name %>
+        </.link>
+      </h2>
+      <span class="text-sm text-zinc-500">5 Nov 2024, at 4:30 PM</span>
+      <!-- <span class="text-sm text-zinc-500">5/40 tickets sold</span> -->
+    </div>
+    <div class="">
+      <button class="inline-flex size-9 items-center justify-center">
+        <.icon name="hero-ellipsis-vertical-mini" />
+      </button>
+    </div>
+  </div>
+</div>

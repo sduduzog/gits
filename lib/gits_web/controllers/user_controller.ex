@@ -2,25 +2,12 @@ defmodule GitsWeb.UserController do
   use GitsWeb, :controller
   require Ash.Query
 
-  alias Gits.Storefront.TicketInstance
-
   def events(conn, _) do
     conn
     |> render(:events)
   end
 
-  def ticket(conn, params) do
-    user =
-      conn.assigns.current_user
-
-    conn
-    |> render(:ticket)
-  end
-
   def tickets(conn, _) do
-    user =
-      conn.assigns.current_user
-
     conn |> render(:tickets)
   end
 

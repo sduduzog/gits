@@ -57,7 +57,7 @@ defmodule GitsWeb.HostLive.SignUp do
 
   def handle_event("continue", _, socket) do
     socket
-    |> push_navigate(to: ~p"/hosts/test/create-event", replace: true)
+    |> push_navigate(to: ~p"/hosts/test", replace: true)
     |> noreply()
   end
 end
