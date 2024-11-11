@@ -1,5 +1,6 @@
 defmodule GitsWeb.StorefrontLive.EventListing do
-  alias Gits.Storefront.Event
+  alias Gits.Storefront.{Event, Order}
+  alias AshPhoenix.Form
   use GitsWeb, :live_view
 
   def mount(params, _session, socket) do
@@ -8,7 +9,7 @@ defmodule GitsWeb.StorefrontLive.EventListing do
       {:ok, event} ->
         socket
         |> assign(:event, event)
-        |> assign(:form, %{})
+        |> assign(:form, Order |> Form.for_create(:create))
     end
     |> assign(:verified?, false)
     |> assign_new(:remote_ip, fn -> get_connect_info(socket, :peer_data).address end)

@@ -7,4 +7,12 @@ defmodule Gits.Storefront.Order do
     table "orders"
     repo Gits.Repo
   end
+
+  actions do
+    defaults [:read, create: []]
+  end
+
+  attributes do
+    uuid_primary_key :id
+  end
 end
