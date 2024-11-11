@@ -18,7 +18,7 @@ defmodule Gits.Accounts.User.Senders.SendMagicLinkEmail do
 end
 
 defmodule Gits.Accounts.User.Senders.SendMagicLinkEmail.Worker do
-  use Oban.Worker, max_attempts: 1
+  use Oban.Worker, max_attempts: 1, queue: :auth
 
   import Swoosh.Email
 
@@ -40,7 +40,6 @@ defmodule Gits.Accounts.User.Senders.SendMagicLinkEmail.Worker do
     |> put_provider_option(:custom_vars, %{"url" => "/auth/user/magic_link/?token=#{token}"})
     |> put_provider_option(:template_name, "magic-link")
     |> put_provider_option(:template_options, %{version: "initial"})
-    |> IO.inspect()
     |> Gits.Mailer.deliver()
   end
 end

@@ -56,7 +56,7 @@ defmodule GitsWeb.AuthLive do
           </span>
         </button>
 
-        <Turnstile.widget events={[:success]} class="mt-8" />
+        <Turnstile.widget events={[:success]} class="mt-8" appearance="interaction-only" />
       </.form>
     <% end %>
     """

@@ -57,7 +57,7 @@ config :gits, :email, sender: {"GiTS", "localhost"}
 
 config :gits, Oban,
   engine: Oban.Engines.Basic,
-  queues: [default: 1],
+  queues: [default: 1, auth: 1],
   repo: Gits.Repo,
   plugins: [{Oban.Plugins.Pruner, max_age: 60 * 60 * 24 * 7}]
 
