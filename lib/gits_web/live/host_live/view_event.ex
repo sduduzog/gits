@@ -1,21 +1,12 @@
 defmodule GitsWeb.HostLive.ViewEvent do
   alias Gits.Storefront.Event
-  alias Gits.Hosting.Host
   use GitsWeb, :host_live_view
   require Ash.Query
 
   embed_templates "view_event_templates/*"
 
-  def mount(params, _session, socket) do
-    host =
-      Host
-      |> Ash.Query.filter(handle == ^params["handle"])
-      |> Ash.read_first!()
-
+  def mount(_params, _session, socket) do
     socket
-    |> assign(:host_handle, host.handle)
-    |> assign(:host_name, host.name)
-    |> assign(:host_logo, host.logo)
     |> ok()
   end
 
@@ -28,10 +19,8 @@ defmodule GitsWeb.HostLive.ViewEvent do
       {:ok, event} ->
         socket
         |> assign(:event, event)
-        |> assign(:event_id, event.id)
-        |> assign(:event_name, event.name)
         |> assign(:event_published?, event.published?)
-        |> assign(:page_title, "Dashboard - #{event.name}")
+        |> assign(:page_title, "Events / #{event.name}")
     end
     |> show_publish_modal(unsigned_params)
     |> show_archive_modal(unsigned_params)

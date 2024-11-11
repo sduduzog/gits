@@ -3,7 +3,6 @@ defmodule Gits.Storefront do
 
   alias __MODULE__.{
     Event,
-    EventDetails,
     EventMedia,
     EventSchedule,
     Interaction,
@@ -14,7 +13,6 @@ defmodule Gits.Storefront do
   resources do
     resource Order
     resource Event
-    resource EventDetails
     resource EventMedia
     resource EventSchedule
     resource Interaction

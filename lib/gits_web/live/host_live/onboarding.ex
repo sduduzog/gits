@@ -46,21 +46,9 @@ defmodule GitsWeb.HostLive.Onboarding do
           :form,
           Host
           |> Form.for_create(:create, as: "host", actor: user)
-          |> Form.validate(%{"handle" => Nanoid.generate()}, target: ["handle"])
         )
         |> noreply()
     end
-
-    # |> case do
-    #   {:ok, [host]} ->
-    #     socket
-    #     |> push_navigate(to: ~p"/hosts/#{host.handle}/dashboard")
-    #     |> noreply()
-    #
-    #   _ ->
-    #     socket
-    #     |> noreply()
-    # end
   end
 
   def handle_event("close", _unsigned_params, socket) do
@@ -98,11 +86,15 @@ defmodule GitsWeb.HostLive.Onboarding do
       end
 
     form
-    |> Form.validate(Map.merge(unsigned_params["host"], %{"logo" => filename, owner: user}))
-    |> Form.submit()
+    |> Form.submit(
+      params: Map.merge(unsigned_params["host"], %{"logo" => filename, "owner" => user})
+    )
     |> case do
-      {:ok, host} -> socket |> push_navigate(to: ~p"/hosts/#{host.handle}/events/create-new")
-      _ -> socket
+      {:ok, host} ->
+        socket |> push_navigate(to: ~p"/hosts/#{host.handle}/events/create-new")
+
+      {:error, form} ->
+        socket |> assign(:form, form)
     end
     |> noreply()
   end
