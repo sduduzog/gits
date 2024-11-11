@@ -23,11 +23,14 @@ defmodule GitsWeb.HostLive.ViewEvent do
     |> Ash.Query.load([:name, :published?])
     |> Ash.read_one()
     |> case do
-      {:ok, event} ->
+      {:ok, %Event{} = event} ->
         socket
         |> assign(:event, event)
         |> assign(:event_published?, event.published?)
         |> assign(:page_title, "Events / #{event.name}")
+
+      {:ok, nil} ->
+        socket |> assign(:error, :event_not_found)
     end
     |> show_publish_modal(unsigned_params)
     |> show_archive_modal(unsigned_params)

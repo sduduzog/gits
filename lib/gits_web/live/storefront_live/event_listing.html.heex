@@ -7,6 +7,7 @@
 
   <.form for={@form} class="lg:sticky bg-white p-2 lg:top-20" phx-submit="get_tickets">
     <Turnstile.widget
+      :if={@live_action == :index}
       events={[:success]}
       class="absolute bottom-0 z-50"
       appearance="interaction-only"
@@ -110,6 +111,7 @@
   <.live_component
     :if={@live_action == :order}
     id="order-component"
+    data-show={show_modal("order-tickets")}
     module={GitsWeb.StorefrontLive.OrderComponent}
     event_id={@event.public_id}
   />

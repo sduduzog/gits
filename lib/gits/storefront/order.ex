@@ -1,11 +1,17 @@
 defmodule Gits.Storefront.Order do
   use Ash.Resource,
     domain: Gits.Storefront,
-    data_layer: AshPostgres.DataLayer
+    data_layer: AshPostgres.DataLayer,
+    extensions: [AshStateMachine]
 
   postgres do
     table "orders"
     repo Gits.Repo
+  end
+
+  state_machine do
+    initial_states [:anonymous, :open]
+    default_initial_state :anonymous
   end
 
   actions do

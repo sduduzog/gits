@@ -3,19 +3,12 @@ defmodule GitsWeb.StorefrontLive.OrderComponent do
 
   def mount(socket) do
     socket
-    |> assign(:verified?, true)
-    |> assign(:section, :tickets_summary)
+    |> assign(:section, :get_tickets)
     |> ok()
   end
 
   def update(%{event_id: _event_id}, socket) do
     socket |> ok()
-  end
-
-  def handle_event("turnstile:success", _unsigned_params, socket) do
-    socket
-    |> assign(:verified?, true)
-    |> noreply()
   end
 
   def handle_event("package_tickets", _unsigned_params, socket) do
@@ -116,17 +109,6 @@ defmodule GitsWeb.StorefrontLive.OrderComponent do
         >
           <span class="text-sm font-semibold">Proceed to Payment</span>
         </button>
-      </div>
-    </div>
-    """
-  end
-
-  def render(assigns) do
-    ~H"""
-    <div class="grid gap-4">
-      <h3 class="text-lg font-semibold">Checking if you are human...</h3>
-      <div>
-        <Turnstile.widget events={[:success]} class="" phx-target={@myself} />
       </div>
     </div>
     """
