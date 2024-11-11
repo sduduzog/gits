@@ -9,8 +9,11 @@ defmodule GitsWeb.HostLive.ViewEvent do
     case socket.assigns.current_user do
       nil ->
         socket
-        |> assign(:page_title, "Events")
+        |> assign(:page_title, "Unauthorized")
         |> ok(:unauthorized)
+
+      _ ->
+        socket |> ok(:host)
     end
   end
 

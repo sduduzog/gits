@@ -23,17 +23,21 @@ defmodule GitsWeb.AuthLive do
   def render(assigns) do
     ~H"""
     <%= if @request_sent do %>
-      <h1 class="font-semibold text-xl">Check your email!</h1>
-      <p class="text-zinc-500 mt-4">
+      <h1 class="text-xl font-semibold">Check your email!</h1>
+      <p class="mt-4 text-sm text-zinc-500">
         A magic link has been sent to <%= @request_sent %>. Check your spam/junk folder, just in case.
       </p>
-      <.link navigate={~p"/"} class="inline-flex gap-2 font-semibold text-sm mt-4">
-        Go to homepage &rarr;
-      </.link>
+      <div class="mt-4 text-zinc-500 size-10 bg-zinc-100 rounded-lg flex items-center justify-center">
+        <.icon name="i-lucide-inbox" />
+      </div>
     <% else %>
       <.form :let={f} for={@form} class="grid" phx-submit="submit" method="post">
-        <h1 class="font-semibold text-xl">Welcome back</h1>
-        <label class="grid gap-1 mt-8 text-sm">
+        <h1 class="text-xl font-semibold">Welcome back</h1>
+        <p class="mt-4 text-sm text-zinc-500">
+          Sign in using your email address and we'll send you a magic link.
+        </p>
+
+        <label class="mt-4 grid gap-1 text-sm">
           <span>Email</span>
           <input
             type="text"
@@ -45,7 +49,7 @@ defmodule GitsWeb.AuthLive do
         <button
           disabled={@disabled_submit?}
           type="submit"
-          class="mt-6 rounded-lg bg-zinc-900 disabled:opacity-70 px-4 py-2 text-sm font-semibold text-zinc-50"
+          class="mt-6 rounded-lg bg-zinc-900 px-4 py-2 text-sm font-semibold text-zinc-50 disabled:opacity-70"
         >
           <span>
             Send me a magic link

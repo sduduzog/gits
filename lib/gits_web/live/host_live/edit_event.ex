@@ -14,12 +14,10 @@ defmodule GitsWeb.HostLive.EditEvent do
         socket
         |> assign(:page_title, "Unauthorized")
         |> ok(:unauthorized)
-    end
-  end
 
-  def mounts(_params, _session, socket) do
-    socket
-    |> ok(:host_panel)
+      _ ->
+        socket |> ok(:host_panel)
+    end
   end
 
   def handle_params(%{"public_id" => public_id} = unsigned_params, _uri, socket) do
@@ -50,7 +48,8 @@ defmodule GitsWeb.HostLive.EditEvent do
       %{event: event, host: host} ->
         socket
         |> push_navigate(
-          to: Routes.host_view_event_path(socket, :overview, host.handle, event.public_id)
+          to: Routes.host_view_event_path(socket, :overview, host.handle, event.public_id),
+          replace: true
         )
 
       %{host: host} ->
@@ -70,7 +69,10 @@ defmodule GitsWeb.HostLive.EditEvent do
       end
 
     socket
-    |> push_patch(to: Routes.host_edit_event_path(socket, action, host.handle, event.public_id))
+    |> push_patch(
+      to: Routes.host_edit_event_path(socket, action, host.handle, event.public_id),
+      replace: true
+    )
     |> noreply()
   end
 
@@ -84,7 +86,10 @@ defmodule GitsWeb.HostLive.EditEvent do
       end
 
     socket
-    |> push_patch(to: Routes.host_edit_event_path(socket, action, host.handle, event.public_id))
+    |> push_patch(
+      to: Routes.host_edit_event_path(socket, action, host.handle, event.public_id),
+      replace: true
+    )
     |> noreply()
   end
 

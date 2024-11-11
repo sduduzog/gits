@@ -11,7 +11,7 @@
     icon: "i-lucide-calendar-range",
     current:
       Enum.any?(
-        [GitsWeb.HostLive.EventList, GitsWeb.HostLive.EventView, GitsWeb.HostLive.ManageEvent],
+        [GitsWeb.HostLive.ListEvents, GitsWeb.HostLive.ViewEvent, GitsWeb.HostLive.EditEvent],
         &(&1 == @socket.view)
       ),
     href: ~p"/hosts/#{@host_handle}/events"
