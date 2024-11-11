@@ -10,7 +10,7 @@ defmodule GitsWeb.CoreComponents do
     ~H"""
     <.link
       navigate="/"
-      class="inline-flex h-9 shrink-0 items-center justify-center rounded-lg p-2 text-xl font-black italic"
+      class="inline-flex h-5 shrink-0 items-center justify-center rounded-lg text-xl font-black italic"
     >
       <img
         src={static_path(GitsWeb.Endpoint, ~p"/images/gits_logo.png")}
@@ -23,6 +23,7 @@ defmodule GitsWeb.CoreComponents do
 
   attr :signed_in, :boolean, default: false
   attr :current, :string, default: ""
+  attr :muted, :boolean, default: false
 
   def header(assigns) do
     %{signed_in: signed_in} = assigns
@@ -48,13 +49,11 @@ defmodule GitsWeb.CoreComponents do
       |> assign(:nav, nav_items)
 
     ~H"""
-    <header class="mx-auto flex max-w-screen-xl items-center gap-10">
-      <div>
-        <div>
-          <.logo />
-        </div>
+    <header class="mx-auto flex max-w-screen-xl p-2 items-center gap-10">
+      <div class="py-2">
+        <.logo />
       </div>
-      <nav class="hidden w-auto gap-4 p-2 lg:flex">
+      <nav :if={not @muted} class="hidden w-auto gap-4 lg:flex">
         <.link
           :for={{label, badge, href} <- @nav}
           navigate={href}
@@ -70,7 +69,7 @@ defmodule GitsWeb.CoreComponents do
           </span>
         </.link>
       </nav>
-      <div class="flex grow items-center justify-end gap-4 p-2">
+      <div :if={not @muted} class="flex grow items-center justify-end gap-4">
         <.link :if={false} navigate="/search" class="inline-flex size-9 items-center justify-center">
           <.icon name="i-lucide-search" />
         </.link>

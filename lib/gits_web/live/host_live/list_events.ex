@@ -1,23 +1,17 @@
 defmodule GitsWeb.HostLive.ListEvents do
   alias Gits.Storefront.Event
-  alias Gits.Hosting.Host
   require Ash.Query
-  use GitsWeb, :host_live_view
+  use GitsWeb, :live_view
 
   require Ash.Query
 
-  def mount(params, _session, socket) do
-    host =
-      Host
-      |> Ash.Query.filter(handle == ^params["handle"])
-      |> Ash.read_first!()
-
-    socket
-    |> assign(:host_handle, host.handle)
-    |> assign(:host_name, host.name)
-    |> assign(:host_logo, host.logo)
-    |> assign(:page_title, "Events")
-    |> ok()
+  def mount(_params, _session, socket) do
+    case socket.assigns.current_user do
+      nil ->
+        socket
+        |> assign(:page_title, "Events")
+        |> ok(:unauthorized)
+    end
   end
 
   def handle_params(unsigned_params, _, socket) do

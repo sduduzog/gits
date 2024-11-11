@@ -1,4 +1,17 @@
-<div class="h-dvh flex p-4 flex-col justify-center">
+<.header />
+<div class="min-h-[calc(100dvh-10rem)] flex mx-auto max-w-screen-xl p-2 flex-col items-start gap-4 justify-center">
   <h1 class="text-8xl font-bold text-black/10">401</h1>
-  <p class="text-sm text-zinc-500">You need to be signed in to view this page</p>
+  <p class="text-sm text-zinc-700 font-medium">
+    Sorry,  you don't have permission to access to this page. Please check your credentials and try again.
+  </p>
+  <div class="flex gap-2 items-center">
+    <button
+      phx-click={JS.navigate("/")}
+      class="h-9 gap-1 hover:bg-zinc-100 border rounded-lg inline-flex items-center text-zinc-950 px-4 text-sm"
+    >
+      <.icon name="i-lucide-arrow-left" />
+      <span class="font-semibold">Go to home</span>
+    </button>
+  </div>
 </div>
+<.footer />

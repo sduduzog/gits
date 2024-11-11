@@ -59,6 +59,10 @@ defmodule GitsWeb do
       unquote(html_helpers())
 
       def ok(socket, false), do: {:ok, socket, layout: false}
+
+      def ok(socket, :error, code),
+        do: {:ok, socket |> assign(:code, code), layout: {GitsWeb.Layouts, :error}}
+
       def ok(socket, layout), do: {:ok, socket, layout: {GitsWeb.Layouts, layout}}
       def ok(socket), do: {:ok, socket}
       def noreply(socket), do: {:noreply, socket}

@@ -1,13 +1,17 @@
 defmodule GitsWeb.HostLive.ViewEvent do
   alias Gits.Storefront.Event
-  use GitsWeb, :host_live_view
+  use GitsWeb, :live_view
   require Ash.Query
 
   embed_templates "view_event_templates/*"
 
   def mount(_params, _session, socket) do
-    socket
-    |> ok()
+    case socket.assigns.current_user do
+      nil ->
+        socket
+        |> assign(:page_title, "Events")
+        |> ok(:unauthorized)
+    end
   end
 
   def handle_params(%{"public_id" => public_id} = unsigned_params, _uri, socket) do

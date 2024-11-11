@@ -9,6 +9,15 @@ defmodule GitsWeb.HostLive.EditEvent do
   embed_templates "edit_event_templates/*"
 
   def mount(_params, _session, socket) do
+    case socket.assigns.current_user do
+      nil ->
+        socket
+        |> assign(:page_title, "Unauthorized")
+        |> ok(:unauthorized)
+    end
+  end
+
+  def mounts(_params, _session, socket) do
     socket
     |> ok(:host_panel)
   end
