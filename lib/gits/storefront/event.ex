@@ -1,5 +1,5 @@
 defmodule Gits.Storefront.Event do
-  alias Gits.Storefront.{PayoutAccount, TicketType}
+  alias Gits.Storefront.{Order, PayoutAccount, TicketType}
   alias Gits.Hosting.{Host, PayoutAccount}
 
   use Ash.Resource,
@@ -59,6 +59,13 @@ defmodule Gits.Storefront.Event do
       argument :type, :map, allow_nil?: false
       change manage_relationship(:type, :ticket_types, on_match: :destroy)
     end
+
+    update :add_order do
+      require_atomic? false
+
+      argument :order, :map, allow_nil?: false
+      change manage_relationship(:order, :orders, type: :create)
+    end
   end
 
   attributes do
@@ -85,6 +92,7 @@ defmodule Gits.Storefront.Event do
     belongs_to :payout_account, PayoutAccount
 
     has_many :ticket_types, TicketType
+    has_many :orders, Order
   end
 
   calculations do

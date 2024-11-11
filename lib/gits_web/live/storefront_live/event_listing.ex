@@ -1,17 +1,24 @@
 defmodule GitsWeb.StorefrontLive.EventListing do
-  alias Gits.Storefront.{Event, Order}
+  alias Gits.Storefront.{Event}
   alias AshPhoenix.Form
   use GitsWeb, :live_view
 
   def mount(%{"public_id" => public_id}, _session, socket) do
+    remote_ip = get_connect_info(socket, :peer_data).address
+
     Event.get_by_public_id_for_listing(public_id)
     |> case do
       {:ok, event} ->
         socket
         |> assign(:event, event)
         |> assign(:verified?, false)
-        |> assign_new(:remote_ip, fn -> get_connect_info(socket, :peer_data).address end)
-        |> assign(:form, Order |> Form.for_create(:create))
+        |> assign(:remote_ip, remote_ip)
+        |> assign(
+          :form,
+          event
+          |> Form.for_update(:add_order, forms: [auto?: true])
+          |> Form.add_form([:order])
+        )
         |> ok()
 
       {:error, _} ->
@@ -37,8 +44,11 @@ defmodule GitsWeb.StorefrontLive.EventListing do
   end
 
   def handle_event("get_tickets", unsigned_params, socket) do
+    unsigned_params |> IO.inspect()
+
     with :ok <- verify_turnstile(unsigned_params, socket.assigns.remote_ip),
-         {:ok, order_id} <- create_order(socket.assigns.form, unsigned_params) do
+         {:ok, order_id} <-
+           create_order(socket.assigns.form, unsigned_params["form"], socket.assigns.event) do
       socket
       |> redirect(
         to:
@@ -54,8 +64,6 @@ defmodule GitsWeb.StorefrontLive.EventListing do
   end
 
   defp verify_turnstile(params, remote_ip) do
-    params |> IO.inspect()
-
     case Turnstile.verify(params, remote_ip) do
       {:ok, _} ->
         :ok
@@ -65,9 +73,9 @@ defmodule GitsWeb.StorefrontLive.EventListing do
     end
   end
 
-  defp create_order(form, params) do
+  defp create_order(form, params, event) do
     form
-    |> Form.submit(params: params)
+    |> Form.submit(params: Map.put(params, :event, event))
     |> case do
       {:ok, order} -> {:ok, order.id}
     end
