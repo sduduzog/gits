@@ -6,6 +6,7 @@
   </div>
 
   <.form for={@form} class="lg:sticky bg-white p-2 lg:top-20" phx-submit="get_tickets">
+    <Turnstile.widget events={[:success]} class="absolute bottom-0 z-50" />
     <div class="grid gap-4">
       <div :if={false} class="flex items-center gap-4">
         <span class="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">
@@ -32,8 +33,6 @@
           <span class="font-semibold">Get tickets</span>
         </button>
       </div>
-
-      <Turnstile.widget events={[:success]} />
 
       <div class="flex flex-wrap gap-4">
         <!-- https://miafrica.net/event-categories-a-comprehensive-guide-to-understanding-types-of-events/ -->
