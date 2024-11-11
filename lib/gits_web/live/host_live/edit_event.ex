@@ -86,7 +86,8 @@ defmodule GitsWeb.HostLive.EditEvent do
       socket.assigns.form
       |> case do
         %{type: :update} = form ->
-          form |> Form.validate(unsigned_params["form"])
+          form
+          |> Form.validate(unsigned_params["form"])
 
         %{type: :create} = form ->
           form
@@ -122,7 +123,9 @@ defmodule GitsWeb.HostLive.EditEvent do
         )
 
       {:update, {:ok, event}} ->
-        socket |> assign(:event, event)
+        socket
+        |> assign(:event, event)
+        |> assign(:form, current_form(socket.assigns.live_action, event))
 
       {_, {:error, form}} ->
         socket |> assign(:form, form)

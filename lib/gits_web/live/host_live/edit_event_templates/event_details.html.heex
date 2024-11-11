@@ -1,6 +1,5 @@
 <.form
   :let={f}
-  phx-update="ignore"
   id="create-event-form"
   for={@form}
   class="grid gap-6"
@@ -66,7 +65,10 @@
     </fieldset>
   </div>
   <div class="col-span-full flex gap-4 py-4 pb-8">
-    <button class="flex h-9 items-center rounded-lg bg-zinc-950 px-4 text-zinc-50">
+    <button
+      disabled={not @form.changed? or not @form.valid?}
+      class="flex h-9 items-center rounded-lg bg-zinc-950 px-4 text-zinc-50 disabled:opacity-50"
+    >
       <span class="text-sm font-semibold">
         Save
       </span>

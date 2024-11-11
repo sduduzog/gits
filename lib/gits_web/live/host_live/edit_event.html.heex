@@ -3,6 +3,7 @@
     <h1 class="text-xl pb-2 font-semibold">Edit event</h1>
     <div class="flex grow justify-end gap-4">
       <button
+        :if={@live_action != :details}
         phx-click="previous"
         phx-value-from={@live_action}
         type="button"
