@@ -11,6 +11,7 @@ defmodule GitsWeb.StorefrontLive.EventListing do
         |> assign(:form, %{})
     end
     |> assign(:verified?, false)
+    |> assign_new(:remote_ip, fn -> get_connect_info(socket, :peer_data).address end)
     |> ok()
   end
 
@@ -25,7 +26,7 @@ defmodule GitsWeb.StorefrontLive.EventListing do
   end
 
   def handle_event("get_tickets", unsigned_params, socket) do
-    case Turnstile.verify(unsigned_params) do
+    case Turnstile.verify(unsigned_params, socket.assigns.remote_ip) do
       {:ok, _} ->
         nil
 
