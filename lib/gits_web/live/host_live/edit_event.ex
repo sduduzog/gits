@@ -37,7 +37,18 @@ defmodule GitsWeb.HostLive.EditEvent do
   end
 
   def handle_event("close", _unsigned_params, socket) do
-    socket |> push_navigate(to: ~p"/") |> noreply()
+    case socket.assigns do
+      %{event: event, host: host} ->
+        socket
+        |> push_navigate(
+          to: Routes.host_view_event_path(socket, :overview, host.handle, event.public_id)
+        )
+
+      %{host: host} ->
+        socket
+        |> push_navigate(to: Routes.host_list_events_path(socket, :drafts, host.handle))
+    end
+    |> noreply()
   end
 
   def handle_event("previous", %{"from" => from}, socket) do
@@ -89,16 +100,17 @@ defmodule GitsWeb.HostLive.EditEvent do
     socket.assigns.form
     |> case do
       %{type: :update} = form ->
-        form |> Form.validate(unsigned_params["form"])
+        {:update, form |> Form.submit(params: unsigned_params["form"])}
 
       %{type: :create} = form ->
-        form
-        |> Form.validate(Map.put(unsigned_params["form"], :host, socket.assigns.host))
+        {:create,
+         form
+         |> Form.submit(params: Map.put(unsigned_params["form"], :host, socket.assigns.host))}
     end
-    |> Form.submit()
     |> case do
-      {:ok, event} ->
+      {:create, {:ok, event}} ->
         socket
+        |> put_flash(:info, "An event was created created successfully")
         |> push_patch(
           to:
             Routes.host_edit_event_path(
@@ -109,7 +121,10 @@ defmodule GitsWeb.HostLive.EditEvent do
             )
         )
 
-      {:error, form} ->
+      {:update, {:ok, event}} ->
+        socket |> assign(:event, event)
+
+      {_, {:error, form}} ->
         socket |> assign(:form, form)
     end
     |> noreply()
@@ -142,7 +157,7 @@ defmodule GitsWeb.HostLive.EditEvent do
     nil
   end
 
-  defp show_create_ticket_modal(socket, %{"modal" => "ticket", "id" => ""}, event) do
+  defp show_create_ticket_modal(socket, %{"modal" => "ticket", "create" => ""}, event) do
     socket
     |> assign(
       :form,
@@ -158,7 +173,7 @@ defmodule GitsWeb.HostLive.EditEvent do
     |> assign(:show_create_ticket_modal, false)
   end
 
-  defp show_edit_ticket_modal(socket, %{"edit" => "ticket", "id" => ticket_id}, event) do
+  defp show_edit_ticket_modal(socket, %{"modal" => "ticket", "edit" => ticket_id}, event) do
     event
     |> Ash.load(ticket_types: [TicketType |> Ash.Query.filter(id == ^ticket_id)])
     |> case do
@@ -178,7 +193,7 @@ defmodule GitsWeb.HostLive.EditEvent do
     |> assign(:show_edit_ticket_modal, false)
   end
 
-  defp show_archive_ticket_modal(socket, %{"archive" => "ticket", "id" => ticket_id}, event) do
+  defp show_archive_ticket_modal(socket, %{"modal" => "ticket", "archive" => ticket_id}, event) do
     event
     |> Ash.load(ticket_types: [TicketType |> Ash.Query.filter(id == ^ticket_id)])
     |> case do

@@ -9,7 +9,7 @@ defmodule GitsWeb.HostLive.AddTicket do
     ~H"""
     <div class="mx-auto grid max-w-screen-sm gap-10">
       <div class="w-full truncate pt-5">
-        <.link class="inline-flex items-center gap-1 truncate w-full">
+        <.link class="inline-flex w-full items-center gap-1 truncate">
           <.icon name="hero-chevron-left-mini" class="shrink-0" />
           <span class="text-sm font-medium text-zinc-800">
             The Ultimate Cheese Festival
@@ -28,7 +28,7 @@ defmodule GitsWeb.HostLive.AddTicket do
             <p class="text-sm text-blue-700">
               A new software update is available. See what’s new in version 2.0.4.
             </p>
-            <p :if={false} class="mt-3 text-sm md:mt-0 md:ml-6">
+            <p :if={false} class="mt-3 text-sm md:ml-6 md:mt-0">
               <a href="#" class="whitespace-nowrap font-medium text-blue-700 hover:text-blue-600">
                 Details <span aria-hidden="true"> &rarr;</span>
               </a>
