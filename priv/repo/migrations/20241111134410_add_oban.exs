@@ -1,4 +1,4 @@
-defmodule Gits.Repo.Migrations.AddObanJobsTable do
+defmodule Gits.Repo.Migrations.AddOban do
   use Ecto.Migration
 
   def up do

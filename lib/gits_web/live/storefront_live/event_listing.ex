@@ -27,14 +27,26 @@ defmodule GitsWeb.StorefrontLive.EventListing do
   end
 
   def handle_event("get_tickets", unsigned_params, socket) do
-    case Turnstile.verify(unsigned_params, socket.assigns.remote_ip) do
+    with :ok <- verify_turnstile(unsigned_params, socket.assigns.remote_ip),
+         :ok <- create_order(socket.assigns.form, unsigned_params) do
+      socket |> noreply()
+    end
+  end
+
+  defp verify_turnstile(params, remote_ip) do
+    params |> IO.inspect()
+
+    case Turnstile.verify(params, remote_ip) do
       {:ok, _} ->
-        nil
+        :ok
 
       {:error, _} ->
-        nil
+        :error
     end
+  end
 
-    socket |> noreply()
+  defp create_order(form, params) do
+    form |> Form.submit(params: params)
+    :ok
   end
 end
