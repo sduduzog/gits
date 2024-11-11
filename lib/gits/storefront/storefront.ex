@@ -7,6 +7,7 @@ defmodule Gits.Storefront do
     EventSchedule,
     Interaction,
     Order,
+    Ticket,
     TicketType
   }
 
@@ -16,6 +17,7 @@ defmodule Gits.Storefront do
     resource EventMedia
     resource EventSchedule
     resource Interaction
+    resource Ticket
     resource TicketType
   end
 end

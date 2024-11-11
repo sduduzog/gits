@@ -1,18 +1,128 @@
 defmodule GitsWeb.StorefrontLive.OrderComponent do
   use GitsWeb, :live_component
+  require Ash.Query
+  alias Gits.Storefront.Order
+  alias AshPhoenix.Form
 
   def mount(socket) do
     socket
-    |> assign(:section, :get_tickets)
     |> ok()
   end
 
-  def update(%{event_id: _event_id}, socket) do
+  def update(%{id: ""} = _assigns, socket) do
     socket |> ok()
+  end
+
+  def update(%{id: id} = _assigns, socket) do
+    Order
+    |> Ash.get(id)
+    |> case do
+      {:ok, order} ->
+        socket
+        |> assign(:order, order)
+        |> assign(:form, current_form(order))
+    end
+    |> ok()
+  end
+
+  defp current_form(order) do
+    order |> Form.for_update(:open)
+  end
+
+  def handle_event("validate", unsigned_params, socket) do
+    socket
+    |> assign(
+      :form,
+      socket.assigns.form
+      |> Form.validate(unsigned_params["form"])
+    )
+    |> noreply()
+  end
+
+  def handle_event("submit", unsigned_params, socket) do
+    socket.assigns.form
+    |> Form.submit(params: unsigned_params["form"])
+    |> case do
+      {:ok, order} -> socket |> assign(:order, order)
+      {:error, form} -> socket |> assign(:form, form)
+    end
+    |> noreply()
   end
 
   def handle_event("package_tickets", _unsigned_params, socket) do
     socket |> noreply()
+  end
+
+  def render(%{order: %{state: :anonymous}} = assigns) do
+    ~H"""
+    <div>
+      <.form
+        :let={f}
+        phx-change="validate"
+        phx-submit="submit"
+        phx-target={@myself}
+        for={@form}
+        class="grid gap-8 items-start"
+      >
+        <div>
+          <h3 class="text-lg font-semibold lg:col-span-full">Get Tickets</h3>
+          <p class=" text-sm text-zinc-700">
+            Please enter your email to proceed with your order.
+          </p>
+        </div>
+
+        <label class="grid gap-1 grow">
+          <span class="text-sm">Email address</span>
+          <input type="email" name={f[:email].name} class="py-2 px-3 text-sm rounded-lg grow" />
+          <span class="text-sm text-zinc-600">
+            Sign in with this email to manage your tickets later.
+          </span>
+        </label>
+
+        <div class="flex items-center flex-wrap justify-end gap-x-4 gap-y-2 lg:col-span-full">
+          <button class="rounded-lg border border-transparent bg-zinc-950 px-4 py-2 text-white">
+            <span class="text-sm font-semibold">Proceed</span>
+          </button>
+        </div>
+      </.form>
+    </div>
+    """
+  end
+
+  def render(%{order: %{state: :open}} = assigns) do
+    ~H"""
+    <div>
+      <.form
+        :let={f}
+        phx-change="validate"
+        phx-submit="submit"
+        phx-target={@myself}
+        for={@form}
+        class="grid gap-8 items-start"
+      >
+        <div>
+          <h3 class="text-lg font-semibold lg:col-span-full">Get Tickets</h3>
+          <p class=" text-sm text-zinc-700">
+            Please enter your email to proceed with your order.
+          </p>
+        </div>
+
+        <label class="grid gap-1 grow">
+          <span class="text-sm">Email address</span>
+          <input type="email" name={f[:email].name} class="py-2 px-3 text-sm rounded-lg grow" />
+          <span class="text-sm text-zinc-600">
+            Sign in with this email to manage your tickets later.
+          </span>
+        </label>
+
+        <div class="flex items-center flex-wrap justify-end gap-x-4 gap-y-2 lg:col-span-full">
+          <button class="rounded-lg border border-transparent bg-zinc-950 px-4 py-2 text-white">
+            <span class="text-sm font-semibold">Proceed</span>
+          </button>
+        </div>
+      </.form>
+    </div>
+    """
   end
 
   def render(%{section: :get_tickets} = assigns) do
@@ -59,7 +169,7 @@ defmodule GitsWeb.StorefrontLive.OrderComponent do
     """
   end
 
-  def render(%{section: :tickets_summary} = assigns) do
+  def render(%{order: %{state: :anonymous}} = assigns) do
     ~H"""
     <div class="grid gap-4 items-start lg:grid-cols-2 lg:gap-8">
       <h3 class="text-lg font-semibold lg:col-span-full">Tickets Summary</h3>
@@ -110,6 +220,14 @@ defmodule GitsWeb.StorefrontLive.OrderComponent do
           <span class="text-sm font-semibold">Proceed to Payment</span>
         </button>
       </div>
+    </div>
+    """
+  end
+
+  def render(assigns) do
+    ~H"""
+    <div class="grid gap-4 items-start lg:grid-cols-2 lg:gap-8">
+      <h3 class="text-lg font-semibold lg:col-span-full">Nothing to see here</h3>
     </div>
     """
   end

@@ -28,13 +28,16 @@ defmodule GitsWeb.StorefrontLive.EventListing do
     end
   end
 
-  def handle_params(%{"order_id" => _}, _uri, socket) do
+  def handle_params(%{"order_id" => order_id}, _uri, socket) do
     socket
+    |> assign(:order_id, order_id)
     |> noreply()
   end
 
   def handle_params(_unsigned_params, _uri, socket) do
-    socket |> noreply()
+    socket
+    |> assign(:order_id, "")
+    |> noreply()
   end
 
   def handle_event("turnstile:success", _, socket) do
@@ -44,11 +47,11 @@ defmodule GitsWeb.StorefrontLive.EventListing do
   end
 
   def handle_event("get_tickets", unsigned_params, socket) do
-    unsigned_params |> IO.inspect()
-
     with :ok <- verify_turnstile(unsigned_params, socket.assigns.remote_ip),
          {:ok, order_id} <-
            create_order(socket.assigns.form, unsigned_params["form"], socket.assigns.event) do
+      order_id |> IO.inspect()
+
       socket
       |> redirect(
         to:
@@ -77,7 +80,8 @@ defmodule GitsWeb.StorefrontLive.EventListing do
     form
     |> Form.submit(params: Map.put(params, :event, event))
     |> case do
-      {:ok, order} -> {:ok, order.id}
+      {:ok, %{orders: [order]}} ->
+        {:ok, order.id}
     end
   end
 end

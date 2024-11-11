@@ -4,7 +4,7 @@ defmodule Gits.Storefront.Order do
     data_layer: AshPostgres.DataLayer,
     extensions: [AshArchival.Resource, AshStateMachine]
 
-  alias Gits.Storefront.Event
+  alias Gits.Storefront.{Event, Ticket}
   alias __MODULE__.Changes.InitialState
 
   postgres do
@@ -15,6 +15,10 @@ defmodule Gits.Storefront.Order do
   state_machine do
     initial_states [:anonymous, :open]
     default_initial_state :anonymous
+
+    transitions do
+      transition :open, from: :anonymous, to: :open
+    end
   end
 
   actions do
@@ -28,6 +32,9 @@ defmodule Gits.Storefront.Order do
     end
 
     update :open do
+      accept [:email]
+
+      change transition_state(:open)
     end
 
     update :process do
@@ -43,6 +50,13 @@ defmodule Gits.Storefront.Order do
     end
   end
 
+  validations do
+    validate match(:email, ~r/(^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$)/) do
+      message "must be a valid email address"
+      where [changing(:email)]
+    end
+  end
+
   attributes do
     uuid_primary_key :id
 
@@ -55,5 +69,7 @@ defmodule Gits.Storefront.Order do
     belongs_to :event, Event do
       allow_nil? false
     end
+
+    has_many :tickets, Ticket
   end
 end
