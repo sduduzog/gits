@@ -15,7 +15,7 @@ defmodule GitsWeb.StorefrontLive.OrderComponent do
 
   def update(%{id: id} = _assigns, socket) do
     Order
-    |> Ash.get(id, load: [:ticket_types, :tickets])
+    |> Ash.get(id)
     |> case do
       {:ok, order} ->
         socket
@@ -26,6 +26,8 @@ defmodule GitsWeb.StorefrontLive.OrderComponent do
   end
 
   defp assign_current_form(socket, order) do
+    order = order |> Ash.load!(:ticket_types)
+
     case order.state do
       :anonymous ->
         socket |> assign(:form, order |> Form.for_update(:open))
@@ -34,8 +36,16 @@ defmodule GitsWeb.StorefrontLive.OrderComponent do
         ticket_types =
           order.ticket_types
           |> Enum.map(fn type ->
-            {type.id, type.name,
-             order.tickets |> Enum.count(fn ticket -> ticket.ticket_type_id == type.id end),
+            order =
+              order |> Ash.load!(tickets: Ash.Query.filter(Ticket, ticket_type.id == ^type.id))
+
+            {type.id, type.name, order.tickets,
+             order
+             |> Form.for_update(:remove_ticket,
+               forms: [
+                 auto?: true
+               ]
+             ),
              order
              |> Form.for_update(:add_ticket,
                forms: [
@@ -76,8 +86,10 @@ defmodule GitsWeb.StorefrontLive.OrderComponent do
     |> Form.submit(params: unsigned_params["form"])
     |> case do
       {:ok, order} ->
+        order = order |> Ash.load!([:ticket_types, :tickets])
+
         socket
-        |> assign(:order, order |> Ash.load!([:ticket_types, :tickets]))
+        |> assign(:order, order)
         |> assign_current_form(order)
 
       {:error, form} ->
@@ -89,6 +101,19 @@ defmodule GitsWeb.StorefrontLive.OrderComponent do
   def handle_event("add_ticket", unsigned_params, socket) do
     socket.assigns.order
     |> Form.for_update(:add_ticket)
+    |> Form.submit(params: unsigned_params["form"])
+    |> case do
+      {:ok, order} ->
+        socket
+        |> assign(:order, order |> Ash.load!([:ticket_types, :tickets]))
+        |> assign_current_form(order)
+    end
+    |> noreply
+  end
+
+  def handle_event("remove_ticket", unsigned_params, socket) do
+    socket.assigns.order
+    |> Form.for_update(:remove_ticket)
     |> Form.submit(params: unsigned_params["form"])
     |> case do
       {:ok, order} ->
@@ -145,12 +170,11 @@ defmodule GitsWeb.StorefrontLive.OrderComponent do
       <div>
         <h3 class="text-lg font-semibold lg:col-span-full">Get Tickets</h3>
         <p class=" text-sm text-zinc-700"></p>
-        <%= @order.tickets |> Enum.count() %>
       </div>
 
       <div class="grid gap-4 lg:grid-cols-2">
         <div
-          :for={{_, name, count, add_ticket_form} <- @ticket_types}
+          :for={{_, name, tickets, remove_ticket_form, add_ticket_form} <- @ticket_types}
           class="grid gap-2 rounded-xl border p-4"
         >
           <div class="flex justify-between items-center gap-4 overflow-hidden">
@@ -164,19 +188,30 @@ defmodule GitsWeb.StorefrontLive.OrderComponent do
             <div class="grow">
               <span class="text-sm font-medium text-zinc-800">R 60.00</span>
             </div>
-            <button
-              type="button"
-              class="flex size-9 items-center justify-center gap-1 rounded-lg bg-zinc-50 text-sm text-zinc-950 hover:bg-zinc-100"
-            >
-              <.icon name="i-lucide-minus" />
-              <span class="sr-only">
-                Remove ticket
-              </span>
-            </button>
-            <span class="text-sm text-zinc-800 tabular-nums"><%= count %></span>
+
+            <.form :let={f} phx-target={@myself} phx-submit="remove_ticket" for={remove_ticket_form}>
+              <.inputs_for :let={ticket_form} field={f[:ticket]}>
+                <.input
+                  :if={Enum.any?(tickets)}
+                  type="hidden"
+                  name={ticket_form[:id].name}
+                  value={List.first(tickets) |> Map.get(:id)}
+                />
+              </.inputs_for>
+
+              <button class="flex size-9 items-center justify-center gap-1 rounded-lg bg-zinc-50 text-sm text-zinc-950 hover:bg-zinc-100">
+                <.icon name="i-lucide-minus" />
+                <span class="sr-only">
+                  Remove ticket
+                </span>
+              </button>
+            </.form>
+            <span class="text-zinc-800 text-base tabular-nums font-medium w-5 text-center">
+              <%= Enum.count(tickets) %>
+            </span>
             <.form :let={f} phx-target={@myself} phx-submit="add_ticket" for={add_ticket_form}>
-              <.inputs_for :let={tf} field={f[:ticket]}>
-                <.inputs_for field={tf[:ticket_type]}></.inputs_for>
+              <.inputs_for :let={ticket_form} field={f[:ticket]}>
+                <.inputs_for field={ticket_form[:ticket_type]}></.inputs_for>
               </.inputs_for>
               <button class="flex size-9 items-center justify-center gap-1 rounded-lg bg-zinc-50 text-sm text-zinc-950">
                 <.icon name="i-lucide-plus" />

@@ -56,6 +56,14 @@ defmodule Gits.Storefront.Order do
 
       change manage_relationship(:ticket, :tickets, type: :create)
     end
+
+    update :remove_ticket do
+      require_atomic? false
+
+      argument :ticket, :map, allow_nil?: false
+
+      change manage_relationship(:ticket, :tickets, on_match: :destroy)
+    end
   end
 
   validations do
