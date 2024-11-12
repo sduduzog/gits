@@ -1,5 +1,5 @@
 defmodule Gits.Storefront.TicketType do
-  alias Gits.Storefront.Event
+  alias Gits.Storefront.{Event, Ticket}
 
   use Ash.Resource,
     domain: Gits.Storefront,
@@ -13,6 +13,12 @@ defmodule Gits.Storefront.TicketType do
 
   actions do
     defaults [:read, :destroy, create: :*, update: :*]
+
+    update :add_ticket do
+      argument :ticket, :map
+
+      change manage_relationship(:ticket, type: :create)
+    end
   end
 
   attributes do
@@ -25,5 +31,7 @@ defmodule Gits.Storefront.TicketType do
 
   relationships do
     belongs_to :event, Event
+
+    has_many :tickets, Ticket
   end
 end

@@ -4,7 +4,7 @@ defmodule Gits.Storefront.Order do
     data_layer: AshPostgres.DataLayer,
     extensions: [AshArchival.Resource, AshStateMachine]
 
-  alias Gits.Storefront.{Event, Ticket}
+  alias Gits.Storefront.{Event, Ticket, TicketType}
   alias __MODULE__.Changes.InitialState
 
   postgres do
@@ -48,6 +48,11 @@ defmodule Gits.Storefront.Order do
 
     update :refund do
     end
+
+    update :add_ticket do
+      argument :ticket_type, :map
+      change manage_relationship(:ticket_type, :ticket_types, on_match: {:update, :add_ticket})
+    end
   end
 
   validations do
@@ -71,5 +76,13 @@ defmodule Gits.Storefront.Order do
     end
 
     has_many :tickets, Ticket
+
+    many_to_many :ticket_types, TicketType do
+      through Event
+      source_attribute :event_id
+      destination_attribute :event_id
+      source_attribute_on_join_resource :id
+      destination_attribute_on_join_resource :id
+    end
   end
 end
