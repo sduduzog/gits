@@ -13,12 +13,6 @@ defmodule Gits.Storefront.TicketType do
 
   actions do
     defaults [:read, :destroy, create: :*, update: :*]
-
-    update :add_ticket do
-      argument :ticket, :map
-
-      change manage_relationship(:ticket, type: :create)
-    end
   end
 
   attributes do

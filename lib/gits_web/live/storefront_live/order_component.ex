@@ -1,7 +1,7 @@
 defmodule GitsWeb.StorefrontLive.OrderComponent do
   use GitsWeb, :live_component
   require Ash.Query
-  alias Gits.Storefront.Order
+  alias Gits.Storefront.{Order, Ticket, TicketType}
   alias AshPhoenix.Form
 
   def mount(socket) do
@@ -20,21 +20,44 @@ defmodule GitsWeb.StorefrontLive.OrderComponent do
       {:ok, order} ->
         socket
         |> assign(:order, order)
-        |> assign(:form, current_form(order))
+        |> assign_current_form(order)
     end
     |> ok()
   end
 
-  defp current_form(order) do
+  defp assign_current_form(socket, order) do
     case order.state do
       :anonymous ->
-        order |> Form.for_update(:open)
+        socket |> assign(:form, order |> Form.for_update(:open))
 
       :open ->
-        order
-        |> Form.for_update(:add_ticket, forms: [auto?: true])
-        |> Form.add_form([:ticket, :ticket_type])
-        |> IO.inspect()
+        ticket_types =
+          order.ticket_types
+          |> Enum.map(fn type ->
+            {type.id, type.name,
+             order.tickets |> Enum.count(fn ticket -> ticket.ticket_type_id == type.id end),
+             order
+             |> Form.for_update(:add_ticket,
+               forms: [
+                 ticket: [
+                   resource: Ticket,
+                   create_action: :create,
+                   update_action: :update,
+                   forms: [
+                     ticket_type: [
+                       resource: TicketType,
+                       data: type,
+                       create_action: :create,
+                       update_action: :update
+                     ]
+                   ]
+                 ]
+               ]
+             )
+             |> Form.add_form([:ticket], params: %{"ticket_type" => %{"id" => type.id}})}
+          end)
+
+        socket |> assign(:ticket_types, ticket_types)
     end
   end
 
@@ -55,12 +78,25 @@ defmodule GitsWeb.StorefrontLive.OrderComponent do
       {:ok, order} ->
         socket
         |> assign(:order, order |> Ash.load!([:ticket_types, :tickets]))
-        |> assign(:form, current_form(order))
+        |> assign_current_form(order)
 
       {:error, form} ->
         socket |> assign(:form, form)
     end
     |> noreply()
+  end
+
+  def handle_event("add_ticket", unsigned_params, socket) do
+    socket.assigns.order
+    |> Form.for_update(:add_ticket)
+    |> Form.submit(params: unsigned_params["form"])
+    |> case do
+      {:ok, order} ->
+        socket
+        |> assign(:order, order |> Ash.load!([:ticket_types, :tickets]))
+        |> assign_current_form(order)
+    end
+    |> noreply
   end
 
   def handle_event("package_tickets", _unsigned_params, socket) do
@@ -113,10 +149,13 @@ defmodule GitsWeb.StorefrontLive.OrderComponent do
       </div>
 
       <div class="grid gap-4 lg:grid-cols-2">
-        <div :for={ticket_type <- @order.ticket_types} class="grid gap-2 rounded-xl border p-4">
+        <div
+          :for={{_, name, count, add_ticket_form} <- @ticket_types}
+          class="grid gap-2 rounded-xl border p-4"
+        >
           <div class="flex justify-between items-center gap-4 overflow-hidden">
             <span class="truncate grow text-lg font-semibold">
-              <%= ticket_type.name %>
+              <%= name %>
             </span>
             <span class="shrink-0 text-lg font-semibold">R <%= "10.00" %></span>
           </div>
@@ -134,24 +173,18 @@ defmodule GitsWeb.StorefrontLive.OrderComponent do
                 Remove ticket
               </span>
             </button>
-            <span class="text-sm text-zinc-800 tabular-nums">0</span>
-            <.form :let={f} for={@form} phx-submit="submit" phx-target={@myself}>
+            <span class="text-sm text-zinc-800 tabular-nums"><%= count %></span>
+            <.form :let={f} phx-target={@myself} phx-submit="add_ticket" for={add_ticket_form}>
               <.inputs_for :let={tf} field={f[:ticket]}>
-                <.inputs_for :let={ttf} field={tf[:ticket_type]}>
-                  eh <.input type="hidden" field={ttf[:id]} />
-                </.inputs_for>
+                <.inputs_for field={tf[:ticket_type]}></.inputs_for>
               </.inputs_for>
-              <button class="border p-1">+</button>
+              <button class="flex size-9 items-center justify-center gap-1 rounded-lg bg-zinc-50 text-sm text-zinc-950">
+                <.icon name="i-lucide-plus" />
+                <span class="sr-only">
+                  Add ticket
+                </span>
+              </button>
             </.form>
-            <button
-              type="button"
-              class="flex size-9 items-center justify-center gap-1 rounded-lg bg-zinc-50 text-sm text-zinc-950 hover:bg-red-50 hover:text-red-600"
-            >
-              <.icon name="i-lucide-plus" />
-              <span class="sr-only">
-                Add ticket
-              </span>
-            </button>
           </div>
         </div>
       </div>

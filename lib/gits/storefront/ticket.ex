@@ -13,6 +13,10 @@ defmodule Gits.Storefront.Ticket do
 
     create :create do
       primary? true
+
+      argument :ticket_type, :map, allow_nil?: false
+
+      change manage_relationship(:ticket_type, type: :append)
     end
   end
 

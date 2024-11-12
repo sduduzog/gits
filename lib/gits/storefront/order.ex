@@ -50,8 +50,11 @@ defmodule Gits.Storefront.Order do
     end
 
     update :add_ticket do
-      argument :ticket_type, :map
-      change manage_relationship(:ticket_type, :ticket_types, on_match: {:update, :add_ticket})
+      require_atomic? false
+
+      argument :ticket, :map, allow_nil?: false
+
+      change manage_relationship(:ticket, :tickets, type: :create)
     end
   end
 
