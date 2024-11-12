@@ -10,7 +10,7 @@
       <.input :if={@current_user} type="hidden" value={@current_user.email} field={ef[:email]} />
     </.inputs_for>
     <Turnstile.widget
-      :if={@live_action == :index}
+      :if={@live_action == :index and is_nil(@current_user)}
       events={[:success]}
       class="absolute bottom-0 z-50"
       appearance="interaction-only"

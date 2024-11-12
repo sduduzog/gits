@@ -177,8 +177,8 @@ defmodule GitsWeb.StorefrontLive.OrderComponent do
           :for={{_, name, tickets, remove_ticket_form, add_ticket_form} <- @ticket_types}
           class="grid gap-2 rounded-xl border p-4"
         >
-          <div class="flex justify-between items-center gap-4 overflow-hidden">
-            <span class="truncate grow text-lg font-semibold">
+          <div class="flex items-center justify-between gap-4 overflow-hidden">
+            <span class="grow truncate text-lg font-semibold">
               <%= name %>
             </span>
             <span class="shrink-0 text-lg font-semibold">R <%= "10.00" %></span>
@@ -189,7 +189,13 @@ defmodule GitsWeb.StorefrontLive.OrderComponent do
               <span class="text-sm font-medium text-zinc-800">R 60.00</span>
             </div>
 
-            <.form :let={f} phx-target={@myself} phx-submit="remove_ticket" for={remove_ticket_form}>
+            <.form
+              :let={f}
+              phx-target={@myself}
+              phx-submit="remove_ticket"
+              for={remove_ticket_form}
+              class="group"
+            >
               <.inputs_for :let={ticket_form} field={f[:ticket]}>
                 <.input
                   :if={Enum.any?(tickets)}
@@ -199,22 +205,40 @@ defmodule GitsWeb.StorefrontLive.OrderComponent do
                 />
               </.inputs_for>
 
-              <button class="flex size-9 items-center justify-center gap-1 rounded-lg bg-zinc-50 text-sm text-zinc-950 hover:bg-zinc-100">
-                <.icon name="i-lucide-minus" />
+              <button
+                disabled={Enum.count(tickets) == 0}
+                class="flex size-12 items-center justify-center gap-1 rounded-lg bg-zinc-100 text-zinc-950 hover:bg-zinc-200 disabled:bg-zinc-50 disabled:hover:bg-zinc-50 lg:size-9 lg:text-sm"
+              >
+                <.icon name="i-lucide-minus" class="inline-flex group-[.phx-submit-loading]:hidden" />
+                <.icon
+                  name="i-lucide-loader-circle"
+                  class="hidden animate-spin group-[.phx-submit-loading]:inline-flex"
+                />
+
                 <span class="sr-only">
                   Remove ticket
                 </span>
               </button>
             </.form>
-            <span class="text-zinc-800 text-base tabular-nums font-medium w-5 text-center">
+            <span class="w-5 text-center text-base font-medium tabular-nums text-zinc-800">
               <%= Enum.count(tickets) %>
             </span>
-            <.form :let={f} phx-target={@myself} phx-submit="add_ticket" for={add_ticket_form}>
+            <.form
+              :let={f}
+              phx-target={@myself}
+              phx-submit="add_ticket"
+              for={add_ticket_form}
+              class="group"
+            >
               <.inputs_for :let={ticket_form} field={f[:ticket]}>
                 <.inputs_for field={ticket_form[:ticket_type]}></.inputs_for>
               </.inputs_for>
-              <button class="flex size-9 items-center justify-center gap-1 rounded-lg bg-zinc-50 text-sm text-zinc-950">
-                <.icon name="i-lucide-plus" />
+              <button class="flex size-12 items-center justify-center gap-1 rounded-lg bg-zinc-100 text-zinc-950 hover:bg-zinc-200 disabled:bg-zinc-50 disabled:hover:bg-zinc-50 lg:size-9 lg:text-sm">
+                <.icon name="i-lucide-plus" class="inline-flex group-[.phx-submit-loading]:hidden" />
+                <.icon
+                  name="i-lucide-loader-circle"
+                  class="hidden animate-spin group-[.phx-submit-loading]:inline-flex"
+                />
                 <span class="sr-only">
                   Add ticket
                 </span>
@@ -230,7 +254,7 @@ defmodule GitsWeb.StorefrontLive.OrderComponent do
         </div>
 
         <button class="rounded-lg border border-transparent bg-zinc-950 px-4 py-2 text-white">
-          <span class="text-sm font-semibold">Proceed</span>
+          <span class="text-sm font-semibold">Continue</span>
         </button>
       </div>
     </div>
