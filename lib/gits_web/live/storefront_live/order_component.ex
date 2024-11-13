@@ -21,6 +21,9 @@ defmodule GitsWeb.StorefrontLive.OrderComponent do
         socket
         |> assign(:order, order)
         |> assign_current_form(order)
+
+      {:error, _} ->
+        socket |> assign(:error, :reason)
     end
     |> ok()
   end
@@ -87,7 +90,17 @@ defmodule GitsWeb.StorefrontLive.OrderComponent do
         |> assign(:confirm_form, order |> Form.for_update(:confirm))
 
       :completed ->
+        order = order |> Ash.load!([:ticket_types, :tickets])
+
+        tickets =
+          Enum.map(order.ticket_types, fn type ->
+            count = Enum.count(order.tickets, &(&1.ticket_type_id == type.id))
+            {type.name, count}
+          end)
+          |> Enum.filter(fn {_, count} -> count > 0 end)
+
         socket
+        |> assign(:tickets, tickets)
         |> assign(:form, order |> Form.for_update(:refund))
 
       _ ->
@@ -322,13 +335,13 @@ defmodule GitsWeb.StorefrontLive.OrderComponent do
     ~H"""
     <div class="grid items-start gap-8">
       <div>
-        <h3 class="text-lg font-semibold lg:col-span-full">Tickets Summary</h3>
+        <h3 class="text-lg font-semibold lg:col-span-full">Order Summary</h3>
       </div>
 
-      <div class="divide-y grid gap-4">
-        <div class="flex gap-4 items-center">
+      <div class="grid gap-4 divide-y">
+        <div class="flex items-center gap-4">
           <div class="size-10 rounded-full bg-zinc-100"></div>
-          <div class="grid text-sm gap-2 font-medium">
+          <div class="grid gap-1 text-sm font-medium">
             <span>John Doe</span>
             <span class="text-zinc-500">john.doe@bar.com</span>
           </div>
@@ -371,58 +384,20 @@ defmodule GitsWeb.StorefrontLive.OrderComponent do
     """
   end
 
+  def render(%{error: _} = assigns) do
+    ~H"""
+    <div class="grid items-start gap-2">
+      <h3 class="text-lg font-semibold lg:col-span-full">Oops!</h3>
+      <p class="mt-1 text-sm text-gray-500">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit quam corrupti consectetur.
+      </p>
+    </div>
+    """
+  end
+
   def render(assigns) do
     ~H"""
-    <div class="grid items-start gap-8">
-      <div>
-        <h3 class="text-lg font-semibold lg:col-span-full">Tickets Summary</h3>
-      </div>
-
-      <div class="divide-y grid gap-4">
-        <div class="flex gap-4 items-center">
-          <div class="size-10 rounded-full bg-zinc-100"></div>
-          <div class="grid text-sm gap-2 font-medium">
-            <span>John Doe</span>
-            <span class="text-zinc-500">john.doe@bar.com</span>
-          </div>
-        </div>
-        <div class="grid gap-4 pt-4">
-          <div
-            :for={
-              ticket_type <-
-                ["Early Access", "General", "VIP", "VVIP", "Super Access", "Geez Dude"]
-            }
-            class="flex justify-between text-sm"
-          >
-            <span class="text-zinc-500"><%= ticket_type %> &times; 2</span>
-            <span class="font-medium">R 50.00</span>
-          </div>
-        </div>
-
-        <div class="grid gap-4 pt-4">
-          <div
-            :for={
-              ticket_type <-
-                ["Total"]
-            }
-            class="flex justify-between"
-          >
-            <span class="font-semibold"><%= ticket_type %></span>
-            <span class="font-semibold">R 100.00</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="flex flex-wrap items-center justify-end gap-x-4 gap-y-2 lg:col-span-full">
-        <button class="rounded-lg border border-transparent hover:bg-zinc-100 px-4 py-2">
-          <span class="text-sm font-semibold">View tickets</span>
-        </button>
-
-        <button class="rounded-lg border border-transparent hover:bg-zinc-100 px-4 py-2 bg-zinc-50">
-          <span class="text-sm font-semibold">Request a refund</span>
-        </button>
-      </div>
-    </div>
+    <div></div>
     """
   end
 end

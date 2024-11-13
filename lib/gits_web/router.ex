@@ -74,6 +74,7 @@ defmodule GitsWeb.Router do
       live "/:handle/events/create-new", HostLive.EditEvent, :details
 
       live "/:handle/events/:public_id", HostLive.ViewEvent, :overview
+      live "/:handle/events/:public_id/attendees", HostLive.ViewEvent, :attendees
 
       live "/:handle/events/:public_id/edit/details", HostLive.EditEvent, :details
 

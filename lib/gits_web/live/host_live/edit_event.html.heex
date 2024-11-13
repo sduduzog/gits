@@ -1,32 +1,6 @@
 <div class="flex items-start">
   <%= if assigns[:event]  do %>
     <h1 class="text-xl pb-2 font-semibold">Edit event</h1>
-    <div class="flex grow justify-end gap-4">
-      <button
-        :if={@live_action != :details}
-        phx-click="previous"
-        phx-value-from={@live_action}
-        type="button"
-        class="flex h-9 items-center gap-1 rounded-lg px-4 text-sm text-zinc-950 hover:bg-zinc-100"
-      >
-        <.icon name="i-lucide-chevron-left" />
-        <span class=" font-semibold">
-          Previous
-        </span>
-      </button>
-
-      <button
-        phx-click="next"
-        phx-value-from={@live_action}
-        type="button"
-        class="flex h-9 items-center gap-1 rounded-lg px-4 text-sm text-zinc-950 hover:bg-zinc-100"
-      >
-        <span class=" font-semibold">
-          Next
-        </span>
-        <.icon name="i-lucide-chevron-right" />
-      </button>
-    </div>
   <% else %>
     <h1 class="text-xl pb-2 font-semibold">Create an event</h1>
   <% end %>
@@ -54,7 +28,20 @@
 
 <div class="flex grow flex-col lg:flex-row">
   <div class="mt-4 w-full lg:mt-0">
-    <.event_details :if={@live_action == :details} form={@form} />
+    <.event_details :if={@live_action == :details} form={@form}>
+      <%= if assigns[:event]  do %>
+        <button
+          phx-click="next"
+          type="button"
+          class="flex h-9 items-center gap-1 rounded-lg px-4 text-sm text-zinc-950 hover:bg-zinc-100"
+        >
+          <span class=" font-semibold">
+            Next
+          </span>
+          <.icon name="i-lucide-chevron-right" />
+        </button>
+      <% end %>
+    </.event_details>
 
     <%= if assigns[:event] do %>
       <.tickets
@@ -68,7 +55,20 @@
         show_create_ticket_modal={@show_create_ticket_modal}
         show_edit_ticket_modal={@show_edit_ticket_modal}
         show_archive_ticket_modal={@show_archive_ticket_modal}
-      />
+      >
+        <button
+          :if={@live_action != :details}
+          phx-click="previous"
+          phx-value-from={@live_action}
+          type="button"
+          class="flex h-9 items-center gap-1 rounded-lg px-4 text-sm text-zinc-950 hover:bg-zinc-100"
+        >
+          <.icon name="i-lucide-chevron-left" />
+          <span class=" font-semibold">
+            Previous
+          </span>
+        </button>
+      </.tickets>
     <% end %>
   </div>
 </div>

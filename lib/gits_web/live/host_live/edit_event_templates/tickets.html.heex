@@ -111,6 +111,9 @@
     </button>
   </div>
 <% end %>
+<div class="flex mt-8 justify-end grow">
+  <%= render_slot(@inner_block) %>
+</div>
 
 <.modal
   id="create_ticket"

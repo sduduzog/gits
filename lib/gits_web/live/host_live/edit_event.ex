@@ -59,12 +59,12 @@ defmodule GitsWeb.HostLive.EditEvent do
     |> noreply()
   end
 
-  def handle_event("previous", %{"from" => from}, socket) do
+  def handle_event("previous", _, socket) do
     %{host: host, event: event} = socket.assigns
 
     action =
-      case from do
-        "tickets" ->
+      case socket.assigns.live_action do
+        :tickets ->
           :details
       end
 
@@ -76,12 +76,12 @@ defmodule GitsWeb.HostLive.EditEvent do
     |> noreply()
   end
 
-  def handle_event("next", %{"from" => from}, socket) do
+  def handle_event("next", _, socket) do
     %{host: host, event: event} = socket.assigns
 
     action =
-      case from do
-        "details" ->
+      case socket.assigns.live_action do
+        :details ->
           :tickets
       end
 

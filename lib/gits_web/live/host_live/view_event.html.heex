@@ -1,11 +1,3 @@
-<% navigation_items = [
-  # %{
-  #   label: "Tickets",
-  #   current: @live_action == :tickets,
-  #   href: ~p"/hosts/#{@host_handle}/events/event_public_id/"
-  # }
-] %>
-
 <div class="flex items-center gap-2 p-2 lg:px-0">
   <div class="flex w-full grow items-center gap-1 text-sm">
     <div class="flex h-9 max-w-48 items-center gap-2 rounded-lg px-1 py-0.5 hover:bg-zinc-100">
@@ -35,104 +27,113 @@
   </div>
 </div>
 
-<div class="flex flex-col gap-4 p-2 lg:flex-row lg:gap-8">
-  <div class="grid w-full rounded-xl border divide-y lg:max-w-96">
-    <div class="grid p-4 gap-4">
-      <div class="flex items-start gap-2">
-        <div class="aspect-[3/2] w-20 shrink-0 rounded-md bg-zinc-200"></div>
-        <div class="grow">
-          <span class="line-clamp-3 inline-flex gap-1 font-semibold">
-            <%= @event.name %>
-          </span>
-          <div class="w-full flex justify-end">
-            <.link
-              target="_blank"
-              class="flex rounded-lg text-zinc-500 hover:text-zinc-950"
-              href={Routes.storefront_event_listing_path(@socket, :index, @event.public_id)}
-            >
-              <span class="sr-only">Open url</span>
-              <.icon name="hero-link-mini" />
-            </.link>
+<div class="grid lg:grid-cols-[24rem_1fr] gap-4 lg:gap-8">
+  <div class="p-2">
+    <div class="grid w-full rounded-xl border divide-y">
+      <div class="grid p-4 gap-4">
+        <div class="flex items-start gap-2">
+          <div class="aspect-[3/2] w-20 shrink-0 rounded-md bg-zinc-200"></div>
+          <div class="grow">
+            <span class="line-clamp-3 inline-flex gap-1 font-semibold">
+              <%= @event.name %>
+            </span>
+            <div class="w-full flex justify-end">
+              <.link
+                target="_blank"
+                class="flex rounded-lg text-zinc-500 hover:text-zinc-950"
+                href={Routes.storefront_event_listing_path(@socket, :index, @event.public_id)}
+              >
+                <span class="sr-only">Open url</span>
+                <.icon name="hero-link-mini" />
+              </.link>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="flex gap-4">
-        <button
-          :if={not @event.published?}
-          phx-click={
-            JS.patch(
-              Routes.host_view_event_path(
-                @socket,
-                @live_action,
-                @host.handle,
-                @event.public_id,
-                %{publish: @event.public_id}
-              ),
-              replace: true
-            )
-            |> show_modal("publish-event")
-          }
-          class="h-9 gap-1 bg-zinc-950 rounded-lg inline-flex items-center text-white px-4 text-sm"
-        >
-          <.icon name="i-lucide-rocket" />
-          <span class="font-semibold">Publish</span>
-        </button>
+        <div class="flex gap-4">
+          <button
+            :if={not @event.published?}
+            phx-click={
+              JS.patch(
+                Routes.host_view_event_path(
+                  @socket,
+                  @live_action,
+                  @host.handle,
+                  @event.public_id,
+                  %{publish: @event.public_id}
+                ),
+                replace: true
+              )
+              |> show_modal("publish-event")
+            }
+            class="h-9 gap-1 bg-zinc-950 rounded-lg inline-flex items-center text-white px-4 text-sm"
+          >
+            <.icon name="i-lucide-rocket" />
+            <span class="font-semibold">Publish</span>
+          </button>
 
-        <button
-          phx-click={
-            JS.navigate(
-              Routes.host_edit_event_path(@socket, :details, @host_handle, @event.public_id)
-            )
-          }
-          class="h-9 border gap-1 rounded-lg inline-flex items-center text-zinc-950 px-4 text-sm"
-        >
-          <span class="font-semibold">Edit</span>
-        </button>
+          <button
+            phx-click={
+              JS.navigate(
+                Routes.host_edit_event_path(@socket, :details, @host_handle, @event.public_id)
+              )
+            }
+            class="h-9 border gap-1 rounded-lg inline-flex items-center text-zinc-950 px-4 text-sm"
+          >
+            <span class="font-semibold">Edit</span>
+          </button>
 
-        <button
-          phx-click={
-            JS.patch(
-              Routes.host_view_event_path(
-                @socket,
-                @live_action,
-                @host_handle,
-                @event.public_id,
-                %{
-                  archive: @event.public_id
-                }
-              ),
-              replace: true
-            )
-            |> show_modal("archive-event")
-          }
-          class="h-9 border gap-1 rounded-lg inline-flex items-center text-red-500 px-4 text-sm"
-        >
-          <span class="font-semibold">Archive</span>
-        </button>
+          <button
+            phx-click={
+              JS.patch(
+                Routes.host_view_event_path(
+                  @socket,
+                  @live_action,
+                  @host_handle,
+                  @event.public_id,
+                  %{
+                    archive: @event.public_id
+                  }
+                ),
+                replace: true
+              )
+              |> show_modal("archive-event")
+            }
+            class="h-9 border gap-1 rounded-lg inline-flex items-center text-red-500 px-4 text-sm"
+          >
+            <span class="font-semibold">Archive</span>
+          </button>
+        </div>
       </div>
-    </div>
-    <div class="p-4 grid grid-cols-3 divide-x">
-      <div
-        :for={{label, unit} <- [{"Unique views", "0"}, {"Total orders", "0"}, {"Attendees", "0"}]}
-        class="grid pl-2 first:pl-0"
-      >
-        <span class="text-xs font-medium text-zinc-600"><%= label %></span>
-        <span class="text-xl font-medium"><%= unit %></span>
+      <div class="p-4 grid grid-cols-3 divide-x">
+        <div
+          :for={{label, unit} <- [{"Unique views", "0"}, {"Total orders", "0"}]}
+          class="grid pl-2 first:pl-0"
+        >
+          <span class="text-xs font-medium text-zinc-600"><%= label %></span>
+          <span class="text-2xl font-medium"><%= unit %></span>
+        </div>
       </div>
     </div>
   </div>
-  <div class="grow space-y-4">
+  <div class="grow space-y-4 lg:pr-2">
     <div class="flex items-center gap-8 border-b-2 border-zinc-100">
       <.link
-        :for={i <- navigation_items}
-        patch={i.href}
+        :for={action <- [:overview, :attendees]}
+        patch={Routes.host_view_event_path(@socket, action, @host.handle, @event.public_id)}
         replace={true}
-        aria-selected={"#{i.current}"}
+        aria-selected={"#{action == @live_action}"}
         class="-mb-0.5 border-b-2 border-transparent py-2 text-sm font-medium text-zinc-400 aria-selected:border-zinc-500 aria-selected:text-zinc-800"
       >
-        <%= i.label %>
+        <span class="px-1 capitalize">
+          <%= action %>
+        </span>
       </.link>
     </div>
+
+    <.tab_header action={@live_action} />
+
+    <.overview :if={@live_action == :overview} />
+    <.attendees :if={@live_action == :attendees} />
   </div>
 </div>
 <.modal

@@ -20,7 +20,7 @@ defmodule GitsWeb.HostLive.ViewEvent do
   def handle_params(%{"public_id" => public_id} = unsigned_params, _uri, socket) do
     Event
     |> Ash.Query.filter(public_id == ^public_id)
-    |> Ash.Query.load([:name, :published?])
+    |> Ash.Query.load([:name, :published?, :orders])
     |> Ash.read_one()
     |> case do
       {:ok, %Event{} = event} ->
@@ -34,7 +34,12 @@ defmodule GitsWeb.HostLive.ViewEvent do
     end
     |> show_publish_modal(unsigned_params)
     |> show_archive_modal(unsigned_params)
+    |> list_attendees()
     |> noreply()
+  end
+
+  defp list_attendees(socket) do
+    socket
   end
 
   def handle_event("publish", _unsigned_params, socket) do

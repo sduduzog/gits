@@ -656,6 +656,7 @@ defmodule GitsWeb.CoreComponents do
 
   slot :col, required: true do
     attr :label, :string
+    attr :optional, :boolean
   end
 
   slot :action, doc: "the slot for showing user actions in the last table column"
@@ -667,49 +668,54 @@ defmodule GitsWeb.CoreComponents do
       end
 
     ~H"""
-    <div class="overflow-y-auto px-4 sm:overflow-visible sm:px-0">
-      <table class="w-[40rem] sm:w-full">
-        <thead class="text-left text-sm leading-6 text-zinc-500">
-          <tr>
-            <th :for={col <- @col} class="p-0 py-4 pr-6 font-normal"><%= col[:label] %></th>
-            <th :if={@action != []} class="relative p-0 pb-4">
-              <span class="sr-only"><%= gettext("Actions") %></span>
-            </th>
-          </tr>
-        </thead>
-        <tbody
-          id={@id}
-          phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"}
-          class="relative divide-y divide-zinc-100 border-t border-zinc-200 text-sm leading-6 text-zinc-700"
-        >
-          <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class="group hover:bg-zinc-50">
-            <td
-              :for={{col, i} <- Enum.with_index(@col)}
-              phx-click={@row_click && @row_click.(row)}
-              class={["relative p-0", @row_click && "hover:cursor-pointer"]}
-            >
-              <div class="block py-4 pr-6">
-                <span class="absolute -inset-y-px -left-4 right-0 group-hover:bg-zinc-50 sm:rounded-l-xl" />
-                <span class={["relative", i == 0 && "font-semibold text-zinc-900"]}>
-                  <%= render_slot(col, @row_item.(row)) %>
-                </span>
-              </div>
-            </td>
-            <td :if={@action != []} class="relative w-14 p-0">
-              <div class="relative whitespace-nowrap py-4 text-right text-sm font-medium">
-                <span class="absolute -inset-y-px -right-4 left-0 group-hover:bg-zinc-50 sm:rounded-r-xl" />
-                <span
-                  :for={action <- @action}
-                  class="relative ml-4 font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
-                >
-                  <%= render_slot(action, @row_item.(row)) %>
-                </span>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <table class="w-full">
+      <thead class="text-left text-sm leading-6 text-zinc-500">
+        <tr>
+          <th
+            :for={col <- @col}
+            class={["p-4 font-normal", if(col[:optional], do: "hidden lg:table-cell", else: "")]}
+          >
+            <%= col[:label] %>
+          </th>
+          <th :if={@action != []} class="relative p-0 pb-4">
+            <span class="sr-only"><%= gettext("Actions") %></span>
+          </th>
+        </tr>
+      </thead>
+      <tbody
+        id={@id}
+        phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"}
+        class="relative divide-y border-t border-zinc-100 divide-zinc-100 text-sm leading-6 text-zinc-700"
+      >
+        <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class="group hover:bg-zinc-50">
+          <td
+            :for={{col, i} <- Enum.with_index(@col)}
+            phx-click={@row_click && @row_click.(row)}
+            class={[
+              "relative p-0",
+              @row_click && "hover:cursor-pointer",
+              if(col[:optional], do: "hidden lg:table-cell", else: "")
+            ]}
+          >
+            <div class="w-full hover:bg-zinc-50 p-4">
+              <span class={["relative", i == 0 && "font-semibold text-zinc-900"]}>
+                <%= render_slot(col, @row_item.(row)) %>
+              </span>
+            </div>
+          </td>
+          <td :if={@action != []} class="relative w-14 p-0">
+            <div class="relative flex gap-4 whitespace-nowrap py-4 pr-4 text-right text-sm font-medium">
+              <span
+                :for={action <- @action}
+                class="relative font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
+              >
+                <%= render_slot(action, @row_item.(row)) %>
+              </span>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
     """
   end
 
