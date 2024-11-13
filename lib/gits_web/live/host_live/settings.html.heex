@@ -1,0 +1,32 @@
+<div class="flex items-center gap-2 p-2 lg:px-0">
+  <div class="flex w-full grow items-center gap-1 text-sm">
+    <div class="flex h-9 max-w-48 items-center gap-2 rounded-lg px-1 py-0.5 hover:bg-zinc-100">
+      <div class="flex size-8 shrink-0 items-center justify-center rounded-full bg-zinc-500">
+        <span class="font-medium text-white ">
+          <%= @host.name
+          |> String.split()
+          |> Enum.map(&String.first(&1))
+          |> Enum.join()
+          |> String.upcase() %>
+        </span>
+      </div>
+      <span :if={false} class="font-semibold hidden lg:inline truncate"><%= @host.name %></span>
+      <span class="hidden truncate font-semibold lg:inline">Treehouse Inc</span>
+      <.icon name="i-lucide-chevrons-up-down" class="size-4 shrink-0 text-zinc-400" />
+    </div>
+    <span class="text-xs font-semibold text-zinc-400">/</span>
+    <div class="flex h-9 shrink-0 items-center truncate rounded-lg px-1 text-sm font-medium">
+      <span class="">Settings</span>
+    </div>
+  </div>
+</div>
+
+<h1 class="p-2 text-xl font-semibold">Settings</h1>
+
+<div class="p-2">
+  <h2 class="text-base font-semibold leading-7 text-gray-900">General</h2>
+  <p class="mt-1 text-sm leading-6 text-gray-600">
+    <!-- This information will be displayed publicly. -->
+  </p>
+  <div class=""></div>
+</div>

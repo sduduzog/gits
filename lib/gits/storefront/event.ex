@@ -1,5 +1,5 @@
 defmodule Gits.Storefront.Event do
-  alias Gits.Storefront.{Order, PayoutAccount, TicketType}
+  alias Gits.Storefront.{Order, PayoutAccount, Ticket, TicketType}
   alias Gits.Hosting.{Host, PayoutAccount}
 
   use Ash.Resource,

@@ -28,4 +28,8 @@ defmodule Gits.Storefront.Ticket do
     belongs_to :order, Order, allow_nil?: false
     belongs_to :ticket_type, TicketType, allow_nil?: false
   end
+
+  calculations do
+    calculate :ticket_type_name, :string, expr(ticket_type.name)
+  end
 end

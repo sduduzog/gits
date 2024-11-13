@@ -34,7 +34,7 @@ defmodule GitsWeb.CoreComponents do
           [
             # {"Tickets", "0", "/my/tickets"},
             # {"Orders", nil, "/my/orders"},
-            # {"Profile", nil, "/my/profile"},
+            {"Settings", nil, "/my/profile"},
             {"Sign out", nil, "/sign-out"}
           ]
 
@@ -49,11 +49,25 @@ defmodule GitsWeb.CoreComponents do
       |> assign(:nav, nav_items)
 
     ~H"""
-    <header class="mx-auto flex max-w-screen-xl p-2 items-center gap-10">
-      <div class="py-2">
+    <header class="mx-auto flex max-w-screen-xl justify-between p-2 items-center gap-10">
+      <div class="h-10 flex items-center">
         <.logo />
       </div>
-      <nav :if={not @muted} class="hidden w-auto gap-4 lg:flex">
+      <%= if @signed_in do %>
+        <div>
+          <button class="size-10 bg-zinc-200 rounded-full"></button>
+        </div>
+      <% else %>
+        <div>
+          <.link
+            navigate={~p"/sign-in"}
+            class="hover:bg-zinc-100 px-4 rounded-lg font-semibold text-sm py-2 inline-flex"
+          >
+            Sign in
+          </.link>
+        </div>
+      <% end %>
+      <nav :if={not @muted and false} class="hidden w-auto gap-4 lg:flex">
         <.link
           :for={{label, badge, href} <- @nav}
           navigate={href}
@@ -69,7 +83,7 @@ defmodule GitsWeb.CoreComponents do
           </span>
         </.link>
       </nav>
-      <div :if={not @muted} class="flex grow items-center justify-end gap-4">
+      <div :if={not @muted and false} class="flex grow items-center justify-end gap-4">
         <.link :if={false} navigate="/search" class="inline-flex size-9 items-center justify-center">
           <.icon name="i-lucide-search" />
         </.link>

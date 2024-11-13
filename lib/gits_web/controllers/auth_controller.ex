@@ -59,11 +59,9 @@ defmodule GitsWeb.AuthController do
   end
 
   def sign_out(conn, _params) do
-    return_to = get_session(conn, :return_to) || ~p"/"
-
     conn
     |> clear_session()
-    |> redirect(to: return_to)
+    |> redirect(to: ~p"/")
   end
 
   def email_not_verified(conn, _params) do

@@ -90,6 +90,8 @@ defmodule GitsWeb.Router do
            HostLive.EventView,
            :settings_payout_preferences
 
+      live "/:handle/settings", HostLive.Settings, :general
+
       live "/hosts/:handle/events/:event_id/manage",
            HostLive.EditEvent,
            :summary
@@ -107,7 +109,6 @@ defmodule GitsWeb.Router do
       live "/hosts/:handle/events/:event_id/guests", HostLive.Event, :guests
 
       live "/hosts/:handle/settings/payouts", HostLive.Settings, :payouts
-      live "/hosts/:handle/settings", HostLive.Settings, :general
     end
   end
 

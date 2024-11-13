@@ -133,7 +133,7 @@
     <.tab_header action={@live_action} />
 
     <.overview :if={@live_action == :overview} />
-    <.attendees :if={@live_action == :attendees} />
+    <.attendees :if={@live_action == :attendees} attendees={@attendees} />
   </div>
 </div>
 <.modal

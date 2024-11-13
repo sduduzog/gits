@@ -1,5 +1,5 @@
 defmodule GitsWeb.HostLive.ViewEvent do
-  alias Gits.Storefront.Event
+  alias Gits.Storefront.{Event, Order, Ticket}
   use GitsWeb, :live_view
   require Ash.Query
 
@@ -20,7 +20,7 @@ defmodule GitsWeb.HostLive.ViewEvent do
   def handle_params(%{"public_id" => public_id} = unsigned_params, _uri, socket) do
     Event
     |> Ash.Query.filter(public_id == ^public_id)
-    |> Ash.Query.load([:name, :published?, :orders])
+    |> Ash.Query.load([:published?])
     |> Ash.read_one()
     |> case do
       {:ok, %Event{} = event} ->
@@ -38,9 +38,25 @@ defmodule GitsWeb.HostLive.ViewEvent do
     |> noreply()
   end
 
-  defp list_attendees(socket) do
-    socket
+  defp list_attendees(%{assigns: %{live_action: :attendees}} = socket) do
+    socket.assigns.event
+    |> Ash.load(
+      orders:
+        Ash.Query.filter(Order, state == :completed)
+        |> Ash.Query.load(tickets: Ash.Query.load(Ticket, :ticket_type_name))
+    )
+    |> case do
+      {:ok, event} ->
+        attendees =
+          Enum.flat_map(event.orders, & &1.tickets)
+          |> Enum.map(&%{name: "Unknown", ticket: &1.ticket_type_name})
+
+        socket
+        |> assign(:attendees, attendees)
+    end
   end
+
+  defp list_attendees(socket), do: socket
 
   def handle_event("publish", _unsigned_params, socket) do
     %{event_id: event_id} = socket.assigns
@@ -48,7 +64,7 @@ defmodule GitsWeb.HostLive.ViewEvent do
     Event.publish_event(event_id)
     |> case do
       {:ok, event} ->
-        event |> IO.inspect()
+        event
     end
     |> Ash.load([:published?])
     |> case do
