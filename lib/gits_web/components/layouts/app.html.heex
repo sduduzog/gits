@@ -2,25 +2,4 @@
   <div class="overflow-auto lg:overflow-visible">
     <%= @inner_content %>
   </div>
-  <div class="flexx hidden justify-between border-t p-2 px-8">
-    <.link navigate={~p"/events"} class="grid place-items-center">
-      <.icon name="hero-magnifying-glass" />
-      <span class="text-xs">Explore</span>
-    </.link>
-
-    <.link navigate={~p"/my/tickets"} class="grid place-items-center">
-      <.icon name="hero-ticket" />
-      <span class="text-xs">Tickets</span>
-    </.link>
-
-    <div :if={false} class="grid place-items-center">
-      <.icon name="hero-chat-bubble-oval-left" />
-      <span class="text-xs">Messages</span>
-    </div>
-
-    <.link navigate={~p"/my/profile"} class="grid place-items-center">
-      <.icon name="hero-user" />
-      <span class="text-xs">Profile</span>
-    </.link>
-  </div>
 </div>

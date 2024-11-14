@@ -21,112 +21,107 @@ defmodule GitsWeb.CoreComponents do
     """
   end
 
-  attr :signed_in, :boolean, default: false
-  attr :current, :string, default: ""
-  attr :muted, :boolean, default: false
+  attr :user, :map
 
   def header(assigns) do
-    %{signed_in: signed_in} = assigns
-
-    nav_items =
-      case signed_in do
-        true ->
-          [
-            # {"Tickets", "0", "/my/tickets"},
-            # {"Orders", nil, "/my/orders"},
-            {"Settings", nil, "/my/profile"},
-            {"Sign out", nil, "/sign-out"}
-          ]
-
-        false ->
-          [
-            {"Sign in", nil, "/sign-in"}
-          ]
-      end
-
     assigns =
       assigns
-      |> assign(:nav, nav_items)
+      |> assign(:menus, [
+        [{"Orders", "", false}, {"Tickets", "", "0"}, {"Settings", "", false}],
+        [{"Sign out", ~p"/sign-out", false}]
+      ])
 
     ~H"""
-    <header class="mx-auto flex max-w-screen-xl justify-between p-2 items-center gap-10">
-      <div class="h-10 flex items-center">
+    <header class="mx-auto flex max-w-screen-xl items-center gap-2 p-2 lg:gap-8">
+      <div class="flex grow items-center">
         <.logo />
       </div>
-      <%= if @signed_in do %>
-        <div>
-          <button class="size-10 bg-zinc-200 rounded-full"></button>
+      <.link
+        navigate={~p"/"}
+        class="inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-semibold hover:bg-zinc-100"
+      >
+        <.icon name="i-lucide-search" />
+        <span>Search</span>
+      </.link>
+
+      <%= if not is_nil(assigns[:user]) do %>
+        <div
+          class="relative inline-block text-left"
+          phx-click-away={
+            JS.hide(
+              to: "div[role=menu]",
+              transition:
+                {"transition ease-in duration-75", "transform opacity-100 scale-100",
+                 "transform opacity-0 scale-95"}
+            )
+          }
+        >
+          <div>
+            <button
+              phx-click={
+                JS.toggle(
+                  to: "div[role=menu]",
+                  in:
+                    {"transition ease-out duration-100", "transform opacity-0 scale-95",
+                     "transform opacity-100 scale-100"},
+                  out:
+                    {"transition ease-in duration-75", "transform opacity-100 scale-100",
+                     "transform opacity-0 scale-95"}
+                )
+              }
+              class="inline-flex h-9 items-center justify-center gap-x-1.5 rounded-lg border px-4 py-2 text-sm font-semibold ring-zinc-300 hover:bg-gray-50"
+              id="menu-button"
+              aria-expanded="true"
+              aria-haspopup="true"
+            >
+              <span>Account</span>
+              <.icon name="i-lucide-chevron-down" />
+            </button>
+          </div>
+          <div
+            class="absolute hidden right-0 z-10 mt-2 w-56 origin-top-right divide-y divide-zinc-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none"
+            role="menu"
+            aria-orientation="vertical"
+            aria-labelledby="menu-button"
+            tabindex="-1"
+          >
+            <div class="px-4 py-3" role="none">
+              <p class="text-sm" role="none">Signed in as</p>
+              <p class="truncate text-sm font-medium text-zinc-900" role="none">
+                <%= @user.email %>
+              </p>
+            </div>
+            <div :for={{items, outer_index} <- Enum.with_index(@menus)} class="py-1" role="none">
+              <!-- Active: "bg-zinc-100 text-gray-900 outline-none", Not Active: "text-gray-700" -->
+              <.link
+                :for={{{name, href, badge}, index} <- Enum.with_index(items)}
+                navigate={href}
+                class="flex items-center justify-between px-4 py-2 text-sm text-zinc-700 active:bg-zinc-100 active:text-zinc-900 active:outline-none"
+                role="menuitem"
+                tabindex="-1"
+                id={"menu-item-#{outer_index}-#{index}"}
+              >
+                <span><%= name %></span>
+                <span
+                  :if={badge}
+                  class="inline-flex items-center gap-x-1.5 rounded-md px-2 py-1 text-xs font-medium text-gray-900 ring-1 ring-inset ring-gray-200"
+                >
+                  <%= badge %>
+                </span>
+              </.link>
+            </div>
+          </div>
         </div>
       <% else %>
         <div>
           <.link
             navigate={~p"/sign-in"}
-            class="hover:bg-zinc-100 px-4 rounded-lg font-semibold text-sm py-2 inline-flex"
+            class="inline-flex rounded-lg px-4 py-2 text-sm font-semibold hover:bg-zinc-100"
           >
             Sign in
           </.link>
         </div>
       <% end %>
-      <nav :if={not @muted and false} class="hidden w-auto gap-4 lg:flex">
-        <.link
-          :for={{label, badge, href} <- @nav}
-          navigate={href}
-          aria-selected={"#{label == @current}"}
-          class="inline-flex items-center justify-between h-9 gap-1 rounded-lg p-1 transition-colors duration-300 hover:bg-black/10 aria-selected:bg-black/10"
-        >
-          <span class="px-1 text-sm"><%= label %></span>
-          <span
-            :if={badge}
-            class="inline-flex items-center justify-center rounded-md border bg-zinc-600 px-2 py-1 text-sm text-xs font-semibold leading-4 text-white"
-          >
-            <%= badge %>
-          </span>
-        </.link>
-      </nav>
-      <div :if={not @muted and false} class="flex grow items-center justify-end gap-4">
-        <.link :if={false} navigate="/search" class="inline-flex size-9 items-center justify-center">
-          <.icon name="i-lucide-search" />
-        </.link>
-
-        <button
-          class="inline-flex size-9 items-center justify-center lg:hidden"
-          phx-click={JS.show(to: "div#mega-options", display: "flex")}
-        >
-          <.icon name="i-lucide-menu" />
-        </button>
-      </div>
-      <div
-        phx-click-away={JS.hide()}
-        id="mega-options"
-        class="absolute inset-x-0 top-0 z-50 hidden w-full bg-white pb-4 shadow-md"
-      >
-        <div class="mx-auto flex w-full max-w-screen-xl flex-wrap items-center gap-10">
-          <div>
-            <.logo />
-          </div>
-          <div class="flex grow justify-end gap-4 p-2 lg:order-3">
-            <button class="size-9" phx-click={JS.hide(to: "div#mega-options")}>
-              <.icon name="i-lucide-x" />
-            </button>
-          </div>
-          <nav class="grid w-full gap-2 p-1 lg:flex lg:w-auto lg:gap-8 lg:p-2">
-            <.link
-              :for={{label, badge, href} <- @nav}
-              navigate={href}
-              aria-selected={"#{label == @current}"}
-              class="inline-flex items-center justify-between gap-1 rounded-lg py-3 pr-3 transition-colors duration-300 hover:bg-black/10 aria-selected:bg-black/10 lg:p-1"
-            >
-              <span class="px-1 text-base lg:text-sm"><%= label %></span>
-              <span
-                :if={badge}
-                class="inline-flex items-center justify-center rounded-lg border bg-zinc-500 px-2 py-1 text-sm font-medium leading-4 text-white lg:rounded-md lg:text-xs"
-              >
-                <%= badge %>
-              </span>
-            </.link>
-          </nav>
-        </div>
-      </div>
     </header>
     """
   end
@@ -612,7 +607,7 @@ defmodule GitsWeb.CoreComponents do
     ~H"""
     <fieldset class={["", @class]}>
       <legend class="text-sm font-medium leading-6 text-zinc-600"><%= @label %></legend>
-      <!-- <p class="mt-1 text-sm leading-6 text-gray-600">How do you prefer to receive notifications?</p> -->
+      <!-- <p class="mt-1 text-sm leading-6 text-zinc-600">How do you prefer to receive notifications?</p> -->
       <div class="mt-6 space-y-6 sm:flex sm:items-center sm:space-x-10 sm:space-y-0">
         <div :for={{%{value: value} = rad, idx} <- Enum.with_index(@radio)} class="flex items-center">
           <input
@@ -621,7 +616,7 @@ defmodule GitsWeb.CoreComponents do
             value={value}
             checked={value == @field.value}
             type="radio"
-            class="h-4 w-4 border-gray-300 text-zinc-600 focus:ring-zinc-600"
+            class="h-4 w-4 border-zinc-300 text-zinc-600 focus:ring-zinc-600"
           />
           <label
             for={"#{@field.id}-#{idx}"}
@@ -699,7 +694,7 @@ defmodule GitsWeb.CoreComponents do
       <tbody
         id={@id}
         phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"}
-        class="relative divide-y border-t border-zinc-100 divide-zinc-100 text-sm leading-6 text-zinc-700"
+        class="relative divide-y divide-zinc-100 border-t border-zinc-100 text-sm leading-6 text-zinc-700"
       >
         <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class="group hover:bg-zinc-50">
           <td
@@ -711,7 +706,7 @@ defmodule GitsWeb.CoreComponents do
               if(col[:optional], do: "hidden lg:table-cell", else: "")
             ]}
           >
-            <div class="w-full hover:bg-zinc-50 p-4">
+            <div class="w-full p-4 hover:bg-zinc-50">
               <span class={["relative", i == 0 && "font-semibold text-zinc-900"]}>
                 <%= render_slot(col, @row_item.(row)) %>
               </span>
