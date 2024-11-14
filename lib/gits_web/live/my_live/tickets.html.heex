@@ -1,5 +1,8 @@
-<h1 class="p-2 mx-auto max-w-screen-xl text-xl font-semibold">Tickets</h1>
+<h1 :if={@live_action == :index} class="p-2 mx-auto max-w-screen-xl text-xl font-semibold">
+  <%= @page_title %>
+</h1>
 <ul
+  :if={@live_action == :index}
   role="list"
   class="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-3 xl:gap-x-8 mx-auto max-w-screen-xl"
 >
@@ -10,6 +13,7 @@
       <div class="text-sm/6 font-medium text-gray-900">General</div>
       <div class="relative ml-auto">
         <button
+          phx-click={JS.show(to: "div#my-ticket-menu")}
           type="button"
           class="-m-2.5 block p-2.5 text-gray-400 hover:text-gray-500"
           id="options-menu-0-button"
@@ -39,6 +43,7 @@
         -->
         <div
           class="absolute hidden right-0 z-10 mt-0.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none"
+          id="my-ticket-menu"
           role="menu"
           aria-orientation="vertical"
           aria-labelledby="options-menu-0-button"
@@ -46,7 +51,7 @@
         >
           <!-- Active: "bg-gray-50 outline-none", Not Active: "" -->
           <a
-            href="#"
+            href={~p"/my/tickets/public-id"}
             class="block px-3 py-1 text-sm/6 text-gray-900"
             role="menuitem"
             tabindex="-1"
@@ -90,3 +95,33 @@
     </dl>
   </li>
 </ul>
+
+<div
+  :if={@live_action == :show}
+  class="mx-auto items-start relative max-w-screen-xl p-4 grid lg:grid-cols-[theme(space.96)_1fr]"
+>
+  <div class="text-center items-center justify-center overflow-hidden w-full grid gap-12 py-4">
+    <div class="space-y-2">
+      <h1 class="mx-auto max-w-screen-xl text-lg/6 text-zinc-500 font-semibold">
+        <%= @page_title %>
+      </h1>
+
+      <h2 class="mx-auto max-w-screen-xl text-2xl/7 font-semibold">
+        The Ultimate Cheese Festival
+      </h2>
+    </div>
+
+    <%= raw(
+      "askldfhalsdfsdlf"
+      |> EQRCode.encode()
+      |> EQRCode.svg(
+        shape: "circle",
+        color: "#3f3f46",
+        viewbox: true,
+        background_color: :transparent,
+        width: 360
+      )
+    ) %>
+  </div>
+  <div class="bg-white z-50 lg:static border inset-x-0 p-2 h-96"></div>
+</div>

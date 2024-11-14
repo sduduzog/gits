@@ -134,6 +134,7 @@ defmodule GitsWeb.Router do
     live_session :my_authentication_required,
       on_mount: {GitsWeb.LiveUserAuth, :my_live} do
       live "/tickets", MyLive.Tickets, :index
+      live "/tickets/:public_id", MyLive.Tickets, :show
       live "/orders", MyLive.Orders, :index
       live "/settings", MyLive.Settings, :account
       live "/settings/partner", MyLive.Settings, :partner
