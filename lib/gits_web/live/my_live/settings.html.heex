@@ -1,0 +1,54 @@
+<h1 class="p-2 mx-auto max-w-screen-xl text-xl font-semibold">Settings</h1>
+<div class="mx-auto pb-16 max-w-screen-xl lg:space-y-16 space-y-4 p-2">
+  <div class="grid gap-8 lg:gap-0 items-start lg:grid-cols-[theme(space.32)_1fr]">
+    <div class="flex gap-4 lg:grid">
+      <.link
+        :for={
+          {name, icon} <-
+            [{:account, "i-lucide-user"}, {:partner, "i-lucide-handshake"}] |> Enum.take(1)
+        }
+        navigate={Routes.my_settings_path(@socket, name)}
+        aria-selected={"#{name == @live_action}"}
+        class="group flex items-center gap-2  border-b-2 border-transparent py-2 font-medium text-zinc-500 hover:text-zinc-950 aria-selected:border-zinc-950 aria-selected:text-zinc-950 lg:rounded-lg lg:border-none lg:p-2 lg:hover:bg-zinc-50"
+      >
+        <.icon name={icon} class="hidden lg:inline" />
+        <span class="font-medium capitalize"><%= name %></span>
+      </.link>
+    </div>
+    <div :if={@live_action == :account} class="mx-auto w-full max-w-screen-sm space-y-8">
+      <div class="size-28 rounded-full bg-zinc-200"></div>
+      <div class="grid gap-1">
+        <span class="text-3xl font-semibold">
+          <%= @current_user.display_name || "Unknown" %>
+        </span>
+        <span class="text-sm text-zinc-500"><%= @current_user.email %></span>
+      </div>
+      <.form :let={f} for={%{}} class="space-y-4">
+        <div class="flex items-center gap-4">
+          <h2 class="text-xl grow font-semibold">Personal details</h2>
+          <button class="text-zinc-300 h-9 font-semibold text-sm/4 hover:bg-zinc-50 px-4 py-2 rounded-lg">
+            <span>Save</span>
+          </button>
+        </div>
+        <div>
+          <.input label="Name" type="text" field={f[:name]} />
+        </div>
+      </.form>
+
+      <div class="space-y-4">
+        <h2 class="text-xl font-semibold">Manage account</h2>
+        <div class="flex items-center">
+          <div class="grow">
+            <h2 class="text-base/7 font-semibold text-gray-900">Delete account</h2>
+            <p class="text-sm/4 text-gray-600">
+              Permanently delete your GiTS account.
+            </p>
+          </div>
+          <button class="text-red-500 h-9 font-semibold text-sm/4 hover:bg-red-50 px-4 py-2 rounded-lg">
+            <span>Delete</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

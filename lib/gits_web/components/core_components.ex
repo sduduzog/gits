@@ -27,7 +27,11 @@ defmodule GitsWeb.CoreComponents do
     assigns =
       assigns
       |> assign(:menus, [
-        [{"Orders", "", false}, {"Tickets", "", "0"}, {"Settings", "", false}],
+        [
+          {"Orders", ~p"/my/orders", false},
+          {"Tickets", ~p"/my/tickets", "0"},
+          {"Settings", ~p"/my/settings", false}
+        ],
         [{"Sign out", ~p"/sign-out", false}]
       ])
 
@@ -49,7 +53,7 @@ defmodule GitsWeb.CoreComponents do
           class="relative inline-block text-left"
           phx-click-away={
             JS.hide(
-              to: "div[role=menu]",
+              to: "div#header-menu[role=menu]",
               transition:
                 {"transition ease-in duration-75", "transform opacity-100 scale-100",
                  "transform opacity-0 scale-95"}
@@ -60,7 +64,7 @@ defmodule GitsWeb.CoreComponents do
             <button
               phx-click={
                 JS.toggle(
-                  to: "div[role=menu]",
+                  to: "div#header-menu[role=menu]",
                   in:
                     {"transition ease-out duration-100", "transform opacity-0 scale-95",
                      "transform opacity-100 scale-100"},
@@ -79,7 +83,8 @@ defmodule GitsWeb.CoreComponents do
             </button>
           </div>
           <div
-            class="absolute hidden right-0 z-10 mt-2 w-56 origin-top-right divide-y divide-zinc-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none"
+            id="header-menu"
+            class="absolute hidden right-0 z-20 mt-2 w-56 origin-top-right divide-y divide-zinc-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none"
             role="menu"
             aria-orientation="vertical"
             aria-labelledby="menu-button"
@@ -92,11 +97,10 @@ defmodule GitsWeb.CoreComponents do
               </p>
             </div>
             <div :for={{items, outer_index} <- Enum.with_index(@menus)} class="py-1" role="none">
-              <!-- Active: "bg-zinc-100 text-gray-900 outline-none", Not Active: "text-gray-700" -->
               <.link
                 :for={{{name, href, badge}, index} <- Enum.with_index(items)}
                 navigate={href}
-                class="flex items-center justify-between px-4 py-2 text-sm text-zinc-700 active:bg-zinc-100 active:text-zinc-900 active:outline-none"
+                class="flex items-center justify-between px-4 py-2 text-sm text-zinc-700 active:bg-zinc-100 hover:bg-zinc-50 active:text-zinc-900 active:outline-none"
                 role="menuitem"
                 tabindex="-1"
                 id={"menu-item-#{outer_index}-#{index}"}
@@ -104,7 +108,7 @@ defmodule GitsWeb.CoreComponents do
                 <span><%= name %></span>
                 <span
                   :if={badge}
-                  class="inline-flex items-center gap-x-1.5 rounded-md px-2 py-1 text-xs font-medium text-gray-900 ring-1 ring-inset ring-gray-200"
+                  class="inline-flex bg-white items-center gap-x-1.5 rounded-md px-2 py-1 text-xs font-medium text-gray-900 ring-1 ring-inset ring-gray-200"
                 >
                   <%= badge %>
                 </span>
@@ -169,11 +173,11 @@ defmodule GitsWeb.CoreComponents do
         </div>
       </div>
       <div class="mx-auto flex w-full max-w-screen-xl">
-        <div class="space-y-4">
+        <div class="space-y-4 p-2">
           <div class="grow">
             <.logo />
           </div>
-          <p class="max-w-96 p-2 text-xs text-zinc-500">
+          <p class="max-w-96 text-xs text-zinc-500">
             We offer better security, faster check-in, and lower costs. Whether it’s concerts, conferences, festivals, or sports events, we’ve got you covered.
           </p>
         </div>
@@ -436,6 +440,8 @@ defmodule GitsWeb.CoreComponents do
   attr :id, :any, default: nil
   attr :name, :any
   attr :label, :string, default: nil
+  attr :hint, :string, default: nil
+  attr :description, :string, default: nil
   attr :value, :any
 
   attr :type, :string,
@@ -537,8 +543,46 @@ defmodule GitsWeb.CoreComponents do
     """
   end
 
-  # All other inputs text, datetime-local, url, password, etc. are handled here...
+  # <label class="col-span-full grid gap-1">
+  #     <span class="text-sm font-medium">What is the name of your event?</span>
+  #     <input
+  #       type="text"
+  #       name={f[:name].name}
+  #       value={f[:name].value}
+  #       class="w-full rounded-lg border-zinc-300 px-3 py-2 text-sm"
+  #     />
+  #   </label>
+
   def input(assigns) do
+    ~H"""
+    <div class={["max-w-3xl space-y-1 text-sm", @class]}>
+      <div class="flex justify-between">
+        <.label for={@id}><%= @label %></.label>
+        <%= if @errors == [] do %>
+          <span :if={@hint} class="text-zinc-500"><%= @hint %></span>
+        <% else %>
+          <.error :for={msg <- @errors}><%= @label <> " " <> msg %></.error>
+        <% end %>
+      </div>
+      <input
+        class={[
+          "w-full py-2 px-3 rounded-lg border border-zinc-200 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-zinc-600 focus:outline-none outline-none",
+          @errors == [] && "border-zinc-300 focus:ring-zinc-400",
+          @errors != [] && "border-rose-400 focus:border-rose-400"
+        ]}
+        type={@type}
+        name={@name}
+        id={@id}
+        value={Phoenix.HTML.Form.normalize_value(@type, @value)}
+        {@rest}
+      />
+      <span :if={@description} class="inline-flex text-zinc-500"><%= @description %></span>
+    </div>
+    """
+  end
+
+  # All other inputs text, datetime-local, url, password, etc. are handled here...
+  def inputs(assigns) do
     ~H"""
     <div class={["max-w-3xl space-y-2 text-sm", @class]}>
       <div class="flex justify-between text-zinc-600">
@@ -588,7 +632,7 @@ defmodule GitsWeb.CoreComponents do
 
   def label(assigns) do
     ~H"""
-    <label for={@for} class={["block text-sm font-medium leading-6 text-zinc-600", @class]}>
+    <label for={@for} class={["block text-sm/6 font-medium text-zinc-700", @class]}>
       <%= render_slot(@inner_block) %>
     </label>
     """
@@ -682,7 +726,10 @@ defmodule GitsWeb.CoreComponents do
         <tr>
           <th
             :for={col <- @col}
-            class={["p-4 font-normal", if(col[:optional], do: "hidden lg:table-cell", else: "")]}
+            class={[
+              "py-4 truncate px-2 font-normal",
+              if(col[:optional], do: "hidden lg:table-cell", else: "")
+            ]}
           >
             <%= col[:label] %>
           </th>
@@ -706,14 +753,14 @@ defmodule GitsWeb.CoreComponents do
               if(col[:optional], do: "hidden lg:table-cell", else: "")
             ]}
           >
-            <div class="w-full p-4 hover:bg-zinc-50">
+            <div class="w-full px-2 py-4 hover:bg-zinc-50">
               <span class={["relative", i == 0 && "font-semibold text-zinc-900"]}>
                 <%= render_slot(col, @row_item.(row)) %>
               </span>
             </div>
           </td>
           <td :if={@action != []} class="relative w-14 p-0">
-            <div class="relative flex gap-4 whitespace-nowrap py-4 pr-4 text-right text-sm font-medium">
+            <div class="relative flex gap-4 whitespace-nowrap py-4 pr-2 text-right text-sm font-medium">
               <span
                 :for={action <- @action}
                 class="relative font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
