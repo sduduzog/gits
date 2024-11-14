@@ -1,10 +1,9 @@
-<h1 :if={@live_action == :index} class="p-2 mx-auto max-w-screen-xl text-xl font-semibold">
+<h1 class="p-2 mx-auto max-w-screen-xl text-xl font-semibold">
   <%= @page_title %>
 </h1>
 <ul
-  :if={@live_action == :index}
   role="list"
-  class="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-3 xl:gap-x-8 mx-auto max-w-screen-xl"
+  class="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-3 xl:gap-x-8 mx-auto max-w-screen-xl p-2"
 >
   <li class="overflow-hidden rounded-xl border border-gray-200">
     <div class="flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
@@ -95,33 +94,3 @@
     </dl>
   </li>
 </ul>
-
-<div
-  :if={@live_action == :show}
-  class="mx-auto items-start relative max-w-screen-xl p-4 grid lg:grid-cols-[theme(space.96)_1fr]"
->
-  <div class="text-center items-center justify-center overflow-hidden w-full grid gap-12 py-4">
-    <div class="space-y-2">
-      <h1 class="mx-auto max-w-screen-xl text-lg/6 text-zinc-500 font-semibold">
-        <%= @page_title %>
-      </h1>
-
-      <h2 class="mx-auto max-w-screen-xl text-2xl/7 font-semibold">
-        The Ultimate Cheese Festival
-      </h2>
-    </div>
-
-    <%= raw(
-      "askldfhalsdfsdlf"
-      |> EQRCode.encode()
-      |> EQRCode.svg(
-        shape: "circle",
-        color: "#3f3f46",
-        viewbox: true,
-        background_color: :transparent,
-        width: 360
-      )
-    ) %>
-  </div>
-  <div class="bg-white z-50 lg:static border inset-x-0 p-2 h-96"></div>
-</div>
