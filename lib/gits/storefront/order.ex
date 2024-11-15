@@ -110,4 +110,8 @@ defmodule Gits.Storefront.Order do
       destination_attribute_on_join_resource :id
     end
   end
+
+  calculations do
+    calculate :event_name, :string, expr(event.name)
+  end
 end

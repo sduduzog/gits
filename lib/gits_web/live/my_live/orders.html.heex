@@ -4,14 +4,12 @@
   <div class="mx-auto rounded-xl overflow-hidden max-w-screen-xl border">
     <.table
       id="my-orders"
-      rows={[
-        %{
-          id: 1_000_000_000,
-          date: "7 Oct, 2024",
-          event: "The Ultimate Cheese Festival In the moon",
-          amount: "R 10 400.00"
-        }
-      ]}
+      rows={@orders}
+      row_click={
+        fn row ->
+          JS.patch(Routes.my_orders_path(@socket, :show, row.id)) |> show_modal("orders")
+        end
+      }
     >
       <:col :let={order} label="Order #"><%= order.id %></:col>
       <:col :let={order} label="Date"><%= order.date %></:col>
@@ -37,3 +35,12 @@
     </.table>
   </div>
 </div>
+
+<.modal
+  id="orders"
+  new={true}
+  show={@live_action == :show}
+  on_cancel={JS.patch(Routes.my_orders_path(@socket, :index))}
+>
+  <.live_component id={@order_id} module={GitsWeb.StorefrontLive.OrderComponent} />
+</.modal>

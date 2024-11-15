@@ -397,7 +397,31 @@ defmodule GitsWeb.StorefrontLive.OrderComponent do
 
   def render(assigns) do
     ~H"""
-    <div></div>
+    <div class="flex justify-end">
+      <div></div>
+      <div class="grow max-w-lg rounded-xl bg-zinc-100 grid gap-8 p-4 lg:px-8 lg:py-10">
+        <h3 class="text-lg font-semibold lg:col-span-full">Order Summary</h3>
+        <dl class="text-sm/6 grid gap-6">
+          <div class="grid justify-between gap-2">
+            <dt class="text-gray-600 font-medium">Customer</dt>
+            <dd class="flex items-center gap-4">
+              <div class="size-10 rounded-full bg-zinc-300"></div>
+              <div class="grid gap-1 text-sm font-medium">
+                <span>John Doe</span>
+                <span class="text-zinc-500">john.doe@bar.com</span>
+              </div>
+            </dd>
+          </div>
+
+          <div class="grid justify-between gap-2">
+            <dt class="text-gray-600 font-medium">Event</dt>
+            <dd class="text-gray-500">
+              The Ultimate Cheese Festival the ultimate cheese festival
+            </dd>
+          </div>
+        </dl>
+      </div>
+    </div>
     """
   end
 end

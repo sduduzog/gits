@@ -41,10 +41,42 @@ defmodule GitsWeb.StorefrontLive.EventListing do
     |> noreply()
   end
 
+  defp current_form() do
+    nil
+  end
+
   def handle_event("turnstile:success", _, socket) do
     socket
     |> assign(:verified?, true)
     |> noreply()
+  end
+
+  def handle_event("submit", %{"cf-turnstile-response" => _} = unsigned_params, socket) do
+    with :ok <-
+           verify_turnstile(
+             unsigned_params,
+             socket.assigns.remote_ip,
+             socket.assigns.current_user
+           ),
+         {:ok, order_id} <-
+           create_order(socket.assigns.form, unsigned_params["form"], socket.assigns.event) do
+      socket
+      |> push_patch(
+        to:
+          Routes.storefront_event_listing_path(
+            socket,
+            :order,
+            socket.assigns.event.public_id,
+            order_id
+          )
+      )
+      |> noreply()
+    end
+  end
+
+  def handle_event("submit", unsigned_params, socket) do
+    unsigned_params |> IO.inspect()
+    socket |> noreply()
   end
 
   def handle_event("get_tickets", unsigned_params, socket) do

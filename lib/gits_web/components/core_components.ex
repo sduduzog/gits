@@ -211,7 +211,67 @@ defmodule GitsWeb.CoreComponents do
   attr :id, :string, required: true
   attr :show, :boolean, default: false
   attr :on_cancel, JS, default: %JS{}
+  attr :new, :boolean, default: false
+  attr :size, :atom, default: :sm
   slot :inner_block, required: true
+
+  def modal(%{new: true} = assigns) do
+    assigns =
+      assign(
+        assigns,
+        :size_class,
+        case assigns.size do
+          :sm -> "max-w-lg"
+          :lg -> "max-w-5xl"
+        end
+      )
+
+    ~H"""
+    <div
+      id={@id}
+      phx-mounted={@show && show_modal(@id)}
+      phx-remove={hide_modal(@id)}
+      data-cancel={JS.exec(@on_cancel, "phx-remove")}
+      class="relative z-50 hidden"
+    >
+      <div id={"#{@id}-bg"} class="fixed inset-0 bg-black/10 transition-opacity" aria-hidden="true" />
+      <div
+        class="fixed inset-0 overflow-y-auto"
+        aria-labelledby={"#{@id}-title"}
+        aria-describedby={"#{@id}-description"}
+        role="dialog"
+        aria-modal="true"
+        tabindex="0"
+      >
+        <div class="flex min-h-full items-end justify-center sm:items-center">
+          <div class={["w-full sm:p-6 lg:py-8", @size_class]}>
+            <.focus_wrap
+              id={"#{@id}-container"}
+              phx-window-keydown={JS.exec("data-cancel", to: "##{@id}")}
+              phx-key="escape"
+              phx-click-away={JS.exec("data-cancel", to: "##{@id}")}
+              class="relative hidden lg:rounded-3xl bg-white p-4 lg:shadow-lg shadow-zinc-700/10 ring-1 ring-zinc-700/10 transition"
+            >
+              <div class="absolute right-4 top-4">
+                <button
+                  phx-click={JS.exec("data-cancel", to: "##{@id}")}
+                  type="button"
+                  class="flex-none p-2 inline-flex justify-center items-center opacity-40 hover:opacity-60"
+                  aria-label={gettext("close")}
+                >
+                  <.icon name="i-lucide-x" />
+                </button>
+              </div>
+              <div id={"#{@id}-content"}>
+                <%= render_slot(@inner_block) %>
+              </div>
+            </.focus_wrap>
+          </div>
+        </div>
+      </div>
+    </div>
+    """
+  end
 
   def modal(assigns) do
     ~H"""
@@ -392,17 +452,29 @@ defmodule GitsWeb.CoreComponents do
   """
   attr :type, :string, default: nil
   attr :class, :string, default: nil
+  attr :size, :atom, default: :sm
   attr :rest, :global, include: ~w(disabled form name value)
 
   slot :inner_block, required: true
 
   def button(assigns) do
+    assigns =
+      assign(
+        assigns,
+        :size_class,
+        case assigns.size do
+          :md -> "py-3 px-6"
+          _ -> "py-2 px-4"
+        end
+      )
+
     ~H"""
     <button
       type={@type}
       class={[
-        "rounded-lg bg-zinc-900 px-3 py-2 hover:bg-zinc-700 phx-submit-loading:opacity-75",
-        "text-sm font-semibold leading-6 text-white active:text-white",
+        "rounded-lg bg-zinc-900 hover:bg-zinc-800 phx-submit-loading:opacity-75 disabled:opacity-75",
+        "text-sm/6 font-semibold text-white active:text-white",
+        @size_class,
         @class
       ]}
       {@rest}
