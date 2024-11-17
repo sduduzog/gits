@@ -1,5 +1,8 @@
 defmodule Gits.Storefront.Ticket do
-  use Ash.Resource, domain: Gits.Storefront, data_layer: AshPostgres.DataLayer
+  use Ash.Resource,
+    domain: Gits.Storefront,
+    data_layer: AshPostgres.DataLayer,
+    extensions: [AshArchival.Resource]
 
   alias Gits.Storefront.{Order, TicketType}
 

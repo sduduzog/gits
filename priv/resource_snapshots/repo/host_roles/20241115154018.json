@@ -22,6 +22,26 @@
     },
     {
       "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "slug",
+      "type": "text"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "type",
+      "type": "text"
+    },
+    {
+      "allow_nil?": false,
       "default": "fragment(\"(now() AT TIME ZONE 'utc')\")",
       "generated?": false,
       "primary_key?": false,
@@ -58,15 +78,44 @@
           "global": null,
           "strategy": null
         },
-        "name": "ticket_types_event_id_fkey",
+        "name": "host_roles_user_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "events"
+        "table": "users"
       },
       "size": null,
-      "source": "event_id",
+      "source": "user_id",
+      "type": "uuid"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": {
+        "deferrable": false,
+        "destination_attribute": "id",
+        "destination_attribute_default": null,
+        "destination_attribute_generated": null,
+        "index?": false,
+        "match_type": null,
+        "match_with": null,
+        "multitenancy": {
+          "attribute": null,
+          "global": null,
+          "strategy": null
+        },
+        "name": "host_roles_host_id_fkey",
+        "on_delete": null,
+        "on_update": null,
+        "primary_key?": true,
+        "schema": "public",
+        "table": "hosts"
+      },
+      "size": null,
+      "source": "host_id",
       "type": "uuid"
     },
     {
@@ -85,7 +134,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "FA2DDC9D55B5CD8F4543D5DEAB436A45648E521774C2201DF7B18476E930258E",
+  "hash": "3D2CB7D91B56FE1EBFBAB5EEFBF70BDD5932C77ECAAE36648B79C2C8116405F1",
   "identities": [],
   "multitenancy": {
     "attribute": null,
@@ -94,5 +143,5 @@
   },
   "repo": "Elixir.Gits.Repo",
   "schema": null,
-  "table": "ticket_types"
+  "table": "host_roles"
 }

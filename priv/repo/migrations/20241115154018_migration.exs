@@ -1,4 +1,4 @@
-defmodule Gits.Repo.Migrations.Initial do
+defmodule Gits.Repo.Migrations.Migration do
   @moduledoc """
   Updates resources based on their most recent snapshots.
 
@@ -11,11 +11,19 @@ defmodule Gits.Repo.Migrations.Initial do
     create table(:users, primary_key: false) do
       add :id, :uuid, null: false, default: fragment("gen_random_uuid()"), primary_key: true
       add :email, :citext, null: false
+      add :username, :text, null: false
       add :display_name, :text
       add :archived_at, :utc_datetime_usec
     end
 
     create unique_index(:users, [:email], name: "users_unique_email_index")
+
+    create table(:tickets, primary_key: false) do
+      add :id, :uuid, null: false, default: fragment("gen_random_uuid()"), primary_key: true
+      add :order_id, :uuid, null: false
+      add :ticket_type_id, :uuid, null: false
+      add :archived_at, :utc_datetime_usec
+    end
 
     create table(:ticket_types, primary_key: false) do
       add :id, :uuid, null: false, default: fragment("gen_random_uuid()"), primary_key: true
@@ -54,6 +62,42 @@ defmodule Gits.Repo.Migrations.Initial do
 
     create table(:orders, primary_key: false) do
       add :id, :uuid, null: false, default: fragment("gen_random_uuid()"), primary_key: true
+    end
+
+    alter table(:tickets) do
+      modify :order_id,
+             references(:orders,
+               column: :id,
+               name: "tickets_order_id_fkey",
+               type: :uuid,
+               prefix: "public"
+             )
+
+      modify :ticket_type_id,
+             references(:ticket_types,
+               column: :id,
+               name: "tickets_ticket_type_id_fkey",
+               type: :uuid,
+               prefix: "public"
+             )
+    end
+
+    alter table(:orders) do
+      add :number, :bigserial, null: false
+      add :email, :citext
+      add :total, :decimal
+
+      add :created_at, :utc_datetime_usec,
+        null: false,
+        default: fragment("(now() AT TIME ZONE 'utc')")
+
+      add :updated_at, :utc_datetime_usec,
+        null: false,
+        default: fragment("(now() AT TIME ZONE 'utc')")
+
+      add :event_id, :uuid, null: false
+      add :archived_at, :utc_datetime_usec
+      add :state, :text, null: false, default: "anonymous"
     end
 
     create table(:interactions, primary_key: false) do
@@ -151,6 +195,16 @@ defmodule Gits.Repo.Migrations.Initial do
              )
     end
 
+    alter table(:orders) do
+      modify :event_id,
+             references(:events,
+               column: :id,
+               name: "orders_event_id_fkey",
+               type: :uuid,
+               prefix: "public"
+             )
+    end
+
     alter table(:events) do
       add :public_id, :text, null: false
       add :name, :text, null: false
@@ -221,6 +275,12 @@ defmodule Gits.Repo.Migrations.Initial do
       remove :public_id
     end
 
+    drop constraint(:orders, "orders_event_id_fkey")
+
+    alter table(:orders) do
+      modify :event_id, :uuid
+    end
+
     drop constraint(:ticket_types, "ticket_types_event_id_fkey")
 
     alter table(:ticket_types) do
@@ -257,11 +317,33 @@ defmodule Gits.Repo.Migrations.Initial do
 
     drop table(:interactions)
 
+    alter table(:orders) do
+      remove :state
+      remove :archived_at
+      remove :event_id
+      remove :updated_at
+      remove :created_at
+      remove :total
+      remove :email
+      remove :number
+    end
+
+    drop constraint(:tickets, "tickets_order_id_fkey")
+
+    drop constraint(:tickets, "tickets_ticket_type_id_fkey")
+
+    alter table(:tickets) do
+      modify :ticket_type_id, :uuid
+      modify :order_id, :uuid
+    end
+
     drop table(:orders)
 
     drop table(:payout_accounts)
 
     drop table(:ticket_types)
+
+    drop table(:tickets)
 
     drop_if_exists unique_index(:users, [:email], name: "users_unique_email_index")
 

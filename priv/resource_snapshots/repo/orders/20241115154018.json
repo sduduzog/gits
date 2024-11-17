@@ -11,6 +11,16 @@
       "type": "uuid"
     },
     {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": true,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "number",
+      "type": "bigint"
+    },
+    {
       "allow_nil?": true,
       "default": "nil",
       "generated?": false,
@@ -38,6 +48,16 @@
       "references": null,
       "size": null,
       "source": "created_at",
+      "type": "utc_datetime_usec"
+    },
+    {
+      "allow_nil?": false,
+      "default": "fragment(\"(now() AT TIME ZONE 'utc')\")",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "updated_at",
       "type": "utc_datetime_usec"
     },
     {
@@ -95,7 +115,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "A6C4E5CF8C8D85CC6C3F53CFA841C8B9430F5B82814F0BEE975B7A3431A73CDB",
+  "hash": "DF90275C61CE76DB9EC9E7B627390E712A6EF92634FBCC24ABF57B019FEDC47A",
   "identities": [],
   "multitenancy": {
     "attribute": null,

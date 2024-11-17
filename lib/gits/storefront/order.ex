@@ -5,7 +5,7 @@ defmodule Gits.Storefront.Order do
     extensions: [AshArchival.Resource, AshStateMachine]
 
   alias Gits.Storefront.{Event, Ticket, TicketType}
-  alias __MODULE__.Changes.{ConfirmOrder, InitialState}
+  alias __MODULE__.Changes.{ConfirmOrder}
 
   postgres do
     table "orders"
@@ -13,8 +13,8 @@ defmodule Gits.Storefront.Order do
   end
 
   state_machine do
-    initial_states [:anonymous, :open]
-    default_initial_state :anonymous
+    initial_states [:open]
+    default_initial_state :open
 
     transitions do
       transition :open, from: :anonymous, to: :open
@@ -31,8 +31,6 @@ defmodule Gits.Storefront.Order do
     create :create do
       primary? true
       accept [:email]
-
-      change InitialState
     end
 
     update :open do
@@ -42,6 +40,7 @@ defmodule Gits.Storefront.Order do
     end
 
     update :process do
+      accept [:email]
       change set_attribute(:total, 0)
       change transition_state(:processed)
     end
@@ -89,10 +88,17 @@ defmodule Gits.Storefront.Order do
   attributes do
     uuid_primary_key :id
 
+    attribute :number, :integer,
+      generated?: true,
+      allow_nil?: false,
+      writable?: false,
+      public?: true
+
     attribute :email, :ci_string, public?: true
     attribute :total, :decimal, public?: true
 
     create_timestamp :created_at
+    update_timestamp :updated_at
   end
 
   relationships do

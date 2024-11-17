@@ -1,0 +1,159 @@
+<div class="mx-auto grid max-w-screen-xl items-start gap-4 gap-x-12 lg:grid-cols-[minmax(auto,48rem)_1fr] lg:gap-6">
+  <div class="space-y-4 p-2 lg:row-span-3">
+    <%= if @order.state == :open do %>
+      <div class="flex items-center gap-4">
+        <.button size={:none} class="p-2" onclick="history.back()" variant={:outline}>
+          <.icon name="i-lucide-chevron-left" />
+        </.button>
+        <h3 class="text-lg font-semibold lg:col-span-full">Get Tickets</h3>
+      </div>
+      <div class="grid gap-4 lg:grid-cols-2">
+        <div
+          :for={
+            {name, description, price, count, removable_ticket, remove_ticket_form,
+             add_ticket_form} <-
+              @ticket_types
+          }
+          class="grid gap-4 rounded-xl border p-6"
+        >
+          <div class="flex justify-between font-semibold">
+            <span><%= name %></span>
+            <span>R <%= price %></span>
+          </div>
+          <span class="line-clamp-2 text-sm text-zinc-500"><%= description %></span>
+          <div class="flex items-center gap-2">
+            <div class="grow"></div>
+
+            <.form
+              :let={f}
+              :if={removable_ticket}
+              phx-submit="remove_ticket"
+              for={remove_ticket_form}
+              class="group"
+            >
+              <.inputs_for :let={ticket_form} field={f[:ticket]}>
+                <.input
+                  :if={removable_ticket}
+                  type="hidden"
+                  name={ticket_form[:id].name}
+                  value={removable_ticket.id}
+                />
+              </.inputs_for>
+
+              <.button size={:none} variant={:subtle} class="p-4 lg:p-2">
+                <.icon name="i-lucide-minus" />
+              </.button>
+            </.form>
+
+            <span class="w-6 text-center text-lg font-medium tabular-nums">
+              <%= count %>
+            </span>
+            <.form :let={f} for={add_ticket_form} phx-submit="add_ticket">
+              <.inputs_for :let={ticket_form} field={f[:ticket]}>
+                <.inputs_for field={ticket_form[:ticket_type]}></.inputs_for>
+              </.inputs_for>
+
+              <.button size={:none} variant={:subtle} class="p-4 lg:p-2">
+                <.icon name="i-lucide-plus" />
+              </.button>
+            </.form>
+          </div>
+        </div>
+      </div>
+      <.form
+        :let={f}
+        phx-submit="process"
+        phx-change="validate"
+        for={@process_form}
+        class="sticky bottom-0 top-0 z-20 items-center border-t border-zinc-100 bg-white p-2 shadow-sm lg:bottom-auto lg:top-6 gap-4 grid lg:border-none lg:shadow-none"
+      >
+        <.input field={f[:email]} type="email" label="Email address" />
+        <div class="flex">
+          <.button>
+            <span>Continue</span>
+          </.button>
+        </div>
+      </.form>
+    <% end %>
+
+    <%= if @order.state == :processed do %>
+      <div class="flex items-center gap-4">
+        <.form :let={f} phx-submit="reopen" for={@reopen_form}>
+          <.button size={:none} class="p-2" variant={:outline}>
+            <.icon name="i-lucide-chevron-left" />
+          </.button>
+        </.form>
+
+        <h3 class="text-lg font-semibold lg:col-span-full">Confirm Order</h3>
+      </div>
+
+      <p class=" text-sm text-zinc-700">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquam voluptatem dolorem reprehenderit.
+      </p>
+    <% end %>
+
+    <%= if @order.state == :completed do %>
+      <div class="flex items-center gap-4">
+        <.button size={:none} class="p-2" onclick="history.back()" variant={:outline}>
+          <.icon name="i-lucide-chevron-left" />
+        </.button>
+
+        <h3 class="text-lg font-semibold lg:col-span-full">Order Complete</h3>
+      </div>
+
+      <p class=" text-sm text-zinc-700">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquam voluptatem dolorem reprehenderit.
+      </p>
+    <% end %>
+  </div>
+
+  <div class="p-2">
+    <div class="grid max-w-lg grow gap-8 rounded-xl bg-zinc-100 p-4 lg:px-8 lg:py-10">
+      <h3 class="text-lg font-semibold lg:col-span-full">Order Summary</h3>
+      <dl class="grid gap-6 text-sm/6">
+        <div class="grid justify-between gap-2">
+          <dt class="font-medium text-gray-600">Event</dt>
+          <dd class="text-gray-500">
+            <%= @event.name %>
+          </dd>
+        </div>
+
+        <div :if={false} class="grid justify-between gap-2">
+          <dt class="font-medium text-gray-600">Customer</dt>
+          <dd class="flex items-center gap-4">
+            <div class="size-10 rounded-full bg-zinc-300"></div>
+            <div class="grid gap-1 text-sm font-medium">
+              <span>John Doe</span>
+              <span class="text-zinc-500">john.doe@bar.com</span>
+            </div>
+          </dd>
+        </div>
+
+        <div :if={false} class="grid justify-between gap-2">
+          <dt class="font-medium text-gray-600">Customer</dt>
+          <dd class="flex items-center gap-4">
+            <div class="grid gap-1 text-sm font-medium">
+              <!-- <span>John Doe</span> -->
+              <span class="text-zinc-500">john.doe@bar.com</span>
+            </div>
+          </dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+
+  <%= if @order.state == :processed do %>
+    <.form
+      :let={f}
+      phx-submit="confirm"
+      for={@confirm_form}
+      class="sticky bottom-0 top-0 z-20 items-center border-t border-zinc-100 bg-white p-2 shadow-sm lg:bottom-auto lg:top-6 gap-4 grid lg:border-none lg:shadow-none"
+    >
+      <div class="flex">
+        <.button>
+          <span>Confirm Order</span>
+        </.button>
+      </div>
+    </.form>
+  <% end %>
+</div>

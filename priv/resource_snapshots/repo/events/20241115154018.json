@@ -17,7 +17,7 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "name",
+      "source": "public_id",
       "type": "text"
     },
     {
@@ -27,7 +27,7 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "slug",
+      "source": "name",
       "type": "text"
     },
     {
@@ -37,8 +37,18 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "type",
+      "source": "visibility",
       "type": "text"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "published_at",
+      "type": "utc_datetime"
     },
     {
       "allow_nil?": false,
@@ -61,7 +71,7 @@
       "type": "utc_datetime_usec"
     },
     {
-      "allow_nil?": true,
+      "allow_nil?": false,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
@@ -78,15 +88,15 @@
           "global": null,
           "strategy": null
         },
-        "name": "host_roles_user_id_fkey",
+        "name": "events_host_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "users"
+        "table": "hosts"
       },
       "size": null,
-      "source": "user_id",
+      "source": "host_id",
       "type": "uuid"
     },
     {
@@ -107,15 +117,15 @@
           "global": null,
           "strategy": null
         },
-        "name": "host_roles_host_id_fkey",
+        "name": "events_payout_account_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "hosts"
+        "table": "payout_accounts"
       },
       "size": null,
-      "source": "host_id",
+      "source": "payout_account_id",
       "type": "uuid"
     },
     {
@@ -134,7 +144,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "7976561626133E2A873871B380AAD18AF2D946D625F96D26E55D6F25E9B42C06",
+  "hash": "97B8BC375225B53CA2AA37F7349548F63C6C0DBED0DDF80561EB4B598F644055",
   "identities": [],
   "multitenancy": {
     "attribute": null,
@@ -143,5 +153,5 @@
   },
   "repo": "Elixir.Gits.Repo",
   "schema": null,
-  "table": "host_roles"
+  "table": "events"
 }

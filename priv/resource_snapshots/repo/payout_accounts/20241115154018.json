@@ -17,7 +17,7 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "public_id",
+      "source": "business_name",
       "type": "text"
     },
     {
@@ -27,28 +27,28 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "name",
+      "source": "account_number",
       "type": "text"
     },
     {
-      "allow_nil?": true,
+      "allow_nil?": false,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "visibility",
+      "source": "settlement_bank",
       "type": "text"
     },
     {
-      "allow_nil?": true,
-      "default": "nil",
+      "allow_nil?": false,
+      "default": "\"1.1\"",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "published_at",
-      "type": "utc_datetime"
+      "source": "percentage_charge",
+      "type": "decimal"
     },
     {
       "allow_nil?": false,
@@ -71,35 +71,6 @@
       "type": "utc_datetime_usec"
     },
     {
-      "allow_nil?": false,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": {
-        "deferrable": false,
-        "destination_attribute": "id",
-        "destination_attribute_default": null,
-        "destination_attribute_generated": null,
-        "index?": false,
-        "match_type": null,
-        "match_with": null,
-        "multitenancy": {
-          "attribute": null,
-          "global": null,
-          "strategy": null
-        },
-        "name": "events_host_id_fkey",
-        "on_delete": null,
-        "on_update": null,
-        "primary_key?": true,
-        "schema": "public",
-        "table": "hosts"
-      },
-      "size": null,
-      "source": "host_id",
-      "type": "uuid"
-    },
-    {
       "allow_nil?": true,
       "default": "nil",
       "generated?": false,
@@ -117,15 +88,15 @@
           "global": null,
           "strategy": null
         },
-        "name": "events_payout_account_id_fkey",
+        "name": "payout_accounts_host_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "payout_accounts"
+        "table": "hosts"
       },
       "size": null,
-      "source": "payout_account_id",
+      "source": "host_id",
       "type": "uuid"
     },
     {
@@ -144,7 +115,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "77EFB8293AEE4CA087C1717B9E667FE5D50E2409A0F02E31CB549C826B1CFCC5",
+  "hash": "E109736D9B5BCD421EB849EEFCD42F15F4354AD1A5EF149BE62DED4185B53441",
   "identities": [],
   "multitenancy": {
     "attribute": null,
@@ -153,5 +124,5 @@
   },
   "repo": "Elixir.Gits.Repo",
   "schema": null,
-  "table": "events"
+  "table": "payout_accounts"
 }

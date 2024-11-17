@@ -84,7 +84,7 @@ defmodule GitsWeb.CoreComponents do
           </div>
           <div
             id="header-menu"
-            class="absolute hidden right-0 z-20 mt-2 w-56 origin-top-right divide-y divide-zinc-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none"
+            class="absolute right-0 z-20 mt-2 hidden w-56 origin-top-right divide-y divide-zinc-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none"
             role="menu"
             aria-orientation="vertical"
             aria-labelledby="menu-button"
@@ -100,7 +100,7 @@ defmodule GitsWeb.CoreComponents do
               <.link
                 :for={{{name, href, badge}, index} <- Enum.with_index(items)}
                 navigate={href}
-                class="flex items-center justify-between px-4 py-2 text-sm text-zinc-700 active:bg-zinc-100 hover:bg-zinc-50 active:text-zinc-900 active:outline-none"
+                class="flex items-center justify-between px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-50 active:bg-zinc-100 active:text-zinc-900 active:outline-none"
                 role="menuitem"
                 tabindex="-1"
                 id={"menu-item-#{outer_index}-#{index}"}
@@ -108,7 +108,7 @@ defmodule GitsWeb.CoreComponents do
                 <span><%= name %></span>
                 <span
                   :if={badge}
-                  class="inline-flex bg-white items-center gap-x-1.5 rounded-md px-2 py-1 text-xs font-medium text-gray-900 ring-1 ring-inset ring-gray-200"
+                  class="inline-flex items-center gap-x-1.5 rounded-md bg-white px-2 py-1 text-xs font-medium text-gray-900 ring-1 ring-inset ring-gray-200"
                 >
                   <%= badge %>
                 </span>
@@ -250,13 +250,13 @@ defmodule GitsWeb.CoreComponents do
               phx-window-keydown={JS.exec("data-cancel", to: "##{@id}")}
               phx-key="escape"
               phx-click-away={JS.exec("data-cancel", to: "##{@id}")}
-              class="relative hidden lg:rounded-3xl bg-white p-4 lg:shadow-lg shadow-zinc-700/10 ring-1 ring-zinc-700/10 transition"
+              class="relative hidden bg-white p-4 shadow-zinc-700/10 ring-1 ring-zinc-700/10 transition lg:rounded-3xl lg:shadow-lg"
             >
               <div class="absolute right-4 top-4">
                 <button
                   phx-click={JS.exec("data-cancel", to: "##{@id}")}
                   type="button"
-                  class="flex-none p-2 inline-flex justify-center items-center opacity-40 hover:opacity-60"
+                  class="inline-flex flex-none items-center justify-center p-2 opacity-40 hover:opacity-60"
                   aria-label={gettext("close")}
                 >
                   <.icon name="i-lucide-x" />
@@ -452,7 +452,8 @@ defmodule GitsWeb.CoreComponents do
   """
   attr :type, :string, default: nil
   attr :class, :string, default: nil
-  attr :size, :atom, default: :sm
+  attr :size, :atom, default: nil
+  attr :variant, :atom, default: nil
   attr :rest, :global, include: ~w(disabled form name value)
 
   slot :inner_block, required: true
@@ -464,7 +465,18 @@ defmodule GitsWeb.CoreComponents do
         :size_class,
         case assigns.size do
           :md -> "py-3 px-6"
+          :none -> ""
           _ -> "py-2 px-4"
+        end
+      )
+      |> assign(
+        :variant_class,
+        case assigns.variant do
+          :subtle -> "border-transparent bg-zinc-50 text-zinc-950 hover:bg-zinc-100"
+          :surface -> "border-zinc-200 bg-zinc-50 text-zinc-950 hover:bg-zinc-100"
+          :outline -> "border-zinc-200 bg-white text-zinc-950 hover:bg-zinc-100"
+          :ghost -> "border-transparent bg-white text-zinc-950 hover:bg-zinc-100"
+          _ -> "border-transparent text-white active:text-white bg-zinc-900 hover:bg-zinc-800"
         end
       )
 
@@ -472,9 +484,10 @@ defmodule GitsWeb.CoreComponents do
     <button
       type={@type}
       class={[
-        "rounded-lg bg-zinc-900 hover:bg-zinc-800 phx-submit-loading:opacity-75 disabled:opacity-75",
-        "text-sm/6 font-semibold text-white active:text-white",
+        "rounded-lg items-center justify-center phx-submit-loading:opacity-75 disabled:opacity-75",
+        "text-sm/6 font-semibold  border inline-flex",
         @size_class,
+        @variant_class,
         @class
       ]}
       {@rest}
@@ -625,6 +638,7 @@ defmodule GitsWeb.CoreComponents do
   #     />
   #   </label>
 
+  # All other inputs text, datetime-local, url, password, etc. are handled here...
   def input(assigns) do
     ~H"""
     <div class={["max-w-3xl space-y-1 text-sm", @class]}>
@@ -633,7 +647,7 @@ defmodule GitsWeb.CoreComponents do
         <%= if @errors == [] do %>
           <span :if={@hint} class="text-zinc-500"><%= @hint %></span>
         <% else %>
-          <.error :for={msg <- @errors}><%= @label <> " " <> msg %></.error>
+          <.error :for={msg <- @errors}><%= msg %></.error>
         <% end %>
       </div>
       <input
@@ -649,48 +663,6 @@ defmodule GitsWeb.CoreComponents do
         {@rest}
       />
       <span :if={@description} class="inline-flex text-zinc-500"><%= @description %></span>
-    </div>
-    """
-  end
-
-  # All other inputs text, datetime-local, url, password, etc. are handled here...
-  def inputs(assigns) do
-    ~H"""
-    <div class={["max-w-3xl space-y-2 text-sm", @class]}>
-      <div class="flex justify-between text-zinc-600">
-        <.label for={@id}><%= @label %></.label>
-      </div>
-      <input
-        class={[
-          "w-full rounded-md p-4 text-sm outline-none focus:border-transparent focus:outline-none ",
-          @errors == [] && "border-zinc-300 focus:ring-zinc-400",
-          @errors != [] && "border-rose-400 focus:border-rose-400"
-        ]}
-        type={@type}
-        name={@name}
-        id={@id}
-        value={Phoenix.HTML.Form.normalize_value(@type, @value)}
-        {@rest}
-      />
-      <.error :for={msg <- @errors}><%= @label <> " " <> msg %></.error>
-    </div>
-
-    <div :if={false} phx-feedback-for={@name}>
-      <.label for={@id}><%= @label %></.label>
-      <input
-        type={@type}
-        name={@name}
-        id={@id}
-        value={Phoenix.HTML.Form.normalize_value(@type, @value)}
-        class={[
-          "mt-2 block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6",
-          "phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400",
-          @errors == [] && "border-zinc-300 focus:border-zinc-400",
-          @errors != [] && "border-rose-400 focus:border-rose-400"
-        ]}
-        {@rest}
-      />
-      <.error :for={msg <- @errors}><%= @label <> " " <> msg %></.error>
     </div>
     """
   end

@@ -3,7 +3,6 @@ defmodule GitsWeb.MyLive do
 
   def render(%{live_action: :tickets} = assigns) do
     ~H"""
-    <.header signed_in={not is_nil(@current_user)} current="Tickets" />
     <div>Tickets</div>
     <.footer />
     """
@@ -11,7 +10,6 @@ defmodule GitsWeb.MyLive do
 
   def render(%{live_action: :orders} = assigns) do
     ~H"""
-    <.header signed_in={not is_nil(@current_user)} current="Orders" />
     <div>orders</div>
     <.footer />
     """
@@ -19,7 +17,6 @@ defmodule GitsWeb.MyLive do
 
   def render(%{live_action: :profile} = assigns) do
     ~H"""
-    <.header signed_in={not is_nil(@current_user)} current="Profile" />
     <div>profile</div>
     <.footer />
     """
