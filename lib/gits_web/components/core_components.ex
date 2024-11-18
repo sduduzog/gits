@@ -131,6 +131,7 @@ defmodule GitsWeb.CoreComponents do
   end
 
   attr :class, :string, default: ""
+  attr :minimal, :boolean, default: false
 
   def footer(assigns) do
     assigns =
@@ -154,7 +155,7 @@ defmodule GitsWeb.CoreComponents do
 
     ~H"""
     <footer class="grid gap-10 bg-zinc-100 py-10">
-      <div class="mx-auto grid w-full max-w-screen-xl gap-8 lg:grid-cols-5">
+      <div :if={not @minimal} class="mx-auto grid w-full max-w-screen-xl gap-8 lg:grid-cols-5">
         <div :for={{icon, heading, children} <- @nav_tree} class="space-y-2 p-4">
           <div class="flex items-center gap-3">
             <.icon name={icon} class="size-4 text-zinc-500" />

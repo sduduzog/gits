@@ -32,6 +32,7 @@ defmodule Gits.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:premailex, "~> 0.3"},
       {:nanoid, "~> 2.0"},
       {:ash_slug, "~> 0.1"},
       {:nimble_totp, "~> 1.0"},
@@ -49,7 +50,7 @@ defmodule Gits.MixProject do
       {:ecto_psql_extras, "~> 0.6"},
       {:phoenix_html, "~> 4.0"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:floki, ">= 0.30.0", only: :test},
+      {:floki, ">= 0.30.0"},
       {:phoenix_live_dashboard, "~> 0.8.3"},
       {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
       {:tailwind, "~> 0.2", runtime: Mix.env() == :dev},

@@ -1,7 +1,6 @@
 defmodule Gits.Accounts.User.Senders.SendMagicLinkEmail do
-  import Swoosh.Email
   use AshAuthentication.Sender
-  alias __MODULE__.Worker
+  use Oban.Worker, max_attempts: 1, queue: :auth
 
   @impl true
   def send(user_or_email, token, _) do
@@ -12,34 +11,12 @@ defmodule Gits.Accounts.User.Senders.SendMagicLinkEmail do
       end
 
     %{email: email, token: token}
-    |> Worker.new()
+    |> __MODULE__.new()
     |> Oban.insert()
   end
-end
-
-defmodule Gits.Accounts.User.Senders.SendMagicLinkEmail.Worker do
-  use Oban.Worker, max_attempts: 1, queue: :auth
-
-  import Swoosh.Email
 
   @impl Oban.Worker
   def perform(%Oban.Job{args: %{"email" => email, "token" => token}}) do
-    [sender: sender] =
-      Application.get_env(:gits, :email)
-
-    new()
-    |> to(email)
-    |> from(sender)
-    |> text_body("""
-    Welcome to GiTS
-
-    To finish signing in, use the following url bellow:
-
-    #{"/auth/user/magic_link?token=#{token}"}
-    """)
-    |> put_provider_option(:custom_vars, %{"url" => "/auth/user/magic_link/?token=#{token}"})
-    |> put_provider_option(:template_name, "magic-link")
-    |> put_provider_option(:template_options, %{version: "initial"})
-    |> Gits.Mailer.deliver()
+    Gits.Mailer.magic_link(token, email)
   end
 end

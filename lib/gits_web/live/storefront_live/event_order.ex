@@ -14,6 +14,7 @@ defmodule GitsWeb.StorefrontLive.EventOrder do
         |> assign(:event, order.event)
         |> assign(:order, order)
         |> assign_ticket_types()
+        |> assign_tickets_summary()
         |> assign_forms()
         |> ok()
 
@@ -33,6 +34,7 @@ defmodule GitsWeb.StorefrontLive.EventOrder do
         socket
         |> assign(:order, order)
         |> assign_ticket_types()
+        |> assign_tickets_summary()
         |> assign_forms()
     end
     |> noreply
@@ -47,6 +49,7 @@ defmodule GitsWeb.StorefrontLive.EventOrder do
         socket
         |> assign(:order, order)
         |> assign_ticket_types()
+        |> assign_tickets_summary()
         |> assign_forms()
     end
     |> noreply
@@ -168,6 +171,35 @@ defmodule GitsWeb.StorefrontLive.EventOrder do
              "0", count, removable_ticket, remove_ticket_form, add_ticket_form}
           end)
         )
+    end
+  end
+
+  def assign_tickets_summary(socket) do
+    Ash.load(socket.assigns.order, [:tickets, :ticket_types])
+    |> case do
+      {:ok, order} ->
+        %{ticket_types: ticket_types, tickets: tickets} = order
+
+        tickets_summary =
+          for type <- ticket_types do
+            tickets = Enum.filter(tickets, &(&1.ticket_type_id == type.id))
+            count = Enum.count(tickets)
+
+            if count > 0 do
+              {type.name, 1 * count, count}
+            end
+          end
+
+        total =
+          for {_, price, _} <- tickets_summary, reduce: 0 do
+            acc ->
+              acc + price
+          end
+
+        socket
+        |> assign(:tickets, tickets)
+        |> assign(:tickets_summary, tickets_summary)
+        |> assign(:tickets_total, total)
     end
   end
 end

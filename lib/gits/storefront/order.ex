@@ -58,6 +58,10 @@ defmodule Gits.Storefront.Order do
     update :complete do
     end
 
+    update :request_refund do
+      change atomic_update(:requested_refund_at, expr(fragment("now()")))
+    end
+
     update :refund do
     end
 
@@ -96,6 +100,7 @@ defmodule Gits.Storefront.Order do
 
     attribute :email, :ci_string, public?: true
     attribute :total, :decimal, public?: true
+    attribute :requested_refund_at, :utc_datetime_usec
 
     create_timestamp :created_at
     update_timestamp :updated_at

@@ -73,5 +73,6 @@ if config_env() == :prod do
     adapter: Swoosh.Adapters.Mailgun,
     api_key: env!("MAILGUN_API_KEY", :string),
     base_url: env!("MAILGUN_BASE_URL", :string),
+    host: "https://" <> host,
     domain: host
 end
