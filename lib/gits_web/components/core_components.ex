@@ -13,7 +13,7 @@ defmodule GitsWeb.CoreComponents do
       class="inline-flex h-5 shrink-0 items-center justify-center rounded-lg text-xl font-black italic"
     >
       <img
-        src={static_path(GitsWeb.Endpoint, ~p"/images/gits_logo.png")}
+        src={static_url(GitsWeb.Endpoint, "/images/gits_logo.png")}
         alt="GiTS"
         class="size-full object-contain"
       />
