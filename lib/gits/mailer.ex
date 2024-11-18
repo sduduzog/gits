@@ -10,6 +10,7 @@ defmodule Gits.Mailer do
     new()
     |> to(to)
     |> from({"GiTS", sender})
+    |> subject("Sign in to GiTS")
     |> render_body(:magic_link, %{token: token})
     |> premail()
     |> deliver()
@@ -27,11 +28,9 @@ defmodule Gits.Mailer do
   end
 
   defp premail(email) do
-    html = Premailex.to_inline_css(email.html_body)
     text = Premailex.to_text(email.html_body)
 
     email
-    |> html_body(html)
     |> text_body(text)
   end
 end
