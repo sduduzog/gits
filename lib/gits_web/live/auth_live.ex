@@ -27,7 +27,7 @@ defmodule GitsWeb.AuthLive do
       <p class="mt-4 text-sm text-zinc-500">
         A magic link has been sent to <%= @request_sent %>. Check your spam/junk folder, just in case.
       </p>
-      <div class="mt-4 text-zinc-500 size-10 bg-zinc-100 rounded-lg flex items-center justify-center">
+      <div class="mt-4 flex size-10 items-center justify-center rounded-lg bg-zinc-100 text-zinc-500">
         <.icon name="i-lucide-inbox" />
       </div>
     <% else %>
@@ -56,8 +56,15 @@ defmodule GitsWeb.AuthLive do
           </span>
         </button>
 
-        <Turnstile.widget events={[:success]} class="mt-8" appearance="interaction-only" />
+        <Turnstile.widget events={[:success]} class="mt-4" appearance="interaction-only" />
       </.form>
+      <div :if={false}>
+        <div class="flex items-center gap-2 text-sm text-zinc-400">
+          <span class="h-0.5 grow border-b"></span>
+          <span>or</span>
+          <span class="h-0.5 grow border-b"></span>
+        </div>
+      </div>
     <% end %>
     """
   end

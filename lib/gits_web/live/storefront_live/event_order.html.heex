@@ -125,25 +125,30 @@
           </dd>
         </div>
 
-        <div :if={Enum.any?(@tickets_summary)} class="grid gap-1">
-          <dt class="font-medium text-gray-600">Tickets</dt>
-          <dd class="text-gray-500 divide-y">
-            <div :for={{name, price, count} <- @tickets_summary} class="py-2">
-              <div class="flex justify-between">
-                <span><%= count %> &times; <%= name %></span>
-                <span class="font-medium text-zinc-800">R <%= price %></span>
+        <%= if Enum.any?(@tickets_summary) do %>
+          <div class="grid gap-1">
+            <dt class="font-medium text-gray-600">Tickets</dt>
+            <dd class="text-gray-500 divide-y">
+              <div :for={{name, price, count} <- @tickets_summary} class="py-2">
+                <div class="flex justify-between">
+                  <span><%= count %> &times; <%= name %></span>
+                  <span class="font-medium text-zinc-800">R <%= price %></span>
+                </div>
               </div>
-            </div>
-            <div class="flex text-zinc-950 font-medium justify-end py-4">
-              <span>Total R <%= @tickets_total %></span>
-            </div>
-          </dd>
-        </div>
+              <div class="flex text-zinc-950 font-medium justify-end py-4">
+                <span>Total R <%= @tickets_total %></span>
+              </div>
+            </dd>
+          </div>
+        <% end %>
       </dl>
-      <div class="grid text-right">
-        <span>Payment total</span>
-        <span class="text-2xl font-medium">R <%= @tickets_total %></span>
-      </div>
+
+      <%= if Enum.any?(@tickets_summary) do %>
+        <div class="grid text-right">
+          <span>Payment total</span>
+          <span class="text-2xl font-medium">R <%= @tickets_total %></span>
+        </div>
+      <% end %>
     </div>
   </div>
 
