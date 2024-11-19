@@ -11,7 +11,7 @@
         end
       }
     >
-      <:col :let={order} label="Order #"><%= order.id %></:col>
+      <:col :let={order} label="Order #">#<%= order.no %></:col>
       <:col :let={order} label="Date"><%= order.date %></:col>
       <:col :let={order} optional label="Event"><%= order.event %></:col>
       <:col :let={_order} label="Status">

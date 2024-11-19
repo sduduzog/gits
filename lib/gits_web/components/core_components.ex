@@ -486,8 +486,9 @@ defmodule GitsWeb.CoreComponents do
     <button
       type={@type}
       class={[
-        "rounded-lg items-center justify-center phx-submit-loading:opacity-75 disabled:opacity-75",
         "text-sm/6 font-semibold  border inline-flex",
+        "rounded-lg items-center justify-center phx-submit-loading:opacity-75 disabled:opacity-75",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-zinc-600",
         @size_class,
         @variant_class,
         @class

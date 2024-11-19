@@ -16,7 +16,13 @@ defmodule GitsWeb.MyLive.Orders do
           :orders,
           orders
           |> Enum.map(fn order ->
-            %{id: order.id, date: order.created_at, event: order.event_name, amount: order.total}
+            %{
+              id: order.id,
+              no: order.number,
+              date: order.created_at,
+              event: order.event_name,
+              amount: order.total
+            }
           end)
         )
         |> ok()
