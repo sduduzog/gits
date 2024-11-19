@@ -59,13 +59,10 @@ defmodule GitsWeb.HostLive.Dashboard do
           </p>
         </div>
         <div>
-          <button
-            phx-click={JS.navigate(~p"/hosts/#{@host.handle}/events/create-new")}
-            class="h-9 gap-1 bg-zinc-950 rounded-lg inline-flex items-center text-white px-4 text-sm"
-          >
+          <.button phx-click={JS.navigate(~p"/hosts/#{@host.handle}/events/create-new")}>
             <.icon name="i-lucide-calendar-plus" />
             <span class="font-semibold">Create</span>
-          </button>
+          </.button>
         </div>
       </div>
     </div>

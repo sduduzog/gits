@@ -94,7 +94,7 @@ const plugins = [
     );
   }),
   iconsPlugin({
-    scale: 1.25,
+    scale: 1.125,
     collections: getIconCollections(["lucide"]),
   }),
 ];

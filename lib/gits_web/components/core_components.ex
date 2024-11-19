@@ -41,13 +41,10 @@ defmodule GitsWeb.CoreComponents do
       <div class="flex grow items-center">
         <.logo />
       </div>
-      <.link
-        navigate={~p"/"}
-        class="inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-semibold hover:bg-zinc-100"
-      >
+      <.button variant={:ghost} href={~p"/"}>
         <.icon name="i-lucide-search" />
         <span>Search</span>
-      </.link>
+      </.button>
 
       <%= if not is_nil(assigns[:user]) do %>
         <div
@@ -62,7 +59,7 @@ defmodule GitsWeb.CoreComponents do
           }
         >
           <div>
-            <button
+            <.button
               phx-click={
                 JS.toggle(
                   to: "div#header-menu[role=menu]",
@@ -74,14 +71,14 @@ defmodule GitsWeb.CoreComponents do
                      "transform opacity-0 scale-95"}
                 )
               }
-              class="inline-flex h-9 items-center justify-center gap-x-1.5 rounded-lg border px-4 py-2 text-sm font-semibold ring-zinc-300 hover:bg-gray-50"
               id="menu-button"
+              variant={:outline}
               aria-expanded="true"
               aria-haspopup="true"
             >
               <span>Account</span>
               <.icon name="i-lucide-chevron-down" />
-            </button>
+            </.button>
           </div>
           <div
             id="header-menu"
@@ -455,6 +452,7 @@ defmodule GitsWeb.CoreComponents do
   attr :type, :string, default: nil
   attr :class, :string, default: nil
   attr :size, :atom, default: nil
+  attr :href, :string, default: nil
   attr :variant, :atom, default: nil
   attr :rest, :global, include: ~w(disabled form name value)
 
@@ -483,20 +481,38 @@ defmodule GitsWeb.CoreComponents do
       )
 
     ~H"""
-    <button
-      type={@type}
-      class={[
-        "text-sm/6 font-semibold  border inline-flex",
-        "rounded-lg items-center justify-center phx-submit-loading:opacity-75 disabled:opacity-75",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-zinc-600",
-        @size_class,
-        @variant_class,
-        @class
-      ]}
-      {@rest}
-    >
-      <%= render_slot(@inner_block) %>
-    </button>
+    <%= if is_nil(@href) do %>
+      <button
+        type={@type}
+        class={[
+          "text-sm/6 font-semibold  border inline-flex gap-2",
+          "rounded-lg items-center justify-center phx-submit-loading:opacity-75 disabled:opacity-75",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-zinc-600",
+          @size_class,
+          @variant_class,
+          @class
+        ]}
+        {@rest}
+      >
+        <%= render_slot(@inner_block) %>
+      </button>
+    <% else %>
+      <.link
+        navigate={@href}
+        type={@type}
+        class={[
+          "text-sm/6 font-semibold  border inline-flex gap-2",
+          "rounded-lg items-center justify-center phx-submit-loading:opacity-75 disabled:opacity-75",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-zinc-600",
+          @size_class,
+          @variant_class,
+          @class
+        ]}
+        {@rest}
+      >
+        <%= render_slot(@inner_block) %>
+      </.link>
+    <% end %>
     """
   end
 
