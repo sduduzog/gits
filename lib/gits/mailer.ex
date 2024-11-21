@@ -16,6 +16,20 @@ defmodule Gits.Mailer do
     |> deliver()
   end
 
+  def order_completed(to) do
+    config = Application.get_env(:gits, Gits.Mailer)
+
+    sender = "orders@#{config[:domain]}"
+
+    new()
+    |> to(to)
+    |> from({"GiTS", sender})
+    |> subject("Sign in to GiTS")
+    |> render_body(:order_completed, %{})
+    |> premail()
+    |> deliver()
+  end
+
   defp render_body(email, template, args) do
     heex = apply(GitsWeb.EmailHTML, template, [args])
     html_body(email, render_component(heex))

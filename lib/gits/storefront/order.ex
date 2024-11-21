@@ -6,6 +6,7 @@ defmodule Gits.Storefront.Order do
 
   alias Gits.Storefront.{Event, Ticket, TicketType}
   alias __MODULE__.Changes.{ConfirmOrder}
+  alias __MODULE__.Notifiers.OrderCompletedEmailNotifier
 
   postgres do
     table "orders"
@@ -53,6 +54,7 @@ defmodule Gits.Storefront.Order do
     update :confirm do
       require_atomic? false
       change ConfirmOrder
+      notifiers [OrderCompletedEmailNotifier]
     end
 
     update :complete do

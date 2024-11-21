@@ -26,6 +26,9 @@
       rel="stylesheet"
     />
     <style>
+      .hover-bg-zinc-100:hover {
+        background-color: #f4f4f5 !important
+      }
       .hover-bg-zinc-800:hover {
         background-color: #27272a !important
       }
@@ -50,19 +53,54 @@
           <tr>
             <td style="width: 640px; max-width: 100%">
               <div role="separator" style="line-height: 24px">&zwj;</div>
+              <h1 style="margin: 0 0 24px; font-size: 24px; line-height: 32px; font-weight: 600; color: #18181b">
+                Order Complete
+              </h1>
+              <p style="margin: 0 0 24px; font-size: 14px; color: #52525b">
+                Your order has been placed successfully. Below you'll find a summary of your order.
+              </p>
               <table style="width: 100%" cellpadding="0" cellspacing="0" role="none">
                 <tr>
                   <td
                     class="sm-p-6"
-                    style="border-radius: 8px; background-color: #fffffe; padding: 24px 36px; border: 1px solid #e4e4e7"
+                    style="border-radius: 12px; background-color: #f4f4f5; padding: 40px 32px"
                   >
-                    <div role="separator" style="line-height: 24px">&zwj;</div>
-                    <h1 style="margin: 0 0 24px; font-size: 24px; line-height: 32px; font-weight: 600; color: #18181b">
-                      Hey! Welcome back!
-                    </h1>
-                    <p style="margin: 0 0 24px; font-size: 14px; color: #52525b">
-                      To finish signing in, click the button below. If you did not request this email, you can safely ignore it.
-                    </p>
+                    <h3 style="font-size: 18px; font-weight: 600">Order Summary</h3>
+                    <dl style="display: grid; gap: 24px; font-size: 14px; line-height: 24px">
+                      <div style="display: grid; gap: 4px">
+                        <dt style="font-weight: 500; color: #4b5563">Event</dt>
+                        <dd style="margin: 0; color: #6b7280">
+                          The Ultimate Cheese Festival
+                        </dd>
+                      </div>
+                      <div style="display: grid; gap: 4px">
+                        <dt style="font-weight: 500; color: #4b5563">Tickets</dt>
+                        <dd style="margin: 0; color: #6b7280">
+                          <div style="padding-top: 8px; padding-bottom: 8px">
+                            <div style="display: flex; justify-content: space-between">
+                              <span>1 &times; General</span>
+                              <span style="font-weight: 500; color: #27272a">R 0</span>
+                            </div>
+                          </div>
+                          <div style="padding-top: 8px; padding-bottom: 8px; border-top-width: 1px; border-bottom-width: 0">
+                            <div style="display: flex; justify-content: space-between">
+                              <span>1 &times; General</span>
+                              <span style="font-weight: 500; color: #27272a">R 0</span>
+                            </div>
+                          </div>
+                        </dd>
+                      </div>
+                    </dl>
+                    <div style="display: grid; text-align: right">
+                      <span>Payment total</span>
+                      <span style="font-size: 24px; font-weight: 500">R 0</span>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+              <table cellpadding="0" cellspacing="0" role="none">
+                <tr>
+                  <td style="display: flex; gap: 24px; padding-top: 40px">
                     <div>
                       <a
                         href="https:///"
@@ -73,7 +111,24 @@
       <i style="mso-font-width: 150%; mso-text-raise: 30px" hidden>&emsp;</i>
     <![endif]-->
                         <span style="mso-text-raise: 16px">
-                          Sign in
+                          View tickets
+                        </span>
+                        <!--[if mso]>
+      <i hidden style="mso-font-width: 150%">&emsp;&#8203;</i>
+    <![endif]-->
+                      </a>
+                    </div>
+                    <div>
+                      <a
+                        href="https:///"
+                        style="margin: 0 0 24px; display: inline-block; border-radius: 8px; background-color: #fafafa; padding: 8px 16px; font-size: 14px; font-weight: 600; color: #09090b; text-decoration: none"
+                        class="hover-bg-zinc-100"
+                      >
+                        <!--[if mso]>
+      <i style="mso-font-width: 150%; mso-text-raise: 30px" hidden>&emsp;</i>
+    <![endif]-->
+                        <span style="mso-text-raise: 16px">
+                          Return tickets
                         </span>
                         <!--[if mso]>
       <i hidden style="mso-font-width: 150%">&emsp;&#8203;</i>
