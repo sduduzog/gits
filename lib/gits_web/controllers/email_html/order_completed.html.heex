@@ -59,6 +59,12 @@
               <p style="margin: 0 0 24px; font-size: 14px; color: #52525b">
                 Your order has been placed successfully. Below you'll find a summary of your order.
               </p>
+
+              <p style="margin: 0 0 24px; font-size: 14px; color: #52525b">
+                <strong>This is not your ticket!</strong>
+                Click the 'View tickets' button to find your tickets for this event. You have to sign in with the same email address.
+              </p>
+
               <table style="width: 100%" cellpadding="0" cellspacing="0" role="none">
                 <tr>
                   <td
@@ -70,30 +76,27 @@
                       <div style="display: grid; gap: 4px">
                         <dt style="font-weight: 500; color: #4b5563">Event</dt>
                         <dd style="margin: 0; color: #6b7280">
-                          The Ultimate Cheese Festival
+                          <%= @event_name %>
                         </dd>
                       </div>
                       <div style="display: grid; gap: 4px">
                         <dt style="font-weight: 500; color: #4b5563">Tickets</dt>
                         <dd style="margin: 0; color: #6b7280">
-                          <div style="padding-top: 8px; padding-bottom: 8px">
+                          <div
+                            :for={{name, price, count} <- @tickets_summary}
+                            style="padding-top: 8px; padding-bottom: 8px"
+                          >
                             <div style="display: flex; justify-content: space-between">
-                              <span>1 &times; General</span>
-                              <span style="font-weight: 500; color: #27272a">R 0</span>
-                            </div>
-                          </div>
-                          <div style="padding-top: 8px; padding-bottom: 8px; border-top-width: 1px; border-bottom-width: 0">
-                            <div style="display: flex; justify-content: space-between">
-                              <span>1 &times; General</span>
-                              <span style="font-weight: 500; color: #27272a">R 0</span>
+                              <span><%= count %> &times; <%= name %></span>
+                              <span style="font-weight: 500; color: #27272a">R <%= price %></span>
                             </div>
                           </div>
                         </dd>
                       </div>
                     </dl>
                     <div style="display: grid; text-align: right">
-                      <span>Payment total</span>
-                      <span style="font-size: 24px; font-weight: 500">R 0</span>
+                      <span>Total payment</span>
+                      <span style="font-size: 24px; font-weight: 500">R <%= @total %></span>
                     </div>
                   </td>
                 </tr>
@@ -103,7 +106,7 @@
                   <td style="display: flex; gap: 24px; padding-top: 40px">
                     <div>
                       <a
-                        href="https:///"
+                        href={url(GitsWeb.Endpoint, ~p"/my/tickets")}
                         style="margin: 0 0 24px; display: inline-block; border-radius: 8px; background-color: #09090b; padding: 8px 16px; font-size: 14px; font-weight: 600; color: #fafafa; text-decoration: none"
                         class="hover-bg-zinc-800"
                       >
@@ -120,7 +123,7 @@
                     </div>
                     <div>
                       <a
-                        href="https:///"
+                        href={url(GitsWeb.Endpoint, ~p"/my/refunds?order_no=#{@order_no}")}
                         style="margin: 0 0 24px; display: inline-block; border-radius: 8px; background-color: #fafafa; padding: 8px 16px; font-size: 14px; font-weight: 600; color: #09090b; text-decoration: none"
                         class="hover-bg-zinc-100"
                       >
@@ -141,11 +144,12 @@
               <table style="width: 100%" cellpadding="0" cellspacing="0" role="none">
                 <tr>
                   <td style="padding-left: 32px; padding-right: 32px; padding-top: 24px">
-                    <a href="https://staging.gits.co.za">
+                    <a href={url(GitsWeb.Endpoint, ~p"/")}>
                       <img
-                        src="https://staging.gits.co.za/images/gits_logo.png"
+                        phx-track-static
+                        src={static_url(GitsWeb.Endpoint, "/images/gits_logo.png")}
                         width="60"
-                        alt="Maizzle"
+                        alt="GiTS"
                         style="max-width: 100%; vertical-align: middle"
                       />
                     </a>
@@ -153,33 +157,36 @@
                 </tr>
                 <tr>
                   <td style="padding-left: 32px; padding-right: 32px; padding-top: 24px; font-size: 12px; color: #71717a">
-                    <a href="#" style="margin-right: 4px; color: #71717a; text-decoration: none">
+                    <a
+                      href={~p"/my/tickets"}
+                      style="margin-right: 4px; color: #71717a; text-decoration: none"
+                    >
                       Tickets
                     </a>
                     &bull;
                     <a
-                      href="#"
+                      href={~p"/my/orders"}
                       style="margin-left: 4px; margin-right: 4px; color: #71717a; text-decoration: none"
                     >
                       Orders
                     </a>
                     &bull;
                     <a
-                      href="#"
+                      href={~p"/my/settings"}
                       style="margin-left: 4px; margin-right: 4px; color: #71717a; text-decoration: none"
                     >
                       Account
                     </a>
                     &bull;
                     <a
-                      href="#"
+                      href={~p"/privacy"}
                       style="margin-left: 4px; margin-right: 4px; color: #71717a; text-decoration: none"
                     >
                       Privacy
                     </a>
                     &bull;
                     <a
-                      href="#"
+                      href={~p"/terms"}
                       style="margin-left: 4px; margin-right: 4px; color: #71717a; text-decoration: none"
                     >
                       Terms

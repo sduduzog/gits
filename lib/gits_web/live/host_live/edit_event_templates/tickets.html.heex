@@ -3,9 +3,9 @@
     <div :for={ticket_type <- @event.ticket_types} class="grid gap-2 rounded-xl border p-4">
       <div class="flex justify-between overflow-hidden gap-4">
         <span class="text-lg font-semibold truncate"><%= ticket_type.name %></span>
-        <span class="text-lg font-semibold shrink-0">R <%= "1 000.00" %></span>
+        <span class="text-lg font-semibold shrink-0">R <%= ticket_type.price %></span>
       </div>
-      <span class="text-sm text-zinc-500">Limited early bird tickets</span>
+      <span class="text-sm text-zinc-500"><%= ticket_type.description %></span>
       <span class="text-sm text-zinc-800">Quantity: 10</span>
       <div class="flex justify-end gap-4">
         <button
@@ -140,15 +140,14 @@
       phx-change="validate"
     >
       <.inputs_for :let={tf} :if={@show_create_ticket_modal} field={f[:type]}>
-        <label class="col-span-full grid gap-1">
-          <span class="text-sm font-medium">Name</span>
-          <input
-            type="text"
-            name={tf[:name].name}
-            value={tf[:name].value}
-            class="w-full rounded-lg border-zinc-300 px-3 py-2 text-sm"
-          />
-        </label>
+        <.input type="text" field={tf[:name]} label="Name" />
+        <.input type="number" field={tf[:price]} label="Price" />
+        <.input
+          type="textarea"
+          field={tf[:description]}
+          label="Description"
+          class="col-span-full"
+        />
       </.inputs_for>
       <div class="col-span-full flex justify-end">
         <button class="flex h-9 items-center rounded-lg bg-zinc-950 px-4 text-zinc-50">
@@ -186,15 +185,14 @@
       phx-change="validate"
     >
       <.inputs_for :let={tf} :if={@show_edit_ticket_modal} field={f[:type]}>
-        <label class="col-span-full grid gap-1">
-          <span class="text-sm font-medium">Name</span>
-          <input
-            type="text"
-            name={tf[:name].name}
-            value={tf[:name].value}
-            class="w-full rounded-lg border-zinc-300 px-3 py-2 text-sm"
-          />
-        </label>
+        <.input type="text" field={tf[:name]} label="Name" />
+        <.input type="number" field={tf[:price]} label="Price" />
+        <.input
+          type="textarea"
+          field={tf[:description]}
+          label="Description"
+          class="col-span-full"
+        />
       </.inputs_for>
       <div class="col-span-full flex justify-end">
         <button class="flex h-9 items-center rounded-lg bg-zinc-950 px-4 text-zinc-50">

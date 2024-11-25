@@ -629,35 +629,31 @@ defmodule GitsWeb.CoreComponents do
 
   def input(%{type: "textarea"} = assigns) do
     ~H"""
-    <div phx-feedback-for={@name} class={["", @class]}>
-      <.label for={@id}><%= @label %></.label>
+    <div phx-feedback-for={@name} class={["max-w-3xl space-y-1 text-sm", @class]}>
+      <div class="flex justify-between">
+        <.label for={@id}><%= @label %></.label>
+        <%= if @errors == [] do %>
+          <span :if={@hint} class="text-zinc-500"><%= @hint %></span>
+        <% else %>
+          <.error :for={msg <- @errors}><%= msg %></.error>
+        <% end %>
+      </div>
       <textarea
-        id={@id}
-        name={@name}
         class={[
-          "mt-2 block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6",
-          "min-h-[6rem] phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400",
-          @errors == [] && "border-zinc-300 focus:border-zinc-400",
+          "w-full py-2 text-sm px-3 rounded-lg border",
+          "border-zinc-200 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-zinc-600 focus:outline-none outline-none",
+          @errors == [] && "border-zinc-300 focus:ring-zinc-400",
           @errors != [] && "border-rose-400 focus:border-rose-400"
         ]}
+        id={@id}
+        name={@name}
         {@rest}
       ><%= Phoenix.HTML.Form.normalize_value("textarea", @value) %></textarea>
-      <.error :for={msg <- @errors}><%= @label <> " " <> msg %></.error>
+      <span :if={@description} class="inline-flex text-zinc-500"><%= @description %></span>
     </div>
     """
   end
 
-  # <label class="col-span-full grid gap-1">
-  #     <span class="text-sm font-medium">What is the name of your event?</span>
-  #     <input
-  #       type="text"
-  #       name={f[:name].name}
-  #       value={f[:name].value}
-  #       class="w-full rounded-lg border-zinc-300 px-3 py-2 text-sm"
-  #     />
-  #   </label>
-
-  # All other inputs text, datetime-local, url, password, etc. are handled here...
   def input(assigns) do
     ~H"""
     <div class={["max-w-3xl space-y-1 text-sm", @class]}>
@@ -671,7 +667,7 @@ defmodule GitsWeb.CoreComponents do
       </div>
       <input
         class={[
-          "w-full py-2 px-3 rounded-lg border border-zinc-200 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-zinc-600 focus:outline-none outline-none",
+          "w-full py-2 text-sm px-3 rounded-lg border border-zinc-200 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-zinc-600 focus:outline-none outline-none",
           @errors == [] && "border-zinc-300 focus:ring-zinc-400",
           @errors != [] && "border-rose-400 focus:border-rose-400"
         ]}

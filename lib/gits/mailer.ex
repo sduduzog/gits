@@ -16,7 +16,7 @@ defmodule Gits.Mailer do
     |> deliver()
   end
 
-  def order_completed(to) do
+  def order_completed(to, tickets_summary, total, event_name, order_no) do
     config = Application.get_env(:gits, Gits.Mailer)
 
     sender = "orders@#{config[:domain]}"
@@ -24,8 +24,13 @@ defmodule Gits.Mailer do
     new()
     |> to(to)
     |> from({"GiTS", sender})
-    |> subject("Sign in to GiTS")
-    |> render_body(:order_completed, %{})
+    |> subject("Order Completed Successfully")
+    |> render_body(:order_completed, %{
+      tickets_summary: tickets_summary,
+      total: total,
+      event_name: event_name,
+      order_no: order_no
+    })
     |> premail()
     |> deliver()
   end

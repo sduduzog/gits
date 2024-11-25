@@ -18,6 +18,8 @@ defmodule Gits.Storefront.TicketType do
   attributes do
     uuid_primary_key :id
     attribute :name, :string, public?: true, allow_nil?: false
+    attribute :price, :decimal, public?: true, allow_nil?: false, default: 0
+    attribute :description, :string, public?: true, allow_nil?: false
 
     create_timestamp :created_at
     update_timestamp :updated_at

@@ -1,5 +1,6 @@
 defmodule GitsWeb.StorefrontLive.EventOrder do
   require Ash.Query
+  require Decimal
   alias Gits.Storefront.{Order, Ticket, TicketType}
   alias AshPhoenix.Form
   use GitsWeb, :live_view
@@ -166,9 +167,8 @@ defmodule GitsWeb.StorefrontLive.EventOrder do
               )
               |> Form.add_form([:ticket], params: %{"ticket_type" => %{"id" => type.id}})
 
-            {type.name,
-             "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dignissimos laudantium id provident commodi dicta?",
-             "0", count, removable_ticket, remove_ticket_form, add_ticket_form}
+            {type.name, type.description, type.price, count, removable_ticket, remove_ticket_form,
+             add_ticket_form}
           end)
         )
     end
@@ -186,14 +186,14 @@ defmodule GitsWeb.StorefrontLive.EventOrder do
             count = Enum.count(tickets)
 
             if count > 0 do
-              {type.name, 1 * count, count}
+              {type.name, type.price, count}
             end
           end
 
         total =
-          for {_, price, _} <- tickets_summary, reduce: 0 do
+          for {_, price, _} <- tickets_summary, reduce: Decimal.new("0") do
             acc ->
-              acc + price
+              acc |> Decimal.add(price)
           end
 
         socket

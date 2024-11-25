@@ -65,7 +65,7 @@
                     </p>
                     <div>
                       <a
-                        href="https:///"
+                        href={url(GitsWeb.Endpoint, ~p"/auth/user/magic_link?token=#{@token}")}
                         style="margin: 0 0 24px; display: inline-block; border-radius: 8px; background-color: #09090b; padding: 8px 16px; font-size: 14px; font-weight: 600; color: #fafafa; text-decoration: none"
                         class="hover-bg-zinc-800"
                       >
@@ -86,11 +86,12 @@
               <table style="width: 100%" cellpadding="0" cellspacing="0" role="none">
                 <tr>
                   <td style="padding-left: 32px; padding-right: 32px; padding-top: 24px">
-                    <a href="https://staging.gits.co.za">
+                    <a href={url(GitsWeb.Endpoint, ~p"/")}>
                       <img
-                        src="https://staging.gits.co.za/images/gits_logo.png"
+                        phx-track-static
+                        src={static_url(GitsWeb.Endpoint, "/images/gits_logo.png")}
                         width="60"
-                        alt="Maizzle"
+                        alt="GiTS"
                         style="max-width: 100%; vertical-align: middle"
                       />
                     </a>
@@ -98,33 +99,36 @@
                 </tr>
                 <tr>
                   <td style="padding-left: 32px; padding-right: 32px; padding-top: 24px; font-size: 12px; color: #71717a">
-                    <a href="#" style="margin-right: 4px; color: #71717a; text-decoration: none">
+                    <a
+                      href={~p"/my/tickets"}
+                      style="margin-right: 4px; color: #71717a; text-decoration: none"
+                    >
                       Tickets
                     </a>
                     &bull;
                     <a
-                      href="#"
+                      href={~p"/my/orders"}
                       style="margin-left: 4px; margin-right: 4px; color: #71717a; text-decoration: none"
                     >
                       Orders
                     </a>
                     &bull;
                     <a
-                      href="#"
+                      href={~p"/my/settings"}
                       style="margin-left: 4px; margin-right: 4px; color: #71717a; text-decoration: none"
                     >
                       Account
                     </a>
                     &bull;
                     <a
-                      href="#"
+                      href={~p"/privacy"}
                       style="margin-left: 4px; margin-right: 4px; color: #71717a; text-decoration: none"
                     >
                       Privacy
                     </a>
                     &bull;
                     <a
-                      href="#"
+                      href={~p"/terms"}
                       style="margin-left: 4px; margin-right: 4px; color: #71717a; text-decoration: none"
                     >
                       Terms

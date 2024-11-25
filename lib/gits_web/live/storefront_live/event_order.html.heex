@@ -7,7 +7,7 @@
         </.button>
         <h3 class="text-lg font-semibold lg:col-span-full">Get Tickets</h3>
       </div>
-      <div class="grid gap-4 lg:grid-cols-2">
+      <div class="grid gap-4 items-start lg:grid-cols-2">
         <div
           :for={
             {name, description, price, count, removable_ticket, remove_ticket_form,
@@ -20,7 +20,7 @@
             <span><%= name %></span>
             <span>R <%= price %></span>
           </div>
-          <span class="line-clamp-2 text-sm text-zinc-500"><%= description %></span>
+          <span class="line-clamp-3 text-sm text-zinc-500"><%= description %></span>
           <div class="flex items-center gap-2">
             <div class="grow"></div>
 
@@ -67,9 +67,8 @@
         for={@process_form}
         class="sticky bottom-0 top-0 z-20 grid items-center gap-4 border-t border-zinc-100 bg-white p-2 shadow-sm lg:bottom-auto lg:top-6 lg:border-none lg:shadow-none"
       >
-        <.input field={f[:email]} type="email" label="Email address" />
         <div class="flex">
-          <.button>
+          <.button disabled={Enum.empty?(@tickets)}>
             <span>Continue</span>
           </.button>
         </div>
@@ -88,7 +87,7 @@
       </div>
 
       <p class=" text-sm text-zinc-700">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquam voluptatem dolorem reprehenderit.
+        Please provide your email address to receive your order confirmation for the <%= @event.name %> tickets. We'll send you important details about your purchase and how to access your tickets.
       </p>
     <% end %>
 
@@ -140,17 +139,16 @@
         <% end %>
       </dl>
 
-      <%= if Enum.any?(@tickets_summary) do %>
-        <div class="grid text-right">
-          <span>Payment total</span>
-          <span class="text-2xl font-medium">R <%= @tickets_total %></span>
-        </div>
-      <% end %>
+      <div class="grid text-right">
+        <span>Total payment</span>
+        <span class="text-2xl font-medium">R <%= @tickets_total %></span>
+      </div>
     </div>
   </div>
 
   <%= if @order.state == :processed do %>
     <.form :let={f} phx-submit="confirm" for={@confirm_form} class="grid  items-center gap-4 p-2">
+      <.input field={f[:email]} type="email" label="Email address" />
       <div class="flex">
         <.button>
           <span>Confirm Order</span>
@@ -166,7 +164,7 @@
       </.button>
 
       <.button variant={:subtle}>
-        <span>Request a refund</span>
+        <span>Return tickets</span>
       </.button>
     </div>
   <% end %>

@@ -18,7 +18,6 @@ defmodule Gits.Storefront.Order do
     default_initial_state :open
 
     transitions do
-      transition :open, from: :anonymous, to: :open
       transition :process, from: :open, to: :processed
       transition :reopen, from: :processed, to: :open
       transition :confirm, from: :processed, to: [:confirmed, :completed]
@@ -29,19 +28,12 @@ defmodule Gits.Storefront.Order do
   actions do
     defaults [:read]
 
-    create :create do
+    create :open do
       primary? true
       accept [:email]
     end
 
-    update :open do
-      accept [:email]
-
-      change transition_state(:open)
-    end
-
     update :process do
-      accept [:email]
       change set_attribute(:total, 0)
       change transition_state(:processed)
     end
@@ -53,6 +45,9 @@ defmodule Gits.Storefront.Order do
 
     update :confirm do
       require_atomic? false
+
+      argument :email, :ci_string, allow_nil?: false
+      change set_attribute(:email, arg(:email))
       change ConfirmOrder
       notifiers [OrderCompletedEmailNotifier]
     end
