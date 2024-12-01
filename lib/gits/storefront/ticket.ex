@@ -25,6 +25,12 @@ defmodule Gits.Storefront.Ticket do
 
   attributes do
     uuid_primary_key :id
+
+    attribute :public_id, :string,
+      allow_nil?: false,
+      writable?: false,
+      public?: true,
+      default: fn -> Nanoid.generate(6, "0123456789abcdef") end
   end
 
   relationships do

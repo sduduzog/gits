@@ -1,11 +1,46 @@
 defmodule GitsWeb.MyLive.Tickets do
+  require Ash.Query
+  alias Gits.Storefront.TicketType
+  alias Gits.Storefront.Event
   use GitsWeb, :live_view
 
-  def mount(_, _, %{assigns: %{live_action: :show}} = socket) do
-    socket |> assign(:page_title, "General") |> ok()
-  end
-
   def mount(_, _, socket) do
-    socket |> assign(:page_title, "Tickets") |> ok()
+    Ash.Query.filter(Event, count(ticket_types.tickets) > 0)
+    |> Ash.Query.load(
+      ticket_types: Ash.Query.filter(TicketType, count(tickets) > 0) |> Ash.Query.load(:tickets)
+    )
+    |> Ash.read()
+    |> case do
+      {:ok, events} ->
+        events =
+          events
+          |> Enum.map(fn event ->
+            event |> IO.inspect()
+
+            ticket_types =
+              event.ticket_types
+              |> Enum.map(fn type ->
+                tickets =
+                  type.tickets
+                  |> Enum.map(fn ticket ->
+                    {ticket.public_id}
+                  end)
+
+                {type.name, tickets}
+              end)
+
+            {event.name, ticket_types}
+          end)
+
+        socket
+        |> assign(:events, events)
+
+      _ ->
+        socket
+        |> assign(:tickets, [])
+    end
+    |> assign(:tickets, [])
+    |> assign(:page_title, "Tickets")
+    |> ok()
   end
 end

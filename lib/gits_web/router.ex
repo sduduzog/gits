@@ -56,6 +56,8 @@ defmodule GitsWeb.Router do
     get "/bucket/*keys", PageController, :bucket
 
     live "/search", SearchLive, :index
+    live "/tickets/:public_id", TicketLive, :show
+    live "/t/:public_id", TicketLive, :show
   end
 
   scope "/hosts", GitsWeb do

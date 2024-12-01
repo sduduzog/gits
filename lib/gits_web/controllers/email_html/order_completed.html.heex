@@ -106,7 +106,7 @@
                   <td style="display: flex; gap: 24px; padding-top: 40px">
                     <div>
                       <a
-                        href={url(GitsWeb.Endpoint, ~p"/my/tickets")}
+                        href={url(GitsWeb.Endpoint, ~p"/my/tickets?order_no=#{@order_no}")}
                         style="margin: 0 0 24px; display: inline-block; border-radius: 8px; background-color: #09090b; padding: 8px 16px; font-size: 14px; font-weight: 600; color: #fafafa; text-decoration: none"
                         class="hover-bg-zinc-800"
                       >
@@ -123,7 +123,7 @@
                     </div>
                     <div>
                       <a
-                        href={url(GitsWeb.Endpoint, ~p"/my/refunds?order_no=#{@order_no}")}
+                        href={url(GitsWeb.Endpoint, ~p"/refund?order_no=#{@order_no}")}
                         style="margin: 0 0 24px; display: inline-block; border-radius: 8px; background-color: #fafafa; padding: 8px 16px; font-size: 14px; font-weight: 600; color: #09090b; text-decoration: none"
                         class="hover-bg-zinc-100"
                       >
