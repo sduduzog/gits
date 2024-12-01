@@ -67,7 +67,9 @@
           <%= event.name %>
         </.link>
       </h2>
-      <span class="text-sm text-zinc-500">5 Nov 2024, at 4:30 PM</span>
+      <span class="text-sm text-zinc-500">
+        <%= Calendar.strftime(event.starts_at, "%d %b %Y, at %I:%M %p") %>
+      </span>
       <!-- <span class="text-sm text-zinc-500">5/40 tickets sold</span> -->
     </div>
     <div class="">

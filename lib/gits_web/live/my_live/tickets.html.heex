@@ -3,18 +3,22 @@
 </h1>
 
 <div
-  :for={{event_name, ticket_types} <- @events}
+  :for={{event_name, event_starts_at, ticket_types} <- @events}
   class="mx-auto flex max-w-screen-xl items-start gap-4 p-4 lg:gap-8"
 >
   <div class="grid pt-6 text-zinc-500 text-center">
-    <span class="text-3xl/6 font-semibold">00</span>
-    <span class=" text-xl/6">Xxx</span>
+    <span class="text-3xl/6 font-semibold">
+      <%= Calendar.strftime(event_starts_at, "%d") %>
+    </span>
+    <span class=" text-xl/6">
+      <%= Calendar.strftime(event_starts_at, "%b") %>
+    </span>
   </div>
   <div class="grid grow gap-2 lg:grid-cols-3 lg:gap-4">
     <%= for {ticket_name, tickets} <- ticket_types do %>
       <.link
         :for={{id} <- tickets}
-        navigate={~p"/tickets/#{id}"}
+        navigate={~p"/t/#{id}"}
         class="grid gap-4 divide-y divide-dashed rounded-xl border p-6 ring-zinc-400 ring-offset-1 hover:ring-2"
       >
         <div class="w-full overflow-hidden">

@@ -6,7 +6,7 @@
         <span class="text-lg font-semibold shrink-0">R <%= ticket_type.price %></span>
       </div>
       <span class="text-sm text-zinc-500"><%= ticket_type.description %></span>
-      <span class="text-sm text-zinc-800">Quantity: 10</span>
+      <span class="text-sm text-zinc-800">Quantity: <%= ticket_type.quantity %></span>
       <div class="flex justify-end gap-4">
         <button
           type="button"
@@ -111,11 +111,12 @@
     </button>
   </div>
 <% end %>
-<div class="flex mt-8 justify-end grow">
+<div class="flex mt-8 grow">
   <%= render_slot(@inner_block) %>
 </div>
 
 <.modal
+  new={true}
   id="create_ticket"
   show={@show_create_ticket_modal}
   on_cancel={
@@ -127,12 +128,12 @@
   }
 >
   <div class="grid gap-4">
-    <h3 class="text-lg font-semibold">New Ticket</h3>
+    <h3 class="text-lg font-semibold">Add a new Ticket</h3>
     <.form
       :let={f}
       id="create_ticket_form"
       for={@form}
-      class="grid grow grid-cols-2 gap-6"
+      class="grid grow grid-cols-2 gap-4"
       phx-submit={
         JS.push("tickets")
         |> JS.exec("data-cancel", to: "#create_ticket")
@@ -141,7 +142,15 @@
     >
       <.inputs_for :let={tf} :if={@show_create_ticket_modal} field={f[:type]}>
         <.input type="text" field={tf[:name]} label="Name" />
+
         <.input type="number" field={tf[:price]} label="Price" />
+        <.input type="number" field={tf[:quantity]} label="Quantity" />
+        <.input type="number" field={tf[:limit_per_user]} label="Limit per user" />
+
+        <.input field={tf[:sale_starts_at]} label="Sale start" type="datetime-local" />
+
+        <.input field={tf[:sale_ends_at]} label="Sale end" type="datetime-local" />
+
         <.input
           type="textarea"
           field={tf[:description]}
@@ -162,6 +171,7 @@
 
 <.modal
   id="edit_ticket"
+  new={true}
   show={@show_edit_ticket_modal}
   on_cancel={
     JS.patch(
@@ -177,7 +187,7 @@
       :let={f}
       id="edit_ticket_form"
       for={@form}
-      class="grid grow grid-cols-2 gap-6"
+      class="grid grow grid-cols-2 gap-4"
       phx-submit={
         JS.push("tickets")
         |> JS.exec("data-cancel", to: "#edit_ticket")
@@ -187,6 +197,13 @@
       <.inputs_for :let={tf} :if={@show_edit_ticket_modal} field={f[:type]}>
         <.input type="text" field={tf[:name]} label="Name" />
         <.input type="number" field={tf[:price]} label="Price" />
+        <.input type="number" field={tf[:quantity]} label="Quantity" />
+        <.input type="number" field={tf[:limit_per_user]} label="Limit per user" />
+
+        <.input field={tf[:sale_starts_at]} label="Sale start" type="datetime-local" />
+
+        <.input field={tf[:sale_ends_at]} label="Sale end" type="datetime-local" />
+
         <.input
           type="textarea"
           field={tf[:description]}
@@ -206,6 +223,7 @@
 </.modal>
 
 <.modal
+  new={true}
   id="archive_ticket"
   show={@show_archive_ticket_modal}
   on_cancel={

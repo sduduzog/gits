@@ -21,6 +21,12 @@ defmodule Gits.Storefront.TicketType do
     attribute :price, :decimal, public?: true, allow_nil?: false, default: 0
     attribute :description, :string, public?: true, allow_nil?: false
 
+    attribute :sale_starts_at, :naive_datetime, public?: true, allow_nil?: false
+    attribute :sale_ends_at, :naive_datetime, public?: true, allow_nil?: false
+
+    attribute :quantity, :integer, public?: true, allow_nil?: false
+    attribute :limit_per_user, :integer, public?: true, allow_nil?: false
+
     create_timestamp :created_at
     update_timestamp :updated_at
   end

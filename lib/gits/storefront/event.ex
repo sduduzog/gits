@@ -27,7 +27,7 @@ defmodule Gits.Storefront.Event do
 
     create :create do
       primary? true
-      accept [:name, :visibility]
+      accept [:name, :starts_at, :ends_at, :visibility]
 
       argument :host, :map
       change manage_relationship(:host, type: :append)
@@ -78,6 +78,10 @@ defmodule Gits.Storefront.Event do
       default: &Nanoid.generate/0
 
     attribute :name, :string, public?: true, allow_nil?: false
+
+    attribute :starts_at, :naive_datetime, public?: true, allow_nil?: false
+    attribute :ends_at, :naive_datetime, public?: true, allow_nil?: false
+
     # attribute :description, :string, public?: true
     attribute :visibility, :atom, public?: true, constraints: [one_of: [:private, :public]]
 

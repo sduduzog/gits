@@ -133,7 +133,8 @@ defmodule GitsWeb.HostLive.EditEvent do
               :details,
               socket.assigns.host.handle,
               event.public_id
-            )
+            ),
+          replace: true
         )
 
       {:update, {:ok, event}} ->
@@ -180,7 +181,7 @@ defmodule GitsWeb.HostLive.EditEvent do
       :form,
       event
       |> Form.for_update(:add_ticket_type, forms: [auto?: true])
-      |> Form.add_form([:type])
+      |> Form.add_form([:type], validate?: false)
     )
     |> assign(:show_create_ticket_modal, true)
   end

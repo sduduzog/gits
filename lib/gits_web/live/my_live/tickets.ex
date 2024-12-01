@@ -6,6 +6,7 @@ defmodule GitsWeb.MyLive.Tickets do
 
   def mount(_, _, socket) do
     Ash.Query.filter(Event, count(ticket_types.tickets) > 0)
+    |> Ash.Query.sort(starts_at: :desc)
     |> Ash.Query.load(
       ticket_types: Ash.Query.filter(TicketType, count(tickets) > 0) |> Ash.Query.load(:tickets)
     )
@@ -29,7 +30,7 @@ defmodule GitsWeb.MyLive.Tickets do
                 {type.name, tickets}
               end)
 
-            {event.name, ticket_types}
+            {event.name, event.starts_at, ticket_types}
           end)
 
         socket

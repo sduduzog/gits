@@ -8,15 +8,16 @@
   phx-auto-recover="validate"
 >
   <div class="grid max-w-screen-sm grid-cols-2 gap-6">
-    <label class="col-span-full grid gap-1">
-      <span class="text-sm font-medium">What is the name of your event?</span>
-      <input
-        type="text"
-        name={f[:name].name}
-        value={f[:name].value}
-        class="w-full rounded-lg border-zinc-300 px-3 py-2 text-sm"
-      />
-    </label>
+    <.input
+      field={f[:name]}
+      label="Name of the event"
+      placeholder="e.g. The Ultimate Cheese Festival"
+      type="text"
+      class="col-span-full"
+    />
+    <.input field={f[:starts_at]} label="Start Date" type="datetime-local" />
+
+    <.input field={f[:ends_at]} label="End Date" type="datetime-local" />
 
     <fieldset class="col-span-full grid gap-4 lg:grid-cols-2 lg:gap-6">
       <legend class="col-span-full inline-flex text-sm font-medium">
@@ -48,6 +49,7 @@
           name={f[:visibility].name}
           type="radio"
           checked={f[:visibility].value == :public}
+          disabled
           value={:public}
           class="peer sr-only"
         />
@@ -73,7 +75,7 @@
         Save
       </span>
     </button>
-    <div class="flex justify-end grow">
+    <div class="flex grow">
       <%= render_slot(@inner_block) %>
     </div>
   </div>
