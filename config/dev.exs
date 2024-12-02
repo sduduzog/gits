@@ -95,4 +95,6 @@ config :gits, :workers,
   reclaim_open_basket_timeout: 40,
   reclaim_payment_started_basket_timeout: 60
 
+config :gits, :basic_auth, username: "test", password: "test"
+
 config :gits, Gits.Mailer, host: "http://localhost", domain: "localhost"

@@ -11,10 +11,11 @@
     :for={
       {label, action} <- [
         {"Event Details", :details},
-        {"Tickets", :tickets}
+        {"Tickets", :tickets},
+        {"Payments", :tickets}
       ]
     }
-    class="group grid grow rounded-lg"
+    class="group grid w-full rounded-lg"
     aria-selected={"#{action == @live_action}"}
   >
     <div class="p-1">

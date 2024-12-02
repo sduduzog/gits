@@ -25,8 +25,8 @@ defmodule GitsWeb.Router do
     end
   end
 
-  pipeline :office do
-    plug :basic_auth, username: "sdu", password: "cheese and onions"
+  pipeline :admin do
+    plug :basic_auth, Application.get_env(:gits, :basic_auth)
   end
 
   pipeline :api do
@@ -144,11 +144,11 @@ defmodule GitsWeb.Router do
   end
 
   scope "/admin" do
-    pipe_through [:browser, :office]
+    pipe_through [:browser, :admin]
 
     live_dashboard "/dashboard",
       ecto_repos: [Gits.Repo],
-      ecto_psql_extras_options: [long_running_queries: [threshold: "20 milliseconds"]],
+      ecto_psql_extras_options: [long_running_queries: [threshold: "10 milliseconds"]],
       metrics: GitsWeb.Telemetry,
       additional_pages: [oban: Oban.LiveDashboard]
   end
