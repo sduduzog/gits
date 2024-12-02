@@ -2,7 +2,6 @@ defmodule GitsWeb.Router do
   use GitsWeb, :router
 
   import Phoenix.LiveDashboard.Router
-  import Plug.BasicAuth
   import GitsWeb.AuthPlug
 
   pipeline :browser do
@@ -25,8 +24,12 @@ defmodule GitsWeb.Router do
     end
   end
 
+  defp basic_auth(conn, _opts) do
+    Plug.BasicAuth.basic_auth(conn, Application.get_env(:gits, :basic_auth))
+  end
+
   pipeline :admin do
-    plug :basic_auth, Application.get_env(:gits, :basic_auth)
+    plug :basic_auth
   end
 
   pipeline :api do
@@ -88,11 +91,15 @@ defmodule GitsWeb.Router do
            HostLive.EditEvent,
            :tickets
 
-      live "/hosts/:handle/events/:event_id/settings/payout-preferences",
-           HostLive.EventView,
-           :settings_payout_preferences
+      live "/:handle/events/:public_id/edit/payouts",
+           HostLive.EditEvent,
+           :payouts
 
-      live "/:handle/settings", HostLive.Settings, :general
+      live "/:handle/settings", HostLive.Settings, :index
+
+      live "/:handle/settings/payouts/create-recipient",
+           HostLive.Settings,
+           :payouts_create_recipient
 
       live "/hosts/:handle/events/:event_id/manage",
            HostLive.EditEvent,

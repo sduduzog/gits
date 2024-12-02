@@ -1,6 +1,6 @@
 defmodule GitsWeb.LiveUserAuth do
   require Ash.Query
-  alias Gits.Hosting.Host
+  alias Gits.Accounts.Host
   import Phoenix.Component
   use GitsWeb, :verified_routes
 

@@ -54,7 +54,10 @@ defmodule GitsWeb.AuthController do
     |> redirect(to: "/sign-in")
   end
 
-  def failure(conn, _activity, _reason) do
+  def failure(conn, activity, reason) do
+    IO.puts("foooooooooo")
+    activity |> IO.inspect()
+    reason |> IO.inspect()
     conn |> put_status(401) |> render("failure.html")
   end
 
@@ -65,7 +68,6 @@ defmodule GitsWeb.AuthController do
   end
 
   def email_not_verified(conn, _params) do
-    # conn |> render(:email_not_verified)
     conn |> render(:email_sent)
   end
 end

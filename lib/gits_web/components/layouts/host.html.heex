@@ -16,16 +16,16 @@
       ),
     href: ~p"/hosts/#{@host_handle}/events"
   },
-  %{
-    label: "Orders",
-    icon: "hero-banknotes",
-    current:
-      Enum.any?(
-        [],
-        &(&1 == @socket.view)
-      ),
-    href: ~p"/hosts/#{@host_handle}/events"
-  },
+  # %{
+  #   label: "Orders",
+  #   icon: "hero-banknotes",
+  #   current:
+  #     Enum.any?(
+  #       [],
+  #       &(&1 == @socket.view)
+  #     ),
+  #   href: ~p"/hosts/#{@host_handle}/events"
+  # },
   %{
     label: "Settings",
     icon: "i-lucide-settings",
@@ -34,23 +34,31 @@
   }
 ] %>
 
+<% menus = [
+  [{"Sign out", ~p"/sign-out", false}]
+] %>
+
 <div class="mx-auto flex min-h-dvh w-full max-w-screen-2xl gap-8">
   <aside
     class="fixed inset-0 z-10 hidden w-full flex-col gap-6 bg-white lg:static lg:flex lg:max-w-64"
     id="sidebar"
   >
-    <div class="flex items-start justify-between p-2">
-      <.logo />
-      <button class="size-9 rounded-lg lg:hidden" phx-click={JS.hide(to: "aside#sidebar")}>
+    <div class="flex items-center justify-between p-2">
+      <div class="inline-flex grow">
+        <.logo />
+      </div>
+      <.button
+        size={:none}
+        variant={:ghost}
+        class="p-2 lg:hidden"
+        phx-click={JS.hide(to: "aside#sidebar")}
+      >
         <.icon name="hero-x-mark" />
-      </button>
+      </.button>
     </div>
-    <nav
-      :for={items <- [navigation_items |> Enum.take(2), navigation_items |> Enum.take(-1)]}
-      class="flex w-full flex-col gap-2 first-of-type:grow"
-    >
+    <nav class="flex w-full flex-col gap-2">
       <.link
-        :for={i <- items}
+        :for={i <- navigation_items}
         navigate={i.href}
         replace={true}
         aria-selected={"#{i.current}"}
@@ -70,39 +78,81 @@
         </div>
       </.link>
     </nav>
-    <div class="p-4 lg:p-2">
-      <div
-        phx-click-away={JS.hide(to: "#sidebar_dropdown")}
-        phx-click={JS.toggle(to: "#sidebar_dropdown")}
-        class="relative flex items-center gap-2 rounded-lg border p-2"
-      >
-        <div
-          id="sidebar_dropdown"
-          class="absolute inset-x-0 bottom-full hidden -translate-y-2 rounded-xl border bg-white p-1 shadow-lg"
-        >
-          <.link
-            navigate={~p"/sign-out"}
-            class="flex items-center rounded-md bg-zinc-50 p-4 lg:p-2"
-          >
-            <span class="grow text-sm">Log out</span>
-            <.icon name="hero-arrow-right-start-on-rectangle" class="size-5 shrink-0" />
-          </.link>
-        </div>
-        <div class="size-9 rounded-full bg-zinc-200"></div>
-        <div class="grid grow text-sm font-medium">
-          <span><%= @current_user.display_name %></span>
-          <span class="text-zinc-500"><%= @host.name %></span>
-        </div>
-        <.icon name="hero-chevron-up-down-mini" class="shrink-0 text-zinc-500" />
-      </div>
-    </div>
   </aside>
-  <main class="mx-auto flex max-h-dvh w-full max-w-screen-xl grow flex-col gap-5 overflow-auto">
-    <div class="flex items-start justify-between p-2 lg:hidden">
-      <.logo />
-      <button class="size-9 rounded-lg" phx-click={JS.show(to: "aside#sidebar", display: "flex")}>
+  <main class="mx-auto relative flex max-h-dvh w-full max-w-screen-xl grow flex-col gap-5 overflow-auto">
+    <div class="absolute right-0 flex items-center justify-between gap-4 p-2">
+      <.button
+        size={:none}
+        variant={:ghost}
+        class="p-2 lg:hidden"
+        phx-click={JS.show(to: "aside#sidebar", display: "flex")}
+      >
         <.icon name="hero-bars-3" />
-      </button>
+      </.button>
+
+      <div
+        class="relative grid"
+        phx-click-away={
+          JS.hide(
+            to: "div#header-menu[role=menu]",
+            transition:
+              {"transition ease-in duration-75", "transform opacity-100 scale-100",
+               "transform opacity-0 scale-95"}
+          )
+        }
+      >
+        <button
+          size={:none}
+          variant={:surface}
+          phx-click={
+            JS.toggle(
+              to: "div#header-menu[role=menu]",
+              in:
+                {"transition ease-out duration-100", "transform opacity-0 scale-95",
+                 "transform opacity-100 scale-100"},
+              out:
+                {"transition ease-in duration-75", "transform opacity-100 scale-100",
+                 "transform opacity-0 scale-95"}
+            )
+          }
+          id="menu-button"
+          class="size-9 rounded-full bg-zinc-200"
+        >
+        </button>
+        <div
+          id="header-menu"
+          class="absolute right-0 top-full z-20 mt-2 hidden w-56 origin-top-right divide-y divide-zinc-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none"
+          role="menu"
+          aria-orientation="vertical"
+          aria-labelledby="menu-button"
+          tabindex="-1"
+        >
+          <div class="px-4 py-3" role="none">
+            <p class="text-sm" role="none">Signed in as</p>
+            <p class="truncate text-sm font-medium text-zinc-900" role="none">
+              <%= @current_user.email %>
+            </p>
+          </div>
+          <div :for={{items, outer_index} <- Enum.with_index(menus)} class="py-1" role="none">
+            <.link
+              :for={{{name, href, badge}, index} <- Enum.with_index(items)}
+              navigate={href}
+              class="flex items-center justify-between px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-50 active:bg-zinc-100 active:text-zinc-900 active:outline-none"
+              role="menuitem"
+              tabindex="-1"
+              id={"menu-item-#{outer_index}-#{index}"}
+            >
+              <span><%= name %></span>
+              <span
+                :if={badge}
+                class="inline-flex items-center gap-x-1.5 rounded-md bg-white px-2 py-1 text-xs font-medium text-gray-900 ring-1 ring-inset ring-gray-200"
+              >
+                <%= badge %>
+              </span>
+            </.link>
+          </div>
+        </div>
+      </div>
     </div>
 
     <%= @inner_content %>

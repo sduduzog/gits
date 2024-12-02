@@ -441,14 +441,6 @@ defmodule GitsWeb.CoreComponents do
     """
   end
 
-  @doc """
-  Renders a button.
-
-  ## Examples
-
-      <.button>Send!</.button>
-      <.button phx-click="go" class="ml-2">Send!</.button>
-  """
   attr :type, :string, default: nil
   attr :class, :string, default: nil
   attr :size, :atom, default: nil
@@ -487,7 +479,7 @@ defmodule GitsWeb.CoreComponents do
         class={[
           "text-sm/6 font-semibold  border inline-flex gap-2",
           "rounded-lg items-center justify-center phx-submit-loading:opacity-75 disabled:opacity-75",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-zinc-600",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-zinc-600",
           @size_class,
           @variant_class,
           @class
@@ -503,7 +495,7 @@ defmodule GitsWeb.CoreComponents do
         class={[
           "text-sm/6 font-semibold  border inline-flex gap-2",
           "rounded-lg items-center justify-center phx-submit-loading:opacity-75 disabled:opacity-75",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-zinc-600",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-zinc-600",
           @size_class,
           @variant_class,
           @class
@@ -607,22 +599,31 @@ defmodule GitsWeb.CoreComponents do
 
   def input(%{type: "select"} = assigns) do
     ~H"""
-    <div phx-feedback-for={@name} class={["grid max-w-3xl gap-2 text-sm", @class]}>
-      <div class="flex justify-between text-zinc-600">
+    <div class={["max-w-3xl space-y-1 text-sm", @class]}>
+      <div phx-feedback-for={@name} class="flex justify-between">
         <.label for={@id}><%= @label %></.label>
+        <%= if @errors == [] do %>
+          <span :if={@hint} class="text-zinc-500"><%= @hint %></span>
+        <% else %>
+          <.error :for={msg <- @errors}><%= msg %></.error>
+        <% end %>
       </div>
-
       <select
         id={@id}
         name={@name}
-        class="w-full rounded-md border-zinc-300 p-4 text-sm outline-none focus:border-transparent focus:outline-none focus:ring-zinc-500"
+        class={[
+          "w-full py-2 text-sm px-3 rounded-lg border border-zinc-200 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-zinc-600 focus:outline-none outline-none",
+          @errors == [] && "border-zinc-300 focus:ring-zinc-400",
+          @errors != [] && "border-rose-400 focus:border-rose-400"
+        ]}
         multiple={@multiple}
         {@rest}
       >
         <option :if={@prompt} value=""><%= @prompt %></option>
         <%= Phoenix.HTML.Form.options_for_select(@options, @value) %>
       </select>
-      <.error :for={msg <- @errors}><%= msg %></.error>
+      <span :if={@description} class="inline-flex text-zinc-500"><%= @description %></span>
+      <%= render_slot(@inner_block) %>
     </div>
     """
   end
@@ -657,7 +658,7 @@ defmodule GitsWeb.CoreComponents do
   def input(assigns) do
     ~H"""
     <div class={["max-w-3xl space-y-1 text-sm", @class]}>
-      <div class="flex justify-between">
+      <div phx-feedback-for={@name} class="flex justify-between">
         <.label for={@id}><%= @label %></.label>
         <%= if @errors == [] do %>
           <span :if={@hint} class="text-zinc-500"><%= @hint %></span>

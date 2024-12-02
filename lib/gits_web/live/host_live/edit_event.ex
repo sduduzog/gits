@@ -66,6 +66,9 @@ defmodule GitsWeb.HostLive.EditEvent do
       case socket.assigns.live_action do
         :tickets ->
           :details
+
+        :payouts ->
+          :tickets
       end
 
     socket
@@ -83,6 +86,9 @@ defmodule GitsWeb.HostLive.EditEvent do
       case socket.assigns.live_action do
         :details ->
           :tickets
+
+        :tickets ->
+          :payouts
       end
 
     socket
@@ -101,11 +107,15 @@ defmodule GitsWeb.HostLive.EditEvent do
       |> case do
         %{type: :update} = form ->
           form
-          |> Form.validate(unsigned_params["form"])
+          |> Form.validate(unsigned_params["form"],
+            target: unsigned_params["_target"]
+          )
 
         %{type: :create} = form ->
           form
-          |> Form.validate(Map.put(unsigned_params["form"], :host, socket.assigns.host))
+          |> Form.validate(Map.put(unsigned_params["form"], :host, socket.assigns.host),
+            target: unsigned_params["_target"]
+          )
       end
     )
     |> noreply()
@@ -150,8 +160,7 @@ defmodule GitsWeb.HostLive.EditEvent do
 
   def handle_event("tickets", unsigned_params, socket) do
     socket.assigns.form
-    |> Form.validate(unsigned_params["form"])
-    |> Form.submit()
+    |> Form.submit(params: unsigned_params["form"])
 
     socket |> noreply()
   end
@@ -169,6 +178,11 @@ defmodule GitsWeb.HostLive.EditEvent do
   defp current_form(:tickets, event) do
     event
     |> Form.for_update(:update, forms: [auto?: true])
+  end
+
+  defp current_form(:payouts, event) do
+    event
+    |> Form.for_update(:payout_preferences, forms: [auto?: true])
   end
 
   defp current_form(_, _) do

@@ -1,4 +1,18 @@
 defmodule Gits.PaystackApi do
+  def list_banks!(:cache) do
+    Cachex.fetch(:cache, "banks", fn _ ->
+      list_banks()
+      |> case do
+        {:ok, banks} -> {:commit, banks}
+        _ -> {:ignore, nil}
+      end
+    end)
+    |> case do
+      {:ok, banks} -> banks
+      {:commit, banks} -> banks
+    end
+  end
+
   def list_banks! do
     {:ok, banks} = list_banks()
     banks
@@ -39,8 +53,16 @@ defmodule Gits.PaystackApi do
       {:ok, %Req.Response{body: %{"data" => subaccount, "status" => true}}} ->
         {:ok, extract_subaccount(subaccount)}
 
-      _ ->
+      all ->
+        all |> IO.inspect()
         :error
+    end
+  end
+
+  def update_subaccount(subaccount_code, business_name, account_number, settlement_bank, :cache) do
+    update_subaccount(subaccount_code, business_name, account_number, settlement_bank)
+    |> case do
+      {:ok, subaccount} -> Cachex.put(:cache, subaccount_code, subaccount)
     end
   end
 
@@ -59,6 +81,20 @@ defmodule Gits.PaystackApi do
     |> case do
       {:ok, %Req.Response{body: %{"data" => subaccount, "status" => true}}} ->
         {:ok, extract_subaccount(subaccount)}
+    end
+  end
+
+  def fetch_subaccount(subaccount_code, :cache) do
+    Cachex.fetch(:cache, subaccount_code, fn key ->
+      fetch_subaccount(key)
+      |> case do
+        {:ok, subaccount} -> {:commit, subaccount}
+        _ -> {:ignore, nil}
+      end
+    end)
+    |> case do
+      {:ok, subaccount} -> {:ok, subaccount}
+      {:commit, subaccount} -> {:ok, subaccount}
     end
   end
 

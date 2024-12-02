@@ -93,7 +93,8 @@ defmodule Gits.MixProject do
       {:mock, "~> 0.3.8", only: :test},
       {:power_assert, "~> 0.3.0", only: :test},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
-      {:igniter, "~> 0.4"}
+      {:igniter, "~> 0.4"},
+      {:dialyxir, "~> 1.1", only: [:dev], runtime: false}
     ]
   end
 

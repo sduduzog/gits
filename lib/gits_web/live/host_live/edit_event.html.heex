@@ -6,22 +6,22 @@
   <% end %>
 </div>
 
-<div class="relative flex gap-2">
+<div class="relative flex">
   <div
     :for={
       {label, action} <- [
         {"Event Details", :details},
         {"Tickets", :tickets},
-        {"Payments", :tickets}
+        {"Payouts", :payouts}
       ]
     }
     class="group grid w-full rounded-lg"
     aria-selected={"#{action == @live_action}"}
   >
     <div class="p-1">
-      <div class="h-1 grow bg-zinc-200 group-aria-selected:bg-zinc-800"></div>
+      <div class="h-1 rounded-full grow bg-zinc-200 group-aria-selected:bg-zinc-800"></div>
     </div>
-    <div class="absolute inset-x-0 top-4 hidden p-1 text-zinc-400 group-aria-selected:inline-flex group-aria-selected:text-zinc-950 lg:static lg:inline-flex">
+    <div class="inset-x-0 top-4 p-1 text-zinc-400 group-aria-selected:text-zinc-950 lg:inline-flex hidden">
       <span class="text-sm font-semibold"><%= label %></span>
     </div>
   </div>
@@ -29,47 +29,47 @@
 
 <div class="flex grow flex-col lg:flex-row">
   <div class="mt-4 w-full lg:mt-0">
-    <.event_details :if={@live_action == :details} form={@form}>
-      <%= if assigns[:event]  do %>
-        <button
-          phx-click="next"
-          type="button"
-          class="flex h-9 items-center gap-1 rounded-lg px-4 text-sm text-zinc-950 hover:bg-zinc-100"
-        >
-          <span class=" font-semibold">
-            Next
-          </span>
-          <.icon name="i-lucide-chevron-right" />
-        </button>
-      <% end %>
-    </.event_details>
+    <.event_details :if={@live_action == :details} form={@form} />
+    <.tickets
+      :if={@live_action == :tickets}
+      form={@form}
+      socket={@socket}
+      host={@host}
+      event={@event}
+      live_action={@live_action}
+      event_id={@event.public_id}
+      show_create_ticket_modal={@show_create_ticket_modal}
+      show_edit_ticket_modal={@show_edit_ticket_modal}
+      show_archive_ticket_modal={@show_archive_ticket_modal}
+    />
 
-    <%= if assigns[:event] do %>
-      <.tickets
-        :if={@live_action == :tickets}
-        form={@form}
-        socket={@socket}
-        host={@host}
-        event={@event}
-        live_action={@live_action}
-        event_id={@event.public_id}
-        show_create_ticket_modal={@show_create_ticket_modal}
-        show_edit_ticket_modal={@show_edit_ticket_modal}
-        show_archive_ticket_modal={@show_archive_ticket_modal}
+    <.payout_preferences
+      :if={@live_action == :payouts}
+      form={@form}
+      new_recipient_path={
+        Routes.host_settings_path(@socket, :payouts_create_recipient, @host.handle)
+      }
+    />
+    <div class="flex gap-6 mt-8">
+      <.button
+        disabled={@live_action == :details}
+        phx-click="previous"
+        phx-value-from={@live_action}
+        type="button"
+        variant={:subtle}
       >
-        <button
-          :if={@live_action != :details}
-          phx-click="previous"
-          phx-value-from={@live_action}
-          type="button"
-          class="flex h-9 items-center gap-1 rounded-lg px-4 text-sm text-zinc-950 hover:bg-zinc-100"
-        >
-          <.icon name="i-lucide-chevron-left" />
-          <span class=" font-semibold">
-            Previous
-          </span>
-        </button>
-      </.tickets>
-    <% end %>
+        <.icon name="i-lucide-chevron-left" />
+        <span class=" font-semibold">
+          Previous
+        </span>
+      </.button>
+
+      <.button phx-click="next" type="button" variant={:subtle}>
+        <span class="">
+          Next
+        </span>
+        <.icon name="i-lucide-chevron-right" />
+      </.button>
+    </div>
   </div>
 </div>

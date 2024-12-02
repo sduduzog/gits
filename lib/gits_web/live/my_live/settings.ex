@@ -1,6 +1,6 @@
 defmodule GitsWeb.MyLive.Settings do
   require Ash.Query
-  alias Gits.Hosting.Host
+  alias Gits.Accounts.Host
   use GitsWeb, :live_view
 
   def mount(_, _, socket) do

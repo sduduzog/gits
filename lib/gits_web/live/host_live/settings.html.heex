@@ -1,32 +1,82 @@
-<div class="flex items-center gap-2 p-2 lg:px-0">
-  <div class="flex w-full grow items-center gap-1 text-sm">
-    <div class="flex h-9 max-w-48 items-center gap-2 rounded-lg px-1 py-0.5 hover:bg-zinc-100">
-      <div class="flex size-8 shrink-0 items-center justify-center rounded-full bg-zinc-500">
-        <span class="font-medium text-white ">
-          <%= @host.name
-          |> String.split()
-          |> Enum.map(&String.first(&1))
-          |> Enum.join()
-          |> String.upcase() %>
+<%= if @live_action == :index do %>
+  <div class="flex items-center gap-2 p-2">
+    <div class="flex w-full grow items-center gap-1 text-sm">
+      <div class="flex shrink-0 items-center truncate rounded-lg border border-transparent p-2 text-sm/6 font-semibold">
+        <span class="truncate ">
+          Settings
         </span>
       </div>
-      <span :if={false} class="font-semibold hidden lg:inline truncate"><%= @host.name %></span>
-      <span class="hidden truncate font-semibold lg:inline">Treehouse Inc</span>
-      <.icon name="i-lucide-chevrons-up-down" class="size-4 shrink-0 text-zinc-400" />
-    </div>
-    <span class="text-xs font-semibold text-zinc-400">/</span>
-    <div class="flex h-9 shrink-0 items-center truncate rounded-lg px-1 text-sm font-medium">
-      <span class="">Settings</span>
     </div>
   </div>
-</div>
 
-<h1 class="p-2 text-xl font-semibold">Settings</h1>
+  <div class="p-2">
+    <h2 class="text-xl font-semibold">Payout Preferences</h2>
+    <p class="mt-1 text-sm leading-6 text-gray-600">
+      <!-- This information will be displayed publicly. -->
+    </p>
 
-<div class="p-2">
-  <h2 class="text-base font-semibold leading-7 text-gray-900">General</h2>
-  <p class="mt-1 text-sm leading-6 text-gray-600">
-    <!-- This information will be displayed publicly. -->
-  </p>
-  <div class=""></div>
-</div>
+    <div class="flex items-center border">
+      <h2 class="grow text-base font-semibold leading-7 text-gray-900">Payout Recipients</h2>
+      <.button phx-click={
+        JS.patch(Routes.host_settings_path(@socket, :payouts_create_recipient, @host.handle))
+      }>
+        <span>Create recipient</span>
+      </.button>
+    </div>
+  </div>
+<% end %>
+
+<%= if @live_action == :payouts_create_recipient do %>
+  <div class="flex max-w-72 items-center gap-2 p-2 lg:max-w-full">
+    <div class="flex w-full grow items-center gap-1 text-sm">
+      <.button
+        phx-click={JS.patch(Routes.host_settings_path(@socket, :index, @host.handle))}
+        variant={:ghost}
+        size={:none}
+        class="group max-w-48 p-2"
+      >
+        <span class="truncate text-zinc-400 group-hover:text-zinc-600">
+          Settings
+        </span>
+      </.button>
+      <span class="text-xs font-semibold text-zinc-400">/</span>
+      <div class="flex  shrink-0 items-center truncate rounded-lg px-1 text-sm/6 font-semibold">
+        <span class="">Create payout recipient</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="p-2">
+    <h2 class="text-xl font-semibold">Create payout reciptient</h2>
+    <p class="mt-1 text-sm leading-6 text-gray-600">
+      <!-- This information will be displayed publicly. -->
+    </p>
+
+    <.form
+      :let={f}
+      for={@form}
+      class="grid gap-4 mt-8 grid-cols-2 max-w-screen-sm"
+      phx-change="validate"
+      phx-submit="submit"
+    >
+      <.input field={f[:paystack_business_name]} label="Business name" type="text" />
+      <.input field={f[:paystack_settlement_bank]} options={@banks} label="Bank" type="select" />
+      <.input field={f[:paystack_account_number]} label="Account number" type="number" />
+      <div class="flex col-span-full gap-6">
+        <.button disabled={not @form.changed? or not @form.valid?}><span>Save</span></.button>
+        <.button variant={:ghost} type="button" phx-click={JS.dispatch("gits:go_back")}>
+          <span>Back</span>
+        </.button>
+      </div>
+    </.form>
+
+    <div :if={false} class="flex items-center border">
+      <h2 class="grow text-base font-semibold leading-7 text-gray-900">Payout Recipients</h2>
+      <.button phx-click={
+        JS.patch(Routes.host_settings_path(@socket, :payouts_create_recipient, @host.handle))
+      }>
+        <span>Create recipient</span>
+      </.button>
+    </div>
+  </div>
+<% end %>

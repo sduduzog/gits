@@ -1,3 +1,5 @@
+<h2 class="text-lg/7 font-semibold text-gray-900">Event Details</h2>
+<p class="mt-1 mb-4 text-sm/5 text-gray-600"></p>
 <.form
   :let={f}
   id="create-event-form"
@@ -66,17 +68,11 @@
       </label>
     </fieldset>
   </div>
-  <div class="col-span-full flex gap-4 py-4 pb-8">
-    <button
-      disabled={not @form.changed? or not @form.valid?}
-      class="flex h-9 items-center rounded-lg bg-zinc-950 px-4 text-zinc-50 disabled:opacity-50"
-    >
+  <div class="col-span-full flex gap-6 py-4 pb-8">
+    <.button disabled={not @form.changed? or not @form.valid?}>
       <span class="text-sm font-semibold">
         Save
       </span>
-    </button>
-    <div class="flex grow">
-      <%= render_slot(@inner_block) %>
-    </div>
+    </.button>
   </div>
 </.form>

@@ -2,14 +2,17 @@ defmodule GitsWeb.PageController do
   use GitsWeb, :controller
 
   require Ash.Query
-  alias Gits.Accounts.User
-  alias Gits.Hosting.Host
+  alias Gits.Accounts.{Host, User}
   alias Gits.Bucket
   alias Gits.Dashboard.Member
   alias Gits.Documentation
   alias Gits.Storefront.Event
 
   def home(conn, _) do
+    AshAuthentication.Info.strategy!(Gits.Accounts.User, :google)
+    |> AshAuthentication.Strategy.routes()
+    |> IO.inspect()
+
     conn
     |> assign(:slug, "/")
     |> assign(:title, "/")

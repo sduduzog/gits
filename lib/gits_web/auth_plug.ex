@@ -3,9 +3,7 @@ defmodule GitsWeb.AuthPlug do
   use GitsWeb, :verified_routes
   import Phoenix.Controller
 
-  def handle_success(conn, activity, user, token) do
-    activity |> IO.inspect()
-
+  def handle_success(conn, _activity, user, token) do
     if is_api_request?(conn) do
       conn
       |> send_resp(
@@ -39,7 +37,8 @@ defmodule GitsWeb.AuthPlug do
       )
     else
       conn
-      |> send_resp(401, "<h2>Incorrect email or password</h2>")
+      |> put_flash(:warn, "There was an error authenticating. Please try again")
+      |> redirect(to: ~p"/sign-in")
     end
   end
 

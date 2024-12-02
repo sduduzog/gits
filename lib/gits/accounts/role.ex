@@ -4,7 +4,7 @@ defmodule Gits.Accounts.Role do
   alias Gits.Accounts
 
   use Ash.Resource,
-    domain: Gits.Hosting,
+    domain: Gits.Accounts,
     data_layer: AshPostgres.DataLayer,
     extensions: [AshArchival.Resource]
 

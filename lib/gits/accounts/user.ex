@@ -1,7 +1,6 @@
 defmodule Gits.Accounts.User do
-  alias Gits.Hosting
-  alias Gits.Hosting.Role
-  alias Gits.Accounts.{Token}
+  alias Gits.Secrets
+  alias Gits.Accounts.{Role, Token}
   alias __MODULE__
 
   use Ash.Resource,
@@ -24,13 +23,19 @@ defmodule Gits.Accounts.User do
 
         sender User.Senders.SendMagicLinkEmail
       end
+
+      google do
+        client_id Secrets
+        client_secret Secrets
+        redirect_uri Secrets
+      end
     end
 
     tokens do
       enabled? true
       token_resource Token
 
-      signing_secret Gits.Secrets
+      signing_secret Secrets
     end
   end
 
@@ -76,6 +81,22 @@ defmodule Gits.Accounts.User do
 
       run AshAuthentication.Strategy.MagicLink.Request
     end
+
+    create :register_with_google do
+      argument :user_info, :map, allow_nil?: false
+      argument :oauth_tokens, :map, allow_nil?: false
+      upsert? true
+      upsert_identity :unique_email
+
+      change AshAuthentication.GenerateTokenChange
+      change AshAuthentication.Strategy.OAuth2.IdentityChange
+
+      change fn changeset, _ ->
+        user_info = Ash.Changeset.get_argument(changeset, :user_info) |> IO.inspect()
+
+        Ash.Changeset.change_attributes(changeset, Map.take(user_info, ["name", "email"]))
+      end
+    end
   end
 
   policies do
@@ -93,13 +114,11 @@ defmodule Gits.Accounts.User do
 
     attribute :email, :ci_string, allow_nil?: false, public?: true
     attribute :username, :string, allow_nil?: false, public?: true, default: &Nanoid.generate/0
-    attribute :display_name, :string, public?: true
+    attribute :name, :string, public?: true
   end
 
   relationships do
-    has_many :roles, Role do
-      domain Hosting
-    end
+    has_many :roles, Role
   end
 
   identities do

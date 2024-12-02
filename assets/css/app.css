@@ -1,8 +1,6 @@
 @import url("../node_modules/quill/dist/quill.snow.css");
 
-.ql-editor {
-  font-family: theme(fontFamily.poppins)
-}
+
 
 @font-face {
   font-family: "Inter";
@@ -79,5 +77,7 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+.ql-editor {
+  font-family: theme(fontFamily.poppins)
+}
 
-/* This file is for your main application CSS */

@@ -1,6 +1,6 @@
 defmodule Gits.Storefront.Event do
-  alias Gits.Storefront.{Order, PayoutAccount, TicketType}
-  alias Gits.Hosting.{Host, PayoutAccount}
+  alias Gits.Storefront.{Order, TicketType}
+  alias Gits.Accounts.{Host}
 
   use Ash.Resource,
     domain: Gits.Storefront,
@@ -36,6 +36,9 @@ defmodule Gits.Storefront.Event do
 
     update :details do
       accept :*
+    end
+
+    update :payout_preferences do
     end
 
     update :publish do
@@ -96,8 +99,6 @@ defmodule Gits.Storefront.Event do
     belongs_to :host, Host do
       allow_nil? false
     end
-
-    belongs_to :payout_account, PayoutAccount
 
     has_many :ticket_types, TicketType
     has_many :orders, Order

@@ -18,6 +18,15 @@ config_dir_prefix =
 
 source!(["#{config_dir_prefix}.env", System.get_env()])
 
+config :gits, :basic_auth,
+  username: env!("BASIC_AUTH_USERNAME"),
+  password: env!("BASIC_AUTH_PASSWORD")
+
+config :gits, :google,
+  client_id: env!("GOOGLE_CLIENT_ID"),
+  client_secret: env!("GOOGLE_CLIENT_SECRET"),
+  redirect_uri: env!("GOOGLE_REDIRECT_URI")
+
 config :gits, :google_api_options,
   base_url: "https://places.googleapis.com",
   headers: ["X-Goog-Api-Key": env!("GOOGLE_MAPS_API_KEY")]

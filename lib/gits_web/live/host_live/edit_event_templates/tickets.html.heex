@@ -1,5 +1,8 @@
+<h2 class="text-lg/7 font-semibold text-gray-900">Tickets</h2>
+<p class="mt-1 mb-4 text-sm/5 text-gray-600"></p>
+
 <%= if Enum.any?(@event.ticket_types) do %>
-  <div class="grid lg:grid-cols-4 items-start gap-4">
+  <div class="grid lg:grid-cols-4 items-start gap-4 pb-10">
     <div :for={ticket_type <- @event.ticket_types} class="grid gap-2 rounded-xl border p-4">
       <div class="flex justify-between overflow-hidden gap-4">
         <span class="text-lg font-semibold truncate"><%= ticket_type.name %></span>
@@ -111,9 +114,6 @@
     </button>
   </div>
 <% end %>
-<div class="flex mt-8 grow">
-  <%= render_slot(@inner_block) %>
-</div>
 
 <.modal
   new={true}
@@ -159,11 +159,11 @@
         />
       </.inputs_for>
       <div class="col-span-full flex justify-end">
-        <button class="flex h-9 items-center rounded-lg bg-zinc-950 px-4 text-zinc-50">
+        <.button disabled={not @form.changed? or not @form.valid?}>
           <span class="text-sm font-semibold">
             Save
           </span>
-        </button>
+        </.button>
       </div>
     </.form>
   </div>
