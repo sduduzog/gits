@@ -69,31 +69,17 @@ defmodule GitsWeb.Router do
     live_session :hosts_authentication,
       on_mount: {GitsWeb.LiveUserAuth, :host} do
       live "/get-started", HostLive.Onboarding, :get_started
-
       live "/:handle/dashboard", HostLive.Dashboard, :overview
-
       live "/:handle/events", HostLive.ListEvents, :published
       live "/:handle/events/drafts", HostLive.ListEvents, :drafts
       live "/:handle/events/all", HostLive.ListEvents, :all
-
       live "/:handle/events/create-new", HostLive.EditEvent, :details
-
       live "/:handle/events/:public_id", HostLive.ViewEvent, :overview
       live "/:handle/events/:public_id/attendees", HostLive.ViewEvent, :attendees
-
       live "/:handle/events/:public_id/edit/details", HostLive.EditEvent, :details
-
-      live "/:handle/events/:public_id/edit/time-and-place",
-           HostLive.EditEvent,
-           :time_and_place
-
-      live "/:handle/events/:public_id/edit/tickets",
-           HostLive.EditEvent,
-           :tickets
-
-      live "/:handle/events/:public_id/edit/payouts",
-           HostLive.EditEvent,
-           :payouts
+      live "/:handle/events/:public_id/edit/description", HostLive.EditEvent, :description
+      live "/:handle/events/:public_id/edit/tickets", HostLive.EditEvent, :tickets
+      live "/:handle/events/:public_id/edit/summary", HostLive.EditEvent, :summary
 
       live "/:handle/settings", HostLive.Settings, :index
 

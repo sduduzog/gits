@@ -597,6 +597,49 @@ defmodule GitsWeb.CoreComponents do
     """
   end
 
+  def input(%{type: "radio"} = assigns) do
+    ~H"""
+    <fieldset class={["max-w-3xl space-y-1 text-sm", @class]}>
+      <legend class="inline-flex w-full items-center justify-between text-sm font-medium">
+        <span class="block text-sm/6 font-medium text-zinc-700"><%= @label %></span>
+        <%= if @errors == [] do %>
+          <span :if={@hint} class="text-zinc-500"><%= @hint %></span>
+        <% else %>
+          <.error :for={msg <- @errors}><%= msg %></.error>
+        <% end %>
+      </legend>
+
+      <div class="flex flex-wrap gap-4">
+        <label
+          :for={{item, index} <- Enum.with_index(@options, 1)}
+          class={[
+            "inline-flex py-2 text-sm px-3 rounded-lg border",
+            "border-zinc-200 focus-visible:border-transparent focus-visible:ring-2 focus-visible:outline-none outline-none",
+            "has-[:checked]:ring-2 has-[:checked]:ring-zinc-600",
+            @errors == [] && "border-zinc-300 focus-visible:ring-zinc-600",
+            @errors != [] && "border-rose-400 focus-visible:border-rose-600"
+          ]}
+        >
+          <input
+            type="radio"
+            id={@id}
+            name={@name}
+            value={item}
+            class="peer sr-only"
+            checked={@value == item or (index == 1 and is_nil(@value))}
+          />
+          <span class="">
+            <%= to_string(item)
+            |> String.split("_")
+            |> Enum.map(&String.capitalize(&1))
+            |> Enum.join(" ") %>
+          </span>
+        </label>
+      </div>
+    </fieldset>
+    """
+  end
+
   def input(%{type: "select"} = assigns) do
     ~H"""
     <div class={["max-w-3xl space-y-1 text-sm", @class]}>
@@ -832,57 +875,6 @@ defmodule GitsWeb.CoreComponents do
         </tr>
       </tbody>
     </table>
-    """
-  end
-
-  @doc """
-  Renders a data list.
-
-  ## Examples
-
-      <.list>
-        <:item title="Title"><%= @post.title %></:item>
-        <:item title="Views"><%= @post.views %></:item>
-      </.list>
-  """
-  slot :item, required: true do
-    attr :title, :string, required: true
-  end
-
-  def list(assigns) do
-    ~H"""
-    <div class="mt-14">
-      <dl class="-my-4 divide-y divide-zinc-100">
-        <div :for={item <- @item} class="flex gap-4 py-4 text-sm leading-6 sm:gap-8">
-          <dt class="w-1/4 flex-none text-zinc-500"><%= item.title %></dt>
-          <dd class="text-zinc-700"><%= render_slot(item) %></dd>
-        </div>
-      </dl>
-    </div>
-    """
-  end
-
-  @doc """
-  Renders a back navigation link.
-
-  ## Examples
-
-      <.back navigate={~p"/posts"}>Back to posts</.back>
-  """
-  attr :navigate, :any, required: true
-  slot :inner_block, required: true
-
-  def back(assigns) do
-    ~H"""
-    <div class="mt-16">
-      <.link
-        navigate={@navigate}
-        class="text-sm font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
-      >
-        <.icon name="hero-arrow-left-solid" class="h-3 w-3" />
-        <%= render_slot(@inner_block) %>
-      </.link>
-    </div>
     """
   end
 

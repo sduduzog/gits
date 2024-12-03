@@ -17,56 +17,27 @@
       type="text"
       class="col-span-full"
     />
+
     <.input field={f[:starts_at]} label="Start Date" type="datetime-local" />
 
     <.input field={f[:ends_at]} label="End Date" type="datetime-local" />
 
-    <fieldset class="col-span-full grid gap-4 lg:grid-cols-2 lg:gap-6">
-      <legend class="col-span-full inline-flex text-sm font-medium">
-        Event visibility
-      </legend>
+    <.input
+      type="radio"
+      field={f[:visibility]}
+      options={[:private, :public]}
+      label="Visibility"
+      class="col-span-full"
+    />
 
-      <label class="mt-1 flex gap-2 rounded-lg border px-3 py-2 has-[:checked]:ring-2 has-[:checked]:ring-zinc-600">
-        <input
-          name={f[:visibility].name}
-          value={:private}
-          type="radio"
-          checked={f[:visibility].value == :private or is_nil(f[:visibility].value)}
-          class="peer sr-only"
-        />
-        <div class="grid grow gap-1">
-          <span class="text-sm font-medium text-zinc-950">Private</span>
-          <span class="text-sm text-zinc-500">
-            Only people with the link to the event will be able to see it
-          </span>
-        </div>
-        <.icon
-          name="hero-check-circle-mini"
-          class="shrink-0 text-zinc-700 opacity-0 peer-checked:opacity-100"
-        />
-      </label>
-
-      <label class="mt-1 flex gap-2 rounded-lg border px-3 py-2 has-[:disabled]:opacity-60 has-[:checked]:ring-2 has-[:checked]:ring-zinc-600">
-        <input
-          name={f[:visibility].name}
-          type="radio"
-          checked={f[:visibility].value == :public}
-          disabled
-          value={:public}
-          class="peer sr-only"
-        />
-        <div class="grid grow gap-1">
-          <span class="text-sm font-medium text-zinc-950">Public</span>
-          <span class="text-sm text-zinc-500">
-            The event will be publicly discoverable on the platform
-          </span>
-        </div>
-        <.icon
-          name="hero-check-circle-mini"
-          class="shrink-0 text-zinc-700 opacity-0 peer-checked:opacity-100"
-        />
-      </label>
-    </fieldset>
+    <.input
+      :if={false}
+      type="radio"
+      field={f[:category]}
+      options={Gits.Storefront.EventCategory.values()}
+      label="Category"
+      class="col-span-full"
+    />
   </div>
   <div class="col-span-full flex gap-6 py-4 pb-8">
     <.button disabled={not @form.changed? or not @form.valid?}>

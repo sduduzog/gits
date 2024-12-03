@@ -12,7 +12,7 @@
       {label, action} <- [
         {"Event Details", :details},
         {"Tickets", :tickets},
-        {"Payouts", :payouts}
+        {"Summary", :summary}
       ]
     }
     class="group grid w-full rounded-lg"
@@ -43,13 +43,8 @@
       show_archive_ticket_modal={@show_archive_ticket_modal}
     />
 
-    <.payout_preferences
-      :if={@live_action == :payouts}
-      form={@form}
-      new_recipient_path={
-        Routes.host_settings_path(@socket, :payouts_create_recipient, @host.handle)
-      }
-    />
+    <.summary :if={@live_action == :summary} />
+
     <div class="flex gap-6 mt-8">
       <.button
         disabled={@live_action == :details}
@@ -64,12 +59,20 @@
         </span>
       </.button>
 
-      <.button phx-click="next" type="button" variant={:subtle}>
-        <span class="">
-          Next
-        </span>
-        <.icon name="i-lucide-chevron-right" />
-      </.button>
+      <%= if @live_action == :summary do %>
+        <.button phx-click={JS.dispatch("gits:go_back")} type="button" variant={:surface}>
+          <span class="">
+            Done
+          </span>
+        </.button>
+      <% else %>
+        <.button phx-click="next" type="button" variant={:subtle}>
+          <span class="">
+            Next
+          </span>
+          <.icon name="i-lucide-chevron-right" />
+        </.button>
+      <% end %>
     </div>
   </div>
 </div>
