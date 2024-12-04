@@ -88,7 +88,7 @@ defmodule GitsWeb.AuthLive do
   end
 
   def handle_event("submit", unsigned_params, socket) do
-    case Turnstile.verify(unsigned_params) do
+    case Gits.Turnstile.verify(unsigned_params) do
       {:ok, _} ->
         strategy =
           AshAuthentication.Info.strategy!(User, :magic_link)
@@ -100,7 +100,7 @@ defmodule GitsWeb.AuthLive do
         |> noreply()
 
       {:error, _} ->
-        socket |> Turnstile.refresh() |> noreply()
+        socket |> Gits.Turnstile.refresh() |> noreply()
     end
   end
 end

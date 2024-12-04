@@ -3,14 +3,14 @@
     <div class="flex h-9 max-w-48 items-center gap-2 rounded-lg px-1 py-0.5 hover:bg-zinc-100">
       <div class="flex size-8 shrink-0 items-center justify-center rounded-full bg-zinc-500">
         <span class="font-medium text-white ">
-          <%= @host.name
+          {@host.name
           |> String.split()
           |> Enum.map(&String.first(&1))
           |> Enum.join()
-          |> String.upcase() %>
+          |> String.upcase()}
         </span>
       </div>
-      <span class="hidden truncate font-semibold lg:inline"><%= @host.name %></span>
+      <span class="hidden truncate font-semibold lg:inline">{@host.name}</span>
       <.icon name="i-lucide-chevrons-up-down" class="size-4 shrink-0 text-zinc-400" />
     </div>
     <span class="text-xs font-semibold text-zinc-400">/</span>
@@ -22,7 +22,7 @@
     </button>
     <span class="text-xs font-semibold text-zinc-400">/</span>
     <div class="flex h-9 items-center truncate rounded-lg px-1 text-sm font-medium">
-      <span class="truncate"><%= @event.name %></span>
+      <span class="truncate">{@event.name}</span>
     </div>
   </div>
 </div>
@@ -31,7 +31,7 @@
   <div class="aspect-[3/2] rounded-lg bg-zinc-200 h-20"></div>
   <div class="grid items-start gap-1">
     <h1 class="font-semibold text-lg/5 inline-flex flex-wrap gap-1">
-      <%= @event.name %>
+      {@event.name}
     </h1>
     <div class="flex flex-wrap items-center gap-2">
       <.link
@@ -42,7 +42,9 @@
         <span class="sr-only">Open url</span>
         <.icon name="i-lucide-link" class="text-sm" />
       </.link>
-      <span class="text-xs/4 text-zinc-500">Created 25 Jun 2024</span>
+      <span class="text-xs/4 text-zinc-500">
+        Created {Calendar.strftime(@event.created_at, "%d %b %Y")}
+      </span>
     </div>
   </div>
 </div>
@@ -108,15 +110,27 @@
         <dl class="flex flex-wrap gap-2">
           <div class="grid grid-cols-[theme(space.24)_1fr] w-full">
             <dt class="flex-none">
+              <span class="text-sm/6 text-zinc-500">Visibility</span>
+            </dt>
+            <dd class="text-sm/6 gap-2 flex items-center">
+              <.icon name="i-lucide-eye-off" />
+              <span>
+                {to_string(@event.visibility) |> String.capitalize()}
+              </span>
+            </dd>
+          </div>
+
+          <div class="grid grid-cols-[theme(space.24)_1fr] w-full">
+            <dt class="flex-none">
               <span class="text-sm/6 text-zinc-500">Starts at</span>
             </dt>
             <dd class="text-sm/6 gap-2 flex items-center">
               <.icon name="i-lucide-calendar-days" />
               <span>
-                <%= Calendar.strftime(
+                {Calendar.strftime(
                   @event.starts_at,
                   "%d %B %Y, %I:%M %p"
-                ) %>
+                )}
               </span>
             </dd>
           </div>
@@ -127,8 +141,8 @@
           :for={{label, unit} <- [{"Unique views", "0"}, {"Total orders", "0"}]}
           class="grid pl-2 first:pl-0"
         >
-          <span class="text-xs font-medium text-zinc-600"><%= label %></span>
-          <span class="text-2xl font-medium"><%= unit %></span>
+          <span class="text-xs font-medium text-zinc-600">{label}</span>
+          <span class="text-2xl font-medium">{unit}</span>
         </div>
       </div>
     </div>
@@ -143,14 +157,17 @@
         class="-mb-0.5 border-b-2 border-transparent py-2 text-sm font-medium text-zinc-400 aria-selected:border-zinc-500 aria-selected:text-zinc-800"
       >
         <span class="px-1 capitalize">
-          <%= action %>
+          {action}
         </span>
       </.link>
     </div>
 
     <.tab_header action={@live_action} />
 
-    <.overview :if={@live_action == :overview} />
+    <.overview
+      :if={@live_action == :overview}
+      host_settings_payouts_path={Routes.host_settings_path(@socket, :payouts, @host.handle)}
+    />
     <.attendees :if={@live_action == :attendees} attendees={@attendees} />
   </div>
 </div>

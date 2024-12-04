@@ -75,14 +75,5 @@
         </.button>
       </div>
     </.form>
-
-    <div :if={false} class="flex items-center border">
-      <h2 class="grow text-base font-semibold leading-7 text-gray-900">Payout Recipients</h2>
-      <.button phx-click={
-        JS.patch(Routes.host_settings_path(@socket, :payouts_create_recipient, @host.handle))
-      }>
-        <span>Create recipient</span>
-      </.button>
-    </div>
   </div>
 <% end %>

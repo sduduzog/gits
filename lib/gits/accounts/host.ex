@@ -89,10 +89,7 @@ defmodule Gits.Accounts.Host do
   end
 
   relationships do
-    belongs_to :owner, User do
-      domain Accounts
-      allow_nil? false
-    end
+    belongs_to :owner, User, allow_nil?: false
 
     has_many :roles, Role
   end

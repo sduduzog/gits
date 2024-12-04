@@ -13,62 +13,12 @@
     {
       "allow_nil?": false,
       "default": "nil",
-      "generated?": true,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "number",
-      "type": "bigint"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "email",
-      "type": "citext"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "total",
-      "type": "decimal"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "requested_refund_at",
-      "type": "utc_datetime_usec"
-    },
-    {
-      "allow_nil?": false,
-      "default": "fragment(\"(now() AT TIME ZONE 'utc')\")",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "created_at",
-      "type": "utc_datetime_usec"
-    },
-    {
-      "allow_nil?": false,
-      "default": "fragment(\"(now() AT TIME ZONE 'utc')\")",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "updated_at",
-      "type": "utc_datetime_usec"
+      "source": "public_id",
+      "type": "text"
     },
     {
       "allow_nil?": false,
@@ -88,15 +38,44 @@
           "global": null,
           "strategy": null
         },
-        "name": "orders_event_id_fkey",
+        "name": "tickets_order_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "events"
+        "table": "orders"
       },
       "size": null,
-      "source": "event_id",
+      "source": "order_id",
+      "type": "uuid"
+    },
+    {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": {
+        "deferrable": false,
+        "destination_attribute": "id",
+        "destination_attribute_default": null,
+        "destination_attribute_generated": null,
+        "index?": false,
+        "match_type": null,
+        "match_with": null,
+        "multitenancy": {
+          "attribute": null,
+          "global": null,
+          "strategy": null
+        },
+        "name": "tickets_ticket_type_id_fkey",
+        "on_delete": null,
+        "on_update": null,
+        "primary_key?": true,
+        "schema": "public",
+        "table": "ticket_types"
+      },
+      "size": null,
+      "source": "ticket_type_id",
       "type": "uuid"
     },
     {
@@ -108,16 +87,6 @@
       "size": null,
       "source": "archived_at",
       "type": "utc_datetime_usec"
-    },
-    {
-      "allow_nil?": false,
-      "default": "\"open\"",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "state",
-      "type": "text"
     }
   ],
   "base_filter": null,
@@ -125,7 +94,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "C9CF527DCC39368015A81F2B0EF61BF85469418F485B4C0F597509ACE6CDB69C",
+  "hash": "CF7D419F0BBA6BD04E8905C484B321EF777A6AE741DF3A6C33666BBAF03916AB",
   "identities": [],
   "multitenancy": {
     "attribute": null,
@@ -134,5 +103,5 @@
   },
   "repo": "Elixir.Gits.Repo",
   "schema": null,
-  "table": "orders"
+  "table": "tickets"
 }

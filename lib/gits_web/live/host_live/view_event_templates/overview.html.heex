@@ -1,7 +1,20 @@
-<div class="grid grid-cols-6">
-  <div class="p-4 flex-col col-span-full flex justify-end h-52 border relative lg:rounded-xl">
-    <span class="text-zinc-400 absolute top-4">Conversion rate chart</span>
-    <span>Unique views</span>
-    <span>Total orders</span>
+<div class="px-2 lg:p-0 grid gap-6">
+  <div class="lg:flex gap-4 rounded-xl border p-4 text-sm/6">
+    <.icon name="i-lucide-triangle-alert" class="mt-1 text-orange-500" />
+    <div class="grid pb-2 grow">
+      <span class="font-medium">Payout details required!</span>
+      <span></span>
+    </div>
+    <.button size={:none} href={@host_settings_payouts_path} variant={:ghost}>
+      <span>Update details &rarr;</span>
+    </.button>
+  </div>
+
+  <div class="grid grid-cols-6">
+    <div class="relative col-span-full flex h-52 flex-col justify-end border p-4 lg:rounded-xl">
+      <span class="absolute top-4 text-zinc-400">Conversion rate chart</span>
+      <span>Unique views</span>
+      <span>Total orders</span>
+    </div>
   </div>
 </div>

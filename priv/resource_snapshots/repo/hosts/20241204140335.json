@@ -11,14 +11,24 @@
       "type": "uuid"
     },
     {
-      "allow_nil?": true,
+      "allow_nil?": false,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "integration",
-      "type": "decimal"
+      "source": "name",
+      "type": "text"
+    },
+    {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "handle",
+      "type": "text"
     },
     {
       "allow_nil?": true,
@@ -27,8 +37,8 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "paystack",
-      "type": "decimal"
+      "source": "logo",
+      "type": "text"
     },
     {
       "allow_nil?": true,
@@ -37,11 +47,31 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "subaccount",
-      "type": "decimal"
+      "source": "paystack_subaccount_code",
+      "type": "text"
     },
     {
-      "allow_nil?": true,
+      "allow_nil?": false,
+      "default": "fragment(\"(now() AT TIME ZONE 'utc')\")",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "created_at",
+      "type": "utc_datetime_usec"
+    },
+    {
+      "allow_nil?": false,
+      "default": "fragment(\"(now() AT TIME ZONE 'utc')\")",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "updated_at",
+      "type": "utc_datetime_usec"
+    },
+    {
+      "allow_nil?": false,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
@@ -58,16 +88,26 @@
           "global": null,
           "strategy": null
         },
-        "name": "order_fees_splits_order_id_fkey",
+        "name": "hosts_owner_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "orders"
+        "table": "users"
       },
       "size": null,
-      "source": "order_id",
+      "source": "owner_id",
       "type": "uuid"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "archived_at",
+      "type": "utc_datetime_usec"
     }
   ],
   "base_filter": null,
@@ -75,7 +115,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "FAAAF6A27DCA67FD5438F2ADB8BEDD9DCA4BC3F9CEA2E468FA784C61D2816A16",
+  "hash": "A9D09A29BF728D048D8914E1320B9BA88DACFDAF5F6CC9859436AF92DF58CF42",
   "identities": [],
   "multitenancy": {
     "attribute": null,
@@ -84,5 +124,5 @@
   },
   "repo": "Elixir.Gits.Repo",
   "schema": null,
-  "table": "order_fees_splits"
+  "table": "hosts"
 }

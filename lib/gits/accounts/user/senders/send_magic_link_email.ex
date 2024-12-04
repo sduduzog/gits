@@ -1,6 +1,6 @@
 defmodule Gits.Accounts.User.Senders.SendMagicLinkEmail do
   use AshAuthentication.Sender
-  use Oban.Worker, max_attempts: 1, queue: :auth
+  use Oban.Worker, max_attempts: 1
 
   @impl true
   def send(user_or_email, token, _) do
@@ -13,6 +13,10 @@ defmodule Gits.Accounts.User.Senders.SendMagicLinkEmail do
     %{email: email, token: token}
     |> __MODULE__.new()
     |> Oban.insert()
+    |> case do
+      {:ok, _} -> :ok
+      _ -> :error
+    end
   end
 
   @impl Oban.Worker

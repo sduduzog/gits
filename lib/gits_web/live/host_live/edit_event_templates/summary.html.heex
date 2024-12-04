@@ -2,7 +2,7 @@
 <p class="mt-1 mb-4 text-sm/5 text-gray-600"></p>
 
 <div class="grid gap-8 max-w-screen-sm">
-  <div class="text-sm/6 flex border p-4 gap-4 rounded-xl">
+  <div :if={@payout_details_required} class="text-sm/6 flex border p-4 gap-4 rounded-xl">
     <.icon name="i-lucide-triangle-alert" class="text-orange-500 mt-1" />
     <div class="grid grow">
       <span class="font-medium">Payout details required!</span>

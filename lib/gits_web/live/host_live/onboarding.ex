@@ -98,4 +98,12 @@ defmodule GitsWeb.HostLive.Onboarding do
     end
     |> noreply()
   end
+
+  def handle_event("validate", _unsigned_params, socket) do
+    socket |> noreply()
+  end
+
+  defp error_to_string(:too_large), do: "Too large"
+  defp error_to_string(:not_accepted), do: "You have selected an unacceptable file type"
+  defp error_to_string(:too_many_files), do: "You have selected too many files"
 end

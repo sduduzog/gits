@@ -1,8 +1,6 @@
 defmodule Gits.Accounts.Role do
   alias Gits.Accounts.{Host, RoleType, User}
 
-  alias Gits.Accounts
-
   use Ash.Resource,
     domain: Gits.Accounts,
     data_layer: AshPostgres.DataLayer,
@@ -29,9 +27,7 @@ defmodule Gits.Accounts.Role do
   end
 
   relationships do
-    belongs_to :user, User do
-      domain Accounts
-    end
+    belongs_to :user, User
 
     belongs_to :host, Host
   end

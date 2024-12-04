@@ -52,7 +52,7 @@ defmodule GitsWeb.CoreComponents do
       <div class="flex grow items-center">
         <.logo />
       </div>
-      <.button variant={:ghost} href={~p"/"}>
+      <.button variant={:ghost} href={~p"/search"}>
         <.icon name="i-lucide-search" />
         <span>Search</span>
       </.button>
@@ -149,12 +149,15 @@ defmodule GitsWeb.CoreComponents do
         {"i-lucide-tickets", "Events & Hosting", [{"Host with us", "/host-with-us"}]},
         {"i-lucide-headset", "Support",
          [
-           {"I need help", "/support/help"},
-           {"FAQ", "/support/faq"},
-           {"Contact", "/contact-us"}
+           # {"I need help", "/support/help"},
+           # {"FAQ", "/support/faq"},
+           # {"Contact", "/contact-us"}
          ]},
         {"i-lucide-scale", "Legal",
-         [{"Terms of service", "/terms"}, {"Privacy Policy", "/privacy"}]},
+         [
+           # {"Terms of service", "/terms"},
+           # {"Privacy Policy", "/privacy"}
+         ]},
         {"i-lucide-at-sign", "Social",
          [
            {"Instagram", "https://instagram.com/gits_za"},

@@ -4,7 +4,7 @@
 <div class="grid items-start gap-4 pb-10 lg:grid-cols-3">
   <div :for={ticket_type <- @event.ticket_types} class="grid gap-4 rounded-xl border p-4">
     <div class="flex gap-4 overflow-hidden">
-      <h3 class="grow text-base/7 font-semibold text-gray-900"><%= ticket_type.name %></h3>
+      <h3 class="grow text-base/7 font-semibold text-gray-900">{ticket_type.name}</h3>
       <.button
         type="button"
         size={:none}
@@ -61,7 +61,7 @@
           <.icon name="i-lucide-banknote" />
           <span class="sr-only">Price</span>
         </div>
-        <span>R <%= ticket_type.price %></span>
+        <span>R {ticket_type.price}</span>
       </div>
       <span>&bull;</span>
       <div class="flex gap-1">
@@ -69,14 +69,14 @@
           <.icon name="i-lucide-users" />
           <span class="sr-only">Quantity</span>
         </div>
-        <span><%= ticket_type.quantity %></span>
+        <span>{ticket_type.quantity}</span>
       </div>
       <span>&bull;</span>
       <div class="flex gap-1">
         <dt class="text-zinc-400">
           <.icon name="i-lucide-user" /><span class="sr-only">Limit per customer</span>
         </dt>
-        <dd><%= ticket_type.limit_per_user %> p.p</dd>
+        <dd>{ticket_type.limit_per_user} p.p</dd>
       </div>
     </dl>
     <dl class="grid gap-3 text-sm/4">
@@ -85,7 +85,7 @@
           <.icon name="i-lucide-calendar-clock" /><span class="sr-only">Date</span>
         </dt>
         <dd class="grid gap-2">
-          <%= "" %>
+          {""}
           <span>
             12:00 PM, 31 Sep 2024 <span class="text-zinc-500"> &dash; Starts sale</span>
           </span>
@@ -98,7 +98,7 @@
         <dt class="w-full max-w-6 text-zinc-400">
           <.icon name="i-lucide-text" /><span class="sr-only">Description</span>
         </dt>
-        <dd><%= ticket_type.description %></dd>
+        <dd>{ticket_type.description}</dd>
       </div>
     </dl>
   </div>
@@ -228,7 +228,7 @@
       <div class="col-span-full flex justify-end">
         <button class="flex h-9 items-center rounded-lg bg-zinc-950 px-4 text-zinc-50">
           <span class="text-sm font-semibold">
-            <%= if(true, do: "Save", else: "Create event") %>
+            {if(true, do: "Save", else: "Create event")}
           </span>
         </button>
       </div>

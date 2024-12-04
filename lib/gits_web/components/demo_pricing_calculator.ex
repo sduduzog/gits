@@ -19,7 +19,7 @@ defmodule GitsWeb.DemoPricingCalculator do
               <span class="font-semibold">Price Per Ticket</span>
               <div class="flex font-medium">
                 <span class="text-base">R</span>
-                <span class="text-5xl"><%= @price %></span>
+                <span class="text-5xl">{@price}</span>
               </div>
               <input
                 name="price"
@@ -35,7 +35,7 @@ defmodule GitsWeb.DemoPricingCalculator do
             <div class="grid w-full gap-2">
               <span class="font-semibold">Tickets Count</span>
               <div class="flex font-medium">
-                <span class="text-5xl"><%= @count %></span>
+                <span class="text-5xl">{@count}</span>
               </div>
               <input
                 name="count"
@@ -52,7 +52,7 @@ defmodule GitsWeb.DemoPricingCalculator do
               <span class="font-semibold">The customer pays</span>
               <div class="flex font-medium">
                 <span class="text-base">R</span>
-                <span class="text-5xl"><%= @results.total_price %></span>
+                <span class="text-5xl">{@results.total_price}</span>
               </div>
               <input
                 disabled
@@ -71,7 +71,7 @@ defmodule GitsWeb.DemoPricingCalculator do
             <span>What you get</span>
             <div class="flex font-medium">
               <span class="text-sm">R</span>
-              <span class="text-4xl"><%= @results.theirs %></span>
+              <span class="text-4xl">{@results.theirs}</span>
             </div>
           </div>
 
@@ -79,7 +79,7 @@ defmodule GitsWeb.DemoPricingCalculator do
             <span class="self-end text-right">Transaction cost</span>
             <div class="flex justify-end font-medium">
               <span class="text-sm">R</span>
-              <span class="text-4xl"><%= @results.ours %></span>
+              <span class="text-4xl">{@results.ours}</span>
             </div>
           </div>
         </div>
@@ -90,7 +90,7 @@ defmodule GitsWeb.DemoPricingCalculator do
       </div>
 
       <div class="flex justify-end gap-2">
-        <span>5% per transaction</span>
+        <span>Simple fee structure</span>
         <.icon name="hero-check-circle" class="size-5" />
       </div>
 

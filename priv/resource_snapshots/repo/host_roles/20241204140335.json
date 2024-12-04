@@ -17,16 +17,6 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "public_id",
-      "type": "text"
-    },
-    {
-      "allow_nil?": false,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
       "source": "name",
       "type": "text"
     },
@@ -37,27 +27,7 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "starts_at",
-      "type": "naive_datetime"
-    },
-    {
-      "allow_nil?": false,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "ends_at",
-      "type": "naive_datetime"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "visibility",
+      "source": "slug",
       "type": "text"
     },
     {
@@ -67,8 +37,8 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "published_at",
-      "type": "utc_datetime"
+      "source": "type",
+      "type": "text"
     },
     {
       "allow_nil?": false,
@@ -91,7 +61,7 @@
       "type": "utc_datetime_usec"
     },
     {
-      "allow_nil?": false,
+      "allow_nil?": true,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
@@ -108,7 +78,36 @@
           "global": null,
           "strategy": null
         },
-        "name": "events_host_id_fkey",
+        "name": "host_roles_user_id_fkey",
+        "on_delete": null,
+        "on_update": null,
+        "primary_key?": true,
+        "schema": "public",
+        "table": "users"
+      },
+      "size": null,
+      "source": "user_id",
+      "type": "uuid"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": {
+        "deferrable": false,
+        "destination_attribute": "id",
+        "destination_attribute_default": null,
+        "destination_attribute_generated": null,
+        "index?": false,
+        "match_type": null,
+        "match_with": null,
+        "multitenancy": {
+          "attribute": null,
+          "global": null,
+          "strategy": null
+        },
+        "name": "host_roles_host_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
@@ -135,7 +134,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "A43197B3F76EAFD8015E0B1C8403FDE14232918B574FED7DDC42D4DC713BBCEB",
+  "hash": "D91C1F176BD87F4C8AAC335F66D49893B7FE2AA9F7674C7F65009DB2E9E14E20",
   "identities": [],
   "multitenancy": {
     "attribute": null,
@@ -144,5 +143,5 @@
   },
   "repo": "Elixir.Gits.Repo",
   "schema": null,
-  "table": "events"
+  "table": "host_roles"
 }

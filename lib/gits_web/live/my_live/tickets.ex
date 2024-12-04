@@ -5,7 +5,7 @@ defmodule GitsWeb.MyLive.Tickets do
   alias Gits.Storefront.Event
   use GitsWeb, :live_view
 
-  def mount(params, _, socket) do
+  def mount(_params, _session, socket) do
     assign(socket, :page_title, "Tickets")
     |> ok()
   end

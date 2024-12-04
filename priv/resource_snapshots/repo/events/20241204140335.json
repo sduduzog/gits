@@ -17,18 +17,28 @@
       "primary_key?": false,
       "references": null,
       "size": null,
+      "source": "public_id",
+      "type": "text"
+    },
+    {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
       "source": "name",
       "type": "text"
     },
     {
       "allow_nil?": false,
-      "default": "\"0\"",
+      "default": "nil",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "price",
-      "type": "decimal"
+      "source": "starts_at",
+      "type": "naive_datetime"
     },
     {
       "allow_nil?": false,
@@ -37,48 +47,28 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "description",
+      "source": "ends_at",
+      "type": "naive_datetime"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "visibility",
       "type": "text"
     },
     {
-      "allow_nil?": false,
+      "allow_nil?": true,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "sale_starts_at",
-      "type": "naive_datetime"
-    },
-    {
-      "allow_nil?": false,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "sale_ends_at",
-      "type": "naive_datetime"
-    },
-    {
-      "allow_nil?": false,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "quantity",
-      "type": "bigint"
-    },
-    {
-      "allow_nil?": false,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "limit_per_user",
-      "type": "bigint"
+      "source": "published_at",
+      "type": "utc_datetime"
     },
     {
       "allow_nil?": false,
@@ -101,7 +91,7 @@
       "type": "utc_datetime_usec"
     },
     {
-      "allow_nil?": true,
+      "allow_nil?": false,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
@@ -118,15 +108,15 @@
           "global": null,
           "strategy": null
         },
-        "name": "ticket_types_event_id_fkey",
+        "name": "events_host_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "events"
+        "table": "hosts"
       },
       "size": null,
-      "source": "event_id",
+      "source": "host_id",
       "type": "uuid"
     },
     {
@@ -145,7 +135,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "65473E5427215C620C4DD3349D3DC14B5480A8B2E8B1A41241C2F7B07440547C",
+  "hash": "4A5B969273EA1827743432101FE9E5DC2005354DBE351FB5B7D2303EA0A2A0AF",
   "identities": [],
   "multitenancy": {
     "attribute": null,
@@ -154,5 +144,5 @@
   },
   "repo": "Elixir.Gits.Repo",
   "schema": null,
-  "table": "ticket_types"
+  "table": "events"
 }

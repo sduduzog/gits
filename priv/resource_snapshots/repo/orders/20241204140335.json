@@ -13,21 +13,51 @@
     {
       "allow_nil?": false,
       "default": "nil",
-      "generated?": false,
+      "generated?": true,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "name",
-      "type": "text"
+      "source": "number",
+      "type": "bigint"
     },
     {
-      "allow_nil?": false,
+      "allow_nil?": true,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "slug",
+      "source": "email",
+      "type": "citext"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "total",
+      "type": "decimal"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "requested_refund_at",
+      "type": "utc_datetime_usec"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "paystack_reference",
       "type": "text"
     },
     {
@@ -37,7 +67,7 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "type",
+      "source": "paystack_authorization_url",
       "type": "text"
     },
     {
@@ -61,7 +91,7 @@
       "type": "utc_datetime_usec"
     },
     {
-      "allow_nil?": true,
+      "allow_nil?": false,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
@@ -78,44 +108,15 @@
           "global": null,
           "strategy": null
         },
-        "name": "host_roles_user_id_fkey",
+        "name": "orders_event_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "users"
+        "table": "events"
       },
       "size": null,
-      "source": "user_id",
-      "type": "uuid"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": {
-        "deferrable": false,
-        "destination_attribute": "id",
-        "destination_attribute_default": null,
-        "destination_attribute_generated": null,
-        "index?": false,
-        "match_type": null,
-        "match_with": null,
-        "multitenancy": {
-          "attribute": null,
-          "global": null,
-          "strategy": null
-        },
-        "name": "host_roles_host_id_fkey",
-        "on_delete": null,
-        "on_update": null,
-        "primary_key?": true,
-        "schema": "public",
-        "table": "hosts"
-      },
-      "size": null,
-      "source": "host_id",
+      "source": "event_id",
       "type": "uuid"
     },
     {
@@ -127,6 +128,16 @@
       "size": null,
       "source": "archived_at",
       "type": "utc_datetime_usec"
+    },
+    {
+      "allow_nil?": false,
+      "default": "\"open\"",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "state",
+      "type": "text"
     }
   ],
   "base_filter": null,
@@ -134,7 +145,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "5D410AEFAF13C2CEBCF673935DCFCC9F270312FE35483BBB34411F8986FDCD2A",
+  "hash": "19348166DE0B5DD15D687C059839B13DB5D25A339F1433ADC858DB1DEDF5A2F2",
   "identities": [],
   "multitenancy": {
     "attribute": null,
@@ -143,5 +154,5 @@
   },
   "repo": "Elixir.Gits.Repo",
   "schema": null,
-  "table": "host_roles"
+  "table": "orders"
 }

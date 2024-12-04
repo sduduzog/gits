@@ -1,4 +1,4 @@
-defmodule Gits.Repo.Migrations.RecreateTables do
+defmodule Gits.Repo.Migrations.AddSchemas do
   @moduledoc """
   Updates resources based on their most recent snapshots.
 
@@ -51,11 +51,11 @@ defmodule Gits.Repo.Migrations.RecreateTables do
       add :id, :uuid, null: false, default: fragment("gen_random_uuid()"), primary_key: true
       add :name, :text, null: false
       add :price, :decimal, null: false, default: "0"
-      add :description, :text, null: false
+      add :description, :text
       add :sale_starts_at, :naive_datetime, null: false
       add :sale_ends_at, :naive_datetime, null: false
-      add :quantity, :bigint, null: false
-      add :limit_per_user, :bigint, null: false
+      add :quantity, :bigint, null: false, default: 10
+      add :limit_per_user, :bigint, null: false, default: 10
 
       add :created_at, :utc_datetime_usec,
         null: false,
@@ -96,6 +96,8 @@ defmodule Gits.Repo.Migrations.RecreateTables do
       add :email, :citext
       add :total, :decimal
       add :requested_refund_at, :utc_datetime_usec
+      add :paystack_reference, :text
+      add :paystack_authorization_url, :text
 
       add :created_at, :utc_datetime_usec,
         null: false,
@@ -108,6 +110,21 @@ defmodule Gits.Repo.Migrations.RecreateTables do
       add :event_id, :uuid, null: false
       add :archived_at, :utc_datetime_usec
       add :state, :text, null: false, default: "open"
+    end
+
+    create table(:order_fees_splits, primary_key: false) do
+      add :id, :uuid, null: false, default: fragment("gen_random_uuid()"), primary_key: true
+      add :integration, :decimal
+      add :paystack, :decimal
+      add :subaccount, :decimal
+
+      add :order_id,
+          references(:orders,
+            column: :id,
+            name: "order_fees_splits_order_id_fkey",
+            type: :uuid,
+            prefix: "public"
+          )
     end
 
     create table(:interactions, primary_key: false) do
@@ -292,12 +309,18 @@ defmodule Gits.Repo.Migrations.RecreateTables do
 
     drop table(:interactions)
 
+    drop constraint(:order_fees_splits, "order_fees_splits_order_id_fkey")
+
+    drop table(:order_fees_splits)
+
     alter table(:orders) do
       remove :state
       remove :archived_at
       remove :event_id
       remove :updated_at
       remove :created_at
+      remove :paystack_authorization_url
+      remove :paystack_reference
       remove :requested_refund_at
       remove :total
       remove :email

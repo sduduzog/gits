@@ -23,7 +23,7 @@
       <div class="inline-flex items-center gap-1">
         <span class="max-w-40 truncate text-xs font-medium">
           <%= if not is_nil(event.address) do %>
-            <%= event.address.display_name %>
+            {event.address.display_name}
           <% else %>
             n/a
           <% end %>
@@ -32,10 +32,10 @@
           &bull;
         </span>
         <span class="shrink-0 text-xs font-medium">
-          <%= event.starts_at |> Timex.format!("%a, %e %b, %I:%M%p", :strftime) %>
+          {event.starts_at |> Timex.format!("%a, %e %b, %I:%M%p", :strftime)}
         </span>
       </div>
-      <span class="truncate text-lg font-medium"><%= event.name %></span>
+      <span class="truncate text-lg font-medium">{event.name}</span>
       <span
         :if={not is_nil(event.minimum_ticket_price)}
         class="whitespace-nowrap text-xs font-medium text-zinc-500 dark:text-zinc-400"
