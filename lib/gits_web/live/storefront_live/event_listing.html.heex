@@ -73,7 +73,7 @@
     <.inputs_for :let={ef} field={f[:order]}>
       <.input :if={@current_user} type="hidden" value={@current_user.email} field={ef[:email]} />
     </.inputs_for>
-    <Turnstile.widget
+    <Gits.Turnstile.widget
       :if={is_nil(@current_user)}
       events={[:success]}
       appearance="interaction-only"

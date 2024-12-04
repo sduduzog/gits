@@ -1,5 +1,6 @@
 defmodule GitsWeb.CoreComponents do
   use Phoenix.Component
+  alias Gits.Accounts.User
   use GitsWeb, :verified_routes
 
   alias Phoenix.HTML.Form
@@ -25,12 +26,22 @@ defmodule GitsWeb.CoreComponents do
   attr :user, :map
 
   def header(assigns) do
+    tickets =
+      case assigns.user do
+        %User{} = user ->
+          user = Ash.load!(user, [:tickets_count])
+          user.tickets_count
+
+        _ ->
+          false
+      end
+
     assigns =
       assigns
       |> assign(:menus, [
         [
           {"Orders", ~p"/my/orders", false},
-          {"Tickets", ~p"/my/tickets", "0"},
+          {"Tickets", ~p"/my/tickets", tickets},
           {"Settings", ~p"/my/settings", false}
         ],
         [{"Sign out", ~p"/sign-out", false}]
@@ -91,7 +102,7 @@ defmodule GitsWeb.CoreComponents do
             <div class="px-4 py-3" role="none">
               <p class="text-sm" role="none">Signed in as</p>
               <p class="truncate text-sm font-medium text-zinc-900" role="none">
-                <%= @user.email %>
+                {@user.email}
               </p>
             </div>
             <div :for={{items, outer_index} <- Enum.with_index(@menus)} class="py-1" role="none">
@@ -103,12 +114,12 @@ defmodule GitsWeb.CoreComponents do
                 tabindex="-1"
                 id={"menu-item-#{outer_index}-#{index}"}
               >
-                <span><%= name %></span>
+                <span>{name}</span>
                 <span
                   :if={badge}
                   class="inline-flex items-center gap-x-1.5 rounded-md bg-white px-2 py-1 text-xs font-medium text-gray-900 ring-1 ring-inset ring-gray-200"
                 >
-                  <%= badge %>
+                  {badge}
                 </span>
               </.link>
             </div>
@@ -157,7 +168,7 @@ defmodule GitsWeb.CoreComponents do
         <div :for={{icon, heading, children} <- @nav_tree} class="space-y-2 p-4">
           <div class="flex items-center gap-3">
             <.icon name={icon} class="size-4 text-zinc-500" />
-            <span class="text-xs text-zinc-500"><%= heading %></span>
+            <span class="text-xs text-zinc-500">{heading}</span>
           </div>
           <div class="relative grid gap-4 px-2 pt-4">
             <span class="absolute bottom-0 left-2 top-2 h-full w-[1px] bg-zinc-200"></span>
@@ -166,7 +177,7 @@ defmodule GitsWeb.CoreComponents do
               navigate={href}
               class="border-zinc-transparent z-10 inline-flex border-l pl-5 text-xs font-medium leading-4 text-zinc-950 hover:border-zinc-500 hover:text-zinc-800"
             >
-              <%= child %>
+              {child}
             </.link>
           </div>
         </div>
@@ -262,7 +273,7 @@ defmodule GitsWeb.CoreComponents do
                 </button>
               </div>
               <div id={"#{@id}-content"}>
-                <%= render_slot(@inner_block) %>
+                {render_slot(@inner_block)}
               </div>
             </.focus_wrap>
           </div>
@@ -310,7 +321,7 @@ defmodule GitsWeb.CoreComponents do
                 </button>
               </div>
               <div id={"#{@id}-content"}>
-                <%= render_slot(@inner_block) %>
+                {render_slot(@inner_block)}
               </div>
             </.focus_wrap>
           </div>
@@ -357,9 +368,9 @@ defmodule GitsWeb.CoreComponents do
         <.icon :if={@kind == :info} name="hero-information-circle-mini" class="h-4 w-4" />
         <.icon :if={@kind == :warn} name="hero-information-circle-mini" class="h-4 w-4" />
         <.icon :if={@kind == :error} name="hero-exclamation-circle-mini" class="h-4 w-4" />
-        <%= @title %>
+        {@title}
       </p>
-      <p class="mt-2 text-sm leading-5"><%= msg %></p>
+      <p class="mt-2 text-sm leading-5">{msg}</p>
       <button type="button" class="group absolute right-1 top-1 p-2" aria-label={gettext("close")}>
         <.icon name="hero-x-mark-solid" class="h-5 w-5 opacity-40 group-hover:opacity-70" />
       </button>
@@ -391,7 +402,7 @@ defmodule GitsWeb.CoreComponents do
         phx-connected={hide("#client-error")}
         hidden
       >
-        <%= gettext("Attempting to reconnect") %>
+        {gettext("Attempting to reconnect")}
         <.icon name="hero-arrow-path" class="ml-1 h-3 w-3 animate-spin" />
       </.flash>
 
@@ -403,7 +414,7 @@ defmodule GitsWeb.CoreComponents do
         phx-connected={hide("#server-error")}
         hidden
       >
-        <%= gettext("Hang in there while we get back on track") %>
+        {gettext("Hang in there while we get back on track")}
         <.icon name="hero-arrow-path" class="ml-1 h-3 w-3 animate-spin" />
       </.flash>
     </div>
@@ -436,7 +447,7 @@ defmodule GitsWeb.CoreComponents do
   def simple_form(assigns) do
     ~H"""
     <.form :let={f} for={@for} as={@as} {@rest}>
-      <%= render_slot(@inner_block, f) %>
+      {render_slot(@inner_block, f)}
     </.form>
     """
   end
@@ -486,7 +497,7 @@ defmodule GitsWeb.CoreComponents do
         ]}
         {@rest}
       >
-        <%= render_slot(@inner_block) %>
+        {render_slot(@inner_block)}
       </button>
     <% else %>
       <.link
@@ -502,7 +513,7 @@ defmodule GitsWeb.CoreComponents do
         ]}
         {@rest}
       >
-        <%= render_slot(@inner_block) %>
+        {render_slot(@inner_block)}
       </.link>
     <% end %>
     """
@@ -590,9 +601,9 @@ defmodule GitsWeb.CoreComponents do
           class="rounded border-zinc-300 text-zinc-900 focus:ring-0"
           {@rest}
         />
-        <%= @label %>
+        {@label}
       </label>
-      <.error :for={msg <- @errors}><%= msg %></.error>
+      <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
   end
@@ -601,11 +612,11 @@ defmodule GitsWeb.CoreComponents do
     ~H"""
     <fieldset class={["max-w-3xl space-y-1 text-sm", @class]}>
       <legend class="inline-flex w-full items-center justify-between text-sm font-medium">
-        <span class="block text-sm/6 font-medium text-zinc-700"><%= @label %></span>
+        <span class="block text-sm/6 font-medium text-zinc-700">{@label}</span>
         <%= if @errors == [] do %>
-          <span :if={@hint} class="text-zinc-500"><%= @hint %></span>
+          <span :if={@hint} class="text-zinc-500">{@hint}</span>
         <% else %>
-          <.error :for={msg <- @errors}><%= msg %></.error>
+          <.error :for={msg <- @errors}>{msg}</.error>
         <% end %>
       </legend>
 
@@ -629,10 +640,10 @@ defmodule GitsWeb.CoreComponents do
             checked={@value == item or (index == 1 and is_nil(@value))}
           />
           <span class="">
-            <%= to_string(item)
+            {to_string(item)
             |> String.split("_")
             |> Enum.map(&String.capitalize(&1))
-            |> Enum.join(" ") %>
+            |> Enum.join(" ")}
           </span>
         </label>
       </div>
@@ -644,11 +655,11 @@ defmodule GitsWeb.CoreComponents do
     ~H"""
     <div class={["max-w-3xl space-y-1 text-sm", @class]}>
       <div phx-feedback-for={@name} class="flex justify-between">
-        <.label for={@id}><%= @label %></.label>
+        <.label for={@id}>{@label}</.label>
         <%= if @errors == [] do %>
-          <span :if={@hint} class="text-zinc-500"><%= @hint %></span>
+          <span :if={@hint} class="text-zinc-500">{@hint}</span>
         <% else %>
-          <.error :for={msg <- @errors}><%= msg %></.error>
+          <.error :for={msg <- @errors}>{msg}</.error>
         <% end %>
       </div>
       <select
@@ -662,11 +673,11 @@ defmodule GitsWeb.CoreComponents do
         multiple={@multiple}
         {@rest}
       >
-        <option :if={@prompt} value=""><%= @prompt %></option>
-        <%= Phoenix.HTML.Form.options_for_select(@options, @value) %>
+        <option :if={@prompt} value="">{@prompt}</option>
+        {Phoenix.HTML.Form.options_for_select(@options, @value)}
       </select>
-      <span :if={@description} class="inline-flex text-zinc-500"><%= @description %></span>
-      <%= render_slot(@inner_block) %>
+      <span :if={@description} class="inline-flex text-zinc-500">{@description}</span>
+      {render_slot(@inner_block)}
     </div>
     """
   end
@@ -675,11 +686,11 @@ defmodule GitsWeb.CoreComponents do
     ~H"""
     <div phx-feedback-for={@name} class={["max-w-3xl space-y-1 text-sm", @class]}>
       <div class="flex justify-between">
-        <.label for={@id}><%= @label %></.label>
+        <.label for={@id}>{@label}</.label>
         <%= if @errors == [] do %>
-          <span :if={@hint} class="text-zinc-500"><%= @hint %></span>
+          <span :if={@hint} class="text-zinc-500">{@hint}</span>
         <% else %>
-          <.error :for={msg <- @errors}><%= msg %></.error>
+          <.error :for={msg <- @errors}>{msg}</.error>
         <% end %>
       </div>
       <textarea
@@ -693,8 +704,20 @@ defmodule GitsWeb.CoreComponents do
         name={@name}
         {@rest}
       ><%= Phoenix.HTML.Form.normalize_value("textarea", @value) %></textarea>
-      <span :if={@description} class="inline-flex text-zinc-500"><%= @description %></span>
+      <span :if={@description} class="inline-flex text-zinc-500">{@description}</span>
     </div>
+    """
+  end
+
+  def input(%{type: "hidden"} = assigns) do
+    ~H"""
+    <input
+      type={@type}
+      name={@name}
+      id={@id}
+      value={Phoenix.HTML.Form.normalize_value(@type, @value)}
+      {@rest}
+    />
     """
   end
 
@@ -702,11 +725,11 @@ defmodule GitsWeb.CoreComponents do
     ~H"""
     <div class={["max-w-3xl space-y-1 text-sm", @class]}>
       <div phx-feedback-for={@name} class="flex justify-between">
-        <.label for={@id}><%= @label %></.label>
+        <.label for={@id}>{@label}</.label>
         <%= if @errors == [] do %>
-          <span :if={@hint} class="text-zinc-500"><%= @hint %></span>
+          <span :if={@hint} class="text-zinc-500">{@hint}</span>
         <% else %>
-          <.error :for={msg <- @errors}><%= msg %></.error>
+          <.error :for={msg <- @errors}>{msg}</.error>
         <% end %>
       </div>
       <input
@@ -721,7 +744,7 @@ defmodule GitsWeb.CoreComponents do
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
         {@rest}
       />
-      <span :if={@description} class="inline-flex text-zinc-500"><%= @description %></span>
+      <span :if={@description} class="inline-flex text-zinc-500">{@description}</span>
     </div>
     """
   end
@@ -736,7 +759,7 @@ defmodule GitsWeb.CoreComponents do
   def label(assigns) do
     ~H"""
     <label for={@for} class={["block text-sm/6 font-medium text-zinc-700", @class]}>
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </label>
     """
   end
@@ -753,7 +776,7 @@ defmodule GitsWeb.CoreComponents do
   def radio_group(assigns) do
     ~H"""
     <fieldset class={["", @class]}>
-      <legend class="text-sm font-medium leading-6 text-zinc-600"><%= @label %></legend>
+      <legend class="text-sm font-medium leading-6 text-zinc-600">{@label}</legend>
       <!-- <p class="mt-1 text-sm leading-6 text-zinc-600">How do you prefer to receive notifications?</p> -->
       <div class="mt-6 space-y-6 sm:flex sm:items-center sm:space-x-10 sm:space-y-0">
         <div :for={{%{value: value} = rad, idx} <- Enum.with_index(@radio)} class="flex items-center">
@@ -769,7 +792,7 @@ defmodule GitsWeb.CoreComponents do
             for={"#{@field.id}-#{idx}"}
             class="ml-3 block text-sm font-medium leading-6 text-zinc-900"
           >
-            <%= render_slot(rad) %>
+            {render_slot(rad)}
           </label>
         </div>
       </div>
@@ -786,7 +809,7 @@ defmodule GitsWeb.CoreComponents do
     ~H"""
     <p class="flex gap-3 text-sm leading-6 text-rose-600 phx-no-feedback:hidden">
       <.icon name="hero-exclamation-circle-mini" class="mt-0.5 h-5 w-5 flex-none" />
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </p>
     """
   end
@@ -834,10 +857,10 @@ defmodule GitsWeb.CoreComponents do
               if(col[:optional], do: "hidden lg:table-cell", else: "")
             ]}
           >
-            <%= col[:label] %>
+            {col[:label]}
           </th>
           <th :if={@action != []} class="relative p-0 pb-4">
-            <span class="sr-only"><%= gettext("Actions") %></span>
+            <span class="sr-only">{gettext("Actions")}</span>
           </th>
         </tr>
       </thead>
@@ -858,7 +881,7 @@ defmodule GitsWeb.CoreComponents do
           >
             <div class="w-full px-2 py-4 hover:bg-zinc-50">
               <span class={["relative", i == 0 && "font-semibold text-zinc-900"]}>
-                <%= render_slot(col, @row_item.(row)) %>
+                {render_slot(col, @row_item.(row))}
               </span>
             </div>
           </td>
@@ -868,7 +891,7 @@ defmodule GitsWeb.CoreComponents do
                 :for={action <- @action}
                 class="relative font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
               >
-                <%= render_slot(action, @row_item.(row)) %>
+                {render_slot(action, @row_item.(row))}
               </span>
             </div>
           </td>

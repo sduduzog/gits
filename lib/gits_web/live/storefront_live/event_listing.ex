@@ -75,7 +75,7 @@ defmodule GitsWeb.StorefrontLive.EventListing do
   end
 
   defp verify_turnstile(params, remote_ip, nil) do
-    case Turnstile.verify(params, remote_ip) do
+    case Gits.Turnstile.verify(params, remote_ip) do
       {:ok, _} ->
         :ok
 

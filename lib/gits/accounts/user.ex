@@ -1,6 +1,7 @@
 defmodule Gits.Accounts.User do
   alias Gits.Secrets
   alias Gits.Accounts.{Role, Token}
+  alias Gits.Storefront.{Order, Ticket}
   alias __MODULE__
 
   use Ash.Resource,
@@ -41,7 +42,13 @@ defmodule Gits.Accounts.User do
 
   actions do
     default_accept :*
-    defaults [:read, :update, create: :*]
+    defaults [:update, create: :*]
+
+    read :read do
+      primary? true
+
+      prepare build(load: [:tickets_count])
+    end
 
     read :get_by_email do
       description "Looks up a user by their email"
@@ -92,7 +99,7 @@ defmodule Gits.Accounts.User do
       change AshAuthentication.Strategy.OAuth2.IdentityChange
 
       change fn changeset, _ ->
-        user_info = Ash.Changeset.get_argument(changeset, :user_info) |> IO.inspect()
+        user_info = Ash.Changeset.get_argument(changeset, :user_info)
 
         Ash.Changeset.change_attributes(changeset, Map.take(user_info, ["name", "email"]))
       end
@@ -119,6 +126,26 @@ defmodule Gits.Accounts.User do
 
   relationships do
     has_many :roles, Role
+
+    has_many :orders, Order do
+      no_attributes? true
+      domain Gits.Storefront
+      filter expr(email == parent(email))
+    end
+
+    has_many :complete_orders, Order do
+      no_attributes? true
+      domain Gits.Storefront
+      filter expr(email == parent(email) and state == :completed)
+    end
+  end
+
+  aggregates do
+    count :tickets_count, [:orders, :tickets] do
+      join_filter :orders, expr(state == :completed)
+
+      # join_filter [:orders, :tickets], expr(public_id == "05e721") // when I need to filter out scanned tickets
+    end
   end
 
   identities do

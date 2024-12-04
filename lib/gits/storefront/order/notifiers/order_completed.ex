@@ -1,4 +1,5 @@
-defmodule Gits.Storefront.Order.Notifiers.OrderCompletedEmailNotifier do
+defmodule Gits.Storefront.Order.Notifiers.OrderCompleted do
+  require Decimal
   use Ash.Notifier
   alias Gits.Storefront.Order
   use Oban.Worker, max_attempts: 1
@@ -8,6 +9,9 @@ defmodule Gits.Storefront.Order.Notifiers.OrderCompletedEmailNotifier do
     %{id: order.id}
     |> __MODULE__.new()
     |> Oban.insert()
+  end
+
+  def notify(_) do
   end
 
   @impl Oban.Worker
@@ -24,22 +28,16 @@ defmodule Gits.Storefront.Order.Notifiers.OrderCompletedEmailNotifier do
             count = Enum.count(tickets)
 
             if count > 0 do
-              {type.name, type.price, count}
+              {type.name, Decimal.mult(type.price, count), count}
             end
-          end
-
-        total =
-          for {_, price, _} <- tickets_summary, reduce: Decimal.new("0") do
-            acc ->
-              acc |> Decimal.add(price)
           end
 
         Gits.Mailer.order_completed(
           order.email |> to_string(),
           tickets_summary,
-          total,
+          order.total,
           order.event.name,
-          order.number
+          order.id
         )
 
       {:error, error} ->

@@ -9,10 +9,6 @@ defmodule GitsWeb.PageController do
   alias Gits.Storefront.Event
 
   def home(conn, _) do
-    AshAuthentication.Info.strategy!(Gits.Accounts.User, :google)
-    |> AshAuthentication.Strategy.routes()
-    |> IO.inspect()
-
     conn
     |> assign(:slug, "/")
     |> assign(:title, "/")

@@ -10,23 +10,29 @@
   </div>
 
   <div class="p-2">
-    <h2 class="text-xl font-semibold">Payout Preferences</h2>
-    <p class="mt-1 text-sm leading-6 text-gray-600">
-      <!-- This information will be displayed publicly. -->
-    </p>
-
-    <div class="flex items-center border">
-      <h2 class="grow text-base font-semibold leading-7 text-gray-900">Payout Recipients</h2>
-      <.button phx-click={
-        JS.patch(Routes.host_settings_path(@socket, :payouts_create_recipient, @host.handle))
-      }>
-        <span>Create recipient</span>
-      </.button>
+    <div class="space-y-4">
+      <div class="flex items-center">
+        <div class="grow">
+          <h2 class="grow text-base/7 font-semibold  text-zinc-900">Payout details</h2>
+          <p class="mt-1 text-sm leading-6 text-gray-600">
+            This information will be displayed publicly.
+          </p>
+        </div>
+        <.button
+          variant={:ghost}
+          phx-click={JS.patch(Routes.host_settings_path(@socket, :payouts, @host.handle))}
+        >
+          <.icon name="i-lucide-pen-line" /> <span>Edit</span>
+        </.button>
+      </div>
+      <div class="">
+        <span></span>
+      </div>
     </div>
   </div>
 <% end %>
 
-<%= if @live_action == :payouts_create_recipient do %>
+<%= if @live_action == :payouts do %>
   <div class="flex max-w-72 items-center gap-2 p-2 lg:max-w-full">
     <div class="flex w-full grow items-center gap-1 text-sm">
       <.button
@@ -41,13 +47,13 @@
       </.button>
       <span class="text-xs font-semibold text-zinc-400">/</span>
       <div class="flex  shrink-0 items-center truncate rounded-lg px-1 text-sm/6 font-semibold">
-        <span class="">Create payout recipient</span>
+        <span class="">Update payout details</span>
       </div>
     </div>
   </div>
 
   <div class="p-2">
-    <h2 class="text-xl font-semibold">Create payout reciptient</h2>
+    <h2 class="text-xl font-semibold">Update payout details</h2>
     <p class="mt-1 text-sm leading-6 text-gray-600">
       <!-- This displayed publicly. -->
     </p>

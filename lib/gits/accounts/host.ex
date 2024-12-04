@@ -1,5 +1,4 @@
 defmodule Gits.Accounts.Host do
-  alias Gits.Accounts.PaystackSubaccount
   alias Gits.PaystackApi
   alias Gits.Accounts
   alias Gits.Accounts.{Role, User}

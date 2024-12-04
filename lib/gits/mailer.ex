@@ -16,7 +16,7 @@ defmodule Gits.Mailer do
     |> deliver()
   end
 
-  def order_completed(to, tickets_summary, total, event_name, order_no) do
+  def order_completed(to, tickets_summary, total, event_name, order_id) do
     config = Application.get_env(:gits, Gits.Mailer)
 
     sender = "orders@#{config[:domain]}"
@@ -29,7 +29,7 @@ defmodule Gits.Mailer do
       tickets_summary: tickets_summary,
       total: total,
       event_name: event_name,
-      order_no: order_no
+      order_id: order_id
     })
     |> premail()
     |> deliver()

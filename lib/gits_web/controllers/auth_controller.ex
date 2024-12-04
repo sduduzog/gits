@@ -54,10 +54,7 @@ defmodule GitsWeb.AuthController do
     |> redirect(to: "/sign-in")
   end
 
-  def failure(conn, activity, reason) do
-    IO.puts("foooooooooo")
-    activity |> IO.inspect()
-    reason |> IO.inspect()
+  def failure(conn, _activity, _reason) do
     conn |> put_status(401) |> render("failure.html")
   end
 

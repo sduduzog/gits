@@ -1,69 +1,15 @@
 <h2 class="text-lg/7 font-semibold text-gray-900">Tickets</h2>
-<p class="mt-1 mb-4 text-sm/5 text-gray-600"></p>
+<p class="mb-4 mt-1 text-sm/5 text-gray-600"></p>
 
-<%= if Enum.any?(@event.ticket_types) do %>
-  <div class="grid lg:grid-cols-4 items-start gap-4 pb-10">
-    <div :for={ticket_type <- @event.ticket_types} class="grid gap-2 rounded-xl border p-4">
-      <div class="flex justify-between overflow-hidden gap-4">
-        <span class="text-lg font-semibold truncate"><%= ticket_type.name %></span>
-        <span class="text-lg font-semibold shrink-0">R <%= ticket_type.price %></span>
-      </div>
-      <span class="text-sm text-zinc-500"><%= ticket_type.description %></span>
-      <span class="text-sm text-zinc-800">Quantity: <%= ticket_type.quantity %></span>
-      <div class="flex justify-end gap-4">
-        <button
-          type="button"
-          phx-click={
-            JS.patch(
-              Routes.host_edit_event_path(
-                @socket,
-                @live_action,
-                @host.handle,
-                @event.public_id,
-                %{modal: :ticket, edit: ticket_type.id}
-              ),
-              replace: true
-            )
-            |> show_modal("edit_ticket")
-          }
-          class="flex h-9 items-center gap-1 rounded-lg px-4 text-sm text-zinc-950 hover:bg-zinc-100"
-        >
-          <.icon name="i-lucide-square-pen" />
-          <span class=" font-semibold">
-            Edit
-          </span>
-        </button>
-
-        <button
-          type="button"
-          phx-click={
-            JS.patch(
-              Routes.host_edit_event_path(
-                @socket,
-                @live_action,
-                @host.handle,
-                @event.public_id,
-                %{modal: :ticket, archive: ticket_type.id}
-              ),
-              replace: true
-            )
-            |> show_modal("archive_ticket")
-          }
-          class="flex h-9 items-center hover:text-red-600 gap-1 rounded-lg px-4 text-sm text-zinc-950 hover:bg-red-50"
-        >
-          <.icon name="i-lucide-trash" />
-          <span class=" font-semibold">
-            Delete
-          </span>
-        </button>
-      </div>
-    </div>
-    <div class="grid bg-zinc-50/50 border gap-4 place-items-start rounded-xl p-4">
-      <h2 class="text-sm font-semibold text-zinc-700">Add more tickets</h2>
-      <span class="text-sm text-zinc-500">
-        You can add as many tickets types as you need for your event.
-      </span>
-      <button
+<div class="grid items-start gap-4 pb-10 lg:grid-cols-3">
+  <div :for={ticket_type <- @event.ticket_types} class="grid gap-4 rounded-xl border p-4">
+    <div class="flex gap-4 overflow-hidden">
+      <h3 class="grow text-base/7 font-semibold text-gray-900"><%= ticket_type.name %></h3>
+      <.button
+        type="button"
+        size={:none}
+        variant={:outline}
+        class="shrink-0 p-2"
         phx-click={
           JS.patch(
             Routes.host_edit_event_path(
@@ -71,29 +17,94 @@
               @live_action,
               @host.handle,
               @event.public_id,
-              %{modal: :ticket, create: nil}
+              %{modal: :ticket, edit: ticket_type.id}
             ),
             replace: true
           )
-          |> show_modal("create_ticket")
+          |> show_modal("edit_ticket")
         }
-        class="inline-flex h-9 items-center gap-1 rounded-lg hover:bg-zinc-950 px-4 text-sm hover:text-zinc-50 bg-zinc-100"
       >
-        <.icon name="i-lucide-ticket-plus" />
-        <span class="font-semibold">Add ticket</span>
-      </button>
+        <.icon name="i-lucide-pen-line" />
+        <span class="sr-only">
+          Edit
+        </span>
+      </.button>
+
+      <.button
+        variant={:outline}
+        class="shrink-0 p-2"
+        size={:none}
+        type="button"
+        phx-click={
+          JS.patch(
+            Routes.host_edit_event_path(
+              @socket,
+              @live_action,
+              @host.handle,
+              @event.public_id,
+              %{modal: :ticket, archive: ticket_type.id}
+            ),
+            replace: true
+          )
+          |> show_modal("archive_ticket")
+        }
+      >
+        <.icon name="i-lucide-trash" />
+        <span class="sr-only">
+          Delete
+        </span>
+      </.button>
     </div>
+    <dl class="flex gap-2 text-sm/4 col-span-full">
+      <div class="flex gap-2">
+        <div class=" text-zinc-400">
+          <.icon name="i-lucide-banknote" />
+          <span class="sr-only">Price</span>
+        </div>
+        <span>R <%= ticket_type.price %></span>
+      </div>
+      <span>&bull;</span>
+      <div class="flex gap-1">
+        <div class="text-zinc-400">
+          <.icon name="i-lucide-users" />
+          <span class="sr-only">Quantity</span>
+        </div>
+        <span><%= ticket_type.quantity %></span>
+      </div>
+      <span>&bull;</span>
+      <div class="flex gap-1">
+        <dt class="text-zinc-400">
+          <.icon name="i-lucide-user" /><span class="sr-only">Limit per customer</span>
+        </dt>
+        <dd><%= ticket_type.limit_per_user %> p.p</dd>
+      </div>
+    </dl>
+    <dl class="grid gap-3 text-sm/4">
+      <div :if={false} class="flex">
+        <dt class="w-full max-w-6 text-zinc-400">
+          <.icon name="i-lucide-calendar-clock" /><span class="sr-only">Date</span>
+        </dt>
+        <dd class="grid gap-2">
+          <%= "" %>
+          <span>
+            12:00 PM, 31 Sep 2024 <span class="text-zinc-500"> &dash; Starts sale</span>
+          </span>
+          <span>
+            12:00 PM, 31 Sep 2024 <span class="text-zinc-500"> &dash; Ends sale</span>
+          </span>
+        </dd>
+      </div>
+      <div class="flex">
+        <dt class="w-full max-w-6 text-zinc-400">
+          <.icon name="i-lucide-text" /><span class="sr-only">Description</span>
+        </dt>
+        <dd><%= ticket_type.description %></dd>
+      </div>
+    </dl>
   </div>
-<% else %>
-  <div class="grid place-items-center items-center justify-center gap-2 pt-20">
-    <div class="flex rounded-lg bg-zinc-100 p-4 text-zinc-500">
-      <.icon name="i-lucide-ticket" />
-    </div>
-    <h2 class="text-sm font-semibold text-zinc-700">Set up your tickets</h2>
-    <span class="text-sm text-zinc-500">
-      You're almost there! Now let's add tickets for this event.
-    </span>
-    <button
+  <div class="flex gap-4 rounded-xl items-start">
+    <.button
+      class="shrink-0"
       phx-click={
         JS.patch(
           Routes.host_edit_event_path(
@@ -107,13 +118,16 @@
         )
         |> show_modal("create_ticket")
       }
-      class="inline-flex h-9 items-center gap-1 rounded-lg bg-zinc-950 px-4 text-sm text-white"
     >
       <.icon name="i-lucide-ticket-plus" />
       <span class="font-semibold">Add ticket</span>
-    </button>
+    </.button>
+
+    <span class="text-sm text-zinc-600">
+      You can add as many tickets types as you need for your event.
+    </span>
   </div>
-<% end %>
+</div>
 
 <.modal
   new={true}

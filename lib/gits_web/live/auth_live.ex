@@ -25,7 +25,7 @@ defmodule GitsWeb.AuthLive do
     <%= if @request_sent do %>
       <h1 class="text-xl font-semibold">Check your email!</h1>
       <p class="mt-4 text-sm text-zinc-500">
-        A magic link has been sent to <%= @request_sent %>. Check your spam/junk folder, just in case.
+        A magic link has been sent to {@request_sent}. Check your spam/junk folder, just in case.
       </p>
       <div class="mt-4 flex size-10 items-center justify-center rounded-lg bg-zinc-100 text-zinc-500">
         <.icon name="i-lucide-inbox" />
@@ -45,7 +45,7 @@ defmodule GitsWeb.AuthLive do
           </span>
         </.button>
 
-        <Turnstile.widget events={[:success]} class="mt-2" appearance="interaction-only" />
+        <Gits.Turnstile.widget events={[:success]} class="mt-2" appearance="interaction-only" />
       </.form>
       <div>
         <div class="flex items-center gap-2 text-sm text-zinc-400">

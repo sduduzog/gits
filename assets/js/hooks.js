@@ -1,4 +1,3 @@
-import { TurnstileHook } from "phoenix_turnstile";
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
 import {
   computePosition,
@@ -9,6 +8,50 @@ import {
 } from "@floating-ui/dom";
 
 import Quill from "quill";
+
+function turnstileCallbackEvent(self, name, eventName) {
+  return (payload) => {
+    const events = self.el.dataset.events || "";
+
+    if (events.split(",").indexOf(name) > -1) {
+      self.pushEventTo(self.el, `turnstile:${eventName || name}`, payload);
+    }
+  };
+}
+
+export const TurnstileHook = {
+  mounted() {
+    turnstile.render(this.el, {
+      callback: turnstileCallbackEvent(this, "success"),
+      "error-callback": turnstileCallbackEvent(this, "error"),
+      "expired-callback": turnstileCallbackEvent(this, "expired"),
+      "before-interactive-callback": turnstileCallbackEvent(
+        this,
+        "beforeInteractive",
+        "before-interactive",
+      ),
+      "after-interactive-callback": turnstileCallbackEvent(
+        this,
+        "afterInteractive",
+        "after-interactive",
+      ),
+      "unsupported-callback": turnstileCallbackEvent(this, "unsupported"),
+      "timeout-callback": turnstileCallbackEvent(this, "timeout"),
+    });
+
+    this.handleEvent("turnstile:refresh", (event) => {
+      if (!event.id || event.id === this.el.id) {
+        turnstile.reset(this.el);
+      }
+    });
+
+    this.handleEvent("turnstile:remove", (event) => {
+      if (!event.id || event.id === this.el.id) {
+        turnstile.remove(this.el);
+      }
+    });
+  },
+};
 
 const QuillEditor = {
   _setup() {

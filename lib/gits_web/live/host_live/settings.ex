@@ -9,7 +9,7 @@ defmodule GitsWeb.HostLive.Settings do
     |> ok()
   end
 
-  def handle_params(_, _, %{assigns: %{live_action: :payouts_create_recipient}} = socket) do
+  def handle_params(_, _, %{assigns: %{live_action: :payouts}} = socket) do
     host =
       Ash.load!(socket.assigns.host, [
         :paystack_subaccount,

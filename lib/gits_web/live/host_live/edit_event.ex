@@ -67,7 +67,7 @@ defmodule GitsWeb.HostLive.EditEvent do
         :tickets ->
           :details
 
-        :payouts ->
+        :summary ->
           :tickets
       end
 
@@ -88,7 +88,7 @@ defmodule GitsWeb.HostLive.EditEvent do
           :tickets
 
         :tickets ->
-          :payouts
+          :summary
       end
 
     socket

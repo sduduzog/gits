@@ -95,13 +95,16 @@ defmodule GitsWeb.StorefrontLive.EventOrder do
     socket.assigns.confirm_form
     |> Form.submit(params: unsigned_params["form"])
     |> case do
-      {:ok, order} ->
+      {:ok, %Order{paystack_authorization_url: nil} = order} ->
         socket
         |> assign(:order, order)
         |> assign_ticket_types()
         |> assign_forms()
+
+      {:ok, %Order{paystack_authorization_url: url} = order} ->
+        socket |> redirect(external: url)
     end
-    |> noreply
+    |> noreply()
   end
 
   def assign_forms(socket) do
@@ -116,6 +119,9 @@ defmodule GitsWeb.StorefrontLive.EventOrder do
         socket
         |> assign(:reopen_form, order |> Form.for_update(:reopen))
         |> assign(:confirm_form, order |> Form.for_update(:confirm))
+
+      :confirmed ->
+        socket
 
       :completed ->
         socket
@@ -186,7 +192,7 @@ defmodule GitsWeb.StorefrontLive.EventOrder do
             count = Enum.count(tickets)
 
             if count > 0 do
-              {type.name, type.price, count}
+              {type.name, type.price |> Decimal.mult(count), count}
             end
           end
 

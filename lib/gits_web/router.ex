@@ -50,6 +50,7 @@ defmodule GitsWeb.Router do
     get "/assets/:filename", PageController, :assets
     get "/healthz", PageController, :healthz
     get "/beta", PageController, :beta
+    get "/orders/paystack/callback", OrderController, :paystack_callback
 
     resources "/accounts", AccountController, only: [:index]
 
@@ -58,9 +59,11 @@ defmodule GitsWeb.Router do
 
     get "/bucket/*keys", PageController, :bucket
 
-    live "/search", SearchLive, :index
-    live "/tickets/:public_id", TicketLive, :show
-    live "/t/:public_id", TicketLive, :show
+    live_session :user_optional, on_mount: {GitsWeb.LiveUserAuth, :live_user_optional} do
+      live "/search", SearchLive, :index
+      live "/tickets/:public_id", TicketLive, :show
+      live "/t/:public_id", TicketLive, :show
+    end
   end
 
   scope "/hosts", GitsWeb do
@@ -144,6 +147,11 @@ defmodule GitsWeb.Router do
       ecto_psql_extras_options: [long_running_queries: [threshold: "10 milliseconds"]],
       metrics: GitsWeb.Telemetry,
       additional_pages: [oban: Oban.LiveDashboard]
+  end
+
+  scope "/webhooks", GitsWeb do
+    pipe_through :api
+    post "/paystack", WebhookController, :paystack
   end
 
   if Application.compile_env(:gits, :dev_routes) do

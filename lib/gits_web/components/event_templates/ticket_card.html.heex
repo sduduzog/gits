@@ -1,0 +1,22 @@
+<div class="grid gap-4 p-4">
+  <div>
+    <div class="flex items-center gap-2">
+      <GitsWeb.CoreComponents.icon name="i-lucide-tickets" />
+      <h2 class="truncate grow  text-xl/6 font-medium">{@ticket_name}</h2>
+      <span class="text-sm/6 shrink-0 font-medium text-zinc-500">#{@id}</span>
+    </div>
+  </div>
+  <dl>
+    <div class="flex justify-between items-center">
+      <dt class="text-sm/6 text-zinc-500">Status</dt>
+      <dd>
+        <span class="inline-flex items-center gap-x-1.5 rounded-md px-2 py-1 text-xs font-medium text-gray-900 ring-1 ring-inset ring-gray-200">
+          <svg class="h-1.5 w-1.5 fill-zinc-900" viewBox="0 0 6 6" aria-hidden="true">
+            <circle cx="3" cy="3" r="3" />
+          </svg>
+          Active
+        </span>
+      </dd>
+    </div>
+  </dl>
+</div>

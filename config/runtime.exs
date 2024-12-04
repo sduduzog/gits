@@ -31,9 +31,11 @@ config :gits, :google_api_options,
   base_url: "https://places.googleapis.com",
   headers: ["X-Goog-Api-Key": env!("GOOGLE_MAPS_API_KEY")]
 
+paystack_secret_key = env!("PAYSTACK_SECRET_KEY")
+
 config :gits, :paystack_api_options,
   base_url: "https://api.paystack.co",
-  auth: {:bearer, env!("PAYSTACK_SECRET_KEY")}
+  auth: {:bearer, paystack_secret_key}
 
 config :ex_aws,
   access_key_id: env!("AWS_ACCESS_KEY_ID"),
@@ -48,6 +50,8 @@ config :ex_aws, :s3,
 config :gits, :bucket_name, env!("BUCKET_NAME")
 
 config :logger, level: env!("LOG_LEVEL", :atom, :debug)
+
+config :gits, :paystack, secret_key: paystack_secret_key
 
 if config_env() == :prod do
   database_url = env!("DATABASE_URL")
@@ -84,4 +88,6 @@ if config_env() == :prod do
     base_url: env!("MAILGUN_BASE_URL", :string),
     host: "https://" <> host,
     domain: host
+
+  config :gits, :paystack, callback_url_base: "https://#{host}"
 end

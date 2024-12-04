@@ -1,45 +1,36 @@
 <h1 class="mx-auto max-w-screen-xl p-2 text-xl font-semibold">
-  <%= @page_title %>
+  {@page_title}
 </h1>
 
 <div
-  :for={{event_name, event_starts_at, ticket_types} <- @events}
-  class="mx-auto flex max-w-screen-xl items-start gap-4 p-4 lg:gap-8"
+  :for={{event_name, event_starts_at, ticket_types, host} <- @events}
+  class="mx-auto grid max-w-screen-xl lg:grid-cols-[theme(space.64)_1fr] items-start gap-4 p-4 lg:gap-8"
 >
-  <div class="grid pt-6 text-zinc-500 text-center">
-    <span class="text-3xl/6 font-semibold">
-      <%= Calendar.strftime(event_starts_at, "%d") %>
-    </span>
-    <span class=" text-xl/6">
-      <%= Calendar.strftime(event_starts_at, "%b") %>
-    </span>
+  <div class="gap-4 flex items-start">
+    <div class="grid text-zinc-500 mt-1 text-center">
+      <span class="text-3xl/6 font-semibold">
+        {Calendar.strftime(event_starts_at, "%d")}
+      </span>
+      <span class=" text-xl/5">
+        {Calendar.strftime(event_starts_at, "%b")}
+      </span>
+    </div>
+
+    <div>
+      <h3 class="text-lg/6 font-medium">
+        {event_name}
+      </h3>
+      <span class="text-sm/6 text-zinc-500">Hosted by {host}</span>
+    </div>
   </div>
-  <div class="grid grow gap-2 lg:grid-cols-3 lg:gap-4">
+  <div class="grid grow gap-2 lg:grid-cols-2 lg:gap-8">
     <%= for {ticket_name, tickets} <- ticket_types do %>
       <.link
         :for={{id} <- tickets}
         navigate={~p"/t/#{id}"}
-        class="grid gap-4 divide-y divide-dashed rounded-xl border p-6 ring-zinc-400 ring-offset-1 hover:ring-2"
+        class="ring-zinc-400 ring-offset-1 hover:ring-2 rounded-xl border"
       >
-        <div class="w-full overflow-hidden">
-          <div class="flex">
-            <div class="grow">
-              <h2 class="truncate text-2xl/6 font-semibold"><%= ticket_name %></h2>
-              <span class="truncate text-sm/5 text-zinc-700">
-                <%= event_name %>
-              </span>
-            </div>
-            <span class="truncate text-sm/6 font-medium text-zinc-500">#<%= id %></span>
-          </div>
-          <div class="pt-4 flex items-center">
-            <span class="inline-flex items-center gap-x-1.5 rounded-md px-2 py-1 text-xs font-medium text-gray-900 ring-1 ring-inset ring-gray-200">
-              <svg class="h-1.5 w-1.5 fill-zinc-900" viewBox="0 0 6 6" aria-hidden="true">
-                <circle cx="3" cy="3" r="3" />
-              </svg>
-              Active
-            </span>
-          </div>
-        </div>
+        <GitsWeb.EventComponents.ticket_card ticket_name={ticket_name} id={id} />
       </.link>
     <% end %>
   </div>

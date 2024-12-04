@@ -11,6 +11,6 @@ defmodule GitsWeb.TicketLive do
       {:ok, ticket} ->
         socket |> assign(:ticket, ticket)
     end
-    |> ok(false)
+    |> ok()
   end
 end

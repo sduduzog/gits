@@ -1,12 +1,12 @@
 <div class="flex items-start">
   <%= if assigns[:event]  do %>
-    <h1 class="text-xl pb-2 font-semibold">Edit event</h1>
+    <h1 class="pb-2 text-xl font-semibold">Edit event</h1>
   <% else %>
-    <h1 class="text-xl pb-2 font-semibold">Create an event</h1>
+    <h1 class="pb-2 text-xl font-semibold">Create an event</h1>
   <% end %>
 </div>
 
-<div class="relative flex">
+<div class="relative flex gap-2">
   <div
     :for={
       {label, action} <- [
@@ -15,13 +15,13 @@
         {"Summary", :summary}
       ]
     }
-    class="group grid w-full rounded-lg"
+    class="group grid w-full max-w-40"
     aria-selected={"#{action == @live_action}"}
   >
-    <div class="p-1">
-      <div class="h-1 rounded-full grow bg-zinc-200 group-aria-selected:bg-zinc-800"></div>
+    <div class="">
+      <div class="h-1.5 rounded-full bg-zinc-200 group-aria-selected:bg-zinc-800"></div>
     </div>
-    <div class="inset-x-0 top-4 p-1 text-zinc-400 group-aria-selected:text-zinc-950 lg:inline-flex hidden">
+    <div class="inset-x-0 top-4 hidden text-zinc-400 group-aria-selected:text-zinc-950 lg:inline-flex">
       <span class="text-sm font-semibold"><%= label %></span>
     </div>
   </div>
@@ -43,9 +43,12 @@
       show_archive_ticket_modal={@show_archive_ticket_modal}
     />
 
-    <.summary :if={@live_action == :summary} />
+    <.summary
+      :if={@live_action == :summary}
+      host_settings_payouts_path={Routes.host_settings_path(@socket, :payouts, @host.handle)}
+    />
 
-    <div class="flex gap-6 mt-8">
+    <div class="mt-8 flex gap-6">
       <.button
         disabled={@live_action == :details}
         phx-click="previous"
@@ -60,10 +63,11 @@
       </.button>
 
       <%= if @live_action == :summary do %>
-        <.button phx-click={JS.dispatch("gits:go_back")} type="button" variant={:surface}>
-          <span class="">
-            Done
+        <.button phx-click={JS.dispatch("gits:go_back")} type="button">
+          <span>
+            Publish
           </span>
+          <.icon name="i-lucide-rocket" />
         </.button>
       <% else %>
         <.button phx-click="next" type="button" variant={:subtle}>

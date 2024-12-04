@@ -1,5 +1,6 @@
 defmodule GitsWeb.Endpoint do
-  use Sentry.PlugCapture
+  alias GitsWeb.CacheBodyReader
+  # use Sentry.PlugCapture
 
   use Phoenix.Endpoint, otp_app: :gits
 
@@ -46,11 +47,12 @@ defmodule GitsWeb.Endpoint do
   plug Plug.Parsers,
     parsers: [:urlencoded, :multipart, :json],
     pass: ["*/*"],
+    body_reader: {CacheBodyReader, :read_body, []},
     json_decoder: Phoenix.json_library()
 
   plug Plug.MethodOverride
   plug Plug.Head
   plug Plug.Session, @session_options
   plug GitsWeb.Router
-  plug Sentry.PlugContext
+  # plug Sentry.PlugContext
 end

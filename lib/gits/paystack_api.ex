@@ -53,8 +53,7 @@ defmodule Gits.PaystackApi do
       {:ok, %Req.Response{body: %{"data" => subaccount, "status" => true}}} ->
         {:ok, extract_subaccount(subaccount)}
 
-      all ->
-        all |> IO.inspect()
+      _ ->
         :error
     end
   end
@@ -95,6 +94,7 @@ defmodule Gits.PaystackApi do
     |> case do
       {:ok, subaccount} -> {:ok, subaccount}
       {:commit, subaccount} -> {:ok, subaccount}
+      {:ignore, nil} -> nil
     end
   end
 
@@ -109,12 +109,17 @@ defmodule Gits.PaystackApi do
       |> case do
         {:ok, %Req.Response{body: %{"data" => subaccount, "status" => true}}} ->
           {:ok, extract_subaccount(subaccount)}
+
+        _ ->
+          :error
       end
     end
   end
 
-  def create_transaction(subaccount_code, customer_email, price_in_cents, callback_url) do
+  def create_transaction(subaccount_code, customer_email, price_in_cents) do
     options = Application.get_env(:gits, :paystack_api_options)
+
+    base_url = Application.get_env(:gits, :paystack) |> Keyword.get(:callback_url_base)
 
     Req.new(options)
     |> Req.post(
@@ -123,8 +128,11 @@ defmodule Gits.PaystackApi do
         subaccount: subaccount_code,
         email: customer_email,
         amount: price_in_cents,
-        callback_url: callback_url,
-        bearer: "subaccount"
+        callback_url: "#{base_url}/orders/paystack/callback",
+        bearer: "subaccount",
+        metadata: %{
+          cancel_action: "#{base_url}/orders/paystack/callback/cancel"
+        }
       }
     )
     |> case do
@@ -145,10 +153,20 @@ defmodule Gits.PaystackApi do
     |> case do
       {:ok, %Req.Response{body: %{"data" => transaction, "status" => true}}} ->
         case transaction do
-          %{"status" => "abandoned"} -> {:ok, %{status: :abandoned}}
-          %{"status" => "failed", "gateway_response" => "Declined"} -> {:ok, %{status: :declined}}
-          %{"status" => "ongoing"} -> {:ok, %{status: :ongoing}}
-          %{"status" => "success"} -> {:ok, %{status: :success}}
+          %{"status" => "abandoned"} ->
+            {:ok, %{status: :abandoned}}
+
+          %{"status" => "failed", "gateway_response" => "Declined"} ->
+            {:ok, %{status: :declined}}
+
+          %{"status" => "ongoing"} ->
+            {:ok, %{status: :ongoing}}
+
+          %{"status" => "reversed"} ->
+            {:ok, %{status: :refunded}}
+
+          %{"status" => "success"} ->
+            {:ok, %{status: :success}, transaction}
         end
     end
   end
