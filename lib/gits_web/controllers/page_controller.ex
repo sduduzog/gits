@@ -109,9 +109,6 @@ defmodule GitsWeb.PageController do
   end
 
   def healthz(conn, _) do
-    time_zone = Application.get_env(:gits, :time_zone)
-    {:ok, datetime} = NaiveDateTime.local_now() |> DateTime.from_naive(time_zone)
-
-    conn |> json(%{datetime: datetime})
+    conn |> json(%{hello: "world"})
   end
 end
