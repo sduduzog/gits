@@ -53,25 +53,6 @@
   <div class="p-2">
     <div class="grid w-full rounded-xl border divide-y">
       <div class="w-full flex justify-end gap-1 p-4">
-        <.button
-          :if={not @event.published?}
-          phx-click={
-            JS.patch(
-              Routes.host_view_event_path(
-                @socket,
-                @live_action,
-                @host.handle,
-                @event.public_id,
-                %{publish: @event.public_id}
-              ),
-              replace: true
-            )
-            |> show_modal("publish-event")
-          }
-        >
-          <.icon name="i-lucide-rocket" />
-          <span>Publish</span>
-        </.button>
         <div role="none" class="grow"></div>
         <.button
           variant={:ghost}
@@ -113,7 +94,7 @@
               <span class="text-sm/6 text-zinc-500">Visibility</span>
             </dt>
             <dd class="text-sm/6 gap-2 flex items-center">
-              <.icon name="i-lucide-eye-off" />
+              <.icon name="i-lucide-eye-off" class="text-zinc-400" />
               <span>
                 {to_string(@event.visibility) |> String.capitalize()}
               </span>
@@ -125,7 +106,7 @@
               <span class="text-sm/6 text-zinc-500">Starts at</span>
             </dt>
             <dd class="text-sm/6 gap-2 flex items-center">
-              <.icon name="i-lucide-calendar-days" />
+              <.icon name="i-lucide-calendar-days" class="text-zinc-400" />
               <span>
                 {Calendar.strftime(
                   @event.starts_at,

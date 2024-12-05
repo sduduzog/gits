@@ -10,10 +10,11 @@
   <div
     :for={
       {label, action} <- [
-        {"Event Details", :details}
+        {"Event Details", :details},
+        {"Tickets", :tickets}
       ]
     }
-    class="group grid w-full max-w-40"
+    class="group grid w-full max-w-36"
     aria-selected={"#{action == @live_action}"}
   >
     <div class="">
@@ -61,7 +62,7 @@
         </span>
       </.button>
 
-      <%= if @live_action == :details do %>
+      <%= if @live_action == :tickets do %>
         <.button variant={:subtle} phx-click={JS.dispatch("gits:go_back")} type="button">
           <span>
             Done

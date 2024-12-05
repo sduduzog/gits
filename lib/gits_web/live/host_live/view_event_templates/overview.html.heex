@@ -1,4 +1,10 @@
 <div class="px-2 lg:p-0 grid gap-6">
+  <div :if={false}>
+    <.button>
+      <.icon name="i-lucide-rocket" />
+      <span>Publish</span>
+    </.button>
+  </div>
   <div class="lg:flex gap-4 rounded-xl border p-4 text-sm/6">
     <.icon name="i-lucide-triangle-alert" class="mt-1 text-orange-500" />
     <div class="grid pb-2 grow">
