@@ -5,7 +5,7 @@
     <div class="flex border-b">
       <span :for={i <- ["Coming up"]} class="px-4">
         <span class="block border-b-2 border-zinc-500 py-4 text-sm font-medium text-zinc-700">
-          <%= i %>
+          {i}
         </span>
       </span>
     </div>
@@ -28,9 +28,9 @@
             />
           </div>
           <div class="grid grow gap-2">
-            <span class="font-semibold text-zinc-500"><%= instance.ticket.name %></span>
+            <span class="font-semibold text-zinc-500">{instance.ticket.name}</span>
             <h2 class="line-clamp-2 font-semibold leading-tight text-zinc-900">
-              <%= instance.ticket.event.name %>
+              {instance.ticket.event.name}
             </h2>
           </div>
           <div class="flex shrink-0 flex-col gap-2">
@@ -58,7 +58,7 @@
               <span class="text-sm">No address</span>
             <% else %>
               <span class="truncate text-sm">
-                <%= instance.ticket.event.address.display_name %> &bull; <%= instance.ticket.event.address.city %>
+                {instance.ticket.event.address.display_name} &bull; {instance.ticket.event.address.city}
               </span>
             <% end %>
           </div>

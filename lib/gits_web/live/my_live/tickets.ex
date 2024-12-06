@@ -35,7 +35,8 @@ defmodule GitsWeb.MyLive.Tickets do
       |> Ash.Query.load(
         ticket_types:
           Ash.Query.load(TicketType,
-            tickets: Ash.Query.filter(Ticket, order.email == ^user.email)
+            tickets:
+              Ash.Query.filter(Ticket, order.email == ^user.email and order.state == :completed)
           )
       )
       |> Ash.read()

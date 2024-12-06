@@ -143,8 +143,7 @@ defmodule Gits.Accounts.User do
   aggregates do
     count :tickets_count, [:orders, :tickets] do
       join_filter :orders, expr(state == :completed)
-
-      # join_filter [:orders, :tickets], expr(public_id == "05e721") // when I need to filter out scanned tickets
+      join_filter [:orders, :tickets], expr(order.state == :completed)
     end
   end
 

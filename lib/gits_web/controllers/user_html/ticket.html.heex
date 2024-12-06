@@ -1,14 +1,14 @@
 <%= if is_nil(@token) do %>
 <% else %>
   <div class="min-h-dvh mx-auto w-full max-w-sm flex-col space-y-2 p-4 text-center">
-    <span class="text-sm font-medium text-zinc-500"><%= @ticket_name %></span>
+    <span class="text-sm font-medium text-zinc-500">{@ticket_name}</span>
     <div class="min-h-16">
       <h1 class="line-clamp-2 text-2xl font-bold">
-        <%= @event_name %>
+        {@event_name}
       </h1>
     </div>
     <div class={["", if(is_nil(@current_user), do: "blur", else: "")]}>
-      <%= raw(
+      {raw(
         @token
         |> EQRCode.encode()
         |> EQRCode.svg(
@@ -18,7 +18,7 @@
           background_color: :transparent,
           width: 360
         )
-      ) %>
+      )}
     </div>
     <div>
       <div class="grid justify-center gap-2 text-center">
@@ -33,7 +33,7 @@
             </.link>
           </span>
         <% else %>
-          <span class="font-semibold"><%= @current_user.display_name %></span>
+          <span class="font-semibold">{@current_user.display_name}</span>
           <span class="max-w-56 mx-auto inline-block w-full text-sm text-zinc-500">
             Please present this QR code at the entrance
           </span>
