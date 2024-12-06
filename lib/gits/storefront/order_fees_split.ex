@@ -1,7 +1,12 @@
 defmodule Gits.Storefront.OrderFeesSplit do
   alias Gits.Repo
   alias Gits.Storefront.Order
-  use Ash.Resource, domain: Gits.Storefront, data_layer: AshPostgres.DataLayer
+
+  use Ash.Resource,
+    domain: Gits.Storefront,
+    authorizers: Ash.Policy.Authorizer,
+    data_layer: AshPostgres.DataLayer,
+    extensions: [AshArchival.Resource]
 
   postgres do
     table "order_fees_splits"

@@ -1,15 +1,24 @@
 defmodule Gits.Storefront.Event do
   alias Gits.Storefront.{Order, TicketType}
-  alias Gits.Accounts.{Host}
+  alias Gits.Accounts.{Host, User, Venue}
+  alias Gits.Accounts
 
   use Ash.Resource,
     domain: Gits.Storefront,
     data_layer: AshPostgres.DataLayer,
-    extensions: [AshArchival.Resource]
+    authorizers: Ash.Policy.Authorizer,
+    extensions: [AshArchival.Resource, AshPaperTrail.Resource]
 
   postgres do
     table "events"
     repo Gits.Repo
+  end
+
+  paper_trail do
+    belongs_to_actor :user, User, domain: Accounts
+    change_tracking_mode :changes_only
+    store_action_name? true
+    ignore_attributes [:created_at, :updated_at]
   end
 
   code_interface do
@@ -81,14 +90,13 @@ defmodule Gits.Storefront.Event do
       default: &Nanoid.generate/0
 
     attribute :name, :string, public?: true, allow_nil?: false
-
     attribute :starts_at, :naive_datetime, public?: true, allow_nil?: false
     attribute :ends_at, :naive_datetime, public?: true, allow_nil?: false
-
-    # attribute :description, :string, public?: true
     attribute :visibility, :atom, public?: true, constraints: [one_of: [:private, :public]]
 
-    # attribute :payout_schedule, :atom, constraints: [one_of: [:auto, :manual]]
+    attribute :summary, :string, public?: true
+    attribute :description, :string, public?: true
+
     attribute :published_at, :utc_datetime, public?: true
 
     create_timestamp :created_at
@@ -99,6 +107,8 @@ defmodule Gits.Storefront.Event do
     belongs_to :host, Host do
       allow_nil? false
     end
+
+    belongs_to :venue, Venue
 
     has_many :ticket_types, TicketType
     has_many :orders, Order

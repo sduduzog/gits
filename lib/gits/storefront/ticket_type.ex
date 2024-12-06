@@ -1,14 +1,24 @@
 defmodule Gits.Storefront.TicketType do
   alias Gits.Storefront.{Event, Ticket}
+  alias Gits.Accounts
+  alias Gits.Accounts.User
 
   use Ash.Resource,
     domain: Gits.Storefront,
     data_layer: AshPostgres.DataLayer,
-    extensions: [AshArchival.Resource]
+    authorizers: Ash.Policy.Authorizer,
+    extensions: [AshArchival.Resource, AshPaperTrail.Resource]
 
   postgres do
     table "ticket_types"
     repo Gits.Repo
+  end
+
+  paper_trail do
+    belongs_to_actor :user, User, domain: Accounts
+    change_tracking_mode :changes_only
+    store_action_name? true
+    ignore_attributes [:created_at, :updated_at]
   end
 
   actions do

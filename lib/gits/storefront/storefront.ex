@@ -1,9 +1,8 @@
 defmodule Gits.Storefront do
-  use Ash.Domain
+  use Ash.Domain, extensions: [AshPaperTrail.Domain]
 
   alias __MODULE__.{
     Event,
-    EventMedia,
     Interaction,
     Order,
     OrderFeesSplit,
@@ -13,11 +12,13 @@ defmodule Gits.Storefront do
 
   resources do
     resource Event
-    resource EventMedia
+    resource Event.Version
     resource Interaction
     resource Order
     resource OrderFeesSplit
     resource Ticket
+    resource Ticket.Version
     resource TicketType
+    resource TicketType.Version
   end
 end

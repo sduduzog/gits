@@ -4,17 +4,18 @@ defmodule Gits.Storefront.Order do
   use Ash.Resource,
     domain: Gits.Storefront,
     data_layer: AshPostgres.DataLayer,
+    authorizers: Ash.Policy.Authorizer,
     extensions: [AshArchival.Resource, AshStateMachine]
-
-  alias Gits.PaystackApi
-
-  alias Gits.Storefront.{Event, OrderFeesSplit, Ticket, TicketType}
-  alias __MODULE__.Notifiers.{OrderCompleted, OrderConfirmed}
 
   postgres do
     table "orders"
     repo Gits.Repo
   end
+
+  alias Gits.PaystackApi
+
+  alias Gits.Storefront.{Event, OrderFeesSplit, Ticket, TicketType}
+  alias __MODULE__.Notifiers.{OrderCompleted, OrderConfirmed}
 
   state_machine do
     initial_states [:open]

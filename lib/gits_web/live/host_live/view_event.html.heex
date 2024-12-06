@@ -27,21 +27,57 @@
   </div>
 </div>
 
-<div class="flex gap-4 p-2 lg:gap-4">
-  <div class="aspect-[3/2] h-20 rounded-lg bg-zinc-200"></div>
-  <div class="grid items-start gap-1">
+<div class="gap-4 flex flex-wrap p-2 items-end">
+  <div class="aspect-[3/2] h-20 lg:h-24 rounded-lg bg-zinc-200"></div>
+  <div class="grid items-start gap-2">
     <h1 class="inline-flex flex-wrap gap-1 text-lg/5 font-semibold">
       {@event.name}
     </h1>
-    <div class="flex flex-wrap items-center gap-2">
-      <.link
-        target="_blank"
-        class="flex rounded-lg border p-1 text-zinc-500 hover:text-zinc-950"
+    <div class="flex flex-wrap items-center gap-4">
+      <.button
+        size={:none}
+        class="p-2"
+        variant={:outline}
+        phx-click={
+          JS.patch(
+            Routes.host_view_event_path(
+              @socket,
+              @live_action,
+              @host_handle,
+              @event.public_id,
+              %{
+                archive: @event.public_id
+              }
+            ),
+            replace: true
+          )
+          |> show_modal("archive-event")
+        }
+      >
+        <.icon name="i-lucide-trash" />
+      </.button>
+      <.button
+        size={:none}
+        class="p-2"
+        variant={:outline}
+        phx-click={
+          JS.navigate(
+            Routes.host_edit_event_path(@socket, :details, @host_handle, @event.public_id)
+          )
+        }
+      >
+        <.icon name="i-lucide-pen-line" />
+      </.button>
+
+      <.button
+        size={:none}
+        class="p-2"
+        variant={:outline}
         href={Routes.storefront_event_listing_path(@socket, :index, @event.public_id)}
       >
-        <span class="sr-only">Open url</span>
-        <.icon name="i-lucide-link" class="text-sm" />
-      </.link>
+        <.icon name="i-lucide-link-2" />
+      </.button>
+
       <span class="text-xs/4 text-zinc-500">
         Created {Calendar.strftime(@event.created_at, "%d %b %Y")}
       </span>
@@ -52,49 +88,14 @@
 <div class="grid gap-4 lg:grid-cols-[24rem_1fr] lg:gap-8">
   <div class="space-y-4 p-2">
     <div class="grid w-full divide-y rounded-xl border">
-      <div class="flex w-full justify-end gap-1 p-4">
-        <div role="none" class="grow"></div>
-        <.button
-          variant={:ghost}
-          phx-click={
-            JS.navigate(
-              Routes.host_edit_event_path(@socket, :details, @host_handle, @event.public_id)
-            )
-          }
-        >
-          <.icon name="i-lucide-pen-line" />
-          <span class="">Edit</span>
-        </.button>
-        <.button
-          variant={:ghost}
-          phx-click={
-            JS.patch(
-              Routes.host_view_event_path(
-                @socket,
-                @live_action,
-                @host_handle,
-                @event.public_id,
-                %{
-                  archive: @event.public_id
-                }
-              ),
-              replace: true
-            )
-            |> show_modal("archive-event")
-          }
-        >
-          <.icon name="i-lucide-trash-2" />
-          <span class="">Archive</span>
-        </.button>
-      </div>
-      <div class="p-4">
-        <dl class="flex flex-wrap gap-2">
+      <div class="p-4 space-y-2">
+        <h3 class="font-semibold px-2">Event Details</h3>
+        <dl class="flex flex-wrap gap-2 p-2">
           <div class="grid w-full grid-cols-[theme(space.24)_1fr]">
             <dt class="flex-none">
               <span class="text-sm/6 text-zinc-500">Visibility</span>
             </dt>
             <dd class="flex items-center gap-2 text-sm/6">
-              <.icon name="i-lucide-eye-off" class="text-zinc-400" />
               <span>
                 {to_string(@event.visibility) |> String.capitalize()}
               </span>
@@ -106,7 +107,6 @@
               <span class="text-sm/6 text-zinc-500">Starts at</span>
             </dt>
             <dd class="flex items-center gap-2 text-sm/6">
-              <.icon name="i-lucide-calendar-days" class="text-zinc-400" />
               <span>
                 {Calendar.strftime(
                   @event.starts_at,
@@ -115,7 +115,54 @@
               </span>
             </dd>
           </div>
+
+          <div class="grid w-full grid-cols-[theme(space.24)_1fr]">
+            <dt class="flex-none">
+              <span class="text-sm/6 text-zinc-500">Ends at</span>
+            </dt>
+            <dd class="flex items-center gap-2 text-sm/6">
+              <span>
+                {Calendar.strftime(
+                  @event.ends_at,
+                  "%d %B %Y, %I:%M %p"
+                )}
+              </span>
+            </dd>
+          </div>
         </dl>
+      </div>
+      <div class="p-2">
+        <div class="flex items-center justify-between">
+          <h3 class="font-semibold px-2">Tickets</h3>
+          <.button
+            size={:none}
+            variant={:ghost}
+            class="p-2"
+            phx-click={
+              JS.navigate(
+                Routes.host_edit_event_path(@socket, :tickets, @host.handle, @event.public_id)
+              )
+            }
+          >
+            <.icon name="i-lucide-settings-2" />
+          </.button>
+        </div>
+        <div :for={type <- @event.ticket_types} class="flex items-center gap-4 p-2">
+          <span class="w-1 self-stretch rounded-full" style={"background-color: #{type.color}"}>
+          </span>
+          <div class="grow">
+            <span class="text-sm/4 font-medium">{type.name}</span>
+            <div class="flex gap-2 text-sm/4 text-zinc-500">
+              <span>
+                foo
+              </span>
+            </div>
+          </div>
+          <div class="">
+            <span class="text-xl font-light">0</span>
+            <span class="text-xl font-light text-zinc-500">/ {type.quantity}</span>
+          </div>
+        </div>
       </div>
       <div class="grid grid-cols-3 divide-x p-4">
         <div
@@ -127,44 +174,11 @@
         </div>
       </div>
     </div>
-    <div class="rounded-xl border pb-2">
-      <div class="flex items-center justify-between p-2">
-        <span class="font-semibold px-2">Tickets</span>
-        <.button
-          size={:none}
-          variant={:ghost}
-          class="p-2"
-          phx-click={
-            JS.navigate(
-              Routes.host_edit_event_path(@socket, :tickets, @host.handle, @event.public_id)
-            )
-          }
-        >
-          <.icon name="i-lucide-settings-2" />
-        </.button>
-      </div>
-      <div :for={type <- @event.ticket_types} class="flex items-center gap-4 py-2 px-4">
-        <span class="w-1 self-stretch rounded-full" style={"background-color: #{type.color}"}>
-        </span>
-        <div class="grow">
-          <span class="text-sm/4 font-medium">{type.name}</span>
-          <div class="flex gap-2 text-sm/4 text-zinc-500">
-            <span>
-              foo
-            </span>
-          </div>
-        </div>
-        <div class="">
-          <span class="text-xl font-light">0</span>
-          <span class="text-xl font-light text-zinc-500">/ {type.quantity}</span>
-        </div>
-      </div>
-    </div>
   </div>
   <div class="grow space-y-4 lg:pr-2">
     <div class="flex items-center gap-8 border-b-2 border-zinc-100">
       <.link
-        :for={action <- [:overview, :attendees]}
+        :for={action <- [:overview]}
         patch={Routes.host_view_event_path(@socket, action, @host.handle, @event.public_id)}
         replace={true}
         aria-selected={"#{action == @live_action}"}
@@ -176,10 +190,11 @@
       </.link>
     </div>
 
-    <.tab_header :if={false} action={@live_action} />
-
     <.overview
       :if={@live_action == :overview}
+      ready_to_publish={false}
+      payments_ready={not is_nil(@host.paystack_subaccount_code)}
+      issues={["This is number one"]}
       host_settings_payouts_path={Routes.host_settings_path(@socket, :payouts, @host.handle)}
     />
     <.attendees :if={@live_action == :attendees} attendees={@attendees} />

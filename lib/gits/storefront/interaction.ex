@@ -1,6 +1,7 @@
 defmodule Gits.Storefront.Interaction do
   use Ash.Resource,
     domain: Gits.Storefront,
+    authorizers: Ash.Policy.Authorizer,
     data_layer: AshPostgres.DataLayer
 
   postgres do
@@ -13,7 +14,7 @@ defmodule Gits.Storefront.Interaction do
 
     attribute :type, :atom,
       public?: true,
-      constraints: [one_of: [:view_event]]
+      constraints: [one_of: [:view]]
 
     create_timestamp :created_at
   end

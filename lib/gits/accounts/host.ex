@@ -4,13 +4,21 @@ defmodule Gits.Accounts.Host do
   alias Gits.Accounts.{Role, User}
 
   use Ash.Resource,
-    domain: Gits.Accounts,
+    domain: Accounts,
     data_layer: AshPostgres.DataLayer,
-    extensions: [AshArchival.Resource]
+    authorizers: Ash.Policy.Authorizer,
+    extensions: [AshArchival.Resource, AshPaperTrail.Resource]
 
   postgres do
     repo Gits.Repo
     table "hosts"
+  end
+
+  paper_trail do
+    belongs_to_actor :user, User
+    change_tracking_mode :changes_only
+    store_action_name? true
+    ignore_attributes [:created_at, :updated_at]
   end
 
   actions do
@@ -24,7 +32,12 @@ defmodule Gits.Accounts.Host do
         allow_nil? false
       end
 
+      argument :role, :map do
+        allow_nil? false
+      end
+
       change manage_relationship(:owner, type: :append)
+      change manage_relationship(:role, :roles, type: :create)
       change set_attribute(:handle, &Nanoid.generate/0)
     end
 

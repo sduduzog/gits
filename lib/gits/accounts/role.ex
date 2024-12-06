@@ -4,6 +4,7 @@ defmodule Gits.Accounts.Role do
   use Ash.Resource,
     domain: Gits.Accounts,
     data_layer: AshPostgres.DataLayer,
+    authorizers: Ash.Policy.Authorizer,
     extensions: [AshArchival.Resource]
 
   postgres do
@@ -17,13 +18,9 @@ defmodule Gits.Accounts.Role do
 
   attributes do
     uuid_primary_key :id
-    attribute :name, :string, allow_nil?: false
-    attribute :slug, :string, allow_nil?: false
-
     attribute :type, RoleType
 
     create_timestamp :created_at
-    update_timestamp :updated_at
   end
 
   relationships do

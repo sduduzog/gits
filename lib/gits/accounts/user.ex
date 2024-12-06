@@ -1,14 +1,14 @@
 defmodule Gits.Accounts.User do
   alias Gits.Secrets
   alias Gits.Accounts.{Role, Token}
-  alias Gits.Storefront.{Order, Ticket}
+  alias Gits.Storefront.{Order}
   alias __MODULE__
 
   use Ash.Resource,
+    domain: Gits.Accounts,
     data_layer: AshPostgres.DataLayer,
-    extensions: [AshAuthentication, AshArchival.Resource],
     authorizers: Ash.Policy.Authorizer,
-    domain: Gits.Accounts
+    extensions: [AshAuthentication, AshArchival.Resource]
 
   postgres do
     table "users"
