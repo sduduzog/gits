@@ -39,6 +39,7 @@
       <.inputs_for :let={tf} field={f[:type]}>
         <.input type="text" field={tf[:name]} label="Name" />
 
+        <.input type="color" field={tf[:color]} label="Price" />
         <.input type="number" field={tf[:price]} label="Price" />
         <.input type="number" field={tf[:quantity]} label="Quantity" />
         <.input type="number" field={tf[:limit_per_user]} label="Limit per user" />
@@ -98,7 +99,14 @@
 
   <div class="mt-8 rounded-xl border">
     <.table id="tickets" rows={@event.ticket_types}>
-      <:col :let={ticket} label="Ticket">{ticket.name}</:col>
+      <:col :let={ticket} label="Ticket">
+        <div class="flex gap-3">
+          <span class="w-1 self-stretch rounded-full" style={"background-color: #{ticket.color}"}>
+          </span>
+
+          {ticket.name}
+        </div>
+      </:col>
       <:col :let={ticket} label="Quantity">{ticket.quantity}</:col>
       <:col :let={ticket} label="Price">{ticket.price}</:col>
       <:col :let={ticket} label="Limit p.p" optional>{ticket.limit_per_user}</:col>

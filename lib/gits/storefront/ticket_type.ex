@@ -29,7 +29,7 @@ defmodule Gits.Storefront.TicketType do
 
     attribute :color, :string,
       public?: true,
-      default: fn -> Nanoid.generate(6, "0123456789abcdef") end
+      default: fn -> "#" <> Nanoid.generate(6, "0123456789abcdef") end
 
     create_timestamp :created_at
     update_timestamp :updated_at
