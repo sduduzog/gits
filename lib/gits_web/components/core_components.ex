@@ -275,7 +275,7 @@ defmodule GitsWeb.CoreComponents do
                   <.icon name="i-lucide-x" />
                 </button>
               </div>
-              <div id={"#{@id}-content"}>
+              <div id={"#{@id}-content"} class="p-2">
                 {render_slot(@inner_block)}
               </div>
             </.focus_wrap>

@@ -2,16 +2,13 @@
 <div class="grid min-h-[calc(100dvh-10rem)] items-start max-w-screen-xl mx-auto grid-rows-[auto_1fr] gap-8 bg-white px-2 pt-12 pb-20">
   <header class="flex items-center w-full divide-x">
     <div class="flex pr-2">
-      <button
-        onclick="history.back()"
-        class="inline-flex border size-9 items-center justify-center rounded-lg"
-      >
+      <.button size={:none} onclick="history.back()" variant={:outline} class="lg:p-2 p-3">
         <.icon name="i-lucide-x" />
-      </button>
+      </.button>
     </div>
   </header>
   <main class="bg-white lg:gap-8 gap-6 w-full grid">
-    <%= @inner_content %>
+    {@inner_content}
   </main>
 </div>
 <.footer />

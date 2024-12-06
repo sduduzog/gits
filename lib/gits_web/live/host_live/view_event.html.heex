@@ -27,16 +27,16 @@
   </div>
 </div>
 
-<div class="p-2 flex gap-4 lg:gap-4">
-  <div class="aspect-[3/2] rounded-lg bg-zinc-200 h-20"></div>
+<div class="flex gap-4 p-2 lg:gap-4">
+  <div class="aspect-[3/2] h-20 rounded-lg bg-zinc-200"></div>
   <div class="grid items-start gap-1">
-    <h1 class="font-semibold text-lg/5 inline-flex flex-wrap gap-1">
+    <h1 class="inline-flex flex-wrap gap-1 text-lg/5 font-semibold">
       {@event.name}
     </h1>
     <div class="flex flex-wrap items-center gap-2">
       <.link
         target="_blank"
-        class="flex rounded-lg text-zinc-500 border p-1 hover:text-zinc-950"
+        class="flex rounded-lg border p-1 text-zinc-500 hover:text-zinc-950"
         href={Routes.storefront_event_listing_path(@socket, :index, @event.public_id)}
       >
         <span class="sr-only">Open url</span>
@@ -49,10 +49,10 @@
   </div>
 </div>
 
-<div class="grid lg:grid-cols-[24rem_1fr] gap-4 lg:gap-8">
-  <div class="p-2">
-    <div class="grid w-full rounded-xl border divide-y">
-      <div class="w-full flex justify-end gap-1 p-4">
+<div class="grid gap-4 lg:grid-cols-[24rem_1fr] lg:gap-8">
+  <div class="space-y-4 p-2">
+    <div class="grid w-full divide-y rounded-xl border">
+      <div class="flex w-full justify-end gap-1 p-4">
         <div role="none" class="grow"></div>
         <.button
           variant={:ghost}
@@ -89,11 +89,11 @@
       </div>
       <div class="p-4">
         <dl class="flex flex-wrap gap-2">
-          <div class="grid grid-cols-[theme(space.24)_1fr] w-full">
+          <div class="grid w-full grid-cols-[theme(space.24)_1fr]">
             <dt class="flex-none">
               <span class="text-sm/6 text-zinc-500">Visibility</span>
             </dt>
-            <dd class="text-sm/6 gap-2 flex items-center">
+            <dd class="flex items-center gap-2 text-sm/6">
               <.icon name="i-lucide-eye-off" class="text-zinc-400" />
               <span>
                 {to_string(@event.visibility) |> String.capitalize()}
@@ -101,11 +101,11 @@
             </dd>
           </div>
 
-          <div class="grid grid-cols-[theme(space.24)_1fr] w-full">
+          <div class="grid w-full grid-cols-[theme(space.24)_1fr]">
             <dt class="flex-none">
               <span class="text-sm/6 text-zinc-500">Starts at</span>
             </dt>
-            <dd class="text-sm/6 gap-2 flex items-center">
+            <dd class="flex items-center gap-2 text-sm/6">
               <.icon name="i-lucide-calendar-days" class="text-zinc-400" />
               <span>
                 {Calendar.strftime(
@@ -117,13 +117,45 @@
           </div>
         </dl>
       </div>
-      <div class="p-4 grid grid-cols-3 divide-x">
+      <div class="grid grid-cols-3 divide-x p-4">
         <div
           :for={{label, unit} <- [{"Unique views", "0"}, {"Total orders", "0"}]}
           class="grid pl-2 first:pl-0"
         >
           <span class="text-xs font-medium text-zinc-600">{label}</span>
           <span class="text-2xl font-medium">{unit}</span>
+        </div>
+      </div>
+    </div>
+    <div class="rounded-xl border pb-2">
+      <div class="flex items-center justify-between p-2">
+        <span class="font-semibold px-2">Tickets</span>
+        <.button
+          size={:none}
+          variant={:ghost}
+          class="p-2"
+          phx-click={
+            JS.navigate(
+              Routes.host_edit_event_path(@socket, :tickets, @host.handle, @event.public_id)
+            )
+          }
+        >
+          <.icon name="i-lucide-settings-2" />
+        </.button>
+      </div>
+      <div :for={type <- @event.ticket_types} class="flex items-center gap-4 py-2 px-4">
+        <span class="w-1 self-stretch rounded-full bg-red-500"></span>
+        <div class="grow">
+          <span class="text-sm/4 font-medium">{type.name}</span>
+          <div class="flex gap-2 text-sm/4 text-zinc-500">
+            <span>
+              foo
+            </span>
+          </div>
+        </div>
+        <div class="">
+          <span class="text-xl font-light">0</span>
+          <span class="text-xl font-light text-zinc-500">/ {type.quantity}</span>
         </div>
       </div>
     </div>
@@ -143,7 +175,7 @@
       </.link>
     </div>
 
-    <.tab_header action={@live_action} />
+    <.tab_header :if={false} action={@live_action} />
 
     <.overview
       :if={@live_action == :overview}

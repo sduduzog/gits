@@ -20,7 +20,7 @@ defmodule GitsWeb.HostLive.ViewEvent do
   def handle_params(%{"public_id" => public_id} = unsigned_params, _uri, socket) do
     Event
     |> Ash.Query.filter(public_id == ^public_id)
-    |> Ash.Query.load([:published?])
+    |> Ash.Query.load([:published?, :ticket_types])
     |> Ash.read_one()
     |> case do
       {:ok, %Event{} = event} ->

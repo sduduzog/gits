@@ -7,28 +7,38 @@
 </div>
 
 <div class="relative flex gap-2">
-  <div
+  <.link
     :for={
       {label, action} <- [
         {"Event Details", :details},
         {"Tickets", :tickets}
       ]
     }
-    class="group grid w-full max-w-36"
+    patch={
+      if @event,
+        do: Routes.host_edit_event_path(@socket, action, @host.handle, @event.public_id),
+        else: "#"
+    }
+    replace={true}
+    class="group grid w-full lg:max-w-36 max-w-20 focus-visible:ring-offset-1 focus-visible:ring-zinc-600 focus-visible:outline-none focus-visible:ring-2 rounded-xl lg:rounded"
     aria-selected={"#{action == @live_action}"}
   >
-    <div class="">
-      <div class="h-1.5 rounded-full bg-zinc-200 group-aria-selected:bg-zinc-800"></div>
-    </div>
+    <div class="lg:h-1.5 h-3 rounded-full bg-zinc-200 group-aria-selected:bg-zinc-800"></div>
     <div class="inset-x-0 top-4 hidden text-zinc-400 group-aria-selected:text-zinc-950 lg:inline-flex">
       <span class="text-sm font-semibold">{label}</span>
     </div>
-  </div>
+  </.link>
 </div>
 
 <div class="flex grow flex-col lg:flex-row">
   <div class="mt-4 w-full lg:mt-0">
-    <.event_details :if={@live_action == :details} form={@form} />
+    <.event_details
+      :if={@live_action == :details}
+      form={@form}
+      socket={@socket}
+      host={@host}
+      event={@event}
+    />
     <.tickets
       :if={@live_action == :tickets}
       form={@form}
@@ -37,9 +47,8 @@
       event={@event}
       live_action={@live_action}
       event_id={@event.public_id}
-      show_create_ticket_modal={@show_create_ticket_modal}
-      show_edit_ticket_modal={@show_edit_ticket_modal}
       show_archive_ticket_modal={@show_archive_ticket_modal}
+      show_ticket_form={@show_ticket_form}
     />
 
     <.summary
@@ -48,7 +57,7 @@
       payout_details_required={false}
     />
 
-    <div class="mt-8 flex gap-6">
+    <div :if={false} class="mt-8 flex gap-6">
       <.button
         disabled={@live_action == :details}
         phx-click="previous"

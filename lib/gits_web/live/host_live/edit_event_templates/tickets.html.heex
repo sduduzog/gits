@@ -1,108 +1,81 @@
-<h2 class="text-lg/7 font-semibold text-gray-900">Tickets</h2>
-<p class="mb-4 mt-1 text-sm/5 text-gray-600"></p>
-
-<div class="grid items-start gap-4 pb-10 lg:grid-cols-3">
-  <div :for={ticket_type <- @event.ticket_types} class="grid gap-4 rounded-xl border p-4">
-    <div class="flex gap-4 overflow-hidden">
-      <h3 class="grow text-base/7 font-semibold text-gray-900">{ticket_type.name}</h3>
-      <.button
-        type="button"
-        size={:none}
-        variant={:outline}
-        class="shrink-0 p-2"
-        phx-click={
-          JS.patch(
-            Routes.host_edit_event_path(
-              @socket,
-              @live_action,
-              @host.handle,
-              @event.public_id,
-              %{modal: :ticket, edit: ticket_type.id}
-            ),
-            replace: true
-          )
-          |> show_modal("edit_ticket")
-        }
-      >
-        <.icon name="i-lucide-pen-line" />
-        <span class="sr-only">
-          Edit
-        </span>
-      </.button>
-
-      <.button
-        variant={:outline}
-        class="shrink-0 p-2"
-        size={:none}
-        type="button"
-        phx-click={
-          JS.patch(
-            Routes.host_edit_event_path(
-              @socket,
-              @live_action,
-              @host.handle,
-              @event.public_id,
-              %{modal: :ticket, archive: ticket_type.id}
-            ),
-            replace: true
-          )
-          |> show_modal("archive_ticket")
-        }
-      >
-        <.icon name="i-lucide-trash" />
-        <span class="sr-only">
-          Delete
-        </span>
-      </.button>
+<%= if @show_ticket_form do %>
+  <div class="flex items-center">
+    <div class="grow">
+      <h2 class="text-lg/7 font-semibold text-gray-900">
+        {if @form.action == :add_ticket_type, do: "Add ticket", else: "Edit ticket"}
+      </h2>
+      <p class="mb-4 mt-1 text-sm/5 text-gray-600"></p>
     </div>
-    <dl class="flex gap-2 text-sm/4 col-span-full">
-      <div class="flex gap-2">
-        <div class=" text-zinc-400">
-          <.icon name="i-lucide-banknote" />
-          <span class="sr-only">Price</span>
-        </div>
-        <span>R {ticket_type.price}</span>
-      </div>
-      <span>&bull;</span>
-      <div class="flex gap-1">
-        <div class="text-zinc-400">
-          <.icon name="i-lucide-users" />
-          <span class="sr-only">Quantity</span>
-        </div>
-        <span>{ticket_type.quantity}</span>
-      </div>
-      <span>&bull;</span>
-      <div class="flex gap-1">
-        <dt class="text-zinc-400">
-          <.icon name="i-lucide-user" /><span class="sr-only">Limit per customer</span>
-        </dt>
-        <dd>{ticket_type.limit_per_user} p.p</dd>
-      </div>
-    </dl>
-    <dl class="grid gap-3 text-sm/4">
-      <div :if={false} class="flex">
-        <dt class="w-full max-w-6 text-zinc-400">
-          <.icon name="i-lucide-calendar-clock" /><span class="sr-only">Date</span>
-        </dt>
-        <dd class="grid gap-2">
-          {""}
-          <span>
-            12:00 PM, 31 Sep 2024 <span class="text-zinc-500"> &dash; Starts sale</span>
-          </span>
-          <span>
-            12:00 PM, 31 Sep 2024 <span class="text-zinc-500"> &dash; Ends sale</span>
-          </span>
-        </dd>
-      </div>
-      <div class="flex">
-        <dt class="w-full max-w-6 text-zinc-400">
-          <.icon name="i-lucide-text" /><span class="sr-only">Description</span>
-        </dt>
-        <dd>{ticket_type.description}</dd>
-      </div>
-    </dl>
+    <.button
+      variant={:subtle}
+      class="shrink-0"
+      phx-click={
+        JS.patch(
+          Routes.host_edit_event_path(
+            @socket,
+            @live_action,
+            @host.handle,
+            @event.public_id
+          ),
+          replace: true
+        )
+      }
+    >
+      <span class="font-semibold">Cancel</span>
+    </.button>
   </div>
-  <div class="flex gap-4 rounded-xl items-start">
+  <.form
+    :let={f}
+    id="add_ticket_form"
+    for={@form}
+    class="grow"
+    phx-submit={
+      JS.push("tickets")
+      |> JS.exec("data-cancel", to: "#create_ticket")
+    }
+    phx-change="validate"
+  >
+    <div class="grid max-w-screen-sm grid-cols-2 gap-4">
+      <.inputs_for :let={tf} field={f[:type]}>
+        <.input type="text" field={tf[:name]} label="Name" />
+
+        <.input type="number" field={tf[:price]} label="Price" />
+        <.input type="number" field={tf[:quantity]} label="Quantity" />
+        <.input type="number" field={tf[:limit_per_user]} label="Limit per user" />
+
+        <.input field={tf[:sale_starts_at]} label="Sale start" type="datetime-local" />
+
+        <.input field={tf[:sale_ends_at]} label="Sale end" type="datetime-local" />
+
+        <.input
+          type="textarea"
+          field={tf[:description]}
+          label="Description"
+          class="col-span-full"
+        />
+      </.inputs_for>
+    </div>
+    <div class="col-span-full flex gap-6 py-4 pb-8">
+      <.button disabled={not @form.changed? or not @form.valid?}>
+        <span class="text-sm font-semibold capitalize">
+          Save
+        </span>
+      </.button>
+
+      <.button variant={:ghost} type="reset" name="reset">
+        <span class="text-sm font-semibold">
+          Reset
+        </span>
+      </.button>
+      <div role="none" class="grow"></div>
+    </div>
+  </.form>
+<% else %>
+  <div class="flex items-center">
+    <div class="grow">
+      <h2 class="text-lg/7 font-semibold text-gray-900">Tickets</h2>
+      <p class="mb-4 mt-1 text-sm/5 text-gray-600"></p>
+    </div>
     <.button
       class="shrink-0"
       phx-click={
@@ -112,6 +85,84 @@
             @live_action,
             @host.handle,
             @event.public_id,
+            %{ticket: :create}
+          ),
+          replace: true
+        )
+      }
+    >
+      <.icon name="i-lucide-plus" />
+      <span class="font-semibold">Add ticket</span>
+    </.button>
+  </div>
+
+  <div class="mt-8 rounded-xl border">
+    <.table id="tickets" rows={@event.ticket_types}>
+      <:col :let={ticket} label="Ticket">{ticket.name}</:col>
+      <:col :let={ticket} label="Quantity">{ticket.quantity}</:col>
+      <:col :let={ticket} label="Price">{ticket.price}</:col>
+      <:col :let={ticket} label="Limit p.p" optional>{ticket.limit_per_user}</:col>
+
+      <:action :let={ticket}>
+        <.button
+          variant={:ghost}
+          size={:none}
+          class="p-2"
+          phx-click={
+            JS.patch(
+              Routes.host_edit_event_path(
+                @socket,
+                @live_action,
+                @host.handle,
+                @event.public_id,
+                %{ticket: :edit, id: ticket.id}
+              ),
+              replace: true
+            )
+          }
+        >
+          <.icon name="i-lucide-pen-line" />
+        </.button>
+      </:action>
+
+      <:action :let={ticket}>
+        <.button
+          variant={:ghost}
+          size={:none}
+          class="p-2"
+          phx-click={
+            JS.patch(
+              Routes.host_edit_event_path(
+                @socket,
+                @live_action,
+                @host.handle,
+                @event.public_id,
+                %{modal: :ticket, archive: ticket.id}
+              ),
+              replace: true
+            )
+            |> show_modal("archive_ticket")
+          }
+        >
+          <.icon name="i-lucide-trash" />
+        </.button>
+      </:action>
+    </.table>
+  </div>
+
+  <div class="col-span-full flex gap-6 py-4 pb-8">
+    <div role="none" class="grow"></div>
+    <.button
+      :if={@form.type == :update}
+      type="button"
+      variant={:subtle}
+      phx-click={
+        JS.patch(
+          Routes.host_edit_event_path(
+            @socket,
+            :tickets,
+            @host.handle,
+            @event.public_id,
             %{modal: :ticket, create: nil}
           ),
           replace: true
@@ -119,122 +170,13 @@
         |> show_modal("create_ticket")
       }
     >
-      <.icon name="i-lucide-ticket-plus" />
-      <span class="font-semibold">Add ticket</span>
+      <span class="text-sm font-semibold">
+        Next
+      </span>
+      <.icon name="i-lucide-chevron-right" />
     </.button>
-
-    <span class="text-sm text-zinc-600">
-      You can add as many tickets types as you need for your event.
-    </span>
   </div>
-</div>
-
-<.modal
-  new={true}
-  id="create_ticket"
-  show={@show_create_ticket_modal}
-  on_cancel={
-    JS.patch(
-      Routes.host_edit_event_path(@socket, @live_action, @host.handle, @event.public_id),
-      replace: true
-    )
-    |> hide_modal("create_ticket")
-  }
->
-  <div class="grid gap-4">
-    <h3 class="text-lg font-semibold">Add a new Ticket</h3>
-    <.form
-      :let={f}
-      id="create_ticket_form"
-      for={@form}
-      class="grid grow grid-cols-2 gap-4"
-      phx-submit={
-        JS.push("tickets")
-        |> JS.exec("data-cancel", to: "#create_ticket")
-      }
-      phx-change="validate"
-    >
-      <.inputs_for :let={tf} :if={@show_create_ticket_modal} field={f[:type]}>
-        <.input type="text" field={tf[:name]} label="Name" />
-
-        <.input type="number" field={tf[:price]} label="Price" />
-        <.input type="number" field={tf[:quantity]} label="Quantity" />
-        <.input type="number" field={tf[:limit_per_user]} label="Limit per user" />
-
-        <.input field={tf[:sale_starts_at]} label="Sale start" type="datetime-local" />
-
-        <.input field={tf[:sale_ends_at]} label="Sale end" type="datetime-local" />
-
-        <.input
-          type="textarea"
-          field={tf[:description]}
-          label="Description"
-          class="col-span-full"
-        />
-      </.inputs_for>
-      <div class="col-span-full flex justify-end">
-        <.button disabled={not @form.changed? or not @form.valid?}>
-          <span class="text-sm font-semibold">
-            Save
-          </span>
-        </.button>
-      </div>
-    </.form>
-  </div>
-</.modal>
-
-<.modal
-  id="edit_ticket"
-  new={true}
-  show={@show_edit_ticket_modal}
-  on_cancel={
-    JS.patch(
-      Routes.host_edit_event_path(@socket, @live_action, @host.handle, @event.public_id),
-      replace: true
-    )
-    |> hide_modal("edit_ticket")
-  }
->
-  <div class="grid gap-4">
-    <h3 class="text-lg font-semibold">Edit Ticket</h3>
-    <.form
-      :let={f}
-      id="edit_ticket_form"
-      for={@form}
-      class="grid grow grid-cols-2 gap-4"
-      phx-submit={
-        JS.push("tickets")
-        |> JS.exec("data-cancel", to: "#edit_ticket")
-      }
-      phx-change="validate"
-    >
-      <.inputs_for :let={tf} :if={@show_edit_ticket_modal} field={f[:type]}>
-        <.input type="text" field={tf[:name]} label="Name" />
-        <.input type="number" field={tf[:price]} label="Price" />
-        <.input type="number" field={tf[:quantity]} label="Quantity" />
-        <.input type="number" field={tf[:limit_per_user]} label="Limit per user" />
-
-        <.input field={tf[:sale_starts_at]} label="Sale start" type="datetime-local" />
-
-        <.input field={tf[:sale_ends_at]} label="Sale end" type="datetime-local" />
-
-        <.input
-          type="textarea"
-          field={tf[:description]}
-          label="Description"
-          class="col-span-full"
-        />
-      </.inputs_for>
-      <div class="col-span-full flex justify-end">
-        <button class="flex h-9 items-center rounded-lg bg-zinc-950 px-4 text-zinc-50">
-          <span class="text-sm font-semibold">
-            {if(true, do: "Save", else: "Create event")}
-          </span>
-        </button>
-      </div>
-    </.form>
-  </div>
-</.modal>
+<% end %>
 
 <.modal
   new={true}
@@ -249,7 +191,13 @@
   }
 >
   <div class="grid gap-4">
-    <h3 class="text-lg font-semibold">Archive Ticket</h3>
+    <h3 class="text-lg/4 font-semibold">Archive Ticket</h3>
+    <div class="text-sm text-zinc-500 space-y-2">
+      <p>
+        You are about to archive this ticket. Archiving will remove it from the event.
+      </p>
+      <p>Are you sure you want to archive this ticket?</p>
+    </div>
     <.form
       :let={f}
       id="archive_ticket_form"

@@ -27,6 +27,11 @@ defmodule Gits.Storefront.TicketType do
     attribute :quantity, :integer, public?: true, allow_nil?: false, default: 10
     attribute :limit_per_user, :integer, public?: true, allow_nil?: false, default: 10
 
+    attribute :color, :string,
+      allow_nil?: false,
+      public?: true,
+      default: fn -> Nanoid.generate(6, "0123456789abcdef") end
+
     create_timestamp :created_at
     update_timestamp :updated_at
   end
