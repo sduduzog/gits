@@ -90,4 +90,8 @@ defmodule Gits.Storefront.TicketType do
 
     has_many :tickets, Ticket
   end
+
+  aggregates do
+    count :tickets_count, :tickets
+  end
 end

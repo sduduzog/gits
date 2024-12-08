@@ -29,7 +29,7 @@
 
 <div class="gap-4 flex flex-wrap p-2 items-end">
   <div class="aspect-[3/2] h-20 lg:h-24 rounded-lg bg-zinc-200"></div>
-  <div class="grid items-start gap-2">
+  <div class="grid items-start gap-2 grow">
     <h1 class="inline-flex flex-wrap gap-1 text-lg/5 font-semibold">
       {@event.name}
     </h1>
@@ -59,9 +59,13 @@
         <.icon name="i-lucide-link-2" />
       </.button>
 
-      <span class="text-xs/4 text-zinc-500">
+      <span class="text-xs/4 text-zinc-500 grow">
         Created {Calendar.strftime(@event.created_at, "%d %b %Y")}
       </span>
+      <.button href={Routes.host_scanner_path(@socket, :index, @host_handle, @event.public_id)}>
+        <.icon name="i-lucide-scan-qr-code" />
+        <span>Scan</span>
+      </.button>
     </div>
   </div>
 </div>
@@ -140,7 +144,7 @@
             </div>
           </div>
           <div class="">
-            <span class="text-xl font-light">0</span>
+            <span class="text-xl font-light">{type.tickets_count}</span>
             <span class="text-xl font-light text-zinc-500">/ {type.quantity}</span>
           </div>
         </div>

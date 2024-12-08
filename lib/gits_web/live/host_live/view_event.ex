@@ -7,7 +7,7 @@ defmodule GitsWeb.HostLive.ViewEvent do
 
   def mount(params, _session, socket) do
     Ash.Query.filter(Event, public_id == ^params["public_id"])
-    |> Ash.Query.load(:ticket_types)
+    |> Ash.Query.load(ticket_types: [:tickets_count])
     |> Ash.read_one(actor: socket.assigns.current_user)
     |> case do
       {:ok, event} ->

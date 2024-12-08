@@ -84,29 +84,11 @@ defmodule GitsWeb.Router do
       live "/:handle/events/:public_id/edit/tickets", HostLive.EditEvent, :tickets
       live "/:handle/events/:public_id/edit/summary", HostLive.EditEvent, :summary
 
+      live "/:handle/events/:public_id/scanner", HostLive.Scanner, :index
+      live "/:handle/events/:public_id/scanner/:camera", HostLive.Scanner, :scan
+
       live "/:handle/settings", HostLive.Settings, :index
-
-      live "/:handle/settings/payouts/create-recipient",
-           HostLive.Settings,
-           :payouts_create_recipient
-
-      live "/hosts/:handle/events/:event_id/manage",
-           HostLive.EditEvent,
-           :summary
-
-      live "/hosts/:handle/events/:event_id/attendees", HostLive.EventView, :attendees
-
-      live "/hosts/:handle/events/:event_id/attendees/scanner",
-           HostLive.Scanner,
-           :choose_camera
-
-      live "/hosts/:handle/events/:event_id/attendees/scanner/:camera",
-           HostLive.Scanner,
-           :scan
-
-      live "/hosts/:handle/events/:event_id/guests", HostLive.Event, :guests
-
-      live "/hosts/:handle/settings/payouts", HostLive.Settings, :payouts
+      live "/:handle/settings/payouts", HostLive.Settings, :payouts
     end
   end
 

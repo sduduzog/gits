@@ -1,25 +1,22 @@
 defmodule GitsWeb.HostLive.Scanner do
   use GitsWeb, :host_live_view
 
-  def mount(_params, _session, socket) do
-    socket |> ok(false)
+  def mount(params, _session, socket) do
+    socket
+    |> assign(:host_handle, params["handle"])
+    |> assign(:public_id, params["public_id"])
+    |> ok(:host_panel)
   end
 
   def render(%{live_action: :scan} = assigns) do
     ~H"""
     <div>
-      <div data-camera={@camera} class="sticky top-0 w-screen" id="qr-scanner" phx-hook="QrScanner">
-      </div>
-      <div>
-        <div class="p-2">
-          <button class="inline-flex h-9 items-center rounded-lg border px-4 py-2">
-            <.icon name="hero-chevron-left-mini" />
-            <span class="text-sm font-semibold">Back</span>
-          </button>
-        </div>
-        <div class="text-3xl">
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veniam, aut sed! Numquam dolorum incidunt aliquam blanditiis aspernatur consequatur itaque atque obcaecati amet? Vero accusamus reprehenderit ipsum? Molestiae sed cumque sequi?
-        </div>
+      <div
+        data-camera={@camera}
+        class="sticky top-0 w-full max-w-md overflow-hidden rounded-xl"
+        id="qr-scanner"
+        phx-hook="QrScanner"
+      >
       </div>
     </div>
     """
@@ -27,10 +24,17 @@ defmodule GitsWeb.HostLive.Scanner do
 
   def render(assigns) do
     ~H"""
-    <div class="grid gap-4 p-2" id="camera-list" phx-hook="QrScannerCameraList">
-      <h1 class="grow items-center truncate p-2 text-2xl font-semibold">
-        Pick a camera
-      </h1>
+    <div class="flex items-center">
+      <div class="grow">
+        <h2 class="text-lg/7 font-semibold text-gray-900">
+          Scan code
+        </h2>
+        <p class="mb-4 mt-1 text-sm/5 text-gray-600"></p>
+      </div>
+    </div>
+
+    <div class="grid gap-4" id="camera-list" phx-hook="QrScannerCameraList">
+      <span>Choose camera to use</span>
     </div>
     """
   end
@@ -45,7 +49,19 @@ defmodule GitsWeb.HostLive.Scanner do
     socket |> noreply()
   end
 
-  # def handle_event("camera_choice", %{"id" => id}, socket) do
-  #   socket |> push_patch(to: ~p"/hosts/test/events/event_id/attendees/scanner/#{id}") |> noreply()
-  # end
+  def handle_event("camera_choice", %{"id" => id}, socket) do
+    socket
+    |> push_patch(
+      to:
+        Routes.host_scanner_path(
+          socket,
+          :scan,
+          socket.assigns.host_handle,
+          socket.assigns.public_id,
+          id
+        ),
+      replace: true
+    )
+    |> noreply()
+  end
 end
