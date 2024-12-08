@@ -61,7 +61,7 @@ defmodule GitsWeb.MyLive.Tickets do
               {ticket.public_id}
             end)
 
-          {type.name, tickets}
+          {type.name, type.color, tickets}
         end)
 
       {event.name, event.starts_at, ticket_types, event.host.name}

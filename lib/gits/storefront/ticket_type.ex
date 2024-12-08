@@ -43,6 +43,7 @@ defmodule Gits.Storefront.TicketType do
     policy action(:read) do
       authorize_if accessing_from(Event, :ticket_types)
       authorize_if accessing_from(Order, :ticket_types)
+      authorize_if accessing_from(Ticket, :ticket_type)
     end
 
     policy action(:create) do
@@ -80,6 +81,7 @@ defmodule Gits.Storefront.TicketType do
     attribute :limit_per_user, :integer, public?: true, allow_nil?: false, default: 10
 
     attribute :color, :string, public?: true
+    attribute :check_in_enabled, :boolean, public?: true, allow_nil?: false, default: false
 
     create_timestamp :created_at
     update_timestamp :updated_at

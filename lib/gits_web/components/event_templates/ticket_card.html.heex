@@ -1,4 +1,4 @@
-<div class="grid gap-4 p-4">
+<div :if={false} class="grid gap-4 p-4">
   <div>
     <div class="flex items-center gap-2">
       <GitsWeb.CoreComponents.icon name="i-lucide-tickets" />
@@ -19,4 +19,21 @@
       </dd>
     </div>
   </dl>
+</div>
+
+<div class="flex gap-4 w-full">
+  <span class="w-1.5 h-10 self-stretch rounded-full" style={"background-color: #{@color}"}></span>
+  <div class="grow grid">
+    <span class="text-sm/5 font-medium">{@name}</span>
+    <div :if={false} class="flex gap-2 text-sm/4 text-zinc-500">
+      <%= if true do %>
+        <span>Available</span>
+      <% else %>
+        <span>Available</span>
+      <% end %>
+    </div>
+  </div>
+  <div :if={assigns[:inner_block]}>
+    {render_slot(@inner_block)}
+  </div>
 </div>

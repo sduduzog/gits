@@ -7,9 +7,13 @@
 
 <div class="mx-auto grid max-w-screen-xl items-start lg:grid-cols-6">
   <div class="px-4 lg:col-span-2 space-y-4">
-    <div class="border rounded-xl">
+    <div class="border rounded-xl p-4">
       <GitsWeb.EventComponents.ticket_card
-        ticket_name={@ticket.ticket_type.name}
+        name={@ticket.ticket_type.name}
+        color={@ticket.ticket_type.color}
+        admitted_at={@ticket.admitted_at}
+        checked_in_at={@ticket.checked_in_at}
+        attendee={@ticket.attendee}
         id={@ticket.public_id}
       />
     </div>

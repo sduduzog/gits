@@ -133,25 +133,19 @@
           </.button>
         </div>
         <div :for={type <- @event.ticket_types} class="flex items-center gap-4 p-2">
-          <span class="w-1 self-stretch rounded-full" style={"background-color: #{type.color}"}>
-          </span>
-          <div class="grow">
-            <span class="text-sm/4 font-medium">{type.name}</span>
-            <div class="flex gap-2 text-sm/4 text-zinc-500">
-              <span>
-                foo
-              </span>
+          <GitsWeb.EventComponents.ticket_card color={type.color} name={type.name} id={type.id}>
+            <div class="">
+              <span class="text-xl font-light">{type.tickets_count}</span>
+              <span class="text-xl font-light text-zinc-500">/ {type.quantity}</span>
             </div>
-          </div>
-          <div class="">
-            <span class="text-xl font-light">{type.tickets_count}</span>
-            <span class="text-xl font-light text-zinc-500">/ {type.quantity}</span>
-          </div>
+          </GitsWeb.EventComponents.ticket_card>
         </div>
       </div>
       <div class="grid grid-cols-3 divide-x p-4">
         <div
-          :for={{label, unit} <- [{"Unique views", "0"}, {"Total orders", "0"}]}
+          :for={
+            {label, unit} <- [{"Unique views", "0"}, {"Total orders", "0"}, {"Admissions", "0"}]
+          }
           class="grid pl-2 first:pl-0"
         >
           <span class="text-xs font-medium text-zinc-600">{label}</span>

@@ -131,14 +131,20 @@ const QrScannerCameraList = {
 
 const QrScanner = {
   async mounted() {
+    console.log(this.liveSocket);
     const cameraId = this.el.dataset.camera;
     const html5QrCode = new Html5Qrcode(this.el.id, {
       formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
     });
 
-    html5QrCode.start(cameraId, { aspectRatio: 1 }, async (decodedText) => {
-      console.log({ decodedText });
-    });
+    html5QrCode.start(
+      cameraId,
+      { fps: 2, aspectRatio: 1 },
+      async (decodedText) => {
+        this.pushEvent("scanned", { text: decodedText });
+        this.liveSocket.execJS(this.el, this.el.getAttribute("data-callback"));
+      },
+    );
   },
 };
 

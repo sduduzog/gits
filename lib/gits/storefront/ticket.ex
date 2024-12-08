@@ -6,11 +6,21 @@ defmodule Gits.Storefront.Ticket do
     domain: Gits.Storefront,
     data_layer: AshPostgres.DataLayer,
     authorizers: Ash.Policy.Authorizer,
-    extensions: [AshArchival.Resource, AshPaperTrail.Resource]
+    extensions: [AshArchival.Resource, AshStateMachine, AshPaperTrail.Resource]
 
   postgres do
     table "tickets"
     repo Gits.Repo
+  end
+
+  state_machine do
+    initial_states [:open]
+    default_initial_state :open
+
+    transitions do
+      transition :check_in, from: :open, to: :checked_in
+      transition :admit, from: [:open, :checked_in], to: :admitted
+    end
   end
 
   alias Gits.Storefront.{Order, TicketType}
@@ -31,6 +41,12 @@ defmodule Gits.Storefront.Ticket do
       argument :order, :map, allow_nil?: false
 
       change manage_relationship(:order, type: :append)
+    end
+
+    update :check_in do
+    end
+
+    update :admit do
     end
   end
 
@@ -56,9 +72,16 @@ defmodule Gits.Storefront.Ticket do
       writable?: false,
       public?: true,
       default: fn -> Nanoid.generate(6, "0123456789abcdef") end
+
+    attribute :admitted_at, :utc_datetime, public?: true
+    attribute :checked_in_at, :utc_datetime, public?: true
+
+    create_timestamp :created_at
+    update_timestamp :updated_at
   end
 
   relationships do
+    belongs_to :attendee, User, domain: Accounts
     belongs_to :order, Order, allow_nil?: false
     belongs_to :ticket_type, TicketType, allow_nil?: false
   end

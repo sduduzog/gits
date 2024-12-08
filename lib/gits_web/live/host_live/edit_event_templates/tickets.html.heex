@@ -46,6 +46,7 @@
         />
 
         <.input type="text" field={tf[:name]} label="Name" />
+
         <.input type="number" field={tf[:price]} label="Price" />
         <.input type="number" field={tf[:quantity]} label="Quantity" />
         <.input type="number" field={tf[:limit_per_user]} label="Limit per user" />
@@ -58,6 +59,14 @@
           type="textarea"
           field={tf[:description]}
           label="Description"
+          class="col-span-full"
+        />
+        <.input
+          type="checkbox"
+          field={tf[:foo]}
+          label="Enable Check-in"
+          hint="RSVP"
+          description="Ticket holders will be required to sign in. This also allows admitting attendees without scanning their ticket"
           class="col-span-full"
         />
       </.inputs_for>
@@ -107,7 +116,10 @@
     <.table id="tickets" rows={@event.ticket_types}>
       <:col :let={ticket} label="Ticket">
         <div class="flex gap-3">
-          <span class="w-1 self-stretch rounded-full" style={"background-color: #{ticket.color}"}>
+          <span
+            class="w-1.5 self-stretch rounded-full"
+            style={"background-color: #{ticket.color}"}
+          >
           </span>
 
           {ticket.name}

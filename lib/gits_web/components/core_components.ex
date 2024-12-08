@@ -247,7 +247,11 @@ defmodule GitsWeb.CoreComponents do
       data-cancel={JS.exec(@on_cancel, "phx-remove")}
       class="relative z-50 hidden"
     >
-      <div id={"#{@id}-bg"} class="fixed inset-0 bg-black/10 transition-opacity" aria-hidden="true" />
+      <div
+        id={"#{@id}-bg"}
+        class="fixed inset-0 bg-black/20x bg-zinc-50/50 transition-opacity"
+        aria-hidden="true"
+      />
       <div
         class="fixed inset-0 overflow-y-auto"
         aria-labelledby={"#{@id}-title"}
@@ -263,7 +267,7 @@ defmodule GitsWeb.CoreComponents do
               phx-window-keydown={JS.exec("data-cancel", to: "##{@id}")}
               phx-key="escape"
               phx-click-away={JS.exec("data-cancel", to: "##{@id}")}
-              class="relative hidden bg-white p-4 shadow-zinc-700/10 ring-1 ring-zinc-700/10 transition lg:rounded-3xl lg:shadow-lg"
+              class="relative hidden bg-white p-4 shadow-zinc-700/10 ring-1 ring-zinc-700/10 transition lg:rounded-2xl lg:shadow-lg"
             >
               <div class="absolute right-4 top-4">
                 <button
@@ -592,8 +596,15 @@ defmodule GitsWeb.CoreComponents do
       end)
 
     ~H"""
-    <div phx-feedback-for={@name}>
-      <label class="flex items-center gap-4 text-sm leading-6 text-zinc-600">
+    <div class={["max-w-3xl space-y-1 text-sm", @class]}>
+      <div phx-feedback-for={@name} class="flex items-center">
+        <.label for={@id}>{@label}</.label>
+        <%= if @errors == [] do %>
+          <span :if={@hint} class="text-zinc-500">&nbsp;({@hint})</span>
+        <% else %>
+          <.error :for={msg <- @errors}>{msg}</.error>
+        <% end %>
+        <div role="none" class="grow"></div>
         <input type="hidden" name={@name} value="false" />
         <input
           type="checkbox"
@@ -604,9 +615,8 @@ defmodule GitsWeb.CoreComponents do
           class="rounded border-zinc-300 text-zinc-900 focus:ring-0"
           {@rest}
         />
-        {@label}
-      </label>
-      <.error :for={msg <- @errors}>{msg}</.error>
+      </div>
+      <span :if={@description} class="inline-flex text-zinc-500">{@description}</span>
     </div>
     """
   end
