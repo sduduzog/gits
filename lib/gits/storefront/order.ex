@@ -38,6 +38,16 @@ defmodule Gits.Storefront.Order do
 
     create :create do
       primary? true
+
+      accept [:email]
+
+      change fn changeset, _ ->
+        if Ash.Changeset.changing_attribute?(changeset, :email) do
+          AshStateMachine.transition_state(changeset, :open)
+        else
+          changeset
+        end
+      end
     end
 
     update :open do

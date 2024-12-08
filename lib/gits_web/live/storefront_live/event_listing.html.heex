@@ -11,7 +11,7 @@
       </div>
     </div>
 
-    <h1 class="text-2xl font-semibold"><%= @event.name %></h1>
+    <h1 class="text-2xl font-semibold">{@event.name}</h1>
     <div class="flex flex-wrap gap-4 opacity-30">
       <span
         :for={i <- ["18+ Only", "Seminar"]}
@@ -20,7 +20,7 @@
         <svg class="h-1.5 w-1.5 fill-zinc-900" viewBox="0 0 6 6" aria-hidden="true">
           <circle cx="3" cy="3" r="3" />
         </svg>
-        <%= i %>
+        {i}
       </span>
     </div>
 
