@@ -13,7 +13,27 @@ defmodule Gits.Accounts.Role do
   end
 
   actions do
-    defaults [:read, :destroy, create: :*, update: :*]
+    defaults [:read, :destroy, update: :*]
+
+    create :create do
+      primary? true
+
+      accept [:type]
+
+      argument :user, :map, allow_nil?: false
+      change manage_relationship(:user, type: :append)
+    end
+  end
+
+  policies do
+    policy action(:read) do
+      authorize_if accessing_from(Host, :roles)
+      authorize_if accessing_from(User, :roles)
+    end
+
+    policy action(:create) do
+      authorize_if accessing_from(Host, :roles)
+    end
   end
 
   attributes do
@@ -24,8 +44,8 @@ defmodule Gits.Accounts.Role do
   end
 
   relationships do
-    belongs_to :user, User
+    belongs_to :user, User, allow_nil?: false
 
-    belongs_to :host, Host
+    belongs_to :host, Host, allow_nil?: false
   end
 end

@@ -9,11 +9,11 @@ defmodule Gits.Application do
   def start(_type, _args) do
     Oban.Telemetry.attach_default_logger()
 
-    Gits.ObanReporter.attach()
+    # Gits.ObanReporter.attach()
 
-    :logger.add_handler(:sentry_handler, Sentry.LoggerHandler, %{
-      config: %{metadata: [:file, :line]}
-    })
+    # :logger.add_handler(:sentry_handler, Sentry.LoggerHandler, %{
+    #   config: %{metadata: [:file, :line]}
+    # })
 
     children = [
       GitsWeb.Telemetry,

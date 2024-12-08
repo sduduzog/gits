@@ -37,16 +37,22 @@
   >
     <div class="grid max-w-screen-sm grid-cols-2 gap-4">
       <.inputs_for :let={tf} field={f[:type]}>
-        <.input type="text" field={tf[:name]} label="Name" />
+        <.input
+          type="color"
+          class="col-span-full max-w-40"
+          field={tf[:color]}
+          value={tf[:color].value || Gits.RandomColor.generate()}
+          label="Color"
+        />
 
-        <.input type="color" field={tf[:color]} label="Price" />
+        <.input type="text" field={tf[:name]} label="Name" />
         <.input type="number" field={tf[:price]} label="Price" />
         <.input type="number" field={tf[:quantity]} label="Quantity" />
         <.input type="number" field={tf[:limit_per_user]} label="Limit per user" />
 
-        <.input field={tf[:sale_starts_at]} label="Sale start" type="datetime-local" />
+        <.input field={tf[:sale_starts_at]} label="Sale starts" type="datetime-local" />
 
-        <.input field={tf[:sale_ends_at]} label="Sale end" type="datetime-local" />
+        <.input field={tf[:sale_ends_at]} label="Sale ends" type="datetime-local" />
 
         <.input
           type="textarea"

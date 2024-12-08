@@ -1,4 +1,6 @@
 defmodule Gits.Accounts.Host do
+  alias Gits.Storefront
+  alias Gits.Storefront.Event
   alias Gits.PaystackApi
   alias Gits.Accounts
   alias Gits.Accounts.{Role, User}
@@ -39,6 +41,11 @@ defmodule Gits.Accounts.Host do
       change manage_relationship(:owner, type: :append)
       change manage_relationship(:role, :roles, type: :create)
       change set_attribute(:handle, &Nanoid.generate/0)
+    end
+
+    update :add_event do
+      argument :event, :map, allow_nil?: false
+      change manage_relationship(:event, :events, type: :create)
     end
 
     update :paystack_subaccount do
@@ -84,6 +91,24 @@ defmodule Gits.Accounts.Host do
     end
   end
 
+  policies do
+    policy action(:read) do
+      authorize_if always()
+    end
+
+    policy action(:create) do
+      authorize_if actor_present()
+    end
+
+    policy action(:paystack_subaccount) do
+      authorize_if expr(roles.user.id == ^actor(:id))
+    end
+
+    policy action(:paystack_subaccount) do
+      authorize_if expr(roles.type in [:owner])
+    end
+  end
+
   attributes do
     uuid_primary_key :id
     attribute :name, :string, public?: true, allow_nil?: false
@@ -105,6 +130,8 @@ defmodule Gits.Accounts.Host do
     belongs_to :owner, User, allow_nil?: false
 
     has_many :roles, Role
+
+    has_many :events, Event, domain: Storefront
   end
 
   calculations do

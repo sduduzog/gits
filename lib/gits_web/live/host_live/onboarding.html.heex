@@ -36,6 +36,18 @@
 
     <.input field={f[:name]} label="Host name" class="mt-8 col-span-full" />
 
+    <.inputs_for :let={o} field={f[:owner]}>
+      <.input field={o[:id]} type="hidden" value={@user.id} />
+    </.inputs_for>
+
+    <.inputs_for :let={o} field={f[:role]}>
+      <.input field={o[:type]} type="hidden" value={:owner} />
+
+      <.inputs_for :let={o} field={o[:user]}>
+        <.input field={o[:id]} type="hidden" value={@user.id} />
+      </.inputs_for>
+    </.inputs_for>
+
     <.button class="mt-8">
       Continue
     </.button>

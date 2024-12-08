@@ -46,8 +46,6 @@ defmodule Gits.Accounts.User do
 
     read :read do
       primary? true
-
-      prepare build(load: [:tickets_count])
     end
 
     read :get_by_email do
@@ -141,9 +139,14 @@ defmodule Gits.Accounts.User do
   end
 
   aggregates do
-    count :tickets_count, [:orders, :tickets] do
+    # count :tickets_count, [:orders, :tickets] do
+    #   join_filter :orders, expr(state == :completed)
+    #   join_filter [:orders, :tickets], expr(order.state == :completed)
+    # end
+
+    count :tickets_count, [:orders] do
       join_filter :orders, expr(state == :completed)
-      join_filter [:orders, :tickets], expr(order.state == :completed)
+      # join_filter [:orders, :tickets], expr(order.state == :completed)
     end
   end
 

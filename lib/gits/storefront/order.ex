@@ -1,6 +1,8 @@
 defmodule Gits.Storefront.Order do
   require Decimal
 
+  alias Gits.Accounts.User
+
   use Ash.Resource,
     domain: Gits.Storefront,
     data_layer: AshPostgres.DataLayer,
@@ -18,10 +20,11 @@ defmodule Gits.Storefront.Order do
   alias __MODULE__.Notifiers.{OrderCompleted, OrderConfirmed}
 
   state_machine do
-    initial_states [:open]
-    default_initial_state :open
+    initial_states [:open, :anonymous]
+    default_initial_state :anonymous
 
     transitions do
+      transition :open, from: :anonymous, to: :open
       transition :process, from: :open, to: :processed
       transition :reopen, from: :processed, to: :open
       transition :confirm, from: :processed, to: [:confirmed, :completed]
@@ -33,8 +36,15 @@ defmodule Gits.Storefront.Order do
   actions do
     defaults [:read]
 
-    create :open do
+    create :create do
       primary? true
+    end
+
+    update :open do
+      argument :email, :ci_string, allow_nil?: false
+      change set_attribute(:email, arg(:email))
+
+      change transition_state(:open)
     end
 
     update :process do
@@ -50,9 +60,6 @@ defmodule Gits.Storefront.Order do
     update :confirm do
       require_atomic? false
 
-      argument :email, :ci_string, allow_nil?: false
-      change set_attribute(:email, arg(:email))
-
       change fn changeset, _ ->
         if changeset.data.total |> Decimal.gt?(Decimal.new("0")) do
           changeset
@@ -63,8 +70,7 @@ defmodule Gits.Storefront.Order do
 
             code = order.event.host.paystack_subaccount_code
 
-            email =
-              Ash.Changeset.get_argument(changeset, :email)
+            email = order.email
 
             price_in_cents = Decimal.mult(order.total, 100) |> Decimal.to_integer()
 
@@ -107,17 +113,43 @@ defmodule Gits.Storefront.Order do
     update :add_ticket do
       require_atomic? false
 
-      argument :ticket, :map, allow_nil?: false
+      argument :ticket_type, :map, allow_nil?: false
 
-      change manage_relationship(:ticket, :tickets, type: :create)
+      change manage_relationship(:ticket_type, :ticket_types, on_match: {:update, :add_ticket})
     end
 
     update :remove_ticket do
       require_atomic? false
 
-      argument :ticket, :map, allow_nil?: false
+      argument :ticket_type, :map, allow_nil?: false
 
-      change manage_relationship(:ticket, :tickets, on_match: :destroy)
+      change manage_relationship(:ticket_type, :ticket_types, on_match: {:update, :remove_ticket})
+    end
+  end
+
+  policies do
+    policy action(:create) do
+      authorize_if accessing_from(Event, :orders)
+    end
+
+    policy action(:read) do
+      authorize_if always()
+    end
+
+    policy action(:add_ticket) do
+      authorize_if always()
+    end
+
+    policy action(:remove_ticket) do
+      authorize_if always()
+    end
+
+    policy action(:process) do
+      authorize_if expr(exists(tickets, true))
+    end
+
+    policy action([:open, :process, :reopen, :confirm, :complete]) do
+      authorize_if AshStateMachine.Checks.ValidNextState
     end
   end
 
@@ -155,12 +187,9 @@ defmodule Gits.Storefront.Order do
 
     has_many :tickets, Ticket
 
-    many_to_many :ticket_types, TicketType do
-      through Event
-      source_attribute :event_id
-      destination_attribute :event_id
-      source_attribute_on_join_resource :id
-      destination_attribute_on_join_resource :id
+    has_many :ticket_types, TicketType do
+      no_attributes? true
+      filter expr(event.id == parent(event.id))
     end
 
     has_one :fees_split, OrderFeesSplit

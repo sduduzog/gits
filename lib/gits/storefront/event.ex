@@ -1,7 +1,10 @@
 defmodule Gits.Storefront.Event do
+  alias Gits.Storefront.Ticket
   alias Gits.Storefront.{Order, TicketType}
   alias Gits.Accounts.{Host, User, Venue}
   alias Gits.Accounts
+
+  alias __MODULE__.Checks.ActorCanCreateEvent
 
   use Ash.Resource,
     domain: Gits.Storefront,
@@ -77,6 +80,36 @@ defmodule Gits.Storefront.Event do
 
       argument :order, :map, allow_nil?: false
       change manage_relationship(:order, :orders, type: :create)
+    end
+  end
+
+  policies do
+    policy action(:read) do
+      authorize_if always()
+    end
+
+    policy action(:create) do
+      authorize_if ActorCanCreateEvent
+    end
+
+    policy action(:details) do
+      authorize_if expr(host.roles.user.id == ^actor(:id))
+    end
+
+    policy action(:add_ticket_type) do
+      authorize_if expr(host.roles.user.id == ^actor(:id))
+    end
+
+    policy action(:edit_ticket_type) do
+      authorize_if expr(host.roles.user.id == ^actor(:id))
+    end
+
+    policy action(:archive_ticket_type) do
+      authorize_if expr(host.roles.user.id == ^actor(:id))
+    end
+
+    policy action(:create_order) do
+      authorize_if always()
     end
   end
 

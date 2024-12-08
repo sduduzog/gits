@@ -21,24 +21,29 @@ defmodule GitsWeb.HostLive.EditEvent do
   end
 
   def handle_params(%{"public_id" => public_id} = unsigned_params, _uri, socket) do
+    user = socket.assigns.current_user
+
     Event
     |> Ash.Query.filter(public_id == ^public_id)
     |> Ash.Query.load([:name, :ticket_types])
-    |> Ash.read_one()
+    |> Ash.read_one(actor: user)
     |> case do
       {:ok, event} ->
         socket
         |> assign(:event, event)
-        |> assign(:form, current_form(socket.assigns.live_action, event))
-        |> show_archive_ticket_modal(unsigned_params, event)
-        |> show_ticket_form(unsigned_params, event)
+        |> assign(
+          :form,
+          current_form(socket.assigns.live_action, event, user)
+        )
+        |> show_archive_ticket_modal(unsigned_params, event, user)
+        |> show_ticket_form(unsigned_params, event, user)
     end
     |> noreply()
   end
 
   def handle_params(_unsigned_params, _uri, socket) do
     socket
-    |> assign(:form, current_form(socket.assigns.live_action, nil))
+    |> assign(:form, current_form(socket.assigns.live_action, nil, socket.assigns.current_user))
     |> assign(:event, nil)
     |> noreply()
   end
@@ -117,7 +122,15 @@ defmodule GitsWeb.HostLive.EditEvent do
         )
 
       _ ->
-        assign(socket, :form, current_form(socket.assigns.live_action, socket.assigns.event))
+        assign(
+          socket,
+          :form,
+          current_form(
+            socket.assigns.live_action,
+            socket.assigns.event,
+            socket.assigns.current_user
+          )
+        )
     end
     |> noreply()
   end
@@ -126,22 +139,10 @@ defmodule GitsWeb.HostLive.EditEvent do
     socket
     |> assign(
       :form,
-      socket.assigns.form
-      |> case do
-        %{type: :update} = form ->
-          form
-          |> Form.validate(unsigned_params["form"],
-            target: unsigned_params["_target"],
-            errors: false
-          )
-
-        %{type: :create} = form ->
-          form
-          |> Form.validate(Map.put(unsigned_params["form"], :host, socket.assigns.host),
-            target: unsigned_params["_target"],
-            errors: false
-          )
-      end
+      Form.validate(socket.assigns.form, unsigned_params["form"],
+        target: unsigned_params["_target"],
+        errors: false
+      )
     )
     |> noreply()
   end
@@ -155,7 +156,7 @@ defmodule GitsWeb.HostLive.EditEvent do
       %{type: :create} = form ->
         {:create,
          form
-         |> Form.submit(params: Map.put(unsigned_params["form"], :host, socket.assigns.host))}
+         |> Form.submit(params: unsigned_params["form"])}
     end
     |> case do
       {:create, {:ok, event}} ->
@@ -214,70 +215,73 @@ defmodule GitsWeb.HostLive.EditEvent do
     |> noreply()
   end
 
-  defp current_form(:details, nil) do
-    Event
-    |> Form.for_create(:create)
+  defp current_form(:details, nil, actor) do
+    Form.for_create(Event, :create, forms: [auto?: true], actor: actor)
+    |> Form.add_form([:host], type: :read)
   end
 
-  defp current_form(:details, event) do
+  defp current_form(:details, event, actor) do
     event
-    |> Form.for_update(:details, forms: [auto?: true])
+    |> Form.for_update(:details, forms: [auto?: true], actor: actor)
   end
 
-  defp current_form(:tickets, event) do
+  defp current_form(:tickets, event, actor) do
     event
-    |> Form.for_update(:update, forms: [auto?: true])
+    |> Form.for_update(:update, forms: [auto?: true], actor: actor)
   end
 
-  defp current_form(:payouts, event) do
-    event
-    |> Form.for_update(:payout_preferences, forms: [auto?: true])
-  end
-
-  defp current_form(_, _) do
+  defp current_form(_, _, _) do
     nil
   end
 
-  defp show_archive_ticket_modal(socket, %{"modal" => "ticket", "archive" => ticket_id}, event) do
+  defp show_archive_ticket_modal(
+         socket,
+         %{"modal" => "ticket", "archive" => ticket_id},
+         event,
+         actor
+       ) do
     event
-    |> Ash.load(ticket_types: [TicketType |> Ash.Query.filter(id == ^ticket_id)])
+    |> Ash.load([ticket_types: Ash.Query.filter(TicketType, id == ^ticket_id)], actor: actor)
     |> case do
       {:ok, event} ->
         socket
         |> assign(
           :form,
           event
-          |> Form.for_update(:archive_ticket_type, forms: [auto?: true])
+          |> Form.for_update(:archive_ticket_type, forms: [auto?: true], actor: actor)
         )
         |> assign(:show_archive_ticket_modal, true)
     end
   end
 
-  defp show_archive_ticket_modal(socket, _, _) do
+  defp show_archive_ticket_modal(socket, _, _, _) do
     socket
     |> assign(:show_archive_ticket_modal, false)
   end
 
-  defp show_ticket_form(socket, %{"ticket" => "create"}, event) do
+  defp show_ticket_form(socket, %{"ticket" => "create"}, event, actor) do
     assign(socket, :show_ticket_form, true)
     |> assign(
       :form,
       event
-      |> Form.for_update(:add_ticket_type, forms: [auto?: true])
+      |> Form.for_update(:add_ticket_type, forms: [auto?: true], actor: actor)
       |> Form.add_form([:type], validate?: false)
     )
   end
 
-  defp show_ticket_form(socket, %{"ticket" => "edit", "id" => id}, event) do
-    Ash.load(event, ticket_types: [Ash.Query.filter(TicketType, id == ^id)])
+  defp show_ticket_form(socket, %{"ticket" => "edit", "id" => id}, event, actor) do
+    Ash.load(event, [ticket_types: [Ash.Query.filter(TicketType, id == ^id)]], actor: actor)
     |> case do
       {:ok, event} ->
         assign(socket, :show_ticket_form, true)
-        |> assign(:form, Form.for_update(event, :edit_ticket_type, forms: [auto?: true]))
+        |> assign(
+          :form,
+          Form.for_update(event, :edit_ticket_type, forms: [auto?: true], actor: actor)
+        )
     end
   end
 
-  defp show_ticket_form(socket, _, _) do
+  defp show_ticket_form(socket, _, _, _) do
     assign(socket, :show_ticket_form, false)
   end
 end

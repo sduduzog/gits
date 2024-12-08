@@ -28,9 +28,23 @@ defmodule Gits.Storefront.Ticket do
     create :create do
       primary? true
 
-      argument :ticket_type, :map, allow_nil?: false
+      argument :order, :map, allow_nil?: false
 
-      change manage_relationship(:ticket_type, type: :append)
+      change manage_relationship(:order, type: :append)
+    end
+  end
+
+  policies do
+    policy action(:read) do
+      authorize_if always()
+    end
+
+    policy action(:create) do
+      authorize_if accessing_from(TicketType, :tickets)
+    end
+
+    policy action(:destroy) do
+      authorize_if accessing_from(TicketType, :tickets)
     end
   end
 

@@ -34,26 +34,7 @@
       {@event.name}
     </h1>
     <div class="flex flex-wrap items-center gap-4">
-      <.button
-        size={:none}
-        class="p-2"
-        variant={:outline}
-        phx-click={
-          JS.patch(
-            Routes.host_view_event_path(
-              @socket,
-              @live_action,
-              @host_handle,
-              @event.public_id,
-              %{
-                archive: @event.public_id
-              }
-            ),
-            replace: true
-          )
-          |> show_modal("archive-event")
-        }
-      >
+      <.button size={:none} class="p-2" variant={:outline}>
         <.icon name="i-lucide-trash" />
       </.button>
       <.button
@@ -201,6 +182,7 @@
   </div>
 </div>
 <.modal
+  :if={false}
   id="publish-event"
   show={@show_publish_modal}
   on_cancel={
@@ -263,6 +245,7 @@
   </div>
 </.modal>
 <.modal
+  :if={false}
   id="archive-event"
   show={@show_archive_modal}
   on_cancel={

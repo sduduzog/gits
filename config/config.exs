@@ -39,6 +39,9 @@ config :gits,
 
 config :ash, :utc_datetime_type, :datetime
 
+config :ash, :policies, show_policy_breakdowns?: true
+config :ash, :policies, log_policy_breakdowns: :error
+
 config :ash, :compatible_foreign_key_types, [
   {Ash.Type.Integer, Ash.Type.UUID}
 ]

@@ -1,5 +1,5 @@
 defmodule Gits.Storefront.TicketType do
-  alias Gits.Storefront.{Event, Ticket}
+  alias Gits.Storefront.{Event, Order, Ticket}
   alias Gits.Accounts
   alias Gits.Accounts.User
 
@@ -23,6 +23,48 @@ defmodule Gits.Storefront.TicketType do
 
   actions do
     defaults [:read, :destroy, create: :*, update: :*]
+
+    update :add_ticket do
+      require_atomic? false
+      argument :ticket, :map, allow_nil?: false
+
+      change manage_relationship(:ticket, :tickets, type: :create)
+    end
+
+    update :remove_ticket do
+      require_atomic? false
+      argument :ticket, :map, allow_nil?: false
+
+      change manage_relationship(:ticket, :tickets, on_match: :destroy)
+    end
+  end
+
+  policies do
+    policy action(:read) do
+      authorize_if accessing_from(Event, :ticket_types)
+      authorize_if accessing_from(Order, :ticket_types)
+    end
+
+    policy action(:create) do
+      authorize_if accessing_from(Event, :ticket_types)
+    end
+
+    policy action(:update) do
+      authorize_if accessing_from(Order, :ticket_types)
+      authorize_if accessing_from(Event, :ticket_types)
+    end
+
+    policy action(:destroy) do
+      authorize_if accessing_from(Event, :ticket_types)
+    end
+
+    policy action(:add_ticket) do
+      authorize_if accessing_from(Order, :ticket_types)
+    end
+
+    policy action(:remove_ticket) do
+      authorize_if accessing_from(Order, :ticket_types)
+    end
   end
 
   attributes do
@@ -37,9 +79,7 @@ defmodule Gits.Storefront.TicketType do
     attribute :quantity, :integer, public?: true, allow_nil?: false, default: 10
     attribute :limit_per_user, :integer, public?: true, allow_nil?: false, default: 10
 
-    attribute :color, :string,
-      public?: true,
-      default: fn -> "#" <> Nanoid.generate(6, "0123456789abcdef") end
+    attribute :color, :string, public?: true
 
     create_timestamp :created_at
     update_timestamp :updated_at

@@ -1,5 +1,7 @@
 defmodule GitsWeb.HostLive.Onboarding do
   require Ash.Query
+  alias Gits.Accounts.User
+  alias Gits.Accounts.Role
   alias Gits.Accounts.Host
   alias AshPhoenix.Form
 
@@ -41,11 +43,17 @@ defmodule GitsWeb.HostLive.Onboarding do
         |> noreply()
 
       {:ok, []} ->
-        socket
+        assign(socket, :user, user)
         |> assign(
           :form,
           Host
-          |> Form.for_create(:create, as: "host", actor: user)
+          |> Form.for_create(:create,
+            actor: user,
+            forms: [auto?: true]
+          )
+          |> Form.add_form([:owner], type: :read)
+          |> Form.add_form([:role])
+          |> Form.add_form([:role, :user], type: :read)
         )
         |> noreply()
     end
@@ -56,7 +64,7 @@ defmodule GitsWeb.HostLive.Onboarding do
   end
 
   def handle_event("save", unsigned_params, socket) do
-    %{form: form, current_user: user} = socket.assigns
+    %{form: form} = socket.assigns
 
     filename =
       consume_uploaded_entries(socket, :logo, fn %{path: path}, _entry ->
@@ -86,9 +94,7 @@ defmodule GitsWeb.HostLive.Onboarding do
       end
 
     form
-    |> Form.submit(
-      params: Map.merge(unsigned_params["host"], %{"logo" => filename, "owner" => user})
-    )
+    |> Form.submit(params: Map.merge(unsigned_params["form"], %{"logo" => filename}))
     |> case do
       {:ok, host} ->
         socket |> push_navigate(to: ~p"/hosts/#{host.handle}/events/create-new")
@@ -99,7 +105,9 @@ defmodule GitsWeb.HostLive.Onboarding do
     |> noreply()
   end
 
-  def handle_event("validate", _unsigned_params, socket) do
+  def handle_event("validate", unsigned_params, socket) do
+    Form.validate(socket.assigns.form, unsigned_params["form"])
+
     socket |> noreply()
   end
 

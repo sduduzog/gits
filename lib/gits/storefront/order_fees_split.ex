@@ -17,6 +17,12 @@ defmodule Gits.Storefront.OrderFeesSplit do
     defaults [:read, :destroy, create: :*, update: :*]
   end
 
+  policies do
+    policy action(:create) do
+      authorize_if accessing_from(Order, :fees_split)
+    end
+  end
+
   attributes do
     uuid_primary_key :id
 

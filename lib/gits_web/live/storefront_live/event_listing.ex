@@ -8,7 +8,8 @@ defmodule GitsWeb.StorefrontLive.EventListing do
   def mount(params, _session, socket) do
     remote_ip = get_connect_info(socket, :peer_data).address
 
-    Event.get_by_public_id_for_listing(params["public_id"], load: :ticket_types)
+    Ash.Query.filter(Event, public_id == ^params["public_id"])
+    |> Ash.read_one(actor: socket.assigns.current_user)
     |> case do
       {:ok, event} ->
         socket
@@ -29,7 +30,7 @@ defmodule GitsWeb.StorefrontLive.EventListing do
     |> assign(
       :form,
       socket.assigns.event
-      |> Form.for_update(:create_order, forms: [auto?: true])
+      |> Form.for_update(:create_order, forms: [auto?: true], actor: socket.assigns.current_user)
       |> Form.add_form([:order])
     )
     |> noreply()

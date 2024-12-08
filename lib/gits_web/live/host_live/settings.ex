@@ -10,13 +10,19 @@ defmodule GitsWeb.HostLive.Settings do
   end
 
   def handle_params(_, _, %{assigns: %{live_action: :payouts}} = socket) do
+    user = socket.assigns.current_user
+
     host =
-      Ash.load!(socket.assigns.host, [
-        :paystack_subaccount,
-        :paystack_business_name,
-        :paystack_account_number,
-        :paystack_settlement_bank
-      ])
+      Ash.load!(
+        socket.assigns.host,
+        [
+          :paystack_subaccount,
+          :paystack_business_name,
+          :paystack_account_number,
+          :paystack_settlement_bank
+        ],
+        actor: user
+      )
 
     banks =
       PaystackApi.list_banks!(:cache)
@@ -24,7 +30,7 @@ defmodule GitsWeb.HostLive.Settings do
 
     form =
       host
-      |> Form.for_update(:paystack_subaccount)
+      |> Form.for_update(:paystack_subaccount, actor: user)
 
     socket
     |> assign(:banks, banks)
@@ -48,25 +54,26 @@ defmodule GitsWeb.HostLive.Settings do
   end
 
   def handle_event("submit", unsigned_params, socket) do
-    socket.assigns.form
-    |> Form.submit(params: unsigned_params["form"])
+    %{form: form, current_user: user} = socket.assigns
+
+    Form.submit(form, params: unsigned_params["form"])
     |> case do
       {:ok, host} ->
         host =
-          Ash.load!(host, [
-            :paystack_subaccount,
-            :paystack_business_name,
-            :paystack_account_number,
-            :paystack_settlement_bank
-          ])
+          Ash.load!(
+            host,
+            [
+              :paystack_subaccount,
+              :paystack_business_name,
+              :paystack_account_number,
+              :paystack_settlement_bank
+            ],
+            actor: user
+          )
 
-        socket
-        |> assign(:host, host)
-        |> assign(:form, Form.for_update(host, :paystack_subaccount))
+        assign(socket, :host, host)
+        |> assign(:form, Form.for_update(host, :paystack_subaccount, actor: user))
         |> noreply()
     end
   end
-end
-
-defmodule GitsWeb.HostLive.SettingsTest do
 end

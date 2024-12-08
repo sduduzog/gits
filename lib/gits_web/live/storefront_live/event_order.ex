@@ -6,17 +6,16 @@ defmodule GitsWeb.StorefrontLive.EventOrder do
   use GitsWeb, :live_view
 
   def mount(params, _session, socket) do
+    user = socket.assigns.current_user
+
     Order
-    |> Ash.get(params["order_id"], load: :event)
+    |> Ash.get(params["order_id"], load: [:event], actor: user)
     |> case do
       {:ok, order} ->
         socket
         |> assign(:page_title, order.event.name)
-        |> assign(:event, order.event)
-        |> assign(:order, order)
-        |> assign_ticket_types()
-        |> assign_tickets_summary()
-        |> assign_forms()
+        |> assign(:event_name, order.event.name)
+        |> assign_order_update(order, user)
         |> ok()
 
       {:error, _} ->
@@ -26,34 +25,37 @@ defmodule GitsWeb.StorefrontLive.EventOrder do
     end
   end
 
-  def handle_event("remove_ticket", unsigned_params, socket) do
-    socket.assigns.order
-    |> Form.for_update(:remove_ticket)
+  def handle_event("open", unsigned_params, socket) do
+    socket.assigns.open_form
     |> Form.submit(params: unsigned_params["form"])
     |> case do
       {:ok, order} ->
         socket
-        |> assign(:order, order)
-        |> assign_ticket_types()
-        |> assign_tickets_summary()
-        |> assign_forms()
+        |> assign_order_update(order, socket.assigns.current_user)
+        |> noreply()
+    end
+  end
+
+  def handle_event("remove_ticket", unsigned_params, socket) do
+    socket.assigns.remove_ticket_form
+    |> Form.submit(params: unsigned_params["form"])
+    |> case do
+      {:ok, order} ->
+        socket
+        |> assign_order_update(order, socket.assigns.current_user)
     end
     |> noreply
   end
 
   def handle_event("add_ticket", unsigned_params, socket) do
-    socket.assigns.order
-    |> Form.for_update(:add_ticket)
+    socket.assigns.add_ticket_form
     |> Form.submit(params: unsigned_params["form"])
     |> case do
       {:ok, order} ->
         socket
-        |> assign(:order, order)
-        |> assign_ticket_types()
-        |> assign_tickets_summary()
-        |> assign_forms()
+        |> assign_order_update(order, socket.assigns.current_user)
     end
-    |> noreply
+    |> noreply()
   end
 
   def handle_event("validate", unsigned_params, socket) do
@@ -71,9 +73,7 @@ defmodule GitsWeb.StorefrontLive.EventOrder do
     |> case do
       {:ok, order} ->
         socket
-        |> assign(:order, order)
-        |> assign_ticket_types()
-        |> assign_forms()
+        |> assign_order_update(order, socket.assigns.current_user)
     end
     |> noreply
   end
@@ -84,9 +84,7 @@ defmodule GitsWeb.StorefrontLive.EventOrder do
     |> case do
       {:ok, order} ->
         socket
-        |> assign(:order, order)
-        |> assign_ticket_types()
-        |> assign_forms()
+        |> assign_order_update(order, socket.assigns.current_user)
     end
     |> noreply()
   end
@@ -95,30 +93,50 @@ defmodule GitsWeb.StorefrontLive.EventOrder do
     socket.assigns.confirm_form
     |> Form.submit(params: unsigned_params["form"])
     |> case do
-      {:ok, %Order{paystack_authorization_url: nil} = order} ->
+      {:ok, %Order{state: :completed} = order} ->
         socket
-        |> assign(:order, order)
-        |> assign_ticket_types()
-        |> assign_forms()
+        |> assign_order_update(order, socket.assigns.current_user)
 
-      {:ok, %Order{paystack_authorization_url: url} = order} ->
+      {:ok, %Order{paystack_authorization_url: url}} ->
         socket |> redirect(external: url)
     end
     |> noreply()
   end
 
-  def assign_forms(socket) do
-    order = socket.assigns.order
+  def assign_order_update(socket, order, actor) do
+    assign(socket, :order_state, order.state)
+    |> assign(:order_id, order.id)
+    |> assign(:order_email, order.email)
+    |> assign_forms(order, actor)
+    |> assign_ticket_types(order, actor)
+  end
 
+  def assign_forms(socket, order, actor) do
     case order.state do
+      :anonymous ->
+        assign(socket, :open_form, Form.for_update(order, :open))
+
       :open ->
         socket
-        |> assign(:process_form, order |> Form.for_update(:process))
+        |> assign(
+          :remove_ticket_form,
+          Form.for_update(order, :remove_ticket, forms: [auto?: true], actor: actor)
+          |> Form.add_form([:ticket_type], type: :update)
+          |> Form.add_form([:ticket_type, :ticket], type: :update)
+        )
+        |> assign(
+          :add_ticket_form,
+          Form.for_update(order, :add_ticket, forms: [auto?: true], actor: actor)
+          |> Form.add_form([:ticket_type], type: :update)
+          |> Form.add_form([:ticket_type, :ticket], type: :create)
+          |> Form.add_form([:ticket_type, :ticket, :order], type: :read)
+        )
+        |> assign(:process_form, Form.for_update(order, :process, actor: actor))
 
       :processed ->
         socket
-        |> assign(:reopen_form, order |> Form.for_update(:reopen))
-        |> assign(:confirm_form, order |> Form.for_update(:confirm))
+        |> assign(:reopen_form, order |> Form.for_update(:reopen, actor: actor))
+        |> assign(:confirm_form, order |> Form.for_update(:confirm, actor: actor))
 
       :confirmed ->
         socket
@@ -128,84 +146,28 @@ defmodule GitsWeb.StorefrontLive.EventOrder do
     end
   end
 
-  def assign_ticket_types(socket) do
-    Ash.load(socket.assigns.order, [:tickets, :ticket_types])
+  def assign_ticket_types(socket, order, user) do
+    Ash.load(
+      order,
+      [event: [ticket_types: [tickets: Ash.Query.filter(Ticket, order.id == ^order.id)]]],
+      actor: user
+    )
     |> case do
       {:ok, order} ->
-        %{ticket_types: ticket_types, tickets: tickets} = order
+        event = order.event
 
-        socket
-        |> assign(:tickets, tickets)
-        |> assign(
-          :ticket_types,
-          Enum.map(ticket_types, fn type ->
-            tickets = Enum.filter(tickets, &(&1.ticket_type_id == type.id))
-            count = Enum.count(tickets)
-
-            removable_ticket = tickets |> List.first()
-
-            remove_ticket_form =
-              order
-              |> Form.for_update(:remove_ticket,
-                forms: [
-                  auto?: true
-                ]
-              )
-
-            add_ticket_form =
-              order
-              |> Form.for_update(:add_ticket,
-                forms: [
-                  ticket: [
-                    resource: Ticket,
-                    create_action: :create,
-                    update_action: :update,
-                    forms: [
-                      ticket_type: [
-                        resource: TicketType,
-                        data: type,
-                        create_action: :create,
-                        update_action: :update
-                      ]
-                    ]
-                  ]
-                ]
-              )
-              |> Form.add_form([:ticket], params: %{"ticket_type" => %{"id" => type.id}})
-
-            {type.name, type.description, type.price, count, removable_ticket, remove_ticket_form,
-             add_ticket_form}
+        ticket_types =
+          Enum.map(event.ticket_types, fn type ->
+            {type.id, type.name, type.price, type.color, type.tickets}
           end)
-        )
-    end
-  end
-
-  def assign_tickets_summary(socket) do
-    Ash.load(socket.assigns.order, [:tickets, :ticket_types])
-    |> case do
-      {:ok, order} ->
-        %{ticket_types: ticket_types, tickets: tickets} = order
-
-        tickets_summary =
-          for type <- ticket_types do
-            tickets = Enum.filter(tickets, &(&1.ticket_type_id == type.id))
-            count = Enum.count(tickets)
-
-            if count > 0 do
-              {type.name, type.price |> Decimal.mult(count), count}
-            end
-          end
 
         total =
-          for {_, price, _} <- tickets_summary, reduce: Decimal.new("0") do
-            acc ->
-              acc |> Decimal.add(price)
-          end
+          Enum.reduce(event.ticket_types, Decimal.new("0"), fn cur, acc ->
+            cur.price |> Decimal.mult(Enum.count(cur.tickets)) |> Decimal.add(acc)
+          end)
 
-        socket
-        |> assign(:tickets, tickets)
-        |> assign(:tickets_summary, tickets_summary)
-        |> assign(:tickets_total, total)
+        assign(socket, :total, total)
+        |> assign(:ticket_types, ticket_types)
     end
   end
 end

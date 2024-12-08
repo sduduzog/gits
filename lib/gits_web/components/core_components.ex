@@ -29,7 +29,7 @@ defmodule GitsWeb.CoreComponents do
     tickets =
       case assigns.user do
         %User{} = user ->
-          user = Ash.load!(user, [:tickets_count])
+          user = Ash.load!(user, [:tickets_count], actor: user)
           user.tickets_count
 
         _ ->
@@ -736,28 +736,10 @@ defmodule GitsWeb.CoreComponents do
         <% end %>
       </div>
       <div class="w-full inline-flex items-center gap-2 py-2 text-sm px-3 rounded-lg border border-zinc-200 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-zinc-600 focus:outline-none outline-none relative">
-        <input
-          type="color"
-          name={@name}
-          value={Phoenix.HTML.Form.normalize_value(@type, @value)}
-          class="absolute inset-0 size-full opacity-0"
-        />
+        <input type="color" name={@name} value={@value} class="absolute inset-0 size-full opacity-0" />
         <span class="size-5 rounded-full inline-flex" style={"background-color: #{@value}"}></span>
         <span>{@value}</span>
       </div>
-      <input
-        :if={false}
-        class={[
-          "w-full py-2 text-sm px-3 rounded-lg border border-zinc-200 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-zinc-600 focus:outline-none outline-none",
-          @errors == [] && "border-zinc-300 focus:ring-zinc-400",
-          @errors != [] && "border-rose-400 focus:border-rose-400"
-        ]}
-        type={@type}
-        name={@name}
-        id={@id}
-        value={Phoenix.HTML.Form.normalize_value(@type, @value)}
-        {@rest}
-      />
       <span :if={@description} class="inline-flex text-zinc-500">{@description}</span>
     </div>
     """
