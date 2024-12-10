@@ -14,26 +14,26 @@ defmodule GitsWeb.HostLive.EditEvent do
     socket |> ok(:host_panel)
   end
 
-  def handle_params(unsigned_params, _uri, socket) do
+  def handle_params(%{"public_id" => public_id} = unsigned_params, _uri, socket) do
     user = socket.assigns.current_user
 
-    Event
-    |> Ash.Query.filter(public_id == ^unsigned_params["public_id"])
+    Ash.Query.filter(Event, public_id == ^public_id)
     |> Ash.Query.load([:name, :ticket_types])
     |> Ash.read_one(actor: user)
     |> case do
       {:ok, event} ->
         socket
-        |> assign(:event, event)
-        |> assign(
-          :form,
-          current_form(socket.assigns.live_action, event, user)
-        )
-        |> show_archive_ticket_modal(unsigned_params, event, user)
-        |> show_ticket_form(unsigned_params, event, user)
         |> assign_event_update(event, user)
         |> noreply()
     end
+  end
+
+  def handle_params(unsigned_params, _uri, socket) do
+    user = socket.assigns.current_user
+
+    assign(socket, :event, nil)
+    |> assign_event_update(nil, user)
+    |> noreply()
   end
 
   def handle_event("close", _unsigned_params, socket) do
@@ -121,6 +121,28 @@ defmodule GitsWeb.HostLive.EditEvent do
     |> noreply()
   end
 
+  def handle_event("submit", unsigned_params, socket) do
+    Form.submit(socket.assigns.form, params: unsigned_params["form"])
+    |> case do
+      {:ok, event} ->
+        push_patch(socket,
+          to:
+            if(socket.assigns.on_next_path,
+              do: socket.assigns.on_next_path,
+              else:
+                Routes.host_edit_event_path(
+                  socket,
+                  :location,
+                  socket.assigns.host.handle,
+                  event.public_id
+                )
+            ),
+          replace: true
+        )
+        |> noreply()
+    end
+  end
+
   def handle_event("details", unsigned_params, socket) do
     socket.assigns.form
     |> case do
@@ -177,7 +199,6 @@ defmodule GitsWeb.HostLive.EditEvent do
 
   def handle_event("use_venue", unsigned_params, socket) do
     Form.submit(socket.assigns.form, params: unsigned_params["form"])
-    |> IO.inspect()
     |> case do
       {:ok, event} ->
         assign_event_update(socket, event, socket.assigns.current_user)
@@ -192,6 +213,84 @@ defmodule GitsWeb.HostLive.EditEvent do
         assign_event_update(socket, event, socket.assigns.current_user)
         |> noreply()
     end
+  end
+
+  def handle_event("location", unsigned_params, socket) do
+    Form.submit(socket.assigns.form, params: unsigned_params["form"])
+    |> case do
+      {:ok, event} ->
+        push_patch(socket,
+          to:
+            Routes.host_edit_event_path(
+              socket,
+              :description,
+              socket.assigns.host.handle,
+              event.public_id
+            ),
+          replace: true
+        )
+        |> noreply()
+    end
+  end
+
+  def handle_event("media", unsigned_params, socket) do
+    filename =
+      consume_uploaded_entries(socket, :poster, fn %{path: path}, _entry ->
+        bucket_name = Application.get_env(:gits, :bucket_name)
+
+        filename = Nanoid.generate(24) <> ".jpg"
+
+        Image.open!(path)
+        |> Image.thumbnail!("768x512", fit: :cover)
+        |> Image.stream!(suffix: ".jpg", buffer_size: 5_242_880, quality: 100)
+        |> ExAws.S3.upload(
+          bucket_name,
+          filename,
+          content_type: "image/jpeg",
+          cache_control: "public,max-age=3600"
+        )
+        |> ExAws.request()
+        |> IO.inspect()
+
+        {:ok,
+         %{
+           body: %{
+             location: "http://localhost:9000/gits/n6hwt861wtvzswb94ws74f5w.jpg",
+             key: "n6hwt861wtvzswb94ws74f5w.jpg",
+             bucket: "gits",
+             etag: "\"dc6d66d0c9d81fc5fcc114d2cc8e4390-1\""
+           },
+           headers: [
+             {"Accept-Ranges", "bytes"},
+             {"Content-Length", "343"},
+             {"Content-Type", "application/xml"},
+             {"ETag", "\"dc6d66d0c9d81fc5fcc114d2cc8e4390-1\""},
+             {"Server", "MinIO"},
+             {"Strict-Transport-Security", "max-age=31536000; includeSubDomains"},
+             {"Vary", "Origin"},
+             {"Vary", "Accept-Encoding"},
+             {"X-Amz-Id-2", "dd9025bab4ad464b049177c95eb6ebf374d3b3fd1af9251148b658df7ac2e3e8"},
+             {"X-Amz-Request-Id", "180FF051D4072B90"},
+             {"X-Content-Type-Options", "nosniff"},
+             {"X-Ratelimit-Limit", "2525"},
+             {"X-Ratelimit-Remaining", "2525"},
+             {"X-Xss-Protection", "1; mode=block"},
+             {"Date", "Tue, 10 Dec 2024 22:10:15 GMT"}
+           ],
+           status_code: 200
+         }}
+
+        {:ok, filename}
+      end)
+      |> case do
+        [filename] ->
+          filename
+
+        [] ->
+          nil
+      end
+
+    socket |> noreply()
   end
 
   def handle_event("tickets", unsigned_params, socket) do
@@ -298,7 +397,12 @@ defmodule GitsWeb.HostLive.EditEvent do
         |> case do
           {:ok, nil} ->
             socket
-            |> assign(:on_next_path, "#")
+            |> assign(
+              :form,
+              Form.for_create(Event, :create, forms: [auto?: true], actor: actor)
+              |> Form.add_form([:host], type: :read, validate?: false)
+            )
+            |> assign(:on_next_path, nil)
 
           {:ok, event} ->
             on_next_path =
@@ -310,6 +414,7 @@ defmodule GitsWeb.HostLive.EditEvent do
               )
 
             socket
+            |> assign(:form, Form.for_update(event, :details, forms: [auto?: true], actor: actor))
             |> assign(:on_next_path, on_next_path)
         end
 
@@ -328,10 +433,54 @@ defmodule GitsWeb.HostLive.EditEvent do
                 else: Form.for_update(event, :use_venue, actor: actor)
               )
             )
+            |> assign(
+              :on_next_path,
+              Routes.host_edit_event_path(
+                socket,
+                :description,
+                socket.assigns.host.handle,
+                event.public_id
+              )
+            )
         end
 
-      :live_stream ->
-        socket
+      :description ->
+        assign(socket, :form, Form.for_update(event, :description, actor: actor))
+        |> assign(
+          :on_next_path,
+          Routes.host_edit_event_path(
+            socket,
+            :media,
+            socket.assigns.host.handle,
+            event.public_id
+          )
+        )
+
+      :media ->
+        assign(socket, :form, Form.for_update(event, :media, actor: actor))
+        |> assign(:uploaded_files, [])
+        |> allow_upload(:poster, accept: ~w(.jpg .jpeg .png .webp), max_entries: 1)
+        |> assign(
+          :on_next_path,
+          Routes.host_edit_event_path(
+            socket,
+            :tickets,
+            socket.assigns.host.handle,
+            event.public_id
+          )
+        )
+
+      :tickets ->
+        assign(socket, :form, Form.for_update(event, :media, actor: actor))
+        |> assign(
+          :on_next_path,
+          Routes.host_edit_event_path(
+            socket,
+            :tickets,
+            socket.assigns.host.handle,
+            event.public_id
+          )
+        )
     end
     |> assign_new(:matches, fn ->
       Ash.Query.limit(Venue, 5)
@@ -343,9 +492,14 @@ defmodule GitsWeb.HostLive.EditEvent do
       end
     end)
     |> assign_new(:suggestions, fn -> [] end)
+    |> assign_new(:event_public_id, fn -> if is_nil(event), do: nil, else: event.public_id end)
   end
 
   def assign_event_update(socket, _, _) do
     socket
   end
+
+  defp error_to_string(:too_large), do: "Too large"
+  defp error_to_string(:not_accepted), do: "You have selected an unacceptable file type"
+  defp error_to_string(:too_many_files), do: "You have selected too many files"
 end

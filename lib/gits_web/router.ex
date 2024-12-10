@@ -83,7 +83,7 @@ defmodule GitsWeb.Router do
       live "/:handle/events/:public_id/edit/location", HostLive.EditEvent, :location
       live "/:handle/events/:public_id/edit/live-stream", HostLive.EditEvent, :live_stream
       live "/:handle/events/:public_id/edit/description", HostLive.EditEvent, :description
-      live "/:handle/events/:public_id/edit/poster", HostLive.EditEvent, :poster
+      live "/:handle/events/:public_id/edit/media", HostLive.EditEvent, :media
       live "/:handle/events/:public_id/edit/tickets", HostLive.EditEvent, :tickets
 
       live "/:handle/events/:public_id/scanner", HostLive.Scanner, :index

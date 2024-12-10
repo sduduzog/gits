@@ -1,14 +1,6 @@
 <h2 class="text-lg/7 font-semibold text-zinc-900">Event Details</h2>
 <p class="mt-1 mb-4 text-sm/5 text-zinc-600"></p>
-<.form
-  :let={f}
-  id="create-event-form"
-  for={@form}
-  class="grid gap-6"
-  phx-submit="details"
-  phx-change="validate"
-  phx-auto-recover="validate"
->
+<.form :let={f} for={@form} class="grid gap-6" phx-submit="submit" phx-change="validate">
   <div class="grid max-w-screen-sm grid-cols-2 gap-6">
     <.inputs_for :let={h} :if={@form.type == :create} field={f[:host]}>
       <.input field={h[:id]} type="hidden" value={@host_id} />

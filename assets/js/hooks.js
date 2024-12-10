@@ -72,7 +72,7 @@ const QuillEditor = {
 
     const hiddenField = document.createElement("input");
     hiddenField.type = "hidden";
-    hiddenField.name = this.el.dataset.name;
+    hiddenField.name = this.el.getAttribute("name");
     hiddenField.value = this.el.dataset.contents;
 
     this.el.appendChild(editor);
@@ -81,12 +81,11 @@ const QuillEditor = {
     const quill = new Quill(editor, {
       modules: {
         toolbar: [
-          [{ header: [1, 2, 3, false] }],
-          ["bold", "italic"],
-          ["link"],
-          [{ list: "bullet" }],
-          ["bold"],
-          ["link"],
+          // [{ header: [1, 2, 3, false] }],
+          // ["bold", "italic", "underline", "strike"],
+          // ["blockquote"],
+          // ["link"],
+          // [{ list: "bullet" }],
         ],
       },
       theme: "snow",
@@ -101,7 +100,10 @@ const QuillEditor = {
     this._setup();
   },
   updated() {
-    this._setup();
+    if (this.quill) {
+    } else {
+      this._setup();
+    }
   },
 };
 

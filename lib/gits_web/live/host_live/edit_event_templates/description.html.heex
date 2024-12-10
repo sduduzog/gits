@@ -1,0 +1,40 @@
+<h2 class="text-lg/7 font-semibold text-zinc-900">Description</h2>
+<p class="mt-1 mb-4 text-sm/5 text-zinc-600"></p>
+<.form
+  :let={f}
+  for={@form}
+  class="grid gap-6"
+  phx-submit="submit"
+  phx-change="validate"
+  phx-auto-recover="validate"
+>
+  <div class="grid max-w-screen-sm grid-cols-2 gap-6">
+    <.input field={f[:summary]} label="Summary" type="textarea" class="col-span-full" />
+    <.input
+      field={f[:description]}
+      label="Long description"
+      type="richtext"
+      class="col-span-full h-64"
+    />
+  </div>
+  <div class="col-span-full flex gap-6 lg:pt-4  py-8">
+    <.button disabled={not @form.changed? or not @form.valid?}>
+      <span class="text-sm font-semibold capitalize">
+        {@form.type}
+      </span>
+    </.button>
+
+    <.button variant={:ghost} type="reset" name="reset">
+      <span class="text-sm font-semibold">
+        Reset
+      </span>
+    </.button>
+    <div role="none" class="grow"></div>
+    <.button type="button" variant={:subtle} phx-click={@on_next}>
+      <span class="text-sm font-semibold">
+        Next
+      </span>
+      <.icon name="i-lucide-chevron-right" />
+    </.button>
+  </div>
+</.form>

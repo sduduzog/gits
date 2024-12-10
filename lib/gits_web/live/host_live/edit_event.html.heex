@@ -1,5 +1,5 @@
 <div class="flex items-start">
-  <%= if assigns[:event]  do %>
+  <%= if assigns[:event_public_id]  do %>
     <h1 class="pb-2 text-xl font-semibold">Edit event</h1>
   <% else %>
     <h1 class="pb-2 text-xl font-semibold">Create an event</h1>
@@ -12,15 +12,14 @@
       {label, action} <- [
         {"Event Details", :details},
         {"Location", :location},
-        # {"Live Stream", :live_stream},
         {"Description", :description},
-        {"Poster", :poster},
+        {"Media", :media},
         {"Tickets", :tickets}
       ]
     }
     patch={
-      if @event,
-        do: Routes.host_edit_event_path(@socket, action, @host.handle, @event.public_id),
+      if @event_public_id,
+        do: Routes.host_edit_event_path(@socket, action, @host.handle, @event_public_id),
         else: "#"
     }
     replace={true}
@@ -40,10 +39,7 @@
       :if={@live_action == :details}
       form={@form}
       host_id={@host.id}
-      on_next={
-        JS.patch(@on_next_path, replace: true)
-        |> show_modal("create_ticket")
-      }
+      on_next={if(@on_next_path, do: JS.patch(@on_next_path, replace: true), else: "")}
     />
     <.location
       :if={@live_action == :location}
@@ -52,56 +48,20 @@
       suggestions={@suggestions}
       event_id={@event_public_id}
       venue={@venue}
-      on_next={
-        JS.patch(
-          Routes.host_edit_event_path(
-            @socket,
-            :description,
-            @host.handle,
-            @event.public_id
-          ),
-          replace: true
-        )
-        |> show_modal("create_ticket")
-      }
+      on_next={JS.patch(@on_next_path, replace: true)}
     />
-
-    <div :if={@live_action == :live_stream} class="text-sm text-zinc-500">
-      Live streaming capabilities are coming soon to GiTS. Stay tuned for more information
-    </div>
 
     <.description
       :if={@live_action == :description}
       form={@form}
-      on_next={
-        JS.patch(
-          Routes.host_edit_event_path(
-            @socket,
-            :location,
-            @host.handle,
-            @event.public_id
-          ),
-          replace: true
-        )
-        |> show_modal("create_ticket")
-      }
+      on_next={JS.patch(@on_next_path, replace: true)}
     />
 
-    <.poster
-      :if={@live_action == :poster}
+    <.media
+      :if={@live_action == :media}
       form={@form}
-      on_next={
-        JS.patch(
-          Routes.host_edit_event_path(
-            @socket,
-            :location,
-            @host.handle,
-            @event.public_id
-          ),
-          replace: true
-        )
-        |> show_modal("create_ticket")
-      }
+      uploads={@uploads}
+      on_next={JS.patch(@on_next_path, replace: true)}
     />
 
     <.tickets

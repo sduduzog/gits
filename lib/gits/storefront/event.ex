@@ -50,6 +50,7 @@ defmodule Gits.Storefront.Event do
     end
 
     update :location do
+      accept [:location_notes, :location_is_private]
     end
 
     update :create_venue do
@@ -74,9 +75,11 @@ defmodule Gits.Storefront.Event do
     end
 
     update :description do
+      accept [:summary, :description]
     end
 
-    update :poster do
+    update :media do
+      accept [:poster]
     end
 
     update :publish do
@@ -134,6 +137,18 @@ defmodule Gits.Storefront.Event do
       authorize_if actor_present()
     end
 
+    policy action(:location) do
+      authorize_if actor_present()
+    end
+
+    policy action(:description) do
+      authorize_if actor_present()
+    end
+
+    policy action(:media) do
+      authorize_if actor_present()
+    end
+
     policy action(:add_ticket_type) do
       authorize_if expr(host.roles.user.id == ^actor(:id))
     end
@@ -165,8 +180,13 @@ defmodule Gits.Storefront.Event do
     attribute :ends_at, :naive_datetime, public?: true, allow_nil?: false
     attribute :visibility, :atom, public?: true, constraints: [one_of: [:private, :public]]
 
+    attribute :location_notes, :string, public?: true
+    attribute :location_is_private, :boolean, public?: true, default: false
+
     attribute :summary, :string, public?: true
     attribute :description, :string, public?: true
+
+    attribute :poster, :string, public?: true
 
     attribute :published_at, :utc_datetime, public?: true
 

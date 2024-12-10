@@ -723,6 +723,31 @@ defmodule GitsWeb.CoreComponents do
     """
   end
 
+  def input(%{type: "richtext"} = assigns) do
+    ~H"""
+    <div phx-feedback-for={@name} class={["max-w-3xl space-y-1 text-sm", @class]}>
+      <div class="flex justify-between">
+        <.label for={@id}>{@label}</.label>
+        <%= if @errors == [] do %>
+          <span :if={@hint} class="text-zinc-500">{@hint}</span>
+        <% else %>
+          <.error :for={msg <- @errors}>{msg}</.error>
+        <% end %>
+      </div>
+      <div
+        id={@id}
+        name={@name}
+        phx-update="ignore"
+        data-contents={@value}
+        phx-hook="QuillEditor"
+        class="h-full"
+      >
+      </div>
+      <span :if={@description} class="inline-flex text-zinc-500">{@description}</span>
+    </div>
+    """
+  end
+
   def input(%{type: "hidden"} = assigns) do
     ~H"""
     <input
