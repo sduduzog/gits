@@ -13,12 +13,32 @@
     {
       "allow_nil?": false,
       "default": "nil",
-      "generated?": true,
+      "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "number",
-      "type": "bigint"
+      "source": "name",
+      "type": "text"
+    },
+    {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "address",
+      "type": "text"
+    },
+    {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "google_place_id",
+      "type": "text"
     },
     {
       "allow_nil?": true,
@@ -27,8 +47,8 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "email",
-      "type": "citext"
+      "source": "place_uri",
+      "type": "text"
     },
     {
       "allow_nil?": true,
@@ -37,38 +57,58 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "total",
+      "source": "surburb",
+      "type": "text"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "city_or_town",
+      "type": "text"
+    },
+    {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "province",
+      "type": "text"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "postal_code",
+      "type": "text"
+    },
+    {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "latitude",
       "type": "decimal"
     },
     {
-      "allow_nil?": true,
+      "allow_nil?": false,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "requested_refund_at",
-      "type": "utc_datetime_usec"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "paystack_reference",
-      "type": "text"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "paystack_authorization_url",
-      "type": "text"
+      "source": "longitude",
+      "type": "decimal"
     },
     {
       "allow_nil?": false,
@@ -108,15 +148,15 @@
           "global": null,
           "strategy": null
         },
-        "name": "orders_event_id_fkey",
+        "name": "venues_host_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "events"
+        "table": "hosts"
       },
       "size": null,
-      "source": "event_id",
+      "source": "host_id",
       "type": "uuid"
     },
     {
@@ -128,16 +168,6 @@
       "size": null,
       "source": "archived_at",
       "type": "utc_datetime_usec"
-    },
-    {
-      "allow_nil?": false,
-      "default": "\"open\"",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "state",
-      "type": "text"
     }
   ],
   "base_filter": null,
@@ -145,8 +175,23 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "F9A35A3E5848E1B433D402985C88B743C71CF14D97DEB660B8B8D6E47C86BD3D",
-  "identities": [],
+  "hash": "FCF4785EB91E24DCFD0534988E24F4724334CEFE357826143974BAE4A2CF2DE1",
+  "identities": [
+    {
+      "all_tenants?": false,
+      "base_filter": null,
+      "index_name": "venues_place_id_index",
+      "keys": [
+        {
+          "type": "atom",
+          "value": "google_place_id"
+        }
+      ],
+      "name": "place_id",
+      "nils_distinct?": true,
+      "where": null
+    }
+  ],
   "multitenancy": {
     "attribute": null,
     "global": null,
@@ -154,5 +199,5 @@
   },
   "repo": "Elixir.Gits.Repo",
   "schema": null,
-  "table": "orders"
+  "table": "venues"
 }

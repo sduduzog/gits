@@ -13,82 +13,22 @@
     {
       "allow_nil?": false,
       "default": "nil",
-      "generated?": true,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "number",
-      "type": "bigint"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "email",
-      "type": "citext"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "total",
-      "type": "decimal"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "requested_refund_at",
-      "type": "utc_datetime_usec"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "paystack_reference",
-      "type": "text"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "paystack_authorization_url",
+      "source": "version_action_type",
       "type": "text"
     },
     {
       "allow_nil?": false,
-      "default": "fragment(\"(now() AT TIME ZONE 'utc')\")",
+      "default": "nil",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "created_at",
-      "type": "utc_datetime_usec"
-    },
-    {
-      "allow_nil?": false,
-      "default": "fragment(\"(now() AT TIME ZONE 'utc')\")",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "updated_at",
-      "type": "utc_datetime_usec"
+      "source": "version_action_name",
+      "type": "text"
     },
     {
       "allow_nil?": false,
@@ -108,7 +48,7 @@
           "global": null,
           "strategy": null
         },
-        "name": "orders_event_id_fkey",
+        "name": "events_versions_version_source_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
@@ -116,7 +56,7 @@
         "table": "events"
       },
       "size": null,
-      "source": "event_id",
+      "source": "version_source_id",
       "type": "uuid"
     },
     {
@@ -126,18 +66,57 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "archived_at",
-      "type": "utc_datetime_usec"
+      "source": "changes",
+      "type": "map"
     },
     {
       "allow_nil?": false,
-      "default": "\"anonymous\"",
+      "default": "fragment(\"(now() AT TIME ZONE 'utc')\")",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "state",
-      "type": "text"
+      "source": "version_inserted_at",
+      "type": "utc_datetime_usec"
+    },
+    {
+      "allow_nil?": false,
+      "default": "fragment(\"(now() AT TIME ZONE 'utc')\")",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "version_updated_at",
+      "type": "utc_datetime_usec"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": {
+        "deferrable": false,
+        "destination_attribute": "id",
+        "destination_attribute_default": null,
+        "destination_attribute_generated": null,
+        "index?": false,
+        "match_type": null,
+        "match_with": null,
+        "multitenancy": {
+          "attribute": null,
+          "global": null,
+          "strategy": null
+        },
+        "name": "events_versions_user_id_fkey",
+        "on_delete": "nothing",
+        "on_update": "update",
+        "primary_key?": true,
+        "schema": "public",
+        "table": "users"
+      },
+      "size": null,
+      "source": "user_id",
+      "type": "uuid"
     }
   ],
   "base_filter": null,
@@ -145,7 +124,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "F8A2712A8C7F2119A0AE9FD9A0D1F98A0657C55DF90F6DC7AD3D4168A9E0B403",
+  "hash": "8D3694B13DE82B0D9B9ACBBEA7C6314C2191A2D4EDB71B3F50643864474D8E02",
   "identities": [],
   "multitenancy": {
     "attribute": null,
@@ -154,5 +133,5 @@
   },
   "repo": "Elixir.Gits.Repo",
   "schema": null,
-  "table": "orders"
+  "table": "events_versions"
 }

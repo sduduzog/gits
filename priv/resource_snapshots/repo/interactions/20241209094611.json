@@ -11,23 +11,13 @@
       "type": "uuid"
     },
     {
-      "allow_nil?": false,
+      "allow_nil?": true,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "name",
-      "type": "text"
-    },
-    {
-      "allow_nil?": false,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "google_place_id",
+      "source": "type",
       "type": "text"
     },
     {
@@ -39,26 +29,6 @@
       "size": null,
       "source": "created_at",
       "type": "utc_datetime_usec"
-    },
-    {
-      "allow_nil?": false,
-      "default": "fragment(\"(now() AT TIME ZONE 'utc')\")",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "updated_at",
-      "type": "utc_datetime_usec"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "archived_at",
-      "type": "utc_datetime_usec"
     }
   ],
   "base_filter": null,
@@ -66,7 +36,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": false,
-  "hash": "C56E2EEDAE506DEF4D5DEE7711CE5C70DCDBBC04743364EF58F8139301646192",
+  "hash": "ABFBD5142DE9E9AD00D0E53927BCD82942B83C2126D7869428FC9C244D98E646",
   "identities": [],
   "multitenancy": {
     "attribute": null,
@@ -75,5 +45,5 @@
   },
   "repo": "Elixir.Gits.Repo",
   "schema": null,
-  "table": "venues"
+  "table": "interactions"
 }

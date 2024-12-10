@@ -27,7 +27,7 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "handle",
+      "source": "google_place_id",
       "type": "text"
     },
     {
@@ -37,7 +37,7 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "logo",
+      "source": "surburb",
       "type": "text"
     },
     {
@@ -47,8 +47,48 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "paystack_subaccount_code",
+      "source": "city_or_town",
       "type": "text"
+    },
+    {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "province",
+      "type": "text"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "postal_code",
+      "type": "text"
+    },
+    {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "latitude",
+      "type": "decimal"
+    },
+    {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "longitude",
+      "type": "decimal"
     },
     {
       "allow_nil?": false,
@@ -88,15 +128,15 @@
           "global": null,
           "strategy": null
         },
-        "name": "hosts_owner_id_fkey",
+        "name": "venues_host_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "users"
+        "table": "hosts"
       },
       "size": null,
-      "source": "owner_id",
+      "source": "host_id",
       "type": "uuid"
     },
     {
@@ -115,7 +155,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "9E8FCDFDE9A1D6075A07E5CCFD155064BB6B5F8BDB57C9E20164377658FA499B",
+  "hash": "C46D16929A5BE104F2DE7FB966A31B6192459336A9744B91AA1A76F143B074C8",
   "identities": [],
   "multitenancy": {
     "attribute": null,
@@ -124,5 +164,5 @@
   },
   "repo": "Elixir.Gits.Repo",
   "schema": null,
-  "table": "hosts"
+  "table": "venues"
 }

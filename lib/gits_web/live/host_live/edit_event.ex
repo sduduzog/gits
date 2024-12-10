@@ -1,4 +1,6 @@
 defmodule GitsWeb.HostLive.EditEvent do
+  alias Gits.Accounts.Venue
+  alias Gits.GooglePlaces
   alias Gits.Storefront.Event
   alias Gits.Storefront.TicketType
   alias Gits.Storefront.{Event, TicketType}
@@ -9,22 +11,14 @@ defmodule GitsWeb.HostLive.EditEvent do
   embed_templates "edit_event_templates/*"
 
   def mount(_params, _session, socket) do
-    case socket.assigns.current_user do
-      nil ->
-        socket
-        |> assign(:page_title, "Unauthorized")
-        |> ok(:unauthorized)
-
-      _ ->
-        socket |> ok(:host_panel)
-    end
+    socket |> ok(:host_panel)
   end
 
-  def handle_params(%{"public_id" => public_id} = unsigned_params, _uri, socket) do
+  def handle_params(unsigned_params, _uri, socket) do
     user = socket.assigns.current_user
 
     Event
-    |> Ash.Query.filter(public_id == ^public_id)
+    |> Ash.Query.filter(public_id == ^unsigned_params["public_id"])
     |> Ash.Query.load([:name, :ticket_types])
     |> Ash.read_one(actor: user)
     |> case do
@@ -37,15 +31,9 @@ defmodule GitsWeb.HostLive.EditEvent do
         )
         |> show_archive_ticket_modal(unsigned_params, event, user)
         |> show_ticket_form(unsigned_params, event, user)
+        |> assign_event_update(event, user)
+        |> noreply()
     end
-    |> noreply()
-  end
-
-  def handle_params(_unsigned_params, _uri, socket) do
-    socket
-    |> assign(:form, current_form(socket.assigns.live_action, nil, socket.assigns.current_user))
-    |> assign(:event, nil)
-    |> noreply()
   end
 
   def handle_event("close", _unsigned_params, socket) do
@@ -61,46 +49,6 @@ defmodule GitsWeb.HostLive.EditEvent do
         socket
         |> push_navigate(to: Routes.host_list_events_path(socket, :drafts, host.handle))
     end
-    |> noreply()
-  end
-
-  def handle_event("previous", _, socket) do
-    %{host: host, event: event} = socket.assigns
-
-    action =
-      case socket.assigns.live_action do
-        :tickets ->
-          :details
-
-        :summary ->
-          :tickets
-      end
-
-    socket
-    |> push_patch(
-      to: Routes.host_edit_event_path(socket, action, host.handle, event.public_id),
-      replace: true
-    )
-    |> noreply()
-  end
-
-  def handle_event("next", _, socket) do
-    %{host: host, event: event} = socket.assigns
-
-    action =
-      case socket.assigns.live_action do
-        :details ->
-          :tickets
-
-        :tickets ->
-          :summary
-      end
-
-    socket
-    |> push_patch(
-      to: Routes.host_edit_event_path(socket, action, host.handle, event.public_id),
-      replace: true
-    )
     |> noreply()
   end
 
@@ -131,6 +79,32 @@ defmodule GitsWeb.HostLive.EditEvent do
             socket.assigns.current_user
           )
         )
+    end
+    |> noreply()
+  end
+
+  def handle_event("validate", %{"address_search" => query}, socket) do
+    search_term = "%#{query}%"
+
+    matches =
+      Ash.Query.filter(
+        Venue,
+        fragment("? ilike ? or ? ilike ?", name, ^search_term, address, ^search_term)
+      )
+      |> Ash.Query.limit(5)
+      |> Ash.Query.load([:host])
+      |> Ash.read()
+      |> case do
+        {:ok, matches} -> matches
+        _ -> []
+      end
+
+    socket = assign(socket, :matches, matches)
+
+    GooglePlaces.get_suggestions(query, :cache)
+    |> case do
+      {:ok, suggestions} -> assign(socket, :suggestions, suggestions)
+      _ -> assign(socket, :suggestions, [])
     end
     |> noreply()
   end
@@ -166,7 +140,7 @@ defmodule GitsWeb.HostLive.EditEvent do
           to:
             Routes.host_edit_event_path(
               socket,
-              :tickets,
+              :location,
               socket.assigns.host.handle,
               event.public_id
             ),
@@ -180,7 +154,7 @@ defmodule GitsWeb.HostLive.EditEvent do
           to:
             Routes.host_edit_event_path(
               socket,
-              :tickets,
+              :location,
               socket.assigns.host.handle,
               event.public_id
             ),
@@ -191,6 +165,33 @@ defmodule GitsWeb.HostLive.EditEvent do
         socket |> assign(:form, form)
     end
     |> noreply()
+  end
+
+  def handle_event("create_venue", unsigned_params, socket) do
+    push_navigate(socket,
+      to:
+        Routes.host_edit_venue_path(socket, :create, socket.assigns.host.handle, unsigned_params)
+    )
+    |> noreply()
+  end
+
+  def handle_event("use_venue", unsigned_params, socket) do
+    Form.submit(socket.assigns.form, params: unsigned_params["form"])
+    |> IO.inspect()
+    |> case do
+      {:ok, event} ->
+        assign_event_update(socket, event, socket.assigns.current_user)
+        |> noreply()
+    end
+  end
+
+  def handle_event("remove_venue", unsigned_params, socket) do
+    Form.submit(socket.assigns.remove_venue_form, params: unsigned_params["form"])
+    |> case do
+      {:ok, event} ->
+        assign_event_update(socket, event, socket.assigns.current_user)
+        |> noreply()
+    end
   end
 
   def handle_event("tickets", unsigned_params, socket) do
@@ -217,12 +218,17 @@ defmodule GitsWeb.HostLive.EditEvent do
 
   defp current_form(:details, nil, actor) do
     Form.for_create(Event, :create, forms: [auto?: true], actor: actor)
-    |> Form.add_form([:host], type: :read)
+    |> Form.add_form([:host], type: :read, validate?: false)
   end
 
   defp current_form(:details, event, actor) do
     event
     |> Form.for_update(:details, forms: [auto?: true], actor: actor)
+  end
+
+  defp current_form(:location, event, actor) do
+    event
+    |> Form.for_update(:location, forms: [auto?: true], actor: actor)
   end
 
   defp current_form(:tickets, event, actor) do
@@ -283,5 +289,63 @@ defmodule GitsWeb.HostLive.EditEvent do
 
   defp show_ticket_form(socket, _, _, _) do
     assign(socket, :show_ticket_form, false)
+  end
+
+  def assign_event_update(socket, event, actor) do
+    case socket.assigns.live_action do
+      :details ->
+        Ash.load(event, [], actor: actor)
+        |> case do
+          {:ok, nil} ->
+            socket
+            |> assign(:on_next_path, "#")
+
+          {:ok, event} ->
+            on_next_path =
+              Routes.host_edit_event_path(
+                socket,
+                :location,
+                socket.assigns.host.handle,
+                event.public_id
+              )
+
+            socket
+            |> assign(:on_next_path, on_next_path)
+        end
+
+      :location ->
+        Ash.load(event, [:venue], actor: actor)
+        |> case do
+          {:ok, event} ->
+            socket
+            |> assign(:event_public_id, event.public_id)
+            |> assign(:venue, event.venue)
+            |> assign(:remove_venue_form, Form.for_update(event, :remove_venue, actor: actor))
+            |> assign(
+              :form,
+              if(event.venue,
+                do: Form.for_update(event, :location, actor: actor),
+                else: Form.for_update(event, :use_venue, actor: actor)
+              )
+            )
+        end
+
+      :live_stream ->
+        socket
+    end
+    |> assign_new(:matches, fn ->
+      Ash.Query.limit(Venue, 5)
+      |> Ash.Query.load(:host)
+      |> Ash.read()
+      |> case do
+        {:ok, venues} -> venues
+        _ -> []
+      end
+    end)
+    |> assign_new(:suggestions, fn -> [] end)
+  end
+
+  def assign_event_update(socket, _, _) do
+    socket
   end
 end

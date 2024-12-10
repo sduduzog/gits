@@ -48,12 +48,12 @@
           "global": null,
           "strategy": null
         },
-        "name": "tickets_versions_version_source_id_fkey",
+        "name": "venues_versions_version_source_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "tickets"
+        "table": "venues"
       },
       "size": null,
       "source": "version_source_id",
@@ -107,7 +107,7 @@
           "global": null,
           "strategy": null
         },
-        "name": "tickets_versions_user_id_fkey",
+        "name": "venues_versions_user_id_fkey",
         "on_delete": "nothing",
         "on_update": "update",
         "primary_key?": true,
@@ -124,7 +124,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "23709903DA6CC35522309ABC022867FD0268EA937A3E4F0C8C52362B8514CE82",
+  "hash": "1C8608F7ED8318E0DD0BDDB7590A577E1606DEBD4C058E1D6B76202D1B3383EE",
   "identities": [],
   "multitenancy": {
     "attribute": null,
@@ -133,5 +133,5 @@
   },
   "repo": "Elixir.Gits.Repo",
   "schema": null,
-  "table": "tickets_versions"
+  "table": "venues_versions"
 }

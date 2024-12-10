@@ -1,0 +1,119 @@
+<h2 class="text-lg/7 font-semibold text-zinc-900">Event Location</h2>
+<p class="mt-1 mb-4 text-sm/5 text-zinc-600"></p>
+<div class="grid gap-6" phx-submit="location">
+  <%= if is_nil(@venue) do %>
+    <div :if={is_nil(@venue)} class="grid max-w-screen-sm grid-cols-2 gap-4">
+      <.form :let={f} for={%{}} class="col-span-full" phx-change="validate">
+        <.input
+          field={f[:address_search]}
+          phx-change="validate"
+          label="Search for an address"
+          type="search"
+          class="col-span-full"
+        />
+      </.form>
+      <div class="col-span-full grid gap-2">
+        <.form :let={f} :for={match <- @matches} for={@form} phx-submit="use_venue" class="w-full">
+          <.input field={f[:venue]} value={match.id} type="hidden" />
+          <.button size={:none} variant={:ghost} class="p-1 w-full">
+            <div class="w-full grid text-left">
+              <span class="grow text-left text-sm/4">
+                {match.name}, {match.address}
+              </span>
+            </div>
+          </.button>
+        </.form>
+        <div :for={suggestion <- @suggestions} class="grid">
+          <.button
+            size={:none}
+            variant={:ghost}
+            class="p-1"
+            phx-click="create_venue"
+            phx-value-place={suggestion.id}
+            phx-value-event={@event_id}
+          >
+            <span class="grow text-left">
+              {suggestion.text}
+            </span>
+          </.button>
+        </div>
+      </div>
+    </div>
+  <% else %>
+    <div class="border max-w-sm flex items-start p-2 rounded-xl">
+      <div class="inline-flex p-2">
+        <.icon name="i-lucide-map" />
+      </div>
+      <div class="grid place-items-start grow p-2 gap-2">
+        <span class="font-medium">{@venue.name}</span>
+        <span class="text-zinc-500 text-sm">{@venue.address}</span>
+      </div>
+      <.form :let={f} for={@form} phx-submit="remove_venue">
+        <.input type="hidden" field={f[:venue]} value={@venue.id} />
+        <.button variant={:ghost}><span>Change</span></.button>
+      </.form>
+    </div>
+
+    <.form
+      :let={f}
+      id="create-event-form"
+      for={@form}
+      class="grid gap-6"
+      phx-submit="details"
+      phx-change="validate"
+      phx-auto-recover="validate"
+    >
+      <div class="grid max-w-screen-sm grid-cols-2 gap-6">
+        <.input type="textarea" field={f[:location_notes]} label="Notes" class="col-span-full" />
+
+        <.input
+          field={f[:location_is_private]}
+          label="Private location"
+          type="checkbox"
+          description="Hide the location from the public event listing. The venue will only be sent to customers after checking in (Note: This requires that all attendees of the event sign in)"
+          class="col-span-full"
+        />
+      </div>
+      <div class="col-span-full flex gap-6 py-4 pb-8">
+        <.button disabled={not @form.changed? or not @form.valid?}>
+          <span class="text-sm font-semibold capitalize">
+            {@form.type}
+          </span>
+        </.button>
+
+        <.button variant={:ghost} type="reset" name="reset">
+          <span class="text-sm font-semibold">
+            Reset
+          </span>
+        </.button>
+        <div role="none" class="grow"></div>
+        <.button :if={@form.type == :update} type="button" variant={:subtle} phx-click={@on_next}>
+          <span class="text-sm font-semibold">
+            Next
+          </span>
+          <.icon name="i-lucide-chevron-right" />
+        </.button>
+      </div>
+    </.form>
+    <div :if={false} class="col-span-full flex gap-6 py-4 pb-8">
+      <.button disabled={not @form.changed? or not @form.valid?}>
+        <span class="text-sm font-semibold capitalize">
+          {@form.type}
+        </span>
+      </.button>
+
+      <.button variant={:ghost} type="reset" name="reset">
+        <span class="text-sm font-semibold">
+          Reset
+        </span>
+      </.button>
+      <div role="none" class="grow"></div>
+      <.button :if={@form.type == :update} type="button" variant={:subtle}>
+        <span class="text-sm font-semibold">
+          Next
+        </span>
+        <.icon name="i-lucide-chevron-right" />
+      </.button>
+    </div>
+  <% end %>
+</div>

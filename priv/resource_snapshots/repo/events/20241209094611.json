@@ -17,18 +17,58 @@
       "primary_key?": false,
       "references": null,
       "size": null,
+      "source": "public_id",
+      "type": "text"
+    },
+    {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
       "source": "name",
       "type": "text"
     },
     {
       "allow_nil?": false,
-      "default": "\"0\"",
+      "default": "nil",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "price",
-      "type": "decimal"
+      "source": "starts_at",
+      "type": "naive_datetime"
+    },
+    {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "ends_at",
+      "type": "naive_datetime"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "visibility",
+      "type": "text"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "summary",
+      "type": "text"
     },
     {
       "allow_nil?": true,
@@ -41,64 +81,14 @@
       "type": "text"
     },
     {
-      "allow_nil?": false,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "sale_starts_at",
-      "type": "naive_datetime"
-    },
-    {
-      "allow_nil?": false,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "sale_ends_at",
-      "type": "naive_datetime"
-    },
-    {
-      "allow_nil?": false,
-      "default": "10",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "quantity",
-      "type": "bigint"
-    },
-    {
-      "allow_nil?": false,
-      "default": "10",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "limit_per_user",
-      "type": "bigint"
-    },
-    {
       "allow_nil?": true,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "color",
-      "type": "text"
-    },
-    {
-      "allow_nil?": false,
-      "default": "false",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "check_in_enabled",
-      "type": "boolean"
+      "source": "published_at",
+      "type": "utc_datetime"
     },
     {
       "allow_nil?": false,
@@ -121,6 +111,35 @@
       "type": "utc_datetime_usec"
     },
     {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": {
+        "deferrable": false,
+        "destination_attribute": "id",
+        "destination_attribute_default": null,
+        "destination_attribute_generated": null,
+        "index?": false,
+        "match_type": null,
+        "match_with": null,
+        "multitenancy": {
+          "attribute": null,
+          "global": null,
+          "strategy": null
+        },
+        "name": "events_host_id_fkey",
+        "on_delete": null,
+        "on_update": null,
+        "primary_key?": true,
+        "schema": "public",
+        "table": "hosts"
+      },
+      "size": null,
+      "source": "host_id",
+      "type": "uuid"
+    },
+    {
       "allow_nil?": true,
       "default": "nil",
       "generated?": false,
@@ -138,15 +157,15 @@
           "global": null,
           "strategy": null
         },
-        "name": "ticket_types_event_id_fkey",
+        "name": "events_venue_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "events"
+        "table": "venues"
       },
       "size": null,
-      "source": "event_id",
+      "source": "venue_id",
       "type": "uuid"
     },
     {
@@ -165,7 +184,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "09AF67124776668932E606909325909FACF9C91290B601C2C4AED09D8B35EC7A",
+  "hash": "0B85A78385E4E13335C959826D2EAE2D71ECECC700EA2D8525F2A5854607B12E",
   "identities": [],
   "multitenancy": {
     "attribute": null,
@@ -174,5 +193,5 @@
   },
   "repo": "Elixir.Gits.Repo",
   "schema": null,
-  "table": "ticket_types"
+  "table": "events"
 }

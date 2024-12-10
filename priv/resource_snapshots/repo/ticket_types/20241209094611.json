@@ -17,18 +17,18 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "public_id",
+      "source": "name",
       "type": "text"
     },
     {
-      "allow_nil?": true,
-      "default": "nil",
+      "allow_nil?": false,
+      "default": "\"0\"",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "admitted_at",
-      "type": "utc_datetime"
+      "source": "price",
+      "type": "decimal"
     },
     {
       "allow_nil?": true,
@@ -37,8 +37,68 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "checked_in_at",
-      "type": "utc_datetime"
+      "source": "description",
+      "type": "text"
+    },
+    {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "sale_starts_at",
+      "type": "naive_datetime"
+    },
+    {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "sale_ends_at",
+      "type": "naive_datetime"
+    },
+    {
+      "allow_nil?": false,
+      "default": "10",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "quantity",
+      "type": "bigint"
+    },
+    {
+      "allow_nil?": false,
+      "default": "10",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "limit_per_user",
+      "type": "bigint"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "color",
+      "type": "text"
+    },
+    {
+      "allow_nil?": false,
+      "default": "false",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "check_in_enabled",
+      "type": "boolean"
     },
     {
       "allow_nil?": false,
@@ -78,73 +138,15 @@
           "global": null,
           "strategy": null
         },
-        "name": "tickets_attendee_id_fkey",
+        "name": "ticket_types_event_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "users"
+        "table": "events"
       },
       "size": null,
-      "source": "attendee_id",
-      "type": "uuid"
-    },
-    {
-      "allow_nil?": false,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": {
-        "deferrable": false,
-        "destination_attribute": "id",
-        "destination_attribute_default": null,
-        "destination_attribute_generated": null,
-        "index?": false,
-        "match_type": null,
-        "match_with": null,
-        "multitenancy": {
-          "attribute": null,
-          "global": null,
-          "strategy": null
-        },
-        "name": "tickets_order_id_fkey",
-        "on_delete": null,
-        "on_update": null,
-        "primary_key?": true,
-        "schema": "public",
-        "table": "orders"
-      },
-      "size": null,
-      "source": "order_id",
-      "type": "uuid"
-    },
-    {
-      "allow_nil?": false,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": {
-        "deferrable": false,
-        "destination_attribute": "id",
-        "destination_attribute_default": null,
-        "destination_attribute_generated": null,
-        "index?": false,
-        "match_type": null,
-        "match_with": null,
-        "multitenancy": {
-          "attribute": null,
-          "global": null,
-          "strategy": null
-        },
-        "name": "tickets_ticket_type_id_fkey",
-        "on_delete": null,
-        "on_update": null,
-        "primary_key?": true,
-        "schema": "public",
-        "table": "ticket_types"
-      },
-      "size": null,
-      "source": "ticket_type_id",
+      "source": "event_id",
       "type": "uuid"
     },
     {
@@ -156,16 +158,6 @@
       "size": null,
       "source": "archived_at",
       "type": "utc_datetime_usec"
-    },
-    {
-      "allow_nil?": false,
-      "default": "\"open\"",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "state",
-      "type": "text"
     }
   ],
   "base_filter": null,
@@ -173,7 +165,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "DB10EF9101C3360252E1F39CF8FD0ECB17E20AB436C638830F73645FDB52FE42",
+  "hash": "FAD4319452F6885AAC262890C191A1FED4FF0B5A5FDBC86D79748492E29675A9",
   "identities": [],
   "multitenancy": {
     "attribute": null,
@@ -182,5 +174,5 @@
   },
   "repo": "Elixir.Gits.Repo",
   "schema": null,
-  "table": "tickets"
+  "table": "ticket_types"
 }

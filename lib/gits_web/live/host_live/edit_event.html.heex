@@ -11,6 +11,10 @@
     :for={
       {label, action} <- [
         {"Event Details", :details},
+        {"Location", :location},
+        # {"Live Stream", :live_stream},
+        {"Description", :description},
+        {"Poster", :poster},
         {"Tickets", :tickets}
       ]
     }
@@ -35,10 +39,71 @@
     <.event_details
       :if={@live_action == :details}
       form={@form}
-      socket={@socket}
-      host={@host}
-      event={@event}
+      host_id={@host.id}
+      on_next={
+        JS.patch(@on_next_path, replace: true)
+        |> show_modal("create_ticket")
+      }
     />
+    <.location
+      :if={@live_action == :location}
+      form={@form}
+      matches={@matches}
+      suggestions={@suggestions}
+      event_id={@event_public_id}
+      venue={@venue}
+      on_next={
+        JS.patch(
+          Routes.host_edit_event_path(
+            @socket,
+            :description,
+            @host.handle,
+            @event.public_id
+          ),
+          replace: true
+        )
+        |> show_modal("create_ticket")
+      }
+    />
+
+    <div :if={@live_action == :live_stream} class="text-sm text-zinc-500">
+      Live streaming capabilities are coming soon to GiTS. Stay tuned for more information
+    </div>
+
+    <.description
+      :if={@live_action == :description}
+      form={@form}
+      on_next={
+        JS.patch(
+          Routes.host_edit_event_path(
+            @socket,
+            :location,
+            @host.handle,
+            @event.public_id
+          ),
+          replace: true
+        )
+        |> show_modal("create_ticket")
+      }
+    />
+
+    <.poster
+      :if={@live_action == :poster}
+      form={@form}
+      on_next={
+        JS.patch(
+          Routes.host_edit_event_path(
+            @socket,
+            :location,
+            @host.handle,
+            @event.public_id
+          ),
+          replace: true
+        )
+        |> show_modal("create_ticket")
+      }
+    />
+
     <.tickets
       :if={@live_action == :tickets}
       form={@form}
@@ -50,41 +115,5 @@
       show_archive_ticket_modal={@show_archive_ticket_modal}
       show_ticket_form={@show_ticket_form}
     />
-
-    <.summary
-      :if={@live_action == :summary}
-      host_settings_payouts_path={Routes.host_settings_path(@socket, :payouts, @host.handle)}
-      payout_details_required={false}
-    />
-
-    <div :if={false} class="mt-8 flex gap-6">
-      <.button
-        disabled={@live_action == :details}
-        phx-click="previous"
-        phx-value-from={@live_action}
-        type="button"
-        variant={:subtle}
-      >
-        <.icon name="i-lucide-chevron-left" />
-        <span class=" font-semibold">
-          Previous
-        </span>
-      </.button>
-
-      <%= if @live_action == :tickets do %>
-        <.button variant={:subtle} phx-click={JS.dispatch("gits:go_back")} type="button">
-          <span>
-            Done
-          </span>
-        </.button>
-      <% else %>
-        <.button phx-click="next" type="button" variant={:subtle}>
-          <span class="">
-            Next
-          </span>
-          <.icon name="i-lucide-chevron-right" />
-        </.button>
-      <% end %>
-    </div>
   </div>
 </div>

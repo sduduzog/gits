@@ -132,11 +132,14 @@
             <.icon name="i-lucide-settings-2" />
           </.button>
         </div>
-        <div :for={type <- @event.ticket_types} class="flex items-center gap-4 p-2">
-          <GitsWeb.EventComponents.ticket_card color={type.color} name={type.name} id={type.id}>
+        <div
+          :for={{id, name, color, tickets_count, quantity, tags} <- @ticket_types}
+          class="flex items-center gap-4 p-2"
+        >
+          <GitsWeb.EventComponents.ticket_card color={color} name={name} id={id} tags={tags}>
             <div class="">
-              <span class="text-xl font-light">{type.tickets_count}</span>
-              <span class="text-xl font-light text-zinc-500">/ {type.quantity}</span>
+              <span class="text-xl font-light">{tickets_count}</span>
+              <span class="text-xl font-light text-zinc-500">/ {quantity}</span>
             </div>
           </GitsWeb.EventComponents.ticket_card>
         </div>
@@ -173,7 +176,7 @@
       :if={@live_action == :overview}
       ready_to_publish={false}
       payments_ready={not is_nil(@host.paystack_subaccount_code)}
-      issues={["This is number one"]}
+      issues={[]}
       host_settings_payouts_path={Routes.host_settings_path(@socket, :payouts, @host.handle)}
     />
     <.attendees :if={@live_action == :attendees} attendees={@attendees} />

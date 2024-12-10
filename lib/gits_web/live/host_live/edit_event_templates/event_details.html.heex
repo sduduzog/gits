@@ -11,7 +11,7 @@
 >
   <div class="grid max-w-screen-sm grid-cols-2 gap-6">
     <.inputs_for :let={h} :if={@form.type == :create} field={f[:host]}>
-      <.input field={h[:id]} type="hidden" value={@host.id} />
+      <.input field={h[:id]} type="hidden" value={@host_id} />
     </.inputs_for>
 
     <.input
@@ -33,15 +33,6 @@
       label="Visibility"
       class="col-span-full"
     />
-
-    <.input
-      :if={false}
-      type="radio"
-      field={f[:category]}
-      options={Gits.Storefront.EventCategory.values()}
-      label="Category"
-      class="col-span-full"
-    />
   </div>
   <div class="col-span-full flex gap-6 py-4 pb-8">
     <.button disabled={not @form.changed? or not @form.valid?}>
@@ -56,23 +47,7 @@
       </span>
     </.button>
     <div role="none" class="grow"></div>
-    <.button
-      :if={@form.type == :update}
-      type="button"
-      variant={:subtle}
-      phx-click={
-        JS.patch(
-          Routes.host_edit_event_path(
-            @socket,
-            :tickets,
-            @host.handle,
-            @event.public_id
-          ),
-          replace: true
-        )
-        |> show_modal("create_ticket")
-      }
-    >
+    <.button :if={@form.type == :update} type="button" variant={:subtle} phx-click={@on_next}>
       <span class="text-sm font-semibold">
         Next
       </span>

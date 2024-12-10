@@ -11,7 +11,15 @@ defmodule GitsWeb.HostLive.ViewEvent do
     |> Ash.read_one(actor: socket.assigns.current_user)
     |> case do
       {:ok, event} ->
+        ticket_types =
+          Enum.map(event.ticket_types, fn type ->
+            tags = if type.check_in_enabled, do: ["RSVP"], else: []
+
+            {type.id, type.name, type.color, type.tickets_count, type.quantity, tags}
+          end)
+
         assign(socket, :event, event)
+        |> assign(:ticket_types, ticket_types)
         |> assign(:page_title, "Events / #{event.name}")
     end
     |> ok(:host)

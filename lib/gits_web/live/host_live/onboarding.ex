@@ -48,12 +48,12 @@ defmodule GitsWeb.HostLive.Onboarding do
           :form,
           Host
           |> Form.for_create(:create,
-            actor: user,
-            forms: [auto?: true]
+            forms: [auto?: true],
+            actor: user
           )
-          |> Form.add_form([:owner], type: :read)
-          |> Form.add_form([:role])
-          |> Form.add_form([:role, :user], type: :read)
+          |> Form.add_form([:owner], type: :read, validate?: false)
+          |> Form.add_form([:role], validate?: false)
+          |> Form.add_form([:role, :user], type: :read, validate?: false)
         )
         |> noreply()
     end

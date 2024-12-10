@@ -495,7 +495,7 @@ defmodule GitsWeb.CoreComponents do
       <button
         type={@type}
         class={[
-          "text-sm/6 font-semibold  border inline-flex gap-2",
+          "text-sm/5 font-semibold  border inline-flex gap-2",
           "rounded-lg items-center justify-center phx-submit-loading:opacity-75 disabled:opacity-75",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-zinc-600",
           @size_class,
@@ -511,7 +511,7 @@ defmodule GitsWeb.CoreComponents do
         navigate={@href}
         type={@type}
         class={[
-          "text-sm/6 font-semibold  border inline-flex gap-2",
+          "text-sm/5 font-semibold  border inline-flex gap-2",
           "rounded-lg items-center justify-center phx-submit-loading:opacity-75 disabled:opacity-75",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-zinc-600",
           @size_class,
@@ -636,6 +636,7 @@ defmodule GitsWeb.CoreComponents do
       <div class="flex flex-wrap gap-4">
         <label
           :for={{item, index} <- Enum.with_index(@options, 1)}
+          for={item}
           class={[
             "inline-flex py-2 text-sm px-3 rounded-lg border",
             "border-zinc-200 focus-visible:border-transparent focus-visible:ring-2 focus-visible:outline-none outline-none",
@@ -646,7 +647,7 @@ defmodule GitsWeb.CoreComponents do
         >
           <input
             type="radio"
-            id={@id}
+            id={item}
             name={@name}
             value={item}
             class="peer sr-only"

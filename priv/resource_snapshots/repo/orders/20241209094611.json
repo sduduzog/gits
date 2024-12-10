@@ -11,13 +11,33 @@
       "type": "uuid"
     },
     {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": true,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "number",
+      "type": "bigint"
+    },
+    {
       "allow_nil?": true,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "integration",
+      "source": "email",
+      "type": "citext"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "total",
       "type": "decimal"
     },
     {
@@ -27,8 +47,8 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "paystack",
-      "type": "decimal"
+      "source": "requested_refund_at",
+      "type": "utc_datetime_usec"
     },
     {
       "allow_nil?": true,
@@ -37,11 +57,41 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "subaccount",
-      "type": "decimal"
+      "source": "paystack_reference",
+      "type": "text"
     },
     {
       "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "paystack_authorization_url",
+      "type": "text"
+    },
+    {
+      "allow_nil?": false,
+      "default": "fragment(\"(now() AT TIME ZONE 'utc')\")",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "created_at",
+      "type": "utc_datetime_usec"
+    },
+    {
+      "allow_nil?": false,
+      "default": "fragment(\"(now() AT TIME ZONE 'utc')\")",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "updated_at",
+      "type": "utc_datetime_usec"
+    },
+    {
+      "allow_nil?": false,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
@@ -58,15 +108,15 @@
           "global": null,
           "strategy": null
         },
-        "name": "order_fees_splits_order_id_fkey",
+        "name": "orders_event_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "orders"
+        "table": "events"
       },
       "size": null,
-      "source": "order_id",
+      "source": "event_id",
       "type": "uuid"
     },
     {
@@ -78,6 +128,16 @@
       "size": null,
       "source": "archived_at",
       "type": "utc_datetime_usec"
+    },
+    {
+      "allow_nil?": false,
+      "default": "\"anonymous\"",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "state",
+      "type": "text"
     }
   ],
   "base_filter": null,
@@ -85,7 +145,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "5D3F6DCFF3A8313FB79B033DBBBF9D3B1587571F45C3852E641FDD3A1448A59C",
+  "hash": "3B4D2CAC014CA2863AB73F2240C383592D664FE068C34F706FDB1E56D59379F9",
   "identities": [],
   "multitenancy": {
     "attribute": null,
@@ -94,5 +154,5 @@
   },
   "repo": "Elixir.Gits.Repo",
   "schema": null,
-  "table": "order_fees_splits"
+  "table": "orders"
 }

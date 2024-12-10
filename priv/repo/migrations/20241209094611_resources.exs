@@ -1,4 +1,4 @@
-defmodule Gits.Repo.Migrations.CreateResources do
+defmodule Gits.Repo.Migrations.Resources do
   @moduledoc """
   Updates resources based on their most recent snapshots.
 
@@ -43,6 +43,12 @@ defmodule Gits.Repo.Migrations.CreateResources do
     alter table(:venues) do
       add :name, :text, null: false
       add :google_place_id, :text, null: false
+      add :surburb, :text
+      add :city_or_town, :text
+      add :province, :text, null: false
+      add :postal_code, :text
+      add :latitude, :decimal, null: false
+      add :longitude, :decimal, null: false
 
       add :created_at, :utc_datetime_usec,
         null: false,
@@ -52,6 +58,7 @@ defmodule Gits.Repo.Migrations.CreateResources do
         null: false,
         default: fragment("(now() AT TIME ZONE 'utc')")
 
+      add :host_id, :uuid, null: false
       add :archived_at, :utc_datetime_usec
     end
 
@@ -145,9 +152,29 @@ defmodule Gits.Repo.Migrations.CreateResources do
 
     alter table(:tickets) do
       add :public_id, :text, null: false
+      add :admitted_at, :utc_datetime
+      add :checked_in_at, :utc_datetime
+
+      add :created_at, :utc_datetime_usec,
+        null: false,
+        default: fragment("(now() AT TIME ZONE 'utc')")
+
+      add :updated_at, :utc_datetime_usec,
+        null: false,
+        default: fragment("(now() AT TIME ZONE 'utc')")
+
+      add :attendee_id,
+          references(:users,
+            column: :id,
+            name: "tickets_attendee_id_fkey",
+            type: :uuid,
+            prefix: "public"
+          )
+
       add :order_id, :uuid, null: false
       add :ticket_type_id, :uuid, null: false
       add :archived_at, :utc_datetime_usec
+      add :state, :text, null: false, default: "open"
     end
 
     create table(:ticket_types_versions, primary_key: false) do
@@ -201,6 +228,7 @@ defmodule Gits.Repo.Migrations.CreateResources do
       add :quantity, :bigint, null: false, default: 10
       add :limit_per_user, :bigint, null: false, default: 10
       add :color, :text
+      add :check_in_enabled, :boolean, null: false, default: false
 
       add :created_at, :utc_datetime_usec,
         null: false,
@@ -254,7 +282,7 @@ defmodule Gits.Repo.Migrations.CreateResources do
 
       add :event_id, :uuid, null: false
       add :archived_at, :utc_datetime_usec
-      add :state, :text, null: false, default: "open"
+      add :state, :text, null: false, default: "anonymous"
     end
 
     create table(:order_fees_splits, primary_key: false) do
@@ -303,6 +331,16 @@ defmodule Gits.Repo.Migrations.CreateResources do
 
     create table(:hosts, primary_key: false) do
       add :id, :uuid, null: false, default: fragment("gen_random_uuid()"), primary_key: true
+    end
+
+    alter table(:venues) do
+      modify :host_id,
+             references(:hosts,
+               column: :id,
+               name: "venues_host_id_fkey",
+               type: :uuid,
+               prefix: "public"
+             )
     end
 
     alter table(:hosts_versions) do
@@ -573,6 +611,12 @@ defmodule Gits.Repo.Migrations.CreateResources do
       modify :version_source_id, :uuid
     end
 
+    drop constraint(:venues, "venues_host_id_fkey")
+
+    alter table(:venues) do
+      modify :host_id, :uuid
+    end
+
     drop table(:hosts)
 
     drop table(:hosts_versions)
@@ -613,6 +657,7 @@ defmodule Gits.Repo.Migrations.CreateResources do
       remove :event_id
       remove :updated_at
       remove :created_at
+      remove :check_in_enabled
       remove :color
       remove :limit_per_user
       remove :quantity
@@ -636,10 +681,18 @@ defmodule Gits.Repo.Migrations.CreateResources do
 
     drop table(:ticket_types_versions)
 
+    drop constraint(:tickets, "tickets_attendee_id_fkey")
+
     alter table(:tickets) do
+      remove :state
       remove :archived_at
       remove :ticket_type_id
       remove :order_id
+      remove :attendee_id
+      remove :updated_at
+      remove :created_at
+      remove :checked_in_at
+      remove :admitted_at
       remove :public_id
     end
 
@@ -683,8 +736,15 @@ defmodule Gits.Repo.Migrations.CreateResources do
 
     alter table(:venues) do
       remove :archived_at
+      remove :host_id
       remove :updated_at
       remove :created_at
+      remove :longitude
+      remove :latitude
+      remove :postal_code
+      remove :province
+      remove :city_or_town
+      remove :surburb
       remove :google_place_id
       remove :name
     end

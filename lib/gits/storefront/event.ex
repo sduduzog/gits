@@ -1,5 +1,4 @@
 defmodule Gits.Storefront.Event do
-  alias Gits.Storefront.Ticket
   alias Gits.Storefront.{Order, TicketType}
   alias Gits.Accounts.{Host, User, Venue}
   alias Gits.Accounts
@@ -50,7 +49,34 @@ defmodule Gits.Storefront.Event do
       accept :*
     end
 
-    update :payout_preferences do
+    update :location do
+    end
+
+    update :create_venue do
+      require_atomic? false
+
+      argument :venue, :map, allow_nil?: false
+      change manage_relationship(:venue, type: :create)
+    end
+
+    update :use_venue do
+      require_atomic? false
+
+      argument :venue, :uuid, allow_nil?: false
+      change manage_relationship(:venue, type: :append)
+    end
+
+    update :remove_venue do
+      require_atomic? false
+
+      argument :venue, :uuid, allow_nil?: false
+      change manage_relationship(:venue, type: :remove)
+    end
+
+    update :description do
+    end
+
+    update :poster do
     end
 
     update :publish do
@@ -94,6 +120,18 @@ defmodule Gits.Storefront.Event do
 
     policy action(:details) do
       authorize_if expr(host.roles.user.id == ^actor(:id))
+    end
+
+    policy action(:create_venue) do
+      authorize_if actor_present()
+    end
+
+    policy action(:use_venue) do
+      authorize_if actor_present()
+    end
+
+    policy action(:remove_venue) do
+      authorize_if actor_present()
     end
 
     policy action(:add_ticket_type) do

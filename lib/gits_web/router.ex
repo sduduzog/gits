@@ -80,12 +80,16 @@ defmodule GitsWeb.Router do
       live "/:handle/events/:public_id", HostLive.ViewEvent, :overview
       live "/:handle/events/:public_id/attendees", HostLive.ViewEvent, :attendees
       live "/:handle/events/:public_id/edit/details", HostLive.EditEvent, :details
+      live "/:handle/events/:public_id/edit/location", HostLive.EditEvent, :location
+      live "/:handle/events/:public_id/edit/live-stream", HostLive.EditEvent, :live_stream
       live "/:handle/events/:public_id/edit/description", HostLive.EditEvent, :description
+      live "/:handle/events/:public_id/edit/poster", HostLive.EditEvent, :poster
       live "/:handle/events/:public_id/edit/tickets", HostLive.EditEvent, :tickets
-      live "/:handle/events/:public_id/edit/summary", HostLive.EditEvent, :summary
 
       live "/:handle/events/:public_id/scanner", HostLive.Scanner, :index
       live "/:handle/events/:public_id/scanner/:camera", HostLive.Scanner, :scan
+
+      live "/:handle/venues/create-new", HostLive.EditVenue, :create
 
       live "/:handle/settings", HostLive.Settings, :index
       live "/:handle/settings/payouts", HostLive.Settings, :payouts
