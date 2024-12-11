@@ -133,6 +133,8 @@ defmodule GitsWeb.Router do
 
     live_session :admin_required, on_mount: {GitsWeb.LiveUserAuth, :live_user_required} do
       live "/", GitsWeb.AdminLive, :index
+      # remove when done with onboarding on all environments
+      live "/start", GitsWeb.AdminLive, :start
     end
 
     live_dashboard "/dashboard",

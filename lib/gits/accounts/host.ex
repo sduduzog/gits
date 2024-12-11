@@ -55,6 +55,8 @@ defmodule Gits.Accounts.Host do
     end
 
     update :verify do
+      change transition_state(:verified)
+      change atomic_update(:verified_at, expr(fragment("now()")))
     end
 
     update :suspend do
@@ -126,6 +128,10 @@ defmodule Gits.Accounts.Host do
 
     policy action(:paystack_subaccount) do
       authorize_if expr(roles.type in [:owner])
+    end
+
+    policy action(:verify) do
+      authorize_if actor_present()
     end
   end
 
