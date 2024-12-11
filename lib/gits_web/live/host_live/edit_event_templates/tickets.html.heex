@@ -10,7 +10,7 @@
 </div>
 
 <div class="mt-8 rounded-xl border">
-  <.table id="tickets" rows={@event.ticket_types}>
+  <.table id="tickets" rows={@ticket_types}>
     <:col :let={ticket} label="Ticket">
       <div class="flex gap-3">
         <span class="w-1.5 self-stretch rounded-full" style={"background-color: #{ticket.color}"}>
@@ -33,8 +33,8 @@
             Routes.host_edit_ticket_path(
               @socket,
               :edit_ticket,
-              @host.handle,
-              @event.public_id,
+              @host_handle,
+              @event_public_id,
               ticket.id
             ),
             replace: true
@@ -49,7 +49,7 @@
 
 <div class="col-span-full flex gap-6 py-4 pb-8">
   <div role="none" class="grow"></div>
-  <.button :if={@form.type == :update} type="button" variant={:subtle} onclick="history.back()">
+  <.button type="button" variant={:subtle} onclick="history.back()">
     <span class="text-sm font-semibold">
       Done
     </span>

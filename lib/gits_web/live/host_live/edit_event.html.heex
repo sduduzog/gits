@@ -67,11 +67,10 @@
 
     <.tickets
       :if={@live_action == :tickets}
-      form={@form}
       socket={@socket}
-      host={@host}
       host_handle={@host.handle}
-      event={@event}
+      event_public_id={@event_public_id}
+      ticket_types={@event.ticket_types}
       on_add_ticket_path={
         Routes.host_edit_ticket_path(
           @socket,
@@ -81,9 +80,6 @@
           %{ticket: :create}
         )
       }
-      live_action={@live_action}
-      event_id={@event_public_id}
-      show_archive_ticket_modal={@show_archive_ticket_modal}
       show_ticket_form={false}
     />
   </div>

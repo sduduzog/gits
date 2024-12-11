@@ -24,7 +24,6 @@ defmodule GitsWeb.HostLive.EditEvent do
       {:ok, event} ->
         socket
         |> assign_event_update(event, user)
-        |> show_archive_ticket_modal(unsigned_params, event, user)
         |> allow_upload(:poster,
           accept: ~w(.jpg .jpeg .png .webp),
           max_entries: 1,
@@ -34,12 +33,11 @@ defmodule GitsWeb.HostLive.EditEvent do
     end
   end
 
-  def handle_params(unsigned_params, _uri, socket) do
+  def handle_params(_unsigned_params, _uri, socket) do
     user = socket.assigns.current_user
 
     assign(socket, :event, nil)
     |> assign_event_update(nil, user)
-    |> show_archive_ticket_modal(unsigned_params, nil, user)
     |> noreply()
   end
 
@@ -55,37 +53,6 @@ defmodule GitsWeb.HostLive.EditEvent do
       %{host: host} ->
         socket
         |> push_navigate(to: Routes.host_list_events_path(socket, :drafts, host.handle))
-    end
-    |> noreply()
-  end
-
-  def handle_event("validate", %{"_target" => ["reset"]}, socket) do
-    case socket.assigns.form.action do
-      :add_ticket_type ->
-        assign(
-          socket,
-          :form,
-          Form.for_update(socket.assigns.event, :add_ticket_type, forms: [auto?: true])
-          |> Form.add_form([:type], validate?: false)
-        )
-
-      :edit_ticket_type ->
-        assign(
-          socket,
-          :form,
-          Form.for_update(socket.assigns.event, :edit_ticket_type, forms: [auto?: true])
-        )
-
-      _ ->
-        assign(
-          socket,
-          :form,
-          current_form(
-            socket.assigns.live_action,
-            socket.assigns.event,
-            socket.assigns.current_user
-          )
-        )
     end
     |> noreply()
   end
@@ -302,80 +269,29 @@ defmodule GitsWeb.HostLive.EditEvent do
     |> noreply()
   end
 
-  defp current_form(:details, nil, actor) do
-    Form.for_create(Event, :create, forms: [auto?: true], actor: actor)
-    |> Form.add_form([:host], type: :read, validate?: false)
-  end
-
-  defp current_form(:details, event, actor) do
-    event
-    |> Form.for_update(:details, forms: [auto?: true], actor: actor)
-  end
-
-  defp current_form(:location, event, actor) do
-    event
-    |> Form.for_update(:location, forms: [auto?: true], actor: actor)
-  end
-
-  defp current_form(:tickets, event, actor) do
-    event
-    |> Form.for_update(:update, forms: [auto?: true], actor: actor)
-  end
-
-  defp current_form(_, _, _) do
-    nil
-  end
-
-  defp show_archive_ticket_modal(
-         socket,
-         %{"modal" => "ticket", "archive" => ticket_id},
-         event,
-         actor
-       ) do
-    event
-    |> Ash.load([ticket_types: Ash.Query.filter(TicketType, id == ^ticket_id)], actor: actor)
-    |> case do
-      {:ok, event} ->
-        socket
-        |> assign(
-          :form,
-          event
-          |> Form.for_update(:archive_ticket_type, forms: [auto?: true], actor: actor)
-        )
-        |> assign(:show_archive_ticket_modal, true)
-    end
-  end
-
-  defp show_archive_ticket_modal(socket, _, _, _) do
-    socket
-    |> assign(:show_archive_ticket_modal, false)
-  end
-
-  defp show_ticket_form(socket, %{"ticket" => "create"}, event, actor) do
-    assign(socket, :show_ticket_form, true)
-    |> assign(
-      :form,
-      event
-      |> Form.for_update(:add_ticket_type, forms: [auto?: true], actor: actor)
-      |> Form.add_form([:type], validate?: false)
-    )
-  end
-
-  defp show_ticket_form(socket, %{"ticket" => "edit", "id" => id}, event, actor) do
-    Ash.load(event, [ticket_types: [Ash.Query.filter(TicketType, id == ^id)]], actor: actor)
-    |> case do
-      {:ok, event} ->
-        assign(socket, :show_ticket_form, true)
-        |> assign(
-          :form,
-          Form.for_update(event, :edit_ticket_type, forms: [auto?: true], actor: actor)
-        )
-    end
-  end
-
-  defp show_ticket_form(socket, _, _, _) do
-    assign(socket, :show_ticket_form, false)
-  end
+  # defp current_form(:details, nil, actor) do
+  #   Form.for_create(Event, :create, forms: [auto?: true], actor: actor)
+  #   |> Form.add_form([:host], type: :read, validate?: false)
+  # end
+  #
+  # defp current_form(:details, event, actor) do
+  #   event
+  #   |> Form.for_update(:details, forms: [auto?: true], actor: actor)
+  # end
+  #
+  # defp current_form(:location, event, actor) do
+  #   event
+  #   |> Form.for_update(:location, forms: [auto?: true], actor: actor)
+  # end
+  #
+  # defp current_form(:tickets, event, actor) do
+  #   event
+  #   |> Form.for_update(:update, forms: [auto?: true], actor: actor)
+  # end
+  #
+  # defp current_form(_, _, _) do
+  #   nil
+  # end
 
   def assign_event_update(socket, event, actor) do
     case socket.assigns.live_action do

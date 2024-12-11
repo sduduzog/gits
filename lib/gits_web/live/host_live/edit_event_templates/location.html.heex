@@ -80,11 +80,6 @@
           </span>
         </.button>
 
-        <.button variant={:ghost} type="reset" name="reset">
-          <span class="text-sm font-semibold">
-            Reset
-          </span>
-        </.button>
         <div role="none" class="grow"></div>
         <.button :if={@form.type == :update} type="button" variant={:subtle} phx-click={@on_next}>
           <span class="text-sm font-semibold">
@@ -101,11 +96,6 @@
         </span>
       </.button>
 
-      <.button variant={:ghost} type="reset" name="reset">
-        <span class="text-sm font-semibold">
-          Reset
-        </span>
-      </.button>
       <div role="none" class="grow"></div>
       <.button :if={@form.type == :update} type="button" variant={:subtle}>
         <span class="text-sm font-semibold">
