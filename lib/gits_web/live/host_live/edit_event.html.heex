@@ -61,6 +61,7 @@
       :if={@live_action == :media}
       form={@form}
       uploads={@uploads}
+      poster={Gits.Bucket.get_image_url(@event_poster)}
       on_next={JS.patch(@on_next_path, replace: true)}
     />
 
@@ -69,11 +70,21 @@
       form={@form}
       socket={@socket}
       host={@host}
+      host_handle={@host.handle}
       event={@event}
+      on_add_ticket_path={
+        Routes.host_edit_ticket_path(
+          @socket,
+          :add_ticket,
+          @host.handle,
+          @event.public_id,
+          %{ticket: :create}
+        )
+      }
       live_action={@live_action}
-      event_id={@event.public_id}
+      event_id={@event_public_id}
       show_archive_ticket_modal={@show_archive_ticket_modal}
-      show_ticket_form={@show_ticket_form}
+      show_ticket_form={false}
     />
   </div>
 </div>

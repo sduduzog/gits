@@ -8,8 +8,7 @@ config :swoosh, local: false
 
 config :gits, :presigned_url_options,
   virtual_host: true,
-  bucket_as_host: true,
-  expires_in: 900
+  bucket_as_host: true
 
 config :gits, :workers,
   reclaim_open_basket_timeout: 1_200,

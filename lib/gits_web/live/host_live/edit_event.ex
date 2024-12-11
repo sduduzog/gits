@@ -24,6 +24,12 @@ defmodule GitsWeb.HostLive.EditEvent do
       {:ok, event} ->
         socket
         |> assign_event_update(event, user)
+        |> show_archive_ticket_modal(unsigned_params, event, user)
+        |> allow_upload(:poster,
+          accept: ~w(.jpg .jpeg .png .webp),
+          max_entries: 1,
+          max_file_size: 2_000_000
+        )
         |> noreply()
     end
   end
@@ -33,6 +39,7 @@ defmodule GitsWeb.HostLive.EditEvent do
 
     assign(socket, :event, nil)
     |> assign_event_update(nil, user)
+    |> show_archive_ticket_modal(unsigned_params, nil, user)
     |> noreply()
   end
 
@@ -233,64 +240,44 @@ defmodule GitsWeb.HostLive.EditEvent do
     end
   end
 
-  def handle_event("media", unsigned_params, socket) do
-    filename =
-      consume_uploaded_entries(socket, :poster, fn %{path: path}, _entry ->
-        bucket_name = Application.get_env(:gits, :bucket_name)
+  def handle_event("media", _unsigned_params, socket) do
+    consume_uploaded_entries(socket, :poster, fn %{path: path}, _entry ->
+      bucket_name = Application.get_env(:gits, :bucket_name)
 
-        filename = Nanoid.generate(24) <> ".jpg"
+      initial_hash_state = :crypto.hash_init(:sha256)
 
-        Image.open!(path)
-        |> Image.thumbnail!("768x512", fit: :cover)
-        |> Image.stream!(suffix: ".jpg", buffer_size: 5_242_880, quality: 100)
-        |> ExAws.S3.upload(
-          bucket_name,
-          filename,
-          content_type: "image/jpeg",
-          cache_control: "public,max-age=3600"
-        )
-        |> ExAws.request()
-        |> IO.inspect()
+      sha256 =
+        File.stream!(path, [], 32 * 1024)
+        |> Enum.reduce(initial_hash_state, &:crypto.hash_update(&2, &1))
+        |> :crypto.hash_final()
 
-        {:ok,
-         %{
-           body: %{
-             location: "http://localhost:9000/gits/n6hwt861wtvzswb94ws74f5w.jpg",
-             key: "n6hwt861wtvzswb94ws74f5w.jpg",
-             bucket: "gits",
-             etag: "\"dc6d66d0c9d81fc5fcc114d2cc8e4390-1\""
-           },
-           headers: [
-             {"Accept-Ranges", "bytes"},
-             {"Content-Length", "343"},
-             {"Content-Type", "application/xml"},
-             {"ETag", "\"dc6d66d0c9d81fc5fcc114d2cc8e4390-1\""},
-             {"Server", "MinIO"},
-             {"Strict-Transport-Security", "max-age=31536000; includeSubDomains"},
-             {"Vary", "Origin"},
-             {"Vary", "Accept-Encoding"},
-             {"X-Amz-Id-2", "dd9025bab4ad464b049177c95eb6ebf374d3b3fd1af9251148b658df7ac2e3e8"},
-             {"X-Amz-Request-Id", "180FF051D4072B90"},
-             {"X-Content-Type-Options", "nosniff"},
-             {"X-Ratelimit-Limit", "2525"},
-             {"X-Ratelimit-Remaining", "2525"},
-             {"X-Xss-Protection", "1; mode=block"},
-             {"Date", "Tue, 10 Dec 2024 22:10:15 GMT"}
-           ],
-           status_code: 200
-         }}
+      filename = Base.encode16(sha256, case: :lower) <> ".jpg"
 
-        {:ok, filename}
-      end)
+      Image.open!(path)
+      |> Image.thumbnail!("768x512", fit: :cover)
+      |> Image.stream!(
+        suffix: ".jpg",
+        buffer_size: 5_242_880,
+        quality: 100
+      )
+      |> ExAws.S3.upload(
+        bucket_name,
+        filename,
+        content_type: "image/jpeg",
+        cache_control: "public,max-age=3600"
+      )
+      |> ExAws.request()
       |> case do
-        [filename] ->
-          filename
-
-        [] ->
-          nil
+        {:ok, _} ->
+          Form.submit(socket.assigns.form, params: %{"poster" => filename})
       end
-
-    socket |> noreply()
+    end)
+    |> case do
+      [event] ->
+        socket
+        |> assign_event_update(event, socket.assigns.current_user)
+        |> noreply()
+    end
   end
 
   def handle_event("tickets", unsigned_params, socket) do
@@ -459,7 +446,7 @@ defmodule GitsWeb.HostLive.EditEvent do
       :media ->
         assign(socket, :form, Form.for_update(event, :media, actor: actor))
         |> assign(:uploaded_files, [])
-        |> allow_upload(:poster, accept: ~w(.jpg .jpeg .png .webp), max_entries: 1)
+        |> assign(:event_poster, event.poster)
         |> assign(
           :on_next_path,
           Routes.host_edit_event_path(
@@ -472,6 +459,7 @@ defmodule GitsWeb.HostLive.EditEvent do
 
       :tickets ->
         assign(socket, :form, Form.for_update(event, :media, actor: actor))
+        |> assign(:event, event)
         |> assign(
           :on_next_path,
           Routes.host_edit_event_path(
