@@ -9,38 +9,35 @@ defmodule GitsWeb.HostLive.Settings do
     |> ok()
   end
 
-  def handle_params(_, _, %{assigns: %{live_action: :payouts}} = socket) do
-    user = socket.assigns.current_user
+  def handle_params(_, _, socket) do
+    %{host: host, current_user: user} = socket.assigns
 
-    host =
-      Ash.load!(
-        socket.assigns.host,
-        [
-          :paystack_subaccount,
-          :paystack_business_name,
-          :paystack_account_number,
-          :paystack_settlement_bank
-        ],
-        actor: user
-      )
+    case socket.assigns.live_action do
+      :billing ->
+        host =
+          Ash.load!(
+            host,
+            [
+              :paystack_subaccount,
+              :paystack_business_name,
+              :paystack_account_number,
+              :paystack_settlement_bank
+            ],
+            actor: user
+          )
 
-    banks =
-      PaystackApi.list_banks!(:cache)
-      |> Enum.map(&{&1.name, &1.code})
+        assign(socket, :page_title, "Settings / Billing & Payouts")
+        |> assign(
+          :banks,
+          PaystackApi.list_banks!(:cache)
+          |> Enum.map(&{&1.name, &1.code})
+        )
+        |> assign(:form, Form.for_update(host, :paystack_subaccount, actor: user))
 
-    form =
-      host
-      |> Form.for_update(:paystack_subaccount, actor: user)
-
-    socket
-    |> assign(:banks, banks)
-    |> assign(:form, form)
-    |> assign(:host, host)
+      :index ->
+        assign(socket, :page_title, "Settings")
+    end
     |> noreply()
-  end
-
-  def handle_params(_unsigned_params, _uri, socket) do
-    socket |> noreply()
   end
 
   def handle_event("validate", unsigned_params, socket) do

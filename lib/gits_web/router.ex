@@ -94,7 +94,8 @@ defmodule GitsWeb.Router do
       live "/:handle/venues/create-new", HostLive.EditVenue, :create
 
       live "/:handle/settings", HostLive.Settings, :index
-      live "/:handle/settings/payouts", HostLive.Settings, :payouts
+      live "/:handle/settings/general", HostLive.Settings, :general
+      live "/:handle/settings/billing", HostLive.Settings, :billing
     end
   end
 
@@ -129,6 +130,10 @@ defmodule GitsWeb.Router do
 
   scope "/admin" do
     pipe_through [:browser, :admin]
+
+    live_session :admin_required, on_mount: {GitsWeb.LiveUserAuth, :live_user_required} do
+      live "/", GitsWeb.AdminLive, :index
+    end
 
     live_dashboard "/dashboard",
       ecto_repos: [Gits.Repo],

@@ -28,7 +28,9 @@
 </div>
 
 <div class="gap-4 flex flex-wrap p-2 items-end">
-  <div class="aspect-[3/2] h-20 lg:h-24 rounded-lg bg-zinc-200"></div>
+  <div class="aspect-[3/2] h-20 lg:h-24 rounded-lg bg-zinc-200 overflow-hidden">
+    <img src={Gits.Bucket.get_image_url(@event.poster)} alt="Event poster" class="size-full" />
+  </div>
   <div class="grid items-start gap-2 grow">
     <h1 class="inline-flex flex-wrap gap-1 text-lg/5 font-semibold">
       {@event.name}
@@ -175,9 +177,9 @@
     <.overview
       :if={@live_action == :overview}
       ready_to_publish={false}
-      payments_ready={not is_nil(@host.paystack_subaccount_code)}
+      payouts_ready={not is_nil(@host.paystack_subaccount_code)}
       issues={[]}
-      host_settings_payouts_path={Routes.host_settings_path(@socket, :payouts, @host.handle)}
+      host_settings_payouts_path={Routes.host_settings_path(@socket, :billing, @host.handle)}
     />
     <.attendees :if={@live_action == :attendees} attendees={@attendees} />
   </div>

@@ -9,11 +9,20 @@ defmodule Gits.Storefront.Event do
     domain: Gits.Storefront,
     data_layer: AshPostgres.DataLayer,
     authorizers: Ash.Policy.Authorizer,
-    extensions: [AshArchival.Resource, AshPaperTrail.Resource]
+    extensions: [AshArchival.Resource, AshStateMachine, AshPaperTrail.Resource]
 
   postgres do
     table "events"
     repo Gits.Repo
+  end
+
+  state_machine do
+    initial_states [:draft]
+    default_initial_state :draft
+
+    transitions do
+      transition :publish, from: :draft, to: :published
+    end
   end
 
   paper_trail do
@@ -189,6 +198,7 @@ defmodule Gits.Storefront.Event do
     attribute :poster, :string, public?: true
 
     attribute :published_at, :utc_datetime, public?: true
+    attribute :completed_at, :utc_datetime, public?: true
 
     create_timestamp :created_at
     update_timestamp :updated_at

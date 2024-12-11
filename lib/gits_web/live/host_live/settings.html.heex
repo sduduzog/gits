@@ -8,31 +8,8 @@
       </div>
     </div>
   </div>
-
-  <div class="p-2">
-    <div class="space-y-4">
-      <div class="flex items-center">
-        <div class="grow">
-          <h2 class="grow text-base/7 font-semibold  text-zinc-900">Payout details</h2>
-          <p class="mt-1 text-sm leading-6 text-gray-600">
-            This information will be displayed publicly.
-          </p>
-        </div>
-        <.button
-          variant={:ghost}
-          phx-click={JS.patch(Routes.host_settings_path(@socket, :payouts, @host.handle))}
-        >
-          <.icon name="i-lucide-pen-line" /> <span>Edit</span>
-        </.button>
-      </div>
-      <div class="">
-        <span></span>
-      </div>
-    </div>
-  </div>
 <% end %>
-
-<%= if @live_action == :payouts do %>
+<%= if @live_action == :billing do %>
   <div class="flex max-w-72 items-center gap-2 p-2 lg:max-w-full">
     <div class="flex w-full grow items-center gap-1 text-sm">
       <.button
@@ -47,13 +24,158 @@
       </.button>
       <span class="text-xs font-semibold text-zinc-400">/</span>
       <div class="flex  shrink-0 items-center truncate rounded-lg px-1 text-sm/6 font-semibold">
-        <span class="">Payout details</span>
+        <span class="">Billing & Payouts</span>
       </div>
     </div>
   </div>
+<% end %>
 
+<%= if @live_action == :index do %>
+  <div class="grid max-w-screen-md w-full gap-8 p-2">
+    <div class="grid p-4 border rounded-lg gap-6">
+      <div class="flex items-center justify-between">
+        <h2 class="grow text-base/7 font-semibold  text-zinc-900">General</h2>
+        <.button
+          size={:none}
+          variant={:ghost}
+          phx-click={JS.patch(Routes.host_settings_path(@socket, :general, @host.handle))}
+        >
+          <.icon name="i-lucide-pen-line" />
+          <span>Edit</span>
+        </.button>
+      </div>
+      <dl class="grid gap-4">
+        <div class="grid gap-2 lg:grid-cols-[theme(space.40)_1fr]">
+          <dt class="text-sm/6 grow  text-zinc-500">Logo</dt>
+          <dd class="size-12 rounded-md bg-zinc-200 overflow-hidden">
+            <img
+              src={Gits.Bucket.get_image_url(@host.logo)}
+              alt={@host.name}
+              class="size-full object-cover"
+            />
+          </dd>
+        </div>
+
+        <div class="grid gap-2 lg:grid-cols-[theme(space.40)_1fr]">
+          <dt class="text-sm/6 grow  text-zinc-500">Name</dt>
+          <dd>
+            <span class="text-sm/6">
+              {@host.name}
+            </span>
+          </dd>
+        </div>
+
+        <div class="grid gap-2 lg:grid-cols-[theme(space.40)_1fr]">
+          <dt class="text-sm/6 grow  text-zinc-500">Status</dt>
+          <dd>
+            <span
+              :if={@host.state == :pending}
+              class="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10"
+            >
+              Pending review
+            </span>
+            <span
+              :if={@host.state == :suspended}
+              class="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20"
+            >
+              Suspended
+            </span>
+            <span
+              :if={@host.state == :verified}
+              class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20"
+            >
+              Verified
+            </span>
+          </dd>
+        </div>
+      </dl>
+    </div>
+
+    <div class="grid p-4 border rounded-lg gap-6">
+      <div class="flex items-center justify-between">
+        <h2 class="grow text-base/7 font-semibold  text-zinc-900">Billing & Payouts</h2>
+        <.button
+          size={:none}
+          variant={:ghost}
+          phx-click={JS.patch(Routes.host_settings_path(@socket, :billing, @host.handle))}
+        >
+          <.icon name="i-lucide-pen-line" />
+          <span>Edit</span>
+        </.button>
+      </div>
+      <dl class="grid gap-4">
+        <div class="grid gap-2 lg:grid-cols-[theme(space.40)_1fr]">
+          <dt class="text-sm/6 grow  text-zinc-500">Logo</dt>
+          <dd class="size-12 rounded-md bg-zinc-200"></dd>
+        </div>
+
+        <div class="grid gap-2 lg:grid-cols-[theme(space.40)_1fr]">
+          <dt class="text-sm/6 grow  text-zinc-500">Name</dt>
+          <dd>
+            <span class="text-sm/6">
+              {@host.name}
+            </span>
+          </dd>
+        </div>
+
+        <div class="grid gap-2 lg:grid-cols-[theme(space.40)_1fr]">
+          <dt class="text-sm/6 grow  text-zinc-500">Status</dt>
+          <dd>
+            <span
+              :if={@host.state == :pending}
+              class="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10"
+            >
+              Pending review
+            </span>
+            <span
+              :if={@host.state == :suspended}
+              class="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20"
+            >
+              Suspended
+            </span>
+            <span
+              :if={@host.state == :verified}
+              class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20"
+            >
+              Verified
+            </span>
+          </dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+<% end %>
+
+<%= if @live_action == :general do %>
   <div class="p-2">
-    <h2 class="text-xl font-semibold">Update payout details</h2>
+    <h2 class="text-xl font-semibold">General</h2>
+    <p class="mt-1 text-sm leading-6 text-gray-600">
+      <!-- This displayed publicly. -->
+    </p>
+
+    <.form
+      :let={f}
+      for={@form}
+      class="grid gap-4 mt-8 grid-cols-2 max-w-screen-sm"
+      phx-change="validate"
+      phx-submit="submit"
+    >
+      <.input field={f[:paystack_business_name]} label="Business name" type="text" />
+      <.input field={f[:paystack_settlement_bank]} options={@banks} label="Bank" type="select" />
+      <.input field={f[:paystack_account_number]} label="Account number" type="number" />
+      <div class="flex col-span-full gap-6">
+        <.button disabled={not @form.changed? or not @form.valid?}><span>Save</span></.button>
+        <.button variant={:ghost} type="button" phx-click={JS.dispatch("gits:go_back")}>
+          <span>Back</span>
+        </.button>
+      </div>
+    </.form>
+  </div>
+<% end %>
+
+<%= if @live_action == :billing do %>
+  <div class="p-2">
+    <h2 class="text-xl font-semibold">Payout Details</h2>
     <p class="mt-1 text-sm leading-6 text-gray-600">
       <!-- This displayed publicly. -->
     </p>

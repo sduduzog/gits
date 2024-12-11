@@ -9,11 +9,22 @@ defmodule Gits.Accounts.Host do
     domain: Accounts,
     data_layer: AshPostgres.DataLayer,
     authorizers: Ash.Policy.Authorizer,
-    extensions: [AshArchival.Resource, AshPaperTrail.Resource]
+    extensions: [AshArchival.Resource, AshStateMachine, AshPaperTrail.Resource]
 
   postgres do
     repo Gits.Repo
     table "hosts"
+  end
+
+  state_machine do
+    initial_states [:pending]
+    default_initial_state :pending
+
+    transitions do
+      transition :verify, from: :pending, to: :verified
+      transition :suspend, from: [:risky, :pending, :verified], to: :suspended
+      transition :restore, from: :suspended, to: :risky
+    end
   end
 
   paper_trail do
@@ -41,6 +52,15 @@ defmodule Gits.Accounts.Host do
       change manage_relationship(:owner, type: :append)
       change manage_relationship(:role, :roles, type: :create)
       change set_attribute(:handle, &Nanoid.generate/0)
+    end
+
+    update :verify do
+    end
+
+    update :suspend do
+    end
+
+    update :restore do
     end
 
     update :add_event do
@@ -122,6 +142,9 @@ defmodule Gits.Accounts.Host do
 
     attribute :paystack_subaccount_code, :string, public?: true
 
+    attribute :verified_at, :utc_datetime, public?: true
+    attribute :suspended_at, :utc_datetime, public?: true
+
     create_timestamp :created_at
     update_timestamp :updated_at
   end
@@ -184,5 +207,9 @@ defmodule Gits.Accounts.Host do
         end
       end)
     end
+  end
+
+  identities do
+    identity :handle, [:handle]
   end
 end
