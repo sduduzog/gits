@@ -21,6 +21,7 @@ defmodule GitsWeb.HostLive.ViewEvent do
         assign(socket, :event, event)
         |> assign(:ticket_types, ticket_types)
         |> assign(:page_title, "Events / #{event.name}")
+        |> assign(:section, event.name)
     end
     |> ok(:host)
   end

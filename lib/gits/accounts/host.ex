@@ -122,6 +122,10 @@ defmodule Gits.Accounts.Host do
       authorize_if actor_present()
     end
 
+    policy action(:update) do
+      authorize_if actor_present()
+    end
+
     policy action(:paystack_subaccount) do
       authorize_if expr(roles.user.id == ^actor(:id))
     end

@@ -1,4 +1,5 @@
 defmodule Gits.Storefront.Event do
+  alias Gits.Storefront.EventCategory
   alias Gits.Storefront.{Order, TicketType}
   alias Gits.Accounts.{Host, User, Venue}
   alias Gits.Accounts
@@ -187,6 +188,7 @@ defmodule Gits.Storefront.Event do
     attribute :name, :string, public?: true, allow_nil?: false
     attribute :starts_at, :naive_datetime, public?: true, allow_nil?: false
     attribute :ends_at, :naive_datetime, public?: true, allow_nil?: false
+    attribute :category, EventCategory, public?: true, allow_nil?: false, default: :other
     attribute :visibility, :atom, public?: true, constraints: [one_of: [:private, :public]]
 
     attribute :location_notes, :string, public?: true

@@ -6,44 +6,65 @@
   </div>
 
   <div class="space-y-2 px-2">
-    <div class="flex items-center gap-4">
-      <div class="flex items-center gap-2 opacity-30">
+    <div :if={false} class="flex items-center gap-4">
+      <div class="flex items-center gap-2">
         <.icon name="hero-calendar-days" class="size-5" />
-        <span class="text-sm"> Saturday 12 October 2024</span>
+        <span class="text-sm">
+          {Calendar.strftime(@event.starts_at, "%A %d %B %Y")}
+        </span>
       </div>
     </div>
 
     <h1 class="text-2xl font-semibold">{@event.name}</h1>
-    <div class="flex flex-wrap gap-4 opacity-30">
-      <span
-        :for={i <- ["18+ Only", "Seminar"]}
-        class="inline-flex items-center gap-x-1.5 rounded-md px-2 py-1 text-xs font-medium text-gray-900 ring-1 ring-inset ring-gray-200"
-      >
+    <div class="flex flex-wrap gap-4">
+      <span class="inline-flex items-center gap-x-1.5 rounded-md px-2 py-1 text-xs font-medium text-gray-900 ring-1 ring-inset ring-gray-200">
         <svg class="h-1.5 w-1.5 fill-zinc-900" viewBox="0 0 6 6" aria-hidden="true">
           <circle cx="3" cy="3" r="3" />
         </svg>
-        {i}
+        {Gits.Storefront.EventCategory.description(@event.category)}
       </span>
     </div>
 
     <div class="grid gap-4">
-      <div class="flex items-start gap-2 opacity-30">
+      <div class="flex items-start gap-2">
         <.icon name="hero-clock" class="size-5" />
         <div class="grid text-zinc-700">
-          <span class="text-sm"> Starts at 2:00 PM</span>
-          <span class="text-sm"> Ends Sunday 13 October 2024, at 8:00 AM</span>
+          <span class="text-sm">
+            Starts {Calendar.strftime(@event.starts_at, "%I:%M %p, %d %B %Y")}
+          </span>
+          <span class="text-sm">
+            Ends {Calendar.strftime(
+              @event.ends_at,
+              if(
+                NaiveDateTime.diff(
+                  NaiveDateTime.end_of_day(@event.ends_at),
+                  NaiveDateTime.end_of_day(@event.starts_at),
+                  :day
+                ) == 0,
+                do: "%I:%M %p",
+                else: "%I:%M %p, %d %B %Y"
+              )
+            )}
+          </span>
         </div>
       </div>
 
-      <div class="flex items-start gap-2 opacity-30">
+      <div class="flex items-start gap-2">
         <.icon name="hero-map-pin" class="size-5" />
         <div class="grid">
-          <span class="text-sm font-medium">Artistry JHB</span>
-          <span class="text-sm text-zinc-500">22 Fredman Dr, Sandown, Sandton 2196</span>
+          <%= if @event.location_is_private do %>
+            <span class="text-sm font-medium">Private Location</span>
+            <span class="text-sm text-zinc-500">
+              Details will be shared with ticket holders
+            </span>
+          <% else %>
+            <span class="text-sm font-medium">{@event.venue.name}</span>
+            <span class="text-sm text-zinc-500">{@event.venue.address}</span>
+          <% end %>
         </div>
       </div>
 
-      <div class="flex items-start gap-2 opacity-30">
+      <div class="flex items-start gap-2">
         <.icon name="hero-megaphone" class="size-5" />
         <div class="flex gap-1.5">
           <span class="text-sm text-zinc-500">hosted by</span>
@@ -51,7 +72,7 @@
         </div>
       </div>
 
-      <div class="flex items-start gap-2 opacity-30">
+      <div class="flex items-start gap-2">
         <.icon name="hero-banknotes" class="size-5" />
         <div class="">
           <span class="text-sm text-zinc-500">
@@ -90,7 +111,7 @@
     <h3 class="text-lg font-medium">About this event</h3>
     <div class="space-y-2 text-zinc-700 opacity-30">
       <p>
-        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Assumenda rem omnis vero, ea adipisci nulla praesentium illo magni sequi libero totam delectus voluptatum eaque repellendus soluta dicta incidunt, laudantium veniam!
+        {@event.summary}
       </p>
     </div>
   </div>

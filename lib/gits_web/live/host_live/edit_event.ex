@@ -3,7 +3,7 @@ defmodule GitsWeb.HostLive.EditEvent do
   alias Gits.GooglePlaces
   alias Gits.Storefront.Event
   alias Gits.Storefront.TicketType
-  alias Gits.Storefront.{Event, TicketType}
+  alias Gits.Storefront.{Event, EventCategory}
   alias AshPhoenix.Form
   require Ash.Query
   use GitsWeb, :live_view
@@ -14,7 +14,7 @@ defmodule GitsWeb.HostLive.EditEvent do
     socket |> ok(:host_panel)
   end
 
-  def handle_params(%{"public_id" => public_id} = unsigned_params, _uri, socket) do
+  def handle_params(%{"public_id" => public_id}, _uri, socket) do
     user = socket.assigns.current_user
 
     Ash.Query.filter(Event, public_id == ^public_id)
@@ -26,8 +26,7 @@ defmodule GitsWeb.HostLive.EditEvent do
         |> assign_event_update(event, user)
         |> allow_upload(:poster,
           accept: ~w(.jpg .jpeg .png .webp),
-          max_entries: 1,
-          max_file_size: 2_000_000
+          max_entries: 1
         )
         |> noreply()
     end
@@ -89,6 +88,7 @@ defmodule GitsWeb.HostLive.EditEvent do
       :form,
       Form.validate(socket.assigns.form, unsigned_params["form"],
         target: unsigned_params["_target"],
+        only_touched?: true,
         errors: false
       )
     )

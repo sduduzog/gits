@@ -19,11 +19,20 @@
     <.input field={f[:ends_at]} label="End Date" type="datetime-local" />
 
     <.input
+      field={f[:category]}
+      label="Category"
+      type="select"
+      options={
+        Gits.Storefront.EventCategory.values()
+        |> Enum.map(&{EventCategory.description(&1), &1})
+      }
+    />
+
+    <.input
       type="radio"
       field={f[:visibility]}
-      options={[:private]}
+      options={if(@host_verified, do: [:private, :public], else: [:private])}
       label="Visibility"
-      class="col-span-full"
     />
   </div>
   <div class="col-span-full flex gap-6 py-4 pb-8">
