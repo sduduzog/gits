@@ -124,7 +124,8 @@ defmodule Gits.Storefront.Event do
 
   policies do
     policy action(:read) do
-      authorize_if always()
+      authorize_if expr(not is_nil(published_at))
+      authorize_if expr(host.roles.user.id == ^actor(:id))
     end
 
     policy action(:create) do

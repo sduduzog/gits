@@ -12,29 +12,39 @@ defmodule GitsWeb.StorefrontLive.EventListing do
     |> Ash.Query.load([:venue])
     |> Ash.read_one(actor: socket.assigns.current_user)
     |> case do
-      {:ok, event} ->
+      {:ok, %Event{} = event} ->
         socket
         |> assign(:verified?, not is_nil(socket.assigns.current_user))
         |> assign(:remote_ip, remote_ip)
         |> assign(:event, event)
         |> ok()
 
-      {:error, _} ->
+      _ ->
         socket
         |> assign(:page_title, "Not found")
+        |> assign(:event, nil)
         |> ok(:not_found)
     end
   end
 
   def handle_params(_unsigned_params, _uri, socket) do
-    socket
-    |> assign(
-      :form,
-      socket.assigns.event
-      |> Form.for_update(:create_order, forms: [auto?: true], actor: socket.assigns.current_user)
-      |> Form.add_form([:order])
-    )
-    |> noreply()
+    case socket.assigns.event do
+      %Event{} = event ->
+        socket
+        |> assign(
+          :form,
+          socket.assigns.event
+          |> Form.for_update(:create_order,
+            forms: [auto?: true],
+            actor: socket.assigns.current_user
+          )
+          |> Form.add_form([:order])
+        )
+        |> noreply()
+
+      _ ->
+        noreply(socket)
+    end
   end
 
   def handle_event("turnstile:success", _, socket) do

@@ -119,14 +119,16 @@
             <.icon name="i-lucide-settings-2" />
           </.button>
         </div>
-        <div
-          :for={{id, name, color, tickets_count, quantity, tags} <- @ticket_types}
-          class="flex items-center gap-4 p-2"
-        >
-          <GitsWeb.EventComponents.ticket_card color={color} name={name} id={id} tags={tags}>
+        <div :for={type <- @ticket_types} class="flex items-center gap-4 p-2">
+          <GitsWeb.EventComponents.ticket_card
+            color={type.color}
+            name={type.name}
+            id={type.id}
+            tags={[]}
+          >
             <div class="">
-              <span class="text-xl font-light">{tickets_count}</span>
-              <span class="text-xl font-light text-zinc-500">/ {quantity}</span>
+              <span class="text-xl font-light">{type.tickets_count}</span>
+              <span class="text-xl font-light text-zinc-500">/ {type.quantity}</span>
             </div>
           </GitsWeb.EventComponents.ticket_card>
         </div>

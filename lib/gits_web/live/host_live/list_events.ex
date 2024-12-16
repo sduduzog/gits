@@ -22,7 +22,7 @@ defmodule GitsWeb.HostLive.ListEvents do
   def handle_params(unsigned_params, _, socket) do
     list_event_query(socket.assigns.live_action, unsigned_params)
     |> Ash.Query.load([:name])
-    |> Ash.read()
+    |> Ash.read(actor: socket.assigns.current_user)
     |> case do
       {:ok, events} -> socket |> assign(:events, events)
     end

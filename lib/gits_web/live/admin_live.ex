@@ -43,7 +43,6 @@ defmodule GitsWeb.AdminLive do
   def handle_event("verify", unsigned_params, socket) do
     Ash.Query.filter(Host, id == ^unsigned_params["id"])
     |> Ash.bulk_update(:verify, %{}, actor: socket.assigns.current_user)
-    |> IO.inspect()
 
     hosts =
       Ash.read!(Host, actor: socket.assigns.current_user)

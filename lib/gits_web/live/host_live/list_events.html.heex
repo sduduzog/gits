@@ -29,7 +29,9 @@
 </div>
 <div class="divide-y divide-zinc-100 p-2">
   <div :for={event <- @events} class="flex items-center gap-4 py-4">
-    <div class="aspect-[3/2] h-20 rounded-xl bg-zinc-200"></div>
+    <div class="aspect-[3/2] overflow-hidden h-20 rounded-xl bg-zinc-200">
+      <img src={Gits.Bucket.get_image_url(event.poster)} alt="Event poster" class="size-full" />
+    </div>
     <div class="grid w-full grow gap-1.5">
       <h2 class="truncate font-semibold">
         <.link navigate={~p"/hosts/#{@host_handle}/events/#{event.public_id}"}>
