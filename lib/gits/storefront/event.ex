@@ -94,6 +94,7 @@ defmodule Gits.Storefront.Event do
 
     update :publish do
       change atomic_update(:published_at, expr(fragment("now()")))
+      change transition_state(:published)
     end
 
     update :add_ticket_type do
@@ -170,6 +171,10 @@ defmodule Gits.Storefront.Event do
 
     policy action(:archive_ticket_type) do
       authorize_if expr(host.roles.user.id == ^actor(:id))
+    end
+
+    policy action(:publish) do
+      authorize_if expr(exists(host.roles, user.id == ^actor(:id)))
     end
 
     policy action(:create_order) do

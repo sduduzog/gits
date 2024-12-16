@@ -46,10 +46,26 @@
         <.icon name="i-lucide-link-2" />
       </.button>
 
-      <span class="text-xs/4 text-zinc-500 grow">
-        Created {Calendar.strftime(@event.created_at, "%d %b %Y")}
-      </span>
-      <.button href={Routes.host_scanner_path(@socket, :index, @host_handle, @event.public_id)}>
+      <div class="grow gap-2">
+        <%= if @event.state == :published do %>
+          <span class="inline-flex items-center rounded-full bg-green-50 px-1.5 py-0.5 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+            {@event.state}
+          </span>
+        <% else %>
+          <span class="inline-flex items-center rounded-full bg-yellow-50 px-1.5 py-0.5 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20">
+            {@event.state}
+          </span>
+        <% end %>
+      </div>
+      <.button :if={@event.state == :draft} phx-click={show_modal("publish-event")}>
+        <.icon name="i-lucide-rocket" />
+        <span>Publish</span>
+      </.button>
+
+      <.button
+        :if={@event.state == :published}
+        href={Routes.host_scanner_path(@socket, :index, @host_handle, @event.public_id)}
+      >
         <.icon name="i-lucide-scan-qr-code" />
         <span>Scan</span>
       </.button>
@@ -171,17 +187,8 @@
     <.attendees :if={@live_action == :attendees} attendees={@attendees} />
   </div>
 </div>
-<.modal
-  :if={false}
-  id="publish-event"
-  show={@show_publish_modal}
-  on_cancel={
-    JS.patch(Routes.host_view_event_path(@socket, @live_action, @host_handle, @event.public_id),
-      replace: true
-    )
-  }
->
-  <div :if={@event_published?} class="grid gap-4">
+<.modal id="publish-event">
+  <div :if={@event.state == :published} class="grid gap-4">
     <div class="flex items-center gap-4">
       <.icon name="hero-check-circle" class="text-green-600" />
       <h3 class="text-lg font-semibold">Event published</h3>
@@ -194,20 +201,14 @@
     </div>
     <div class="flex justify-end gap-4">
       <button
-        phx-click={
-          JS.patch(
-            Routes.host_view_event_path(@socket, @live_action, @host_handle, @event.public_id),
-            replace: true
-          )
-          |> hide_modal("publish-event")
-        }
+        phx-click={hide_modal("publish-event")}
         class="rounded-lg bg-zinc-950 px-4 py-2 text-zinc-50"
       >
         <span class="text-sm font-semibold">Close</span>
       </button>
     </div>
   </div>
-  <div :if={not @event_published?} class="grid gap-4">
+  <div :if={@event.state == :draft} class="grid gap-4">
     <h3 class="text-lg font-semibold">Ready to publish?</h3>
     <div>
       <p class="text-sm text-zinc-700">
@@ -215,16 +216,7 @@
       </p>
     </div>
     <div class="flex justify-end gap-4">
-      <button
-        class="rounded-lg px-4 py-2"
-        phx-click={
-          JS.patch(
-            Routes.host_view_event_path(@socket, @live_action, @host_handle, @event.public_id),
-            replace: true
-          )
-          |> hide_modal("publish-event")
-        }
-      >
+      <button class="rounded-lg px-4 py-2" phx-click={hide_modal("publish-event")}>
         <span class="text-sm font-semibold">Cancel</span>
       </button>
 

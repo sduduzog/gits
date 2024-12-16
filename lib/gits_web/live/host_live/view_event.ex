@@ -28,4 +28,15 @@ defmodule GitsWeb.HostLive.ViewEvent do
         |> ok(:host)
     end
   end
+
+  def handle_event("publish", _, socket) do
+    Ash.Changeset.for_update(socket.assigns.event, :publish, %{})
+    |> Ash.update(actor: socket.assigns.current_user)
+    |> case do
+      {:ok, event} ->
+        socket
+        |> assign(:event, event)
+        |> noreply()
+    end
+  end
 end

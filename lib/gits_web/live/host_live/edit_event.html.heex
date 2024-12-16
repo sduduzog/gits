@@ -39,7 +39,7 @@
       :if={@live_action == :details}
       form={@form}
       host_id={@host.id}
-      host_verified={not is_nil(@host.verified_at) and @host.state == :verified}
+      host_verified={@host.state == :verified}
       on_next={if(@on_next_path, do: JS.patch(@on_next_path, replace: true), else: "")}
     />
     <.location
