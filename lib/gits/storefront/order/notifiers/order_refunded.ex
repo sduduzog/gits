@@ -7,11 +7,15 @@ defmodule Gits.Storefront.Order.Notifiers.OrderRefunded do
 
   @impl Ash.Notifier
   def notify(%Ash.Notifier.Notification{data: %Order{state: :refunded} = order}) do
-    %{id: order.id}
-    |> __MODULE__.new()
-    |> Oban.insert()
-    |> case do
-      {:ok, _} -> :ok
+    if order.total |> Decimal.gt?(Decimal.new("0")) do
+      %{id: order.id}
+      |> __MODULE__.new()
+      |> Oban.insert()
+      |> case do
+        {:ok, _} -> :ok
+      end
+    else
+      :ok
     end
   end
 
