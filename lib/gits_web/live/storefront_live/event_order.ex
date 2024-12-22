@@ -152,7 +152,9 @@ defmodule GitsWeb.StorefrontLive.EventOrder do
   def assign_ticket_types(socket, order, user) do
     Ash.load(
       order,
-      [event: [ticket_types: [tickets: Ash.Query.filter(Ticket, order.id == ^order.id)]]],
+      [
+        event: [ticket_types: [tickets: Ash.Query.filter(Ticket, order.id == ^order.id)]]
+      ],
       actor: user
     )
     |> case do

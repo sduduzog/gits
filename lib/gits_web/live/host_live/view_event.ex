@@ -1,5 +1,4 @@
 defmodule GitsWeb.HostLive.ViewEvent do
-  alias Gits.Storefront.Interaction
   alias Gits.Accounts.Host
   alias Gits.Storefront.{Event}
   use GitsWeb, :live_view

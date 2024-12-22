@@ -16,6 +16,7 @@ defmodule Gits.Storefront.Order do
 
   alias Gits.Storefront.{Event, OrderFeesSplit, Ticket, TicketType}
   alias __MODULE__.Notifiers.{OrderCompleted, OrderConfirmed, OrderRefunded, OrderRefundRequested}
+  alias __MODULE__.Checks.OrderUserLimitReached
 
   state_machine do
     initial_states [:open, :anonymous]
@@ -171,6 +172,10 @@ defmodule Gits.Storefront.Order do
 
     policy action(:read) do
       authorize_if always()
+    end
+
+    policy action(:add_ticket) do
+      authorize_unless OrderUserLimitReached
     end
 
     policy action(:remove_ticket) do
