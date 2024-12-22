@@ -21,6 +21,7 @@ defmodule GitsWeb.MyLive.Orders do
               no: order.number,
               date: order.created_at,
               event: order.event_name,
+              event_id: order.event_id,
               amount: order.total
             }
           end)

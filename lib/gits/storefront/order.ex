@@ -1,8 +1,6 @@
 defmodule Gits.Storefront.Order do
   require Decimal
 
-  alias Gits.Accounts.User
-
   use Ash.Resource,
     domain: Gits.Storefront,
     data_layer: AshPostgres.DataLayer,
@@ -17,7 +15,7 @@ defmodule Gits.Storefront.Order do
   alias Gits.PaystackApi
 
   alias Gits.Storefront.{Event, OrderFeesSplit, Ticket, TicketType}
-  alias __MODULE__.Notifiers.{OrderCompleted, OrderConfirmed}
+  alias __MODULE__.Notifiers.{OrderCompleted, OrderConfirmed, OrderRefundRequested}
 
   state_machine do
     initial_states [:open, :anonymous]
@@ -114,10 +112,37 @@ defmodule Gits.Storefront.Order do
     end
 
     update :request_refund do
+      change set_attribute(:requested_refund_secret, &NimbleTOTP.secret/0)
       change atomic_update(:requested_refund_at, expr(fragment("now()")))
+
+      notifiers [OrderRefundRequested]
     end
 
     update :refund do
+      require_atomic? false
+      argument :otp, :string, allow_nil?: false
+
+      change fn changeset, %{actor: actor} ->
+        Ash.Changeset.before_action(changeset, fn changeset ->
+          order =
+            Ash.reload!(changeset.data, load: [:tickets], actor: actor)
+
+          secret =
+            order.requested_refund_secret
+
+          otp =
+            Ash.Changeset.get_argument(changeset, :otp)
+
+          if NimbleTOTP.valid?(secret, otp, period: 60 * 30) do
+            AshStateMachine.transition_state(changeset, :refunded)
+            |> Ash.Changeset.manage_relationship(:tickets, order.tickets,
+              on_match: {:update, :release}
+            )
+          else
+            changeset
+          end
+        end)
+      end
     end
 
     update :add_ticket do
@@ -158,7 +183,11 @@ defmodule Gits.Storefront.Order do
       authorize_if expr(exists(tickets, true))
     end
 
-    policy action([:open, :process, :reopen, :confirm, :complete]) do
+    policy action(:request_refund) do
+      authorize_if always()
+    end
+
+    policy action([:open, :process, :reopen, :confirm, :complete, :refund]) do
       authorize_if AshStateMachine.Checks.ValidNextState
     end
   end
@@ -181,6 +210,8 @@ defmodule Gits.Storefront.Order do
 
     attribute :email, :ci_string, public?: true
     attribute :total, :decimal, public?: true
+
+    attribute :requested_refund_secret, :binary, public?: true
     attribute :requested_refund_at, :utc_datetime_usec
 
     attribute :paystack_reference, :string, public?: true
@@ -207,5 +238,6 @@ defmodule Gits.Storefront.Order do
 
   calculations do
     calculate :event_name, :string, expr(event.name)
+    calculate :refund_value, :decimal, expr(fees_split.subaccount)
   end
 end

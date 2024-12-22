@@ -63,6 +63,7 @@ defmodule GitsWeb.Router do
       live "/search", SearchLive, :index
       live "/tickets/:public_id", TicketLive, :show
       live "/t/:public_id", TicketLive, :show
+      live "/refund", RefundLive, :index
     end
   end
 

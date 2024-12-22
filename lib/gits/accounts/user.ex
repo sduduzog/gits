@@ -144,9 +144,9 @@ defmodule Gits.Accounts.User do
     #   join_filter [:orders, :tickets], expr(order.state == :completed)
     # end
 
-    count :tickets_count, [:orders] do
+    count :tickets_count, [:orders, :tickets] do
       join_filter :orders, expr(state == :completed)
-      # join_filter [:orders, :tickets], expr(order.state == :completed)
+      join_filter [:orders, :tickets], expr(order.state == :completed)
     end
   end
 

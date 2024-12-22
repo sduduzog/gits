@@ -35,6 +35,20 @@ defmodule Gits.Mailer do
     |> deliver()
   end
 
+  def refund_requested(to, otp, order_no) do
+    config = Application.get_env(:gits, Gits.Mailer)
+
+    sender = "orders@#{config[:domain]}"
+
+    new()
+    |> to(to)
+    |> from({"GiTS", sender})
+    |> subject("Refund Requested")
+    |> render_body(:refund_requested, %{otp: otp, order_no: order_no})
+    |> premail()
+    |> deliver()
+  end
+
   defp render_body(email, template, args) do
     heex = apply(GitsWeb.EmailHTML, template, [args])
     html_body(email, render_component(heex))

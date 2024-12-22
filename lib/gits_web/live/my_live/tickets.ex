@@ -29,7 +29,7 @@ defmodule GitsWeb.MyLive.Tickets do
     user = socket.assigns.current_user
 
     if user do
-      Ash.Query.filter(Event, orders.email == ^user.email)
+      Ash.Query.filter(Event, orders.email == ^user.email and orders.state == :completed)
       |> Ash.Query.load(:host)
       |> Ash.Query.sort(starts_at: :asc)
       |> Ash.Query.load(

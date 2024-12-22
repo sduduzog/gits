@@ -143,6 +143,9 @@ defmodule GitsWeb.StorefrontLive.EventOrder do
 
       :completed ->
         socket
+
+      :refunded ->
+        socket
     end
   end
 

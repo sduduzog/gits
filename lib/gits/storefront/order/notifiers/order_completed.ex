@@ -16,8 +16,7 @@ defmodule Gits.Storefront.Order.Notifiers.OrderCompleted do
 
   @impl Oban.Worker
   def perform(%Oban.Job{args: %{"id" => id}}) do
-    Order
-    |> Ash.get(id, load: [:event, :ticket_types, :tickets])
+    Ash.get(Order, id, load: [:event, :ticket_types, :tickets])
     |> case do
       {:ok, order} ->
         %{ticket_types: ticket_types, tickets: tickets} = order

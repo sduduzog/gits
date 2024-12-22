@@ -20,6 +20,7 @@ defmodule Gits.Storefront.Ticket do
     transitions do
       transition :check_in, from: :open, to: :checked_in
       transition :admit, from: [:open, :checked_in], to: :admitted
+      transition :release, from: :open, to: :released
     end
   end
 
@@ -48,6 +49,10 @@ defmodule Gits.Storefront.Ticket do
 
     update :admit do
     end
+
+    update :release do
+      change transition_state(:released)
+    end
   end
 
   policies do
@@ -61,6 +66,10 @@ defmodule Gits.Storefront.Ticket do
 
     policy action(:destroy) do
       authorize_if accessing_from(TicketType, :tickets)
+    end
+
+    policy action(:release) do
+      authorize_if always()
     end
   end
 

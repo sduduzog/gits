@@ -168,6 +168,19 @@
         You're almost done!
       </p>
     <% end %>
+    <%= if @order_state == :refunded do %>
+      <div class="flex items-center gap-4">
+        <.button size={:none} class="p-2" onclick="history.back()" variant={:outline}>
+          <.icon name="i-lucide-chevron-left" />
+        </.button>
+
+        <h3 class="text-lg font-semibold lg:col-span-full">Order Refunded</h3>
+      </div>
+
+      <p class=" text-sm text-zinc-700">
+        This order has been refunded.
+      </p>
+    <% end %>
 
     <%= if @order_state == :completed do %>
       <div class="flex items-center gap-4">

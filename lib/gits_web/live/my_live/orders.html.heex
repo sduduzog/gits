@@ -7,13 +7,13 @@
       rows={@orders}
       row_click={
         fn row ->
-          JS.patch(Routes.my_orders_path(@socket, :show, row.id)) |> show_modal("orders")
+          JS.navigate(Routes.storefront_event_order_path(@socket, :index, row.event_id, row.id))
         end
       }
     >
-      <:col :let={order} label="Order #">#<%= order.no %></:col>
-      <:col :let={order} label="Date"><%= order.date %></:col>
-      <:col :let={order} optional label="Event"><%= order.event %></:col>
+      <:col :let={order} label="Order #">#{order.no}</:col>
+      <:col :let={order} label="Date">{order.date}</:col>
+      <:col :let={order} optional label="Event">{order.event}</:col>
       <:col :let={_order} label="Status">
         <span
           :if={false}
@@ -31,7 +31,7 @@
           Completed
         </span>
       </:col>
-      <:col :let={order} optional label="Amount"><%= order.amount %></:col>
+      <:col :let={order} optional label="Amount">{order.amount}</:col>
     </.table>
   </div>
 </div>
