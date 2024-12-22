@@ -18,6 +18,10 @@ defmodule Gits.Storefront.OrderFeesSplit do
   end
 
   policies do
+    policy action(:read) do
+      authorize_if accessing_from(Order, :fees_split)
+    end
+
     policy action(:create) do
       authorize_if accessing_from(Order, :fees_split)
     end

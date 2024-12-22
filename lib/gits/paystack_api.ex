@@ -171,6 +171,23 @@ defmodule Gits.PaystackApi do
     end
   end
 
+  def create_refund(reference, amount) do
+    options = Application.get_env(:gits, :paystack_api_options)
+
+    Req.new(options)
+    |> Req.post(
+      url: "/refund",
+      json: %{
+        transaction: reference,
+        amount: amount
+      }
+    )
+    |> case do
+      {:ok, %Req.Response{body: %{"data" => refund, "status" => true}}} ->
+        {:ok, refund}
+    end
+  end
+
   defp extract_subaccount(subaccount) do
     %{
       business_name: subaccount["business_name"],

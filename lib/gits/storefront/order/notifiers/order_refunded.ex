@@ -1,6 +1,7 @@
 defmodule Gits.Storefront.Order.Notifiers.OrderRefunded do
   require Decimal
   use Ash.Notifier
+  alias Gits.PaystackApi
   alias Gits.Storefront.Order
   use Oban.Worker
 
@@ -18,14 +19,14 @@ defmodule Gits.Storefront.Order.Notifiers.OrderRefunded do
   end
 
   @impl Oban.Worker
-  def perform(%Oban.Job{args: %{"id" => id}}) do
-    Ash.get(Order, id)
+  def perform(%Oban.Job{args: %{"id" => id}} = job) do
+    Ash.get(Order, id, load: [:fees_split], actor: job)
     |> case do
       {:ok, order} ->
-        otp =
-          NimbleTOTP.verification_code(order.requested_refund_secret, period: 60 * 30)
-
-        Gits.Mailer.refund_requested(to_string(order.email), otp, order.number)
+        PaystackApi.create_refund(
+          order.paystack_reference,
+          Decimal.mult(order.fees_split.subaccount, 100)
+        )
 
       {:error, error} ->
         {:error, error}

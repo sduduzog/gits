@@ -15,7 +15,7 @@ defmodule Gits.Storefront.Order do
   alias Gits.PaystackApi
 
   alias Gits.Storefront.{Event, OrderFeesSplit, Ticket, TicketType}
-  alias __MODULE__.Notifiers.{OrderCompleted, OrderConfirmed, OrderRefundRequested}
+  alias __MODULE__.Notifiers.{OrderCompleted, OrderConfirmed, OrderRefunded, OrderRefundRequested}
 
   state_machine do
     initial_states [:open, :anonymous]
@@ -143,6 +143,8 @@ defmodule Gits.Storefront.Order do
           end
         end)
       end
+
+      notifiers [OrderRefunded]
     end
 
     update :add_ticket do
