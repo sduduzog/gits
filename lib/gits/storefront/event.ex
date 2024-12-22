@@ -1,6 +1,6 @@
 defmodule Gits.Storefront.Event do
   alias Gits.Storefront.EventCategory
-  alias Gits.Storefront.{Order, TicketType}
+  alias Gits.Storefront.{Interaction, Order, TicketType}
   alias Gits.Accounts.{Host, User, Venue}
   alias Gits.Accounts
 
@@ -221,9 +221,21 @@ defmodule Gits.Storefront.Event do
 
     has_many :ticket_types, TicketType
     has_many :orders, Order
+    has_many :interactions, Interaction
   end
 
   calculations do
     calculate :published?, :boolean, expr(not is_nil(published_at))
+  end
+
+  aggregates do
+    count :unique_views, :interactions do
+      field :viewer_id
+      uniq? true
+    end
+
+    count :total_orders, :orders do
+      filter state: :completed
+    end
   end
 end

@@ -63,6 +63,10 @@ defmodule Gits.Storefront.TicketType do
       authorize_if accessing_from(Order, :ticket_types)
     end
 
+    policy action(:add_ticket) do
+      authorize_if expr(open_tickets_count < quantity)
+    end
+
     policy action(:remove_ticket) do
       authorize_if accessing_from(Order, :ticket_types)
     end
@@ -94,6 +98,12 @@ defmodule Gits.Storefront.TicketType do
   end
 
   aggregates do
-    count :tickets_count, :tickets
+    count :open_tickets_count, :tickets do
+      filter expr(state in [:open])
+    end
+
+    count :active_tickets_count, :tickets do
+      filter expr(order.state == :completed)
+    end
   end
 end

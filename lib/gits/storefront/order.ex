@@ -173,10 +173,6 @@ defmodule Gits.Storefront.Order do
       authorize_if always()
     end
 
-    policy action(:add_ticket) do
-      authorize_if always()
-    end
-
     policy action(:remove_ticket) do
       authorize_if always()
     end

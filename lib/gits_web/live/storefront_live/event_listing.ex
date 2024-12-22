@@ -1,11 +1,12 @@
 defmodule GitsWeb.StorefrontLive.EventListing do
   require Ash.Query
+  alias Gits.Storefront.Interaction
   alias Gits.Accounts.User
   alias Gits.Storefront.{Event}
   alias AshPhoenix.Form
   use GitsWeb, :live_view
 
-  def mount(params, _session, socket) do
+  def mount(params, session, socket) do
     remote_ip = get_connect_info(socket, :peer_data).address
 
     Ash.Query.filter(Event, public_id == ^params["public_id"])
@@ -15,6 +16,7 @@ defmodule GitsWeb.StorefrontLive.EventListing do
       {:ok, %Event{} = event} ->
         socket
         |> assign(:verified?, not is_nil(socket.assigns.current_user))
+        |> assign(:viewer_id, session["viewer_id"])
         |> assign(:remote_ip, remote_ip)
         |> assign(:event, event)
         |> ok()
@@ -33,7 +35,7 @@ defmodule GitsWeb.StorefrontLive.EventListing do
         socket
         |> assign(
           :form,
-          socket.assigns.event
+          event
           |> Form.for_update(:create_order,
             forms: [auto?: true],
             actor: socket.assigns.current_user
@@ -48,6 +50,16 @@ defmodule GitsWeb.StorefrontLive.EventListing do
   end
 
   def handle_event("turnstile:success", _, socket) do
+    if not is_nil(socket.assigns.current_user) and connected?(socket) do
+      Ash.Changeset.for_create(Interaction, :create, %{
+        type: :view,
+        viewer_id: socket.assigns.viewer_id,
+        event: socket.assigns.event,
+        user: socket.assigns.current_user
+      })
+      |> Ash.create(actor: socket.assigns.current_user)
+    end
+
     socket
     |> assign(:verified?, true)
     |> noreply()

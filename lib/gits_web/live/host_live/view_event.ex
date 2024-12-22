@@ -1,4 +1,5 @@
 defmodule GitsWeb.HostLive.ViewEvent do
+  alias Gits.Storefront.Interaction
   alias Gits.Accounts.Host
   alias Gits.Storefront.{Event}
   use GitsWeb, :live_view
@@ -11,7 +12,7 @@ defmodule GitsWeb.HostLive.ViewEvent do
     |> Ash.Query.load(
       events:
         Ash.Query.filter(Event, public_id == ^params["public_id"])
-        |> Ash.Query.load(ticket_types: [:tickets_count])
+        |> Ash.Query.load([:unique_views, :total_orders, ticket_types: [:active_tickets_count]])
     )
     |> Ash.read_one()
     |> case do

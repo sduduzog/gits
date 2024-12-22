@@ -143,7 +143,7 @@
             tags={[]}
           >
             <div class="">
-              <span class="text-xl font-light">{type.tickets_count}</span>
+              <span class="text-xl font-light">{type.active_tickets_count}</span>
               <span class="text-xl font-light text-zinc-500">/ {type.quantity}</span>
             </div>
           </GitsWeb.EventComponents.ticket_card>
@@ -152,7 +152,11 @@
       <div class="grid grid-cols-3 divide-x p-4">
         <div
           :for={
-            {label, unit} <- [{"Unique views", "0"}, {"Total orders", "0"}, {"Admissions", "0"}]
+            {label, unit} <- [
+              {"Unique views", @event.unique_views},
+              {"Total orders", @event.total_orders},
+              {"Admissions", "0"}
+            ]
           }
           class="grid pl-2 first:pl-0"
         >

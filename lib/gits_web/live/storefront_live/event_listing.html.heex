@@ -96,11 +96,7 @@
     <.inputs_for :let={ef} field={f[:order]}>
       <.input :if={@current_user} type="hidden" value={@current_user.email} field={ef[:email]} />
     </.inputs_for>
-    <Gits.Turnstile.widget
-      :if={is_nil(@current_user)}
-      events={[:success]}
-      appearance="interaction-only"
-    />
+    <Gits.Turnstile.widget events={[:success]} appearance="interaction-only" />
 
     <.button disabled={not @verified?}>
       <span>Get tickets</span>
