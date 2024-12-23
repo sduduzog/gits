@@ -46,7 +46,8 @@ defmodule GitsWeb.Router do
     get "/privacy", PageController, :privacy
     get "/terms", PageController, :terms
     get "/help", PageController, :help
-    get "/faq", PageController, :faq
+    get "/support/faq", PageController, :faq
+    get "/contact-us", PageController, :contact_us
     get "/assets/:filename", PageController, :assets
     get "/healthz", PageController, :healthz
     get "/beta", PageController, :beta

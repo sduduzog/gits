@@ -97,7 +97,21 @@ defmodule GitsWeb.PageController do
   end
 
   def privacy(conn, _params) do
-    render(conn, :privacy)
+    conn
+    |> assign(:article, Documentation.Articles.get_article_by_id!("privacy"))
+    |> render(:article)
+  end
+
+  def terms(conn, _params) do
+    conn
+    |> assign(:article, Documentation.Articles.get_article_by_id!("terms"))
+    |> render(:article)
+  end
+
+  def contact_us(conn, _params) do
+    conn
+    |> assign(:article, Documentation.Articles.get_article_by_id!("contact-us"))
+    |> render(:article)
   end
 
   def help(conn, _params) do

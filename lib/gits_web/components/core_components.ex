@@ -150,13 +150,13 @@ defmodule GitsWeb.CoreComponents do
         {"i-lucide-headset", "Support",
          [
            # {"I need help", "/support/help"},
-           # {"FAQ", "/support/faq"},
-           # {"Contact", "/contact-us"}
+           {"FAQ", "/support/faq"},
+           {"Contact", "/contact-us"}
          ]},
         {"i-lucide-scale", "Legal",
          [
-           # {"Terms of service", "/terms"},
-           # {"Privacy Policy", "/privacy"}
+           {"Terms of service", "/terms"},
+           {"Privacy Policy", "/privacy"}
          ]},
         {"i-lucide-at-sign", "Social",
          [
