@@ -50,7 +50,7 @@ defmodule GitsWeb.StorefrontLive.EventListing do
   end
 
   def handle_event("turnstile:success", _, socket) do
-    if not is_nil(socket.assigns.current_user) and connected?(socket) do
+    if connected?(socket) do
       Ash.Changeset.for_create(Interaction, :create, %{
         type: :view,
         viewer_id: socket.assigns.viewer_id,

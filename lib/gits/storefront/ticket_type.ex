@@ -64,7 +64,7 @@ defmodule Gits.Storefront.TicketType do
     end
 
     policy action(:add_ticket) do
-      authorize_if expr(open_tickets_count < quantity)
+      authorize_if expr(valid_tickets_count < quantity)
     end
 
     policy action(:remove_ticket) do
@@ -97,9 +97,29 @@ defmodule Gits.Storefront.TicketType do
     has_many :tickets, Ticket
   end
 
+  calculations do
+    calculate :sold_out, :boolean, expr(valid_tickets_count == quantity)
+
+    calculate :limit_reached,
+              :boolean,
+              expr(
+                count(tickets,
+                  query: [
+                    filter:
+                      expr(
+                        state in [:open, :checked_in, :admitted] and order.email == ^arg(:email)
+                      )
+                  ]
+                ) ==
+                  limit_per_user
+              ) do
+      argument :email, :ci_string
+    end
+  end
+
   aggregates do
-    count :open_tickets_count, :tickets do
-      filter expr(state in [:open])
+    count :valid_tickets_count, :tickets do
+      filter expr(state in [:open, :checked_in, :admitted])
     end
 
     count :active_tickets_count, :tickets do

@@ -21,8 +21,8 @@ defmodule Gits.Storefront.Interaction do
 
       accept [:type, :viewer_id]
 
-      argument :event, :map, allow_nil?: false
-      argument :user, :map, allow_nil?: false
+      argument :event, :map
+      argument :user, :map
 
       change manage_relationship(:event, type: :append)
       change manage_relationship(:user, type: :append)

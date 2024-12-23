@@ -1,7 +1,7 @@
 defmodule GitsWeb.StorefrontLive.EventOrder do
   require Ash.Query
   require Decimal
-  alias Gits.Storefront.{Order, Ticket, TicketType}
+  alias Gits.Storefront.{Order, Ticket}
   alias AshPhoenix.Form
   use GitsWeb, :live_view
 
@@ -153,7 +153,13 @@ defmodule GitsWeb.StorefrontLive.EventOrder do
     Ash.load(
       order,
       [
-        event: [ticket_types: [tickets: Ash.Query.filter(Ticket, order.id == ^order.id)]]
+        event: [
+          ticket_types: [
+            :sold_out,
+            limit_reached: [email: order.email],
+            tickets: Ash.Query.filter(Ticket, order.id == ^order.id)
+          ]
+        ]
       ],
       actor: user
     )
@@ -163,7 +169,20 @@ defmodule GitsWeb.StorefrontLive.EventOrder do
 
         ticket_types =
           Enum.map(event.ticket_types, fn type ->
-            {type.id, type.name, type.price, type.color, type.tickets}
+            tags = if type.limit_reached, do: ["Limit Reached"], else: []
+            tags = if type.sold_out, do: ["Sold Out"], else: tags
+
+            %{
+              id: type.id,
+              name: type.name,
+              price: type.price,
+              color: type.color,
+              tickets: type.tickets,
+              tags: tags,
+              can_add_ticket?:
+                Ash.Changeset.for_update(order, :add_ticket, %{ticket_type: %{"id" => type.id}})
+                |> Ash.can?(actor: user) and not type.sold_out
+            }
           end)
 
         total =

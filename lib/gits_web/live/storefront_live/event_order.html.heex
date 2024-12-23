@@ -32,109 +32,64 @@
         <h3 class="text-lg font-semibold lg:col-span-full">Get Tickets</h3>
       </div>
       <div class="grid items-start gap-4 lg:grid-cols-2">
-        <div
-          :for={{id, name, price, color, tickets} <- @ticket_types}
-          class="flex items-center gap-4 rounded-xl border p-4"
-        >
-          <span class="w-1 self-stretch rounded-full" style={"background-color: #{color}"}></span>
-          <div class="grow">
-            <span class="text-sm/4 font-medium">{name}</span>
-            <div class="flex gap-2 text-sm/4 text-zinc-500">
-              <span></span>
-            </div>
-          </div>
-          <div class="flex items-center gap-2">
-            <.form :let={f} for={@remove_ticket_form} phx-submit="remove_ticket">
-              <.inputs_for :let={tt} field={f[:ticket_type]}>
-                <.input field={tt[:id]} value={id} id={"remove_#{id}"} type="hidden" />
+        <div :for={type <- @ticket_types} class="border rounded-xl p-4">
+          <GitsWeb.EventComponents.ticket_card
+            color={type.color}
+            name={type.name}
+            id={type.id}
+            tags={type.tags}
+          >
+            <div class="flex items-center gap-2">
+              <.form :let={f} for={@remove_ticket_form} phx-submit="remove_ticket">
+                <.inputs_for :let={tt} field={f[:ticket_type]}>
+                  <.input field={tt[:id]} value={type.id} id={"remove_#{type.id}"} type="hidden" />
 
-                <.inputs_for :let={t} field={tt[:ticket]}>
-                  <.input
-                    :if={Enum.any?(tickets)}
-                    field={t[:id]}
-                    value={List.first(tickets || []) |> Map.get(:id)}
-                    id={"remove_#{id}_ticket"}
-                    type="hidden"
-                  />
-                </.inputs_for>
-              </.inputs_for>
-
-              <.button size={:none} variant={:subtle} class="lg:p-2.5 p-3">
-                <.icon name="i-lucide-minus" />
-              </.button>
-            </.form>
-
-            <span class="w-5 tabular-nums text-base/4 text-center font-medium">
-              {Enum.count(tickets)}
-            </span>
-
-            <.form :let={f} for={@add_ticket_form} phx-submit="add_ticket">
-              <.inputs_for :let={tt} field={f[:ticket_type]}>
-                <.input field={tt[:id]} value={id} id={id} type="hidden" />
-
-                <.inputs_for :let={t} field={tt[:ticket]}>
-                  <.inputs_for :let={o} field={t[:order]}>
-                    <.input field={o[:id]} id={"#{id}_ticket"} value={@order_id} type="hidden" />
+                  <.inputs_for :let={t} field={tt[:ticket]}>
+                    <.input
+                      :if={Enum.any?(type.tickets)}
+                      field={t[:id]}
+                      value={List.first(type.tickets || []) |> Map.get(:id)}
+                      id={"remove_#{type.id}_ticket"}
+                      type="hidden"
+                    />
                   </.inputs_for>
                 </.inputs_for>
-              </.inputs_for>
-              <.button size={:none} variant={:subtle} class="lg:p-2.5 p-3">
-                <.icon name="i-lucide-plus" />
-              </.button>
-            </.form>
-          </div>
-        </div>
 
-        <div
-          :for={
-            {name, description, price, count, removable_ticket, remove_ticket_form,
-             add_ticket_form} <-
-              @ticket_types
-          }
-          class="grid gap-4 rounded-xl border p-6"
-        >
-          <div class="flex justify-between font-semibold">
-            <span>{name}</span>
-            <span>R {price}</span>
-          </div>
-          <span class="line-clamp-3 text-sm text-zinc-500">{description}</span>
-          <div class="flex items-center gap-2">
-            <div class="grow"></div>
+                <.button size={:none} variant={:subtle} class="lg:p-2.5 p-3">
+                  <.icon name="i-lucide-minus" />
+                </.button>
+              </.form>
 
-            <.form
-              :let={f}
-              :if={removable_ticket}
-              phx-submit="remove_ticket"
-              for={remove_ticket_form}
-              class="group"
-            >
-              <.inputs_for :let={ticket_form} field={f[:ticket]}>
-                <.input
-                  :if={removable_ticket}
-                  type="hidden"
-                  name={ticket_form[:id].name}
-                  value={removable_ticket.id}
-                />
-              </.inputs_for>
+              <span class="w-5 tabular-nums text-base/4 text-center font-medium">
+                {Enum.count(type.tickets)}
+              </span>
 
-              <.button size={:none} variant={:subtle} class="p-4 lg:p-2">
-                <.icon name="i-lucide-minus" />
-              </.button>
-            </.form>
+              <.form :let={f} for={@add_ticket_form} phx-submit="add_ticket">
+                <.inputs_for :let={tt} field={f[:ticket_type]}>
+                  <.input field={tt[:id]} value={type.id} id={type.id} type="hidden" />
 
-            <span class="w-6 text-center text-lg font-medium tabular-nums">
-              {count}
-            </span>
-            <.form :let={f} for={add_ticket_form} phx-submit="add_ticket">
-              <.inputs_for :let={ticket_form} field={f[:ticket]}>
-                <.inputs_for field={ticket_form[:ticket_type]}></.inputs_for>
-              </.inputs_for>
-
-              <.button size={:none} variant={:subtle} class="p-4 lg:p-2">
-                <.icon name="i-lucide-plus" />
-              </.button>
-            </.form>
-          </div>
+                  <.inputs_for :let={t} field={tt[:ticket]}>
+                    <.inputs_for :let={o} field={t[:order]}>
+                      <.input
+                        field={o[:id]}
+                        id={"#{type.id}_ticket"}
+                        value={@order_id}
+                        type="hidden"
+                      />
+                    </.inputs_for>
+                  </.inputs_for>
+                </.inputs_for>
+                <.button
+                  disabled={not type.can_add_ticket?}
+                  size={:none}
+                  variant={:subtle}
+                  class="lg:p-2.5 p-3"
+                >
+                  <.icon name="i-lucide-plus" />
+                </.button>
+              </.form>
+            </div>
+          </GitsWeb.EventComponents.ticket_card>
         </div>
       </div>
       <.form
