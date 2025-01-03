@@ -29,6 +29,10 @@ defmodule GitsWeb.HostLive.ViewEvent do
     end
   end
 
+  def handle_params(_, _, socket) do
+    socket |> noreply()
+  end
+
   def handle_event("publish", _, socket) do
     Ash.Changeset.for_update(socket.assigns.event, :publish, %{})
     |> Ash.update(actor: socket.assigns.current_user)
@@ -38,5 +42,12 @@ defmodule GitsWeb.HostLive.ViewEvent do
         |> assign(:event, event)
         |> noreply()
     end
+  end
+
+  def handle_event("archive", _, socket) do
+    Ash.Changeset.for_destroy(socket.assigns.event, :destroy)
+    |> Ash.destroy(actor: socket.assigns.current_user)
+
+    socket |> noreply()
   end
 end

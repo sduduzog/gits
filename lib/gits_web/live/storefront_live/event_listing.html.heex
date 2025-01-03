@@ -52,7 +52,7 @@
       <div class="flex items-start gap-2">
         <.icon name="hero-map-pin" class="size-5" />
         <div class="grid">
-          <%= if @event.location_is_private do %>
+          <%= if @event.location_is_private or is_nil(@event.venue) do %>
             <span class="text-sm font-medium">Private Location</span>
             <span class="text-sm text-zinc-500">
               Details will be shared with ticket holders

@@ -21,7 +21,7 @@
       {@event.name}
     </h1>
     <div class="flex flex-wrap items-center gap-4">
-      <.button size={:none} class="p-2" variant={:outline}>
+      <.button size={:none} class="p-2" variant={:outline} phx-click={show_modal("archive-event")}>
         <.icon name="i-lucide-trash" />
       </.button>
       <.button
@@ -46,7 +46,7 @@
         <.icon name="i-lucide-link-2" />
       </.button>
 
-      <div class="grow gap-2">
+      <div class="grow capitalize gap-2">
         <%= if @event.state == :published do %>
           <span class="inline-flex items-center rounded-full bg-green-50 px-1.5 py-0.5 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
             {@event.state}
@@ -230,16 +230,7 @@
     </div>
   </div>
 </.modal>
-<.modal
-  :if={false}
-  id="archive-event"
-  show={@show_archive_modal}
-  on_cancel={
-    JS.patch(Routes.host_view_event_path(@socket, @live_action, @host.handle, @event.public_id),
-      replace: true
-    )
-  }
->
+<.modal id="archive-event" on_cancel={JS.dispatch("gits:go_back")}>
   <div class="grid gap-4">
     <h3 class="text-lg font-semibold">Confirm archive?</h3>
     <div class="space-y-2 text-sm text-zinc-700">
@@ -262,7 +253,10 @@
         <span class="text-sm font-semibold">Cancel</span>
       </button>
 
-      <button class="rounded-lg bg-red-600 px-4 py-2 text-white">
+      <button
+        class="rounded-lg bg-red-600 px-4 py-2 text-white"
+        phx-click={JS.push("archive") |> hide_modal("archive-event")}
+      >
         <span class="text-sm font-semibold">Yes, Archive</span>
       </button>
     </div>

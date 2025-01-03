@@ -180,6 +180,10 @@ defmodule Gits.Storefront.Event do
     policy action(:create_order) do
       authorize_if always()
     end
+
+    policy action(:destroy) do
+      authorize_if always()
+    end
   end
 
   attributes do

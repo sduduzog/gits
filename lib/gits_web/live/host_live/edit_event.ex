@@ -82,7 +82,7 @@ defmodule GitsWeb.HostLive.EditEvent do
     |> noreply()
   end
 
-  def handle_event("validate", unsigned_params, socket) do
+  def handle_event("validate", %{"form" => _} = unsigned_params, socket) do
     socket
     |> assign(
       :form,
@@ -92,6 +92,11 @@ defmodule GitsWeb.HostLive.EditEvent do
         errors: false
       )
     )
+    |> noreply()
+  end
+
+  def handle_event("validate", _, socket) do
+    socket
     |> noreply()
   end
 
