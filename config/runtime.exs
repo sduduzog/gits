@@ -18,6 +18,8 @@ config_dir_prefix =
 
 source!(["#{config_dir_prefix}.env", System.get_env()])
 
+config :gits, tz: env!("TZ")
+
 config :gits, :basic_auth,
   username: env!("BASIC_AUTH_USERNAME"),
   password: env!("BASIC_AUTH_PASSWORD")

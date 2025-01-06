@@ -112,6 +112,10 @@ defmodule Gits.Accounts.User do
     policy action(:read) do
       authorize_if always()
     end
+
+    policy action(:update) do
+      authorize_if expr(id == ^actor(:id))
+    end
   end
 
   attributes do

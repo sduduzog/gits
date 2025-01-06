@@ -81,11 +81,11 @@ const QuillEditor = {
     const quill = new Quill(editor, {
       modules: {
         toolbar: [
-          // [{ header: [1, 2, 3, false] }],
-          // ["bold", "italic", "underline", "strike"],
-          // ["blockquote"],
-          // ["link"],
-          // [{ list: "bullet" }],
+          [{ header: [false, 1, 2, 3, 4] }],
+          ["bold", "italic", "underline", "strike"],
+          ["blockquote"],
+          ["link"],
+          [{ list: "bullet" }],
         ],
       },
       theme: "snow",
@@ -104,6 +104,18 @@ const QuillEditor = {
     } else {
       this._setup();
     }
+  },
+};
+
+const QuillContentParser = {
+  mounted() {
+    const element = document.createElement("div");
+    const quill = new Quill(element, {});
+
+    const ops = JSON.parse(this.el.dataset.content || '{"ops": []}');
+    quill.setContents(ops);
+    const html = quill.getSemanticHTML();
+    this.el.innerHTML = html;
   },
 };
 
@@ -187,6 +199,7 @@ const Dropdown = {
 
 export const Hooks = {
   QuillEditor,
+  QuillContentParser,
   QrScanner,
   QrScannerCameraList,
   Turnstile: TurnstileHook,

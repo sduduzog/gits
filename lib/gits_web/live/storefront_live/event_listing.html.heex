@@ -1,6 +1,6 @@
 <div class="mx-auto grid max-w-screen-xl items-start gap-4 gap-x-12 lg:grid-cols-[minmax(auto,48rem)_1fr] lg:gap-6 lg:pb-6">
   <div class="space-y-4 lg:row-span-3">
-    <div class="aspect-[3/2] bg-zinc-200 lg:rounded-2xl overflow-hidden">
+    <div class="aspect-[3/2] overflow-hidden bg-zinc-200 lg:rounded-2xl">
       <img src={Gits.Bucket.get_image_url(@event.poster)} alt={@event.name} class="size-full" />
     </div>
   </div>
@@ -17,6 +17,16 @@
 
     <h1 class="text-2xl font-semibold">{@event.name}</h1>
     <div class="flex flex-wrap gap-4">
+      <span
+        :if={@event.state == :draft}
+        class="inline-flex items-center gap-x-1.5 rounded-md px-2 py-1 text-xs font-medium text-yellow-800 bg-yellow-50 ring-1 ring-inset ring-yellow-600/20"
+      >
+        <svg class="h-1.5 w-1.5 fill-yellow-800" viewBox="0 0 6 6" aria-hidden="true">
+          <circle cx="3" cy="3" r="3" />
+        </svg>
+        Draft
+      </span>
+
       <span class="inline-flex items-center gap-x-1.5 rounded-md px-2 py-1 text-xs font-medium text-gray-900 ring-1 ring-inset ring-gray-200">
         <svg class="h-1.5 w-1.5 fill-zinc-900" viewBox="0 0 6 6" aria-hidden="true">
           <circle cx="3" cy="3" r="3" />
@@ -89,6 +99,7 @@
 
   <.form
     :let={f}
+    :if={@event.state == :published}
     phx-submit="submit"
     for={@form}
     class="sticky bottom-0 top-0 z-20 flex flex-wrap place-items-start items-center border-t border-zinc-100 bg-white p-2 shadow-sm lg:bottom-auto lg:top-6 lg:border-none lg:shadow-none"
@@ -103,12 +114,20 @@
     </.button>
   </.form>
 
-  <div class="px-2 lg:row-start-4">
+  <div class="grid gap-2 px-2 lg:row-start-4">
     <h3 class="text-lg font-medium">About this event</h3>
-    <div class="space-y-2 text-zinc-700 opacity-30">
+    <div class="space-y-2 font-medium text-zinc-600">
       <p>
         {@event.summary}
       </p>
+    </div>
+
+    <div
+      class="quill-content text-zinc-700"
+      id="quill-content"
+      phx-hook="QuillContentParser"
+      data-content={@event.description}
+    >
     </div>
   </div>
 </div>

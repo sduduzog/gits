@@ -8,7 +8,7 @@
   </div>
 </div>
 
-<div class="flex gap-4 items-center p-2">
+<div class="flex items-center gap-4 p-2">
   <div class="flex grow gap-8 p-2 lg:p-0">
     <.link
       :for={i <- [:all, :published, :drafts]}
@@ -17,7 +17,7 @@
       aria-selected={"#{i == @live_action}"}
       class="rounded-lg text-zinc-400 aria-selected:text-zinc-950"
     >
-      <span class="font-medium capitalize text-sm">{i}</span>
+      <span class="text-sm font-medium capitalize">{i}</span>
     </.link>
   </div>
   <div>
@@ -29,9 +29,12 @@
 </div>
 <div class="divide-y divide-zinc-100 p-2">
   <div :for={event <- @events} class="flex items-center gap-4 py-4">
-    <div class="aspect-[3/2] overflow-hidden h-20 rounded-xl bg-zinc-200">
+    <.link
+      navigate={~p"/hosts/#{@host_handle}/events/#{event.public_id}"}
+      class="aspect-[3/2] h-20 overflow-hidden rounded-xl bg-zinc-200"
+    >
       <img src={Gits.Bucket.get_image_url(event.poster)} alt="Event poster" class="size-full" />
-    </div>
+    </.link>
     <div class="grid w-full grow gap-1.5">
       <h2 class="truncate font-semibold">
         <.link navigate={~p"/hosts/#{@host_handle}/events/#{event.public_id}"}>
@@ -43,10 +46,11 @@
       </span>
       <!-- <span class="text-sm text-zinc-500">5/40 tickets sold</span> -->
     </div>
-    <div class="">
-      <button class="inline-flex size-9 items-center justify-center">
-        <.icon name="hero-ellipsis-vertical-mini" />
-      </button>
+    <div>
+      <!-- <span class="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">Badge</span> -->
+      <!-- <span class="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">Badge</span> -->
+<!-- <span class="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20">Badge</span> -->
+<!-- <span class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">Badge</span> -->
     </div>
   </div>
 </div>

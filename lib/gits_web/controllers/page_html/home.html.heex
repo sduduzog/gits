@@ -1,28 +1,34 @@
-<div class="grid gap-8 p-4 py-28 mx-auto max-w-screen-xl">
-  <div>
-    <div class="bg-zinc-500/5 relative inline-flex rounded-3xl border border-zinc-200 p-8">
-      <div class="bg-zinc-500/5 absolute -top-4 left-36 h-12 w-40 rounded-xl border border-zinc-200">
+<div class="bg-white">
+  <div class="grid gap-8 p-4 py-28 mx-auto max-w-screen-xl">
+    <div>
+      <div class="bg-zinc-500/5x relative inline-flex rounded-3xl border border-zinc-300 p-8">
+        <div class="bg-zinc-500/5x bg-brand-base/5  absolute -top-4 left-36 h-12 w-40 rounded-xl border border-zinc-300">
+        </div>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="size-28 text-brand-base"
+          viewBox="0 0 14 14"
+        >
+          <path
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="m4.656 2.255l-.39.09a1.19 1.19 0 0 1-.91 1.43a1.22 1.22 0 0 1-1.44-.92l-.78.16a.81.81 0 0 0-.61 1s.36 1.67.78 3.55m10.85-5.32a1.32 1.32 0 1 1-2.44-1l-.81-.38a.89.89 0 0 0-1.16.47l-3.36 7.91l-.44 1a.89.89 0 0 0 .47 1.16l4.06 1.73a.89.89 0 0 0 1.16-.47l3.8-8.94a.89.89 0 0 0-.43-1.13z"
+          />
+        </svg>
       </div>
-      <svg xmlns="http://www.w3.org/2000/svg" class="size-28 text-zinc-300" viewBox="0 0 14 14">
-        <path
-          fill="none"
-          stroke="currentColor"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="m4.656 2.255l-.39.09a1.19 1.19 0 0 1-.91 1.43a1.22 1.22 0 0 1-1.44-.92l-.78.16a.81.81 0 0 0-.61 1s.36 1.67.78 3.55m10.85-5.32a1.32 1.32 0 1 1-2.44-1l-.81-.38a.89.89 0 0 0-1.16.47l-3.36 7.91l-.44 1a.89.89 0 0 0 .47 1.16l4.06 1.73a.89.89 0 0 0 1.16-.47l3.8-8.94a.89.89 0 0 0-.43-1.13z"
-        />
-      </svg>
     </div>
-  </div>
-  <h1 class="text-5xl font-semibold md:text-6xl">
-    Unlock Unforgettable Experiences
-  </h1>
-  <p class="max-w-lg text-lg text-zinc-600">
-    Start planning and hosting your events today.
-  </p>
-  <div class="flex gap-8 font-medium">
-    <.button variant={:outline} href={~p"/host-with-us"}>
-      Host with us
-    </.button>
+    <h1 class="text-5xl font-semibold md:text-6xl">
+      Unlock <span class="text-brand-base">Unforgettable</span> Experiences
+    </h1>
+    <p class="max-w-lg text-lg text-zinc-500">
+      Start planning and hosting your events today.
+    </p>
+    <div :if={false} class="flex gap-8 font-medium">
+      <.button size={:lg} href={~p"/host-with-us"}>
+        Host with us
+      </.button>
+    </div>
   </div>
 </div>

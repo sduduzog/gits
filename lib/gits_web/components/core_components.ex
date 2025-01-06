@@ -474,9 +474,10 @@ defmodule GitsWeb.CoreComponents do
         assigns,
         :size_class,
         case assigns.size do
-          :md -> "py-3 px-6"
-          :none -> ""
-          _ -> "py-2 px-4"
+          :lg -> "py-4 px-8 text-base/6"
+          :md -> "py-3 px-6 text-sm/4"
+          :none -> "text-sm/4"
+          _ -> "py-2 px-4 text-sm/4"
         end
       )
       |> assign(
@@ -484,9 +485,9 @@ defmodule GitsWeb.CoreComponents do
         case assigns.variant do
           :subtle -> "border-transparent bg-zinc-50 text-zinc-950 hover:bg-zinc-100"
           :surface -> "border-zinc-200 bg-zinc-50 text-zinc-950 hover:bg-zinc-100"
-          :outline -> "border-zinc-200 bg-white text-zinc-950 hover:bg-zinc-100"
-          :ghost -> "border-transparent bg-white text-zinc-950 hover:bg-zinc-100"
-          _ -> "border-transparent text-white active:text-white bg-zinc-900 hover:bg-zinc-800"
+          :outline -> "border-brand-400 bg-transparent text-brand-base hover:bg-black/5"
+          :ghost -> "border-transparent bg-transparent text-zinc-950 hover:bg-black/5"
+          _ -> "border-transparent text-white active:text-white bg-brand-base hover:bg-brand-400"
         end
       )
 
@@ -495,7 +496,7 @@ defmodule GitsWeb.CoreComponents do
       <button
         type={@type}
         class={[
-          "text-sm/5 font-semibold  border inline-flex gap-2",
+          "font-semibold  border inline-flex gap-2",
           "rounded-lg items-center justify-center phx-submit-loading:opacity-75 disabled:opacity-75",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-zinc-600",
           @size_class,
@@ -511,7 +512,7 @@ defmodule GitsWeb.CoreComponents do
         navigate={@href}
         type={@type}
         class={[
-          "text-sm/5 font-semibold  border inline-flex gap-2",
+          "font-semibold  border inline-flex gap-2",
           "rounded-lg items-center justify-center phx-submit-loading:opacity-75 disabled:opacity-75",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-zinc-600",
           @size_class,
@@ -740,7 +741,7 @@ defmodule GitsWeb.CoreComponents do
         phx-update="ignore"
         data-contents={@value}
         phx-hook="QuillEditor"
-        class="h-full"
+        class="h-full quill-editor"
       >
       </div>
       <span :if={@description} class="inline-flex text-zinc-500">{@description}</span>
@@ -993,8 +994,6 @@ defmodule GitsWeb.CoreComponents do
     <span class={[@name, @class]}></span>
     """
   end
-
-  ## JS Commands
 
   def show(js \\ %JS{}, selector) do
     JS.show(js,

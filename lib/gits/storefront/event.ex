@@ -177,6 +177,10 @@ defmodule Gits.Storefront.Event do
       authorize_if expr(exists(host.roles, user.id == ^actor(:id)))
     end
 
+    policy action(:publish) do
+      authorize_if expr(fragment("now()") < utc_starts_at)
+    end
+
     policy action(:create_order) do
       authorize_if always()
     end
@@ -230,6 +234,14 @@ defmodule Gits.Storefront.Event do
 
   calculations do
     calculate :published?, :boolean, expr(not is_nil(published_at))
+
+    calculate :utc_starts_at,
+              :utc_datetime,
+              expr(fragment("? at time zone (?)", starts_at, ^Application.get_env(:gits, :tz)))
+
+    calculate :utc_ends_at,
+              :utc_datetime,
+              expr(fragment("? at time zone (?)", ends_at, ^Application.get_env(:gits, :tz)))
   end
 
   aggregates do

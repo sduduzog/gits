@@ -7,11 +7,20 @@ defmodule GitsWeb.HostLive.ViewEvent do
   embed_templates "view_event_templates/*"
 
   def mount(params, _session, socket) do
+    Application.get_env(:gits, :tz)
+    |> IO.inspect()
+
     Ash.Query.for_read(Host, :read, %{}, actor: socket.assigns.current_user)
     |> Ash.Query.load(
       events:
         Ash.Query.filter(Event, public_id == ^params["public_id"])
-        |> Ash.Query.load([:unique_views, :total_orders, ticket_types: [:active_tickets_count]])
+        |> Ash.Query.load([
+          :utc_starts_at,
+          :venue,
+          :unique_views,
+          :total_orders,
+          ticket_types: [:active_tickets_count]
+        ])
     )
     |> Ash.read_one()
     |> case do
@@ -19,7 +28,16 @@ defmodule GitsWeb.HostLive.ViewEvent do
         [event] =
           host.events
 
-        ticket_types = event.ticket_types
+        ticket_types =
+          event.ticket_types
+          |> Enum.map(fn type ->
+            price =
+              if Decimal.gt?(type.price, Decimal.new("0")), do: "R #{type.price}", else: "Free"
+
+            per_user = "#{type.limit_per_user} p.p"
+
+            Map.merge(type, %{tags: [price, per_user]})
+          end)
 
         assign(socket, :event, event)
         |> assign(:ticket_types, ticket_types)
@@ -49,5 +67,10 @@ defmodule GitsWeb.HostLive.ViewEvent do
     |> Ash.destroy(actor: socket.assigns.current_user)
 
     socket |> noreply()
+  end
+
+  defp can_publish?(event, actor) do
+    Ash.Changeset.for_update(event, :publish, %{})
+    |> Ash.can?(actor)
   end
 end

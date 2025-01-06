@@ -5,7 +5,7 @@
       <.link
         :for={
           {name, icon} <-
-            [{:account, "i-lucide-user"}, {:partner, "i-lucide-handshake"}]
+            [{:profile, "i-lucide-user"}, {:partner, "i-lucide-handshake"}]
         }
         navigate={Routes.my_settings_path(@socket, name)}
         aria-selected={"#{name == @live_action}"}
@@ -15,7 +15,7 @@
         <span class="font-medium capitalize">{name}</span>
       </.link>
     </div>
-    <div :if={@live_action == :account} class="mx-auto w-full max-w-screen-sm space-y-8">
+    <div :if={@live_action == :profile} class="mx-auto w-full max-w-screen-sm space-y-8">
       <div class="size-28 rounded-full bg-zinc-200"></div>
       <div class="grid gap-1">
         <span class="text-3xl font-semibold">
@@ -23,12 +23,12 @@
         </span>
         <span class="text-sm text-zinc-500">{@current_user.email}</span>
       </div>
-      <.form :let={f} for={%{}} class="space-y-4">
+      <.form :let={f} for={@form} class="space-y-4" phx-change="validate" phx-submit="submit">
         <div class="flex items-center gap-4">
           <h2 class="text-xl grow font-semibold">Personal details</h2>
-          <button class="text-zinc-300 h-9 font-semibold text-sm/4 hover:bg-zinc-50 px-4 py-2 rounded-lg">
+          <.button variant={:subtle} disabled={not @form.changed? or not @form.valid?}>
             <span>Save</span>
-          </button>
+          </.button>
         </div>
         <div>
           <.input label="Name" type="text" field={f[:name]} />

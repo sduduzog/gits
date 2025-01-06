@@ -9,12 +9,11 @@
   phx-auto-recover="validate"
 >
   <div class="grid max-w-screen-sm grid-cols-2 gap-6">
-    <.input field={f[:summary]} label="Summary" type="textarea" class="col-span-full" />
     <.input
       field={f[:description]}
       label="Long description"
       type="richtext"
-      class="col-span-full h-64"
+      class="col-span-full h-96"
     />
   </div>
   <div class="col-span-full flex gap-6 lg:pt-4  py-8">

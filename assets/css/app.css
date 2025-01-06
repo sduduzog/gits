@@ -77,7 +77,60 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-.ql-editor {
-  font-family: theme(fontFamily.poppins)
+
+
+@layer components {
+  .quill-content {
+    font-family: theme('fontFamily.poppins');
+    font-size: theme('fontSize.sm');
+    line-height: theme('lineHeight.tight');
+    height: theme('lineHeight.tight');
+  }
+
+  .quill-content h1 {
+    font-size: theme('fontSize.3xl');
+  }
+
+  
+  .quill-content h2 {
+    font-size: theme('fontSize.2xl');
+  }
+
+  
+  .quill-content h3 {
+    font-size: theme('fontSize.xl');
+  }
+
+  
+  .quill-content h4 {
+    font-size: theme('fontSize.lg');
+  }
+
+  .quill-content a {
+    text-decoration: underline;
+    color: theme('colors.blue.600');
+  }
+
+  .quill-content ul {
+    padding-left: theme("space.8");
+  }
+
+  .quill-content li {
+    list-style: theme('listStyleType.disc');
+    padding-left: theme('space.0');
+  }
+
+  .quill-content li > span.ql-ui:before {
+    content: '';
+  }
+
+  .quill-content blockquote {
+    border-left:  theme('borderWidth.4') theme('borderColor.zinc.300') solid;
+    padding-left: theme('space.4');
+  }
+  
+  .quill-editor .ql-editor {
+    @apply quill-content;
+  }
 }
 

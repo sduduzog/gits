@@ -57,7 +57,11 @@
           </span>
         <% end %>
       </div>
-      <.button :if={@event.state == :draft} phx-click={show_modal("publish-event")}>
+      <.button
+        :if={@event.state == :draft}
+        disabled={not can_publish?(@event, @current_user)}
+        phx-click={show_modal("publish-event")}
+      >
         <.icon name="i-lucide-rocket" />
         <span>Publish</span>
       </.button>
@@ -79,7 +83,7 @@
       <div class="p-4 space-y-2">
         <h3 class="font-semibold px-2">Event Details</h3>
         <dl class="flex flex-wrap gap-2 p-2">
-          <div class="grid w-full grid-cols-[theme(space.24)_1fr]">
+          <div class="grid w-full grid-cols-[theme(space.28)_1fr]">
             <dt class="flex-none">
               <span class="text-sm/6 text-zinc-500">Visibility</span>
             </dt>
@@ -90,7 +94,7 @@
             </dd>
           </div>
 
-          <div class="grid w-full grid-cols-[theme(space.24)_1fr]">
+          <div class="grid w-full grid-cols-[theme(space.28)_1fr]">
             <dt class="flex-none">
               <span class="text-sm/6 text-zinc-500">Starts at</span>
             </dt>
@@ -104,7 +108,7 @@
             </dd>
           </div>
 
-          <div class="grid w-full grid-cols-[theme(space.24)_1fr]">
+          <div class="grid w-full grid-cols-[theme(space.28)_1fr]">
             <dt class="flex-none">
               <span class="text-sm/6 text-zinc-500">Ends at</span>
             </dt>
@@ -115,6 +119,21 @@
                   "%d %B %Y, %I:%M %p"
                 )}
               </span>
+            </dd>
+          </div>
+
+          <div class="grid w-full grid-cols-[theme(space.28)_1fr]">
+            <dt class="flex-none">
+              <span class="text-sm/6 text-zinc-500">Location</span>
+            </dt>
+            <dd class="flex items-center gap-2 text-sm/6">
+              <%= if is_nil(@event.venue) do %>
+                <span class="text-zinc-500">Not set</span>
+              <% else %>
+                <span>
+                  {@event.venue.name}
+                </span>
+              <% end %>
             </dd>
           </div>
         </dl>
@@ -140,7 +159,7 @@
             color={type.color}
             name={type.name}
             id={type.id}
-            tags={[]}
+            tags={type.tags}
           >
             <div class="">
               <span class="text-xl font-light">{type.active_tickets_count}</span>
@@ -230,7 +249,7 @@
     </div>
   </div>
 </.modal>
-<.modal id="archive-event" on_cancel={JS.dispatch("gits:go_back")}>
+<.modal id="archive-event">
   <div class="grid gap-4">
     <h3 class="text-lg font-semibold">Confirm archive?</h3>
     <div class="space-y-2 text-sm text-zinc-700">
