@@ -146,18 +146,18 @@ defmodule GitsWeb.CoreComponents do
     assigns =
       assigns
       |> assign(:nav_tree, [
-        {"i-lucide-tickets", "Events & Hosting", [{"Host with us", "/host-with-us"}]},
-        {"i-lucide-headset", "Support",
-         [
-           # {"I need help", "/support/help"},
-           {"FAQ", "/support/faq"},
-           {"Contact", "/contact-us"}
-         ]},
-        {"i-lucide-scale", "Legal",
-         [
-           {"Terms of service", "/terms"},
-           {"Privacy Policy", "/privacy"}
-         ]},
+        # {"i-lucide-tickets", "Events & Hosting", [{"Host with us", "/host-with-us"}]},
+        # {"i-lucide-headset", "Support",
+        #  [
+        #    # {"I need help", "/support/help"},
+        #    {"FAQ", "/support/faq"},
+        #    {"Contact", "/contact-us"}
+        #  ]},
+        # {"i-lucide-scale", "Legal",
+        #  [
+        #    {"Terms of service", "/terms"},
+        #    {"Privacy Policy", "/privacy"}
+        #  ]},
         {"i-lucide-at-sign", "Social",
          [
            {"Instagram", "https://instagram.com/gits_za"},
