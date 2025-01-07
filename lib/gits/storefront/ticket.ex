@@ -14,13 +14,13 @@ defmodule Gits.Storefront.Ticket do
   end
 
   state_machine do
-    initial_states [:open]
-    default_initial_state :open
+    initial_states [:ready]
+    default_initial_state :ready
 
     transitions do
-      transition :check_in, from: :open, to: :checked_in
-      transition :admit, from: [:open, :checked_in], to: :admitted
-      transition :release, from: :open, to: :released
+      transition :check_in, from: :ready, to: :checked_in
+      transition :admit, from: [:ready, :checked_in], to: :admitted
+      transition :release, from: :ready, to: :released
     end
   end
 
@@ -48,6 +48,8 @@ defmodule Gits.Storefront.Ticket do
     end
 
     update :admit do
+      change atomic_update(:admitted_at, expr(fragment("now()")))
+      change transition_state(:admitted)
     end
 
     update :release do
@@ -70,6 +72,14 @@ defmodule Gits.Storefront.Ticket do
 
     policy action(:release) do
       authorize_if always()
+    end
+
+    policy action(:admit) do
+      authorize_if AshStateMachine.Checks.ValidNextState
+    end
+
+    policy action(:admit) do
+      authorize_if expr(ticket_type.event.host.roles.user.id == ^actor(:id))
     end
   end
 
@@ -97,5 +107,15 @@ defmodule Gits.Storefront.Ticket do
 
   calculations do
     calculate :ticket_type_name, :string, expr(ticket_type.name)
+
+    calculate :local_admitted_at,
+              :naive_datetime,
+              expr(
+                fragment(
+                  "? at time zone 'UTC' at time zone ?",
+                  admitted_at,
+                  "Africa/Johannesburg"
+                )
+              )
   end
 end

@@ -23,14 +23,19 @@
       <span class="text-sm/6 text-zinc-500">Hosted by {host}</span>
     </div>
   </div>
-  <div class="grid grow gap-2 lg:grid-cols-2 lg:gap-8">
-    <%= for {ticket_name, color, tickets} <- ticket_types do %>
+  <div class="grid grow gap-2 lg:grid-cols-3 lg:gap-8">
+    <%= for type <- ticket_types do %>
       <.link
-        :for={{id} <- tickets}
-        navigate={~p"/t/#{id}"}
-        class="ring-zinc-400 ring-offset-1 hover:ring-2 rounded-xl border p-4"
+        :for={ticket <- type.tickets}
+        navigate={~p"/t/#{ticket.id}"}
+        class="ring-zinc-200 hover:ring-2 rounded-xl border p-4"
       >
-        <GitsWeb.EventComponents.ticket_card color={color} name={ticket_name} id={id} />
+        <GitsWeb.EventComponents.ticket_card
+          color={type.color}
+          name={type.name}
+          id={ticket.id}
+          tags={ticket.tags}
+        />
       </.link>
     <% end %>
   </div>

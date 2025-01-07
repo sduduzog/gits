@@ -69,4 +69,3 @@ defmodule Gits.Accounts.Venue do
     identity :place_id, [:google_place_id]
   end
 end
-

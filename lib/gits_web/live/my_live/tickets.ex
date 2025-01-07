@@ -58,10 +58,19 @@ defmodule GitsWeb.MyLive.Tickets do
           tickets =
             type.tickets
             |> Enum.map(fn ticket ->
-              {ticket.public_id}
+              %{
+                id: ticket.public_id,
+                tags: [
+                  ticket.public_id,
+                  to_string(ticket.state)
+                  |> String.split("_")
+                  |> Enum.map(&String.capitalize(&1))
+                  |> Enum.join(" ")
+                ]
+              }
             end)
 
-          {type.name, type.color, tickets}
+          %{name: type.name, color: type.color, tickets: tickets}
         end)
 
       {event.name, event.starts_at, ticket_types, event.host.name}

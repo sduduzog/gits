@@ -11,10 +11,8 @@
       <GitsWeb.EventComponents.ticket_card
         name={@ticket.ticket_type.name}
         color={@ticket.ticket_type.color}
-        admitted_at={@ticket.admitted_at}
-        checked_in_at={@ticket.checked_in_at}
-        attendee={@ticket.attendee}
-        id={@ticket.public_id}
+        id={@ticket.id}
+        tags={@ticket.tags}
       />
     </div>
 
@@ -26,20 +24,29 @@
           </div>
           <div class="flex w-full flex-none gap-x-4">
             <dt class="flex-none">
-              <span class="sr-only">Due date</span>
+              <span class="sr-only">Start date</span>
               <.icon name="i-lucide-calendar-range" class="text-zinc-400 mt-0.5" />
             </dt>
             <dd class="text-sm/6 text-gray-500">
-              <time datetime="2023-01-31"> 31 September 2023 at 05:30 AM</time>
+              <time datetime={@ticket.ticket_type.event.starts_at}>
+                {Calendar.strftime(
+                  @ticket.ticket_type.event.starts_at,
+                  "%d %B %Y at %I:%M %p"
+                )}
+              </time>
             </dd>
           </div>
           <div class="flex w-full flex-none gap-x-4">
             <dt class="flex-none">
-              <span class="sr-only">Status</span>
+              <span class="sr-only">Location</span>
               <.icon name="i-lucide-map-pin" class="text-zinc-400 mt-0.5" />
             </dt>
             <dd class="text-sm/6 text-gray-500">
-              Artistry JHB, 22 Fredman Drive, Sandton
+              {if(@ticket.ticket_type.event.location_is_private,
+                do: "Private location",
+                else:
+                  "#{@ticket.ticket_type.event.venue.name}, #{@ticket.ticket_type.event.venue.address}"
+              )}
             </dd>
           </div>
         </dl>
@@ -48,7 +55,7 @@
   </div>
   <div class="w-full max-w-80 place-self-center lg:place-self-end py-8 lg:col-start-5 lg:col-end-7 lg:p-0">
     {raw(
-      url(GitsWeb.Endpoint, ~p"/t/#{@ticket.public_id}")
+      url(GitsWeb.Endpoint, ~p"/t/#{@ticket.id}")
       |> EQRCode.encode()
       |> EQRCode.svg(
         shape: "circle",

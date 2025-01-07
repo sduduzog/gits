@@ -55,7 +55,12 @@
                   </.inputs_for>
                 </.inputs_for>
 
-                <.button size={:none} variant={:subtle} class="lg:p-2.5 p-3">
+                <.button
+                  size={:none}
+                  disabled={not type.can_remove_ticket?}
+                  variant={:subtle}
+                  class="lg:p-2.5 p-3"
+                >
                   <.icon name="i-lucide-minus" />
                 </.button>
               </.form>

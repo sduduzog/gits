@@ -183,10 +183,16 @@ defmodule GitsWeb.StorefrontLive.EventOrder do
             not_on_sale =
               cond do
                 type.sale_ended? ->
-                  "No longer available"
+                  "Ticket no longer available"
 
                 not type.sale_started? ->
                   "Available #{Calendar.strftime(type.sale_starts_at, "%d %B %Y, %I:%M %p")}"
+
+                type.sold_out ->
+                  "Ticket sold out"
+
+                type.limit_reached ->
+                  "Customer limit reached"
 
                 true ->
                   ""

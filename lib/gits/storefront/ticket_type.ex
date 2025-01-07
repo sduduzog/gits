@@ -123,7 +123,7 @@ defmodule Gits.Storefront.TicketType do
                   query: [
                     filter:
                       expr(
-                        state in [:open, :checked_in, :admitted] and order.email == ^arg(:email)
+                        state in [:ready, :checked_in, :admitted] and order.email == ^arg(:email)
                       )
                   ]
                 ) ==
@@ -135,7 +135,7 @@ defmodule Gits.Storefront.TicketType do
 
   aggregates do
     count :valid_tickets_count, :tickets do
-      filter expr(state in [:open, :checked_in, :admitted])
+      filter expr(state in [:ready, :checked_in, :admitted])
     end
 
     count :active_tickets_count, :tickets do
