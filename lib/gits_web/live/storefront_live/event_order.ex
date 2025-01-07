@@ -177,8 +177,7 @@ defmodule GitsWeb.StorefrontLive.EventOrder do
 
         ticket_types =
           Enum.map(event.ticket_types, fn type ->
-            # tags = if type.limit_reached, do: ["Limit Reached"], else: []
-            # tags = if type.sold_out, do: ["Sold Out"], else: tags
+            can_remove_ticket? = Enum.any?(type.tickets)
 
             not_on_sale =
               cond do
@@ -188,6 +187,9 @@ defmodule GitsWeb.StorefrontLive.EventOrder do
                 not type.sale_started? ->
                   "Available #{Calendar.strftime(type.sale_starts_at, "%d %B %Y, %I:%M %p")}"
 
+                type.sold_out and can_remove_ticket? ->
+                  "You got the last ticket"
+
                 type.sold_out ->
                   "Ticket sold out"
 
@@ -195,7 +197,7 @@ defmodule GitsWeb.StorefrontLive.EventOrder do
                   "Customer limit reached"
 
                 true ->
-                  ""
+                  nil
               end
 
             tags =
@@ -211,8 +213,8 @@ defmodule GitsWeb.StorefrontLive.EventOrder do
               color: type.color,
               tickets: type.tickets,
               on_sale?: type.on_sale?,
+              can_remove_ticket?: can_remove_ticket?,
               tags: tags,
-              can_remove_ticket?: Enum.any?(type.tickets),
               can_add_ticket?:
                 Ash.Changeset.for_update(order, :add_ticket, %{ticket_type: %{"id" => type.id}})
                 |> Ash.can?(actor: user) and not type.sold_out
