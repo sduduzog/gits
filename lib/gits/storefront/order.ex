@@ -183,7 +183,7 @@ defmodule Gits.Storefront.Order do
     end
 
     policy action(:process) do
-      authorize_if expr(exists(tickets, true))
+      authorize_if expr(has_tickets?)
     end
 
     policy action(:request_refund) do
@@ -242,5 +242,7 @@ defmodule Gits.Storefront.Order do
   calculations do
     calculate :event_name, :string, expr(event.name)
     calculate :refund_value, :decimal, expr(fees_split.subaccount)
+
+    calculate :has_tickets?, :boolean, expr(count(tickets, query: [filter: expr(true)]) > 0)
   end
 end

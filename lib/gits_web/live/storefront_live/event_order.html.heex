@@ -39,7 +39,7 @@
             id={type.id}
             tags={type.tags}
           >
-            <div class="flex items-center gap-2">
+            <div :if={type.on_sale?} class="flex items-center gap-2">
               <.form :let={f} for={@remove_ticket_form} phx-submit="remove_ticket">
                 <.inputs_for :let={tt} field={f[:ticket_type]}>
                   <.input field={tt[:id]} value={type.id} id={"remove_#{type.id}"} type="hidden" />
@@ -97,11 +97,11 @@
         phx-submit="process"
         phx-change="validate"
         for={@process_form}
-        class="sticky bottom-0 top-0 z-20 grid items-center gap-4 border-t border-zinc-100 bg-white shadow-sm lg:bottom-auto lg:top-6 lg:border-none lg:shadow-none"
+        class="sticky bottom-0 top-0 z-20 grid items-center gap-4 lg:bottom-auto lg:top-6 lg:border-none lg:shadow-none"
       >
         <.input type="hidden" field={f[:total]} value={@total} />
         <div class="flex">
-          <.button>
+          <.button disabled={not @can_process_order?}>
             <span>Continue</span>
           </.button>
         </div>
@@ -188,12 +188,12 @@
           <div class="grid gap-1">
             <dt class="font-medium text-gray-600">Tickets</dt>
             <dd class="divide-y text-gray-500">
-              <%= for {id, name, price, _, tickets} <- @ticket_types do %>
-                <div :if={Enum.any?(tickets)} class="py-2">
+              <%= for type <- @ticket_types do %>
+                <div :if={Enum.any?(type.tickets)} class="py-2">
                   <div class="flex justify-between">
-                    <span>{Enum.count(tickets)} &times; {name}</span>
+                    <span>{Enum.count(type.tickets)} &times; {type.name}</span>
                     <span class="font-medium text-zinc-800">
-                      R {Decimal.mult(price, Enum.count(tickets))}
+                      R {Decimal.mult(type.price, Enum.count(type.tickets))}
                     </span>
                   </div>
                 </div>

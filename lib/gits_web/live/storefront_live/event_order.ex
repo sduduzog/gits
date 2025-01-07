@@ -104,11 +104,16 @@ defmodule GitsWeb.StorefrontLive.EventOrder do
   end
 
   def assign_order_update(socket, order, actor) do
-    assign(socket, :order_state, order.state)
-    |> assign(:order_id, order.id)
-    |> assign(:order_email, order.email)
-    |> assign_forms(order, actor)
-    |> assign_ticket_types(order, actor)
+    Ash.load(order, [:has_tickets?], actor: actor)
+    |> case do
+      {:ok, order} ->
+        assign(socket, :order_state, order.state)
+        |> assign(:order_id, order.id)
+        |> assign(:can_process_order?, order.has_tickets?)
+        |> assign(:order_email, order.email)
+        |> assign_forms(order, actor)
+        |> assign_ticket_types(order, actor)
+    end
   end
 
   def assign_forms(socket, order, actor) do
@@ -155,6 +160,9 @@ defmodule GitsWeb.StorefrontLive.EventOrder do
       [
         event: [
           ticket_types: [
+            :sale_started?,
+            :sale_ended?,
+            :on_sale?,
             :sold_out,
             limit_reached: [email: order.email],
             tickets: Ash.Query.filter(Ticket, order.id == ^order.id)
@@ -169,8 +177,26 @@ defmodule GitsWeb.StorefrontLive.EventOrder do
 
         ticket_types =
           Enum.map(event.ticket_types, fn type ->
-            tags = if type.limit_reached, do: ["Limit Reached"], else: []
-            tags = if type.sold_out, do: ["Sold Out"], else: tags
+            # tags = if type.limit_reached, do: ["Limit Reached"], else: []
+            # tags = if type.sold_out, do: ["Sold Out"], else: tags
+
+            not_on_sale =
+              cond do
+                type.sale_ended? ->
+                  "No longer available"
+
+                not type.sale_started? ->
+                  "Available #{Calendar.strftime(type.sale_starts_at, "%d %B %Y, %I:%M %p")}"
+
+                true ->
+                  ""
+              end
+
+            tags =
+              [
+                not_on_sale
+              ]
+              |> Enum.filter(& &1)
 
             %{
               id: type.id,
@@ -178,7 +204,9 @@ defmodule GitsWeb.StorefrontLive.EventOrder do
               price: type.price,
               color: type.color,
               tickets: type.tickets,
+              on_sale?: type.on_sale?,
               tags: tags,
+              can_remove_ticket?: Enum.any?(type.tickets),
               can_add_ticket?:
                 Ash.Changeset.for_update(order, :add_ticket, %{ticket_type: %{"id" => type.id}})
                 |> Ash.can?(actor: user) and not type.sold_out
