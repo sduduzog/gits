@@ -609,14 +609,7 @@ defmodule GitsWeb.CoreComponents do
 
     ~H"""
     <div class={["max-w-3xl space-y-1 text-sm", @class]}>
-      <div phx-feedback-for={@name} class="flex items-center">
-        <.label for={@id}>{@label}</.label>
-        <%= if @errors == [] do %>
-          <span :if={@hint} class="text-zinc-500">&nbsp;({@hint})</span>
-        <% else %>
-          <.error :for={msg <- @errors}>{msg}</.error>
-        <% end %>
-        <div role="none" class="grow"></div>
+      <div phx-feedback-for={@name} class="flex items-center gap-2">
         <input type="hidden" name={@name} value="false" />
         <input
           type="checkbox"
@@ -627,6 +620,13 @@ defmodule GitsWeb.CoreComponents do
           class="rounded border-zinc-300 text-zinc-900 focus:ring-0"
           {@rest}
         />
+
+        <.label for={@id}>{@label}</.label>
+        <%= if @errors == [] do %>
+          <span :if={@hint} class="text-zinc-500">&nbsp;({@hint})</span>
+        <% else %>
+          <.error :for={msg <- @errors}>{msg}</.error>
+        <% end %>
       </div>
       <span :if={@description} class="inline-flex text-zinc-500">{@description}</span>
     </div>

@@ -130,13 +130,18 @@ defmodule GitsWeb.Router do
     end
   end
 
-  scope "/admin" do
+  scope "/admin", GitsWeb do
     pipe_through [:browser, :admin]
 
     live_session :admin_required, on_mount: {GitsWeb.LiveUserAuth, :live_user_required} do
-      live "/", GitsWeb.AdminLive, :index
+      live "/", AdminLive.Index, :dashboard
+      live "/jobs", AdminLive.Index, :jobs
+      live "/hosts", AdminLive.Index, :hosts
+      live "/events", AdminLive.Index, :events
+      live "/orders", AdminLive.Index, :orders
+      live "/users", AdminLive.Index, :users
       # remove when done with onboarding on all environments
-      live "/start", GitsWeb.AdminLive, :start
+      live "/start", AdminLive, :start
     end
 
     live_dashboard "/dashboard",
