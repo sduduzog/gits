@@ -59,6 +59,7 @@
       </div>
       <.button
         :if={@event.state == :draft}
+        variant={:subtle}
         disabled={not can_publish?(@event, @current_user)}
         phx-click={show_modal("publish-event")}
       >
@@ -68,6 +69,7 @@
 
       <.button
         :if={@event.state == :published}
+        variant={:subtle}
         href={Routes.host_scanner_path(@socket, :index, @host_handle, @event.public_id)}
       >
         <.icon name="i-lucide-scan-qr-code" />
@@ -204,7 +206,7 @@
       :if={@live_action == :overview}
       ready_to_publish={false}
       payouts_ready={not is_nil(@host.paystack_subaccount_code)}
-      issues={[]}
+      issues={@issues}
       host_settings_payouts_path={Routes.host_settings_path(@socket, :billing, @host.handle)}
     />
     <.attendees :if={@live_action == :attendees} attendees={@attendees} />

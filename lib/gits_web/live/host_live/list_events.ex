@@ -29,6 +29,11 @@ defmodule GitsWeb.HostLive.ListEvents do
     |> noreply()
   end
 
+  defp list_event_query(:archived, _) do
+    Event
+    |> Ash.Query.for_read(:archived)
+  end
+
   defp list_event_query(:drafts, _) do
     Event
     |> Ash.Query.filter(is_nil(published_at))

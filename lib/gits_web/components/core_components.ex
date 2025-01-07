@@ -17,7 +17,7 @@ defmodule GitsWeb.CoreComponents do
         phx-track-static
         src={static_url(GitsWeb.Endpoint, "/images/gits_logo.png")}
         alt="GiTS"
-        class="size-full object-contain"
+        class="size-full object-contain dark:invert"
       />
     </.link>
     """
@@ -42,7 +42,7 @@ defmodule GitsWeb.CoreComponents do
         [
           {"Orders", ~p"/my/orders", false},
           {"Tickets", ~p"/my/tickets", tickets},
-          {"Settings", ~p"/my/settings", false}
+          {"Settings", ~p"/settings/profile", false}
         ],
         [{"Sign out", ~p"/sign-out", false}]
       ])
@@ -127,12 +127,9 @@ defmodule GitsWeb.CoreComponents do
         </div>
       <% else %>
         <div>
-          <.link
-            navigate={~p"/sign-in"}
-            class="inline-flex rounded-lg px-4 py-2 text-sm font-semibold hover:bg-zinc-100"
-          >
+          <.button variant={:outline} href={~p"/sign-in"}>
             Sign in
-          </.link>
+          </.button>
         </div>
       <% end %>
     </header>
@@ -146,7 +143,7 @@ defmodule GitsWeb.CoreComponents do
     assigns =
       assigns
       |> assign(:nav_tree, [
-        # {"i-lucide-tickets", "Events & Hosting", [{"Host with us", "/host-with-us"}]},
+        {"i-lucide-tickets", "Events & Hosting", [{"Host with us", "/host-with-us"}]},
         # {"i-lucide-headset", "Support",
         #  [
         #    # {"I need help", "/support/help"},
@@ -166,19 +163,20 @@ defmodule GitsWeb.CoreComponents do
       ])
 
     ~H"""
-    <footer class="grid gap-10 bg-zinc-100 py-10">
+    <footer class="grid gap-10 bg-zinc-50 py-10 dark:bg-zinc-900">
       <div :if={not @minimal} class="mx-auto grid w-full max-w-screen-xl gap-8 lg:grid-cols-5">
         <div :for={{icon, heading, children} <- @nav_tree} class="space-y-2 p-4">
           <div class="flex items-center gap-3">
-            <.icon name={icon} class="size-4 text-zinc-500" />
-            <span class="text-xs text-zinc-500">{heading}</span>
+            <.icon name={icon} class="size-4 text-zinc-400" />
+            <span class="text-xs text-zinc-500 dark:text-zinc-300">{heading}</span>
           </div>
           <div class="relative grid gap-4 px-2 pt-4">
-            <span class="absolute bottom-0 left-2 top-2 h-full w-[1px] bg-zinc-200"></span>
+            <span class="absolute bottom-0 left-2 top-2 h-full w-[1px] bg-zinc-200 dark:bg-zinc-700">
+            </span>
             <.link
               :for={{child, href} <- children}
               navigate={href}
-              class="border-zinc-transparent z-10 inline-flex border-l pl-5 text-xs font-medium leading-4 text-zinc-950 hover:border-zinc-500 hover:text-zinc-800"
+              class="border-transparent z-10 inline-flex border-l pl-5 text-xs font-medium leading-4 dark:text-zinc-100 text-zinc-950 hover:border-zinc-500 dark:border-zinc-700 dark:hover:border-zinc-100"
             >
               {child}
             </.link>
@@ -190,13 +188,13 @@ defmodule GitsWeb.CoreComponents do
           <div class="grow">
             <.logo />
           </div>
-          <p class="max-w-96 text-xs text-zinc-500">
+          <p class="max-w-96 text-xs text-zinc-500 dark:text-zinc-300">
             We offer better security, faster check-in, and lower costs. Whether it’s concerts, conferences, festivals, or sports events, we’ve got you covered.
           </p>
         </div>
       </div>
       <div class="mx-auto w-full max-w-screen-xl p-2">
-        <span class="text-xs text-zinc-500">
+        <span class="text-xs text-zinc-500 dark:text-zinc-300">
           &copy; 2024 PRPL Group | All Rights Reserved
         </span>
       </div>
@@ -249,7 +247,7 @@ defmodule GitsWeb.CoreComponents do
     >
       <div
         id={"#{@id}-bg"}
-        class="fixed inset-0 bg-black/20x bg-zinc-50/50 transition-opacity"
+        class="bg-black/20x fixed inset-0 bg-zinc-50/50 transition-opacity"
         aria-hidden="true"
       />
       <div
@@ -477,17 +475,30 @@ defmodule GitsWeb.CoreComponents do
           :lg -> "py-4 px-8 text-base/6"
           :md -> "py-3 px-6 text-sm/4"
           :none -> "text-sm/4"
-          _ -> "py-2 px-4 text-sm/4"
+          :sm -> "py-2 px-4 text-sm/4"
+          _ -> "py-3 px-4 text-sm/4"
         end
       )
       |> assign(
         :variant_class,
         case assigns.variant do
-          :subtle -> "border-transparent bg-zinc-50 text-zinc-950 hover:bg-zinc-100"
-          :surface -> "border-zinc-200 bg-zinc-50 text-zinc-950 hover:bg-zinc-100"
-          :outline -> "border-brand-400 bg-transparent text-brand-base hover:bg-black/5"
-          :ghost -> "border-transparent bg-transparent text-zinc-950 hover:bg-black/5"
-          _ -> "border-transparent text-white active:text-white bg-brand-base hover:bg-brand-400"
+          :accent ->
+            "border-transparent text-white active:text-white bg-brand-500 hover:bg-brand-600 active:bg-brand-700  phx-submit-loading:bg-brand-100 phx-submit-loading:text-brand-400 disabled:bg-brand-100 disabled:text-brand-400"
+
+          :subtle ->
+            "border-transparent bg-zinc-50 text-zinc-500 hover:bg-zinc-100 disabled:bg-zinc-50 hover:dark:text-zinc-400 dark:bg-zinc-950 hover:dark:bg-zinc-900 active:dark:text-zinc-300 active:dark:bg-zinc-800 disabled:text-zinc-200 disabled:bg-transparent"
+
+          :surface ->
+            "border-zinc-200 bg-zinc-50 text-zinc-950 hover:bg-zinc-100"
+
+          :outline ->
+            "text-zinc-400 border-zinc-400 hover:text-zinc-500 hover:border-zinc-500 active:text-zinc-600 active:border-zinc-600 disabled:text-zinc-100 disabled:border-zinc-100 dark:disabled:text-zinc-800 dark:disabled:border-zinc-800"
+
+          :ghost ->
+            "border-transparent bg-transparent text-zinc-400 hover:text-zinc-500"
+
+          _ ->
+            "border-transparent bg-zinc-500 text-white active:text-white bg-black hover:bg-zinc-600 active:bg-zinc-700  phx-submit-loading:bg-zinc-100 phx-submit-loading:text-zinc-400 disabled:bg-zinc-100 disabled:text-zinc-400 dark:phx-loading:text-zinc-700 dark:phx-loading:bg-zinc-950 dark:disabled:text-zinc-700 dark:disabled:bg-zinc-950"
         end
       )
 
@@ -496,9 +507,9 @@ defmodule GitsWeb.CoreComponents do
       <button
         type={@type}
         class={[
-          "font-semibold  border inline-flex gap-2",
-          "rounded-lg items-center justify-center phx-submit-loading:opacity-75 disabled:opacity-75",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-zinc-600",
+          "font-medium  border inline-flex gap-2",
+          "rounded-lg items-center justify-center",
+          "outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-200 dark:focus-visible:ring-zinc-700",
           @size_class,
           @variant_class,
           @class
@@ -512,9 +523,9 @@ defmodule GitsWeb.CoreComponents do
         navigate={@href}
         type={@type}
         class={[
-          "font-semibold  border inline-flex gap-2",
-          "rounded-lg items-center justify-center phx-submit-loading:opacity-75 disabled:opacity-75",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-zinc-600",
+          "font-medium border inline-flex gap-2",
+          "rounded-lg items-center justify-center",
+          "outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-200 dark:focus-visible:ring-zinc-700",
           @size_class,
           @variant_class,
           @class
@@ -681,7 +692,10 @@ defmodule GitsWeb.CoreComponents do
         id={@id}
         name={@name}
         class={[
-          "w-full py-2 text-sm px-3 rounded-lg border border-zinc-200 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-zinc-600 focus:outline-none outline-none",
+          "w-full p-3 text-sm rounded-lg",
+          "bg-transparent border border-zinc-400",
+          "text-zinc-900 dark:text-zinc-200",
+          "focus-visible:outline-none focus-visible:border-zinc-400 focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:dark:ring-zinc-700",
           @errors == [] && "border-zinc-300 focus:ring-zinc-400",
           @errors != [] && "border-rose-400 focus:border-rose-400"
         ]}
@@ -710,8 +724,10 @@ defmodule GitsWeb.CoreComponents do
       </div>
       <textarea
         class={[
-          "w-full py-2 text-sm px-3 rounded-lg border",
-          "border-zinc-200 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-zinc-600 focus:outline-none outline-none",
+          "w-full text-sm p-3 rounded-lg",
+          "bg-transparent border border-zinc-400",
+          "text-zinc-900 dark:text-zinc-200",
+          "focus-visible:outline-none focus-visible:border-zinc-400 focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:dark:ring-zinc-700",
           @errors == [] && "border-zinc-300 focus:ring-zinc-400",
           @errors != [] && "border-rose-400 focus:border-rose-400"
         ]}
@@ -741,7 +757,7 @@ defmodule GitsWeb.CoreComponents do
         phx-update="ignore"
         data-contents={@value}
         phx-hook="QuillEditor"
-        class="h-full quill-editor"
+        class="quill-editor h-full"
       >
       </div>
       <span :if={@description} class="inline-flex text-zinc-500">{@description}</span>
@@ -772,9 +788,9 @@ defmodule GitsWeb.CoreComponents do
           <.error :for={msg <- @errors}>{msg}</.error>
         <% end %>
       </div>
-      <div class="w-full inline-flex items-center gap-2 py-2 text-sm px-3 rounded-lg border border-zinc-200 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-zinc-600 focus:outline-none outline-none relative">
+      <div class="relative inline-flex w-full items-center gap-2 rounded-lg border border-zinc-200 px-3 py-2 text-sm outline-none focus:outline-none focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-zinc-600">
         <input type="color" name={@name} value={@value} class="absolute inset-0 size-full opacity-0" />
-        <span class="size-5 rounded-full inline-flex" style={"background-color: #{@value}"}></span>
+        <span class="inline-flex size-5 rounded-full" style={"background-color: #{@value}"}></span>
         <span>{@value}</span>
       </div>
       <span :if={@description} class="inline-flex text-zinc-500">{@description}</span>
@@ -795,7 +811,11 @@ defmodule GitsWeb.CoreComponents do
       </div>
       <input
         class={[
-          "w-full py-2 text-sm px-3 rounded-lg border border-zinc-200 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-zinc-600 focus:outline-none outline-none",
+          "p-3",
+          "w-full text-sm rounded-lg",
+          "bg-transparent border border-zinc-400",
+          "text-zinc-900 dark:text-zinc-200",
+          "focus-visible:outline-none focus-visible:border-zinc-400 focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:dark:ring-zinc-700",
           @errors == [] && "border-zinc-300 focus:ring-zinc-400",
           @errors != [] && "border-rose-400 focus:border-rose-400"
         ]}
@@ -819,7 +839,7 @@ defmodule GitsWeb.CoreComponents do
 
   def label(assigns) do
     ~H"""
-    <label for={@for} class={["block text-sm/6 font-medium text-zinc-700", @class]}>
+    <label for={@for} class={["block text-sm/6 font-medium text-zinc-700 dark:text-zinc-300", @class]}>
       {render_slot(@inner_block)}
     </label>
     """

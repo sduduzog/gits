@@ -17,6 +17,10 @@ defmodule Gits.Storefront.Event do
     repo Gits.Repo
   end
 
+  archive do
+    exclude_read_actions :archived
+  end
+
   state_machine do
     initial_states [:draft]
     default_initial_state :draft
@@ -44,6 +48,10 @@ defmodule Gits.Storefront.Event do
     read :get_by_public_id_for_listing do
       get_by [:public_id]
       prepare build(load: [:name])
+    end
+
+    read :archived do
+      filter expr(not is_nil(archived_at))
     end
 
     create :create do
@@ -129,6 +137,10 @@ defmodule Gits.Storefront.Event do
       authorize_if expr(host.roles.user.id == ^actor(:id))
     end
 
+    policy action(:archived) do
+      authorize_if expr(host.roles.user.id == ^actor(:id))
+    end
+
     policy action(:create) do
       authorize_if ActorCanCreateEvent
     end
@@ -178,7 +190,15 @@ defmodule Gits.Storefront.Event do
     end
 
     policy action(:publish) do
-      authorize_if expr(fragment("now()") < utc_starts_at)
+      authorize_if expr(not start_date_invalid?)
+    end
+
+    policy action(:publish) do
+      authorize_if expr(not end_date_invalid?)
+    end
+
+    policy action(:publish) do
+      authorize_if expr(not venue_invalid?)
     end
 
     policy action(:create_order) do
@@ -237,11 +257,15 @@ defmodule Gits.Storefront.Event do
 
     calculate :utc_starts_at,
               :utc_datetime,
-              expr(fragment("? at time zone (?)", starts_at, ^Application.get_env(:gits, :tz)))
+              expr(fragment("? at time zone (?)", starts_at, "Africa/Johannesburg"))
 
     calculate :utc_ends_at,
               :utc_datetime,
-              expr(fragment("? at time zone (?)", ends_at, ^Application.get_env(:gits, :tz)))
+              expr(fragment("? at time zone (?)", ends_at, "Africa/Johannesburg"))
+
+    calculate :start_date_invalid?, :boolean, expr(utc_starts_at < fragment("now()"))
+    calculate :end_date_invalid?, :boolean, expr(utc_ends_at < utc_starts_at)
+    calculate :venue_invalid?, :boolean, expr(is_nil(venue))
   end
 
   aggregates do

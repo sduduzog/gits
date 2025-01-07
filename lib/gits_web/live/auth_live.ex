@@ -32,14 +32,14 @@ defmodule GitsWeb.AuthLive do
       </div>
     <% else %>
       <.form :let={f} for={@form} class="grid" phx-submit="submit" method="post">
-        <h1 class="text-xl font-semibold">Welcome back</h1>
-        <p class="mt-4 text-sm text-zinc-500">
+        <h1 class="text-xl font-semibold text-zinc-950 dark:text-zinc-50">Welcome back</h1>
+        <p class="mt-4 text-sm text-zinc-500 dark:text-zinc-300">
           Sign in using your email address and we'll send you a magic link.
         </p>
 
         <.input field={f[:email]} type="email" class="mt-4" label="Email address" />
 
-        <.button disabled={@disabled_submit?} type="submit" class="mt-6">
+        <.button size={:md} disabled={@disabled_submit?} type="submit" class="mt-6">
           <span>
             Send me a magic link
           </span>
@@ -49,9 +49,9 @@ defmodule GitsWeb.AuthLive do
       </.form>
       <div>
         <div class="flex items-center gap-2 text-sm text-zinc-400">
-          <span class="h-0.5 grow border-b"></span>
+          <span class="h-0.5 grow border-b border-zinc-100 dark:border-zinc-400"></span>
           <span>or</span>
-          <span class="h-0.5 grow border-b"></span>
+          <span class="h-0.5 grow border-b border-zinc-100 dark:border-zinc-400"></span>
         </div>
         <.button
           type="button"
@@ -59,7 +59,7 @@ defmodule GitsWeb.AuthLive do
           class="w-full mt-6"
           variant={:outline}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 48 48">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 48 48">
             <path
               fill="#ffc107"
               d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8c-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C12.955 4 4 12.955 4 24s8.955 20 20 20s20-8.955 20-20c0-1.341-.138-2.65-.389-3.917"

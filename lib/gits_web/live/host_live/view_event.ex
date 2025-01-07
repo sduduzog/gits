@@ -6,21 +6,23 @@ defmodule GitsWeb.HostLive.ViewEvent do
 
   embed_templates "view_event_templates/*"
 
-  def mount(params, _session, socket) do
-    Application.get_env(:gits, :tz)
-    |> IO.inspect()
+  @event_load_keys [
+    :utc_starts_at,
+    :start_date_invalid?,
+    :end_date_invalid?,
+    :venue_invalid?,
+    :venue,
+    :unique_views,
+    :total_orders,
+    ticket_types: [:active_tickets_count]
+  ]
 
+  def mount(params, _session, socket) do
     Ash.Query.for_read(Host, :read, %{}, actor: socket.assigns.current_user)
     |> Ash.Query.load(
       events:
         Ash.Query.filter(Event, public_id == ^params["public_id"])
-        |> Ash.Query.load([
-          :utc_starts_at,
-          :venue,
-          :unique_views,
-          :total_orders,
-          ticket_types: [:active_tickets_count]
-        ])
+        |> Ash.Query.load(@event_load_keys)
     )
     |> Ash.read_one()
     |> case do
@@ -40,6 +42,7 @@ defmodule GitsWeb.HostLive.ViewEvent do
           end)
 
         assign(socket, :event, event)
+        |> assign_issues()
         |> assign(:ticket_types, ticket_types)
         |> assign(:page_title, "Events / #{event.name}")
         |> assign(:section, event.name)
@@ -53,11 +56,12 @@ defmodule GitsWeb.HostLive.ViewEvent do
 
   def handle_event("publish", _, socket) do
     Ash.Changeset.for_update(socket.assigns.event, :publish, %{})
-    |> Ash.update(actor: socket.assigns.current_user)
+    |> Ash.update(actor: socket.assigns.current_user, load: @event_load_keys)
     |> case do
       {:ok, event} ->
         socket
         |> assign(:event, event)
+        |> assign_issues()
         |> noreply()
     end
   end
@@ -72,5 +76,18 @@ defmodule GitsWeb.HostLive.ViewEvent do
   defp can_publish?(event, actor) do
     Ash.Changeset.for_update(event, :publish, %{})
     |> Ash.can?(actor)
+  end
+
+  defp assign_issues(socket) do
+    socket |> assign(:issues, list_issues(socket.assigns.event))
+  end
+
+  defp list_issues(event) do
+    [
+      if(event.start_date_invalid?, do: "Start date should not be in the past", else: false),
+      if(event.end_date_invalid?, do: "End date should not be before the start date", else: false),
+      if(event.venue_invalid?, do: "The event location is not set", else: false)
+    ]
+    |> Enum.filter(& &1)
   end
 end

@@ -77,7 +77,11 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-
+@layer base {
+  a, button, input {
+    @apply outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-200 dark:focus-visible:ring-zinc-700;
+  }
+}
 
 @layer components {
   .quill-content {

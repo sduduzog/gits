@@ -42,7 +42,7 @@ defmodule Gits.Accounts.User do
 
   actions do
     default_accept :*
-    defaults [:update, create: :*]
+    defaults update: :*, create: :*
 
     read :read do
       primary? true
@@ -124,6 +124,7 @@ defmodule Gits.Accounts.User do
     attribute :email, :ci_string, allow_nil?: false, public?: true
     attribute :username, :string, allow_nil?: false, public?: true, default: &Nanoid.generate/0
     attribute :name, :string, public?: true
+    attribute :avatar, :string, public?: true
   end
 
   relationships do

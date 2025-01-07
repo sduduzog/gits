@@ -1,0 +1,49 @@
+<.layout socket={@socket} live_action={@live_action}>
+  <form id="avatar" phx-submit="save-upload" phx-change="validate-upload">
+    <div class="flex flex-wrap items-center gap-4">
+      <div class="size-28 overflow-hidden rounded-full bg-zinc-200">
+        <%= if Enum.any?(@uploads.avatar.entries) do %>
+          <.live_img_preview
+            entry={@uploads.avatar.entries |> List.first()}
+            class="h-full w-full object-cover opacity-50"
+          />
+        <% else %>
+          <img
+            src={Gits.Bucket.get_image_url(@current_user.avatar)}
+            alt={@current_user.name}
+            class="h-full w-full object-cover"
+          />
+        <% end %>
+      </div>
+
+      <.live_file_input
+        upload={@uploads.avatar}
+        class="grow text-sm/4 file:rounded-lg file:border-0 file:bg-zinc-50 file:px-4 file:py-3 file:text-sm/4 file:font-medium hover:file:bg-zinc-100"
+      />
+
+      <.button :if={Enum.any?(@uploads.avatar.entries)} variant={:subtle}>
+        <span>Upload</span>
+      </.button>
+
+      <p :for={err <- upload_errors(@uploads.avatar)} class="alert alert-danger">
+        {error_to_string(err)}
+      </p>
+    </div>
+  </form>
+  <div class="grid gap-1">
+    <span class="text-3xl font-semibold">
+      {@current_user.email}
+    </span>
+  </div>
+  <.form :let={f} for={@form} phx-change="validate" phx-submit="submit" class="space-y-4">
+    <div class="flex items-center gap-4">
+      <h2 class="grow text-xl font-semibold">Personal details</h2>
+      <.button variant={:subtle} disabled={not @form.changed? or not @form.valid?}>
+        <span>Save</span>
+      </.button>
+    </div>
+    <div>
+      <.input label="Name" type="text" field={f[:name]} />
+    </div>
+  </.form>
+</.layout>

@@ -16,6 +16,8 @@ defmodule GitsWeb.HostLive.Settings do
     case socket.assigns.live_action do
       :general ->
         assign(socket, :section, "General")
+        |> assign(:uploaded_files, [])
+        |> allow_upload(:logo, accept: ~w(.jpg .jpeg .png .webp), max_entries: 1)
         |> assign(:form, Form.for_update(host, :update, actor: user))
 
       :billing ->
@@ -67,6 +69,46 @@ defmodule GitsWeb.HostLive.Settings do
     |> noreply()
   end
 
+  def handle_event("upload", unsigned_params, socket) do
+    %{form: form} = socket.assigns
+
+    filename =
+      consume_uploaded_entries(socket, :logo, fn %{path: path}, _entry ->
+        bucket_name = Application.get_env(:gits, :bucket_name)
+
+        filename = Nanoid.generate(24) <> ".jpg"
+
+        Image.open!(path)
+        |> Image.thumbnail!("256x256", fit: :cover)
+        |> Image.stream!(suffix: ".jpg", buffer_size: 5_242_880, quality: 100)
+        |> ExAws.S3.upload(
+          bucket_name,
+          filename,
+          content_type: "image/jpeg",
+          cache_control: "public,max-age=3600"
+        )
+        |> ExAws.request()
+
+        {:ok, filename}
+      end)
+      |> case do
+        [filename] ->
+          filename
+
+        [] ->
+          nil
+      end
+
+    Ash.Changeset.for_update(socket.assigns.host, :update, %{logo: filename})
+    |> Ash.update(actor: socket.assigns.current_user)
+    |> case do
+      {:ok, host} ->
+        socket
+        |> assign(:host, host)
+        |> noreply()
+    end
+  end
+
   def handle_event("validate", unsigned_params, socket) do
     form =
       socket.assigns.form
@@ -113,4 +155,8 @@ defmodule GitsWeb.HostLive.Settings do
     end
     |> noreply()
   end
+
+  defp error_to_string(:too_large), do: "Too large"
+  defp error_to_string(:not_accepted), do: "You have selected an unacceptable file type"
+  defp error_to_string(:too_many_files), do: "You have selected too many files"
 end

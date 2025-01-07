@@ -5,7 +5,7 @@ defmodule GitsWeb.DemoPricingCalculator do
   def render(assigns) do
     ~H"""
     <div class="grid items-start gap-4 rounded-2xl">
-      <h2 class="w-full text-right text-4xl font-semibold">Straighforward pricing</h2>
+      <h2 class="w-full text-right text-4xl font-semibold text-zinc-600">Straighforward pricing</h2>
 
       <p class="max-w-80 ml-auto w-full text-right text-sm text-zinc-600">
         GiTS charges a single fee per transaction, avoiding per-ticket commission or service fees.
@@ -69,7 +69,7 @@ defmodule GitsWeb.DemoPricingCalculator do
 
           <div class="grid shrink-0 grow gap-2 lg:max-w-64 lg:mt-4">
             <span>What you get</span>
-            <div class="flex font-medium">
+            <div class="flex font-semibold text-brand-600">
               <span class="text-sm">R</span>
               <span class="text-4xl">{@results.theirs}</span>
             </div>
@@ -84,17 +84,17 @@ defmodule GitsWeb.DemoPricingCalculator do
           </div>
         </div>
       </form>
-      <div class="flex justify-end gap-2">
+      <div class="flex justify-end gap-2 text-zinc-700">
         <span>No setup costs</span>
         <.icon name="hero-check-circle" class="size-5" />
       </div>
 
-      <div class="flex justify-end gap-2">
+      <div class="flex justify-end gap-2 text-zinc-700">
         <span>Simple fee structure</span>
         <.icon name="hero-check-circle" class="size-5" />
       </div>
 
-      <div class="flex justify-end gap-2">
+      <div class="flex justify-end gap-2 text-zinc-700">
         <span>Comprehensive sales analytics</span>
         <.icon name="hero-check-circle" class="size-5" />
       </div>
