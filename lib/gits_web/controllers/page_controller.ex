@@ -1,4 +1,5 @@
 defmodule GitsWeb.PageController do
+  require Ash.Sort
   use GitsWeb, :controller
 
   require Ash.Query
@@ -15,7 +16,9 @@ defmodule GitsWeb.PageController do
     recent_events =
       Ash.Query.for_read(Event, :read)
       |> Ash.Query.filter(interactions.viewer_id == ^viewer_id)
-      |> Ash.Query.load([:venue, :host])
+      |> Ash.Query.load([:venue, :host, :minimum_ticket_price, :ticket_prices_vary?])
+      |> Ash.Query.sort([{Ash.Sort.expr_sort(interactions.created_at), :desc}])
+      |> Ash.Query.limit(4)
       |> Ash.read()
       |> case do
         {:ok, events} -> events

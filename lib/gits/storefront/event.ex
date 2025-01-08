@@ -1,5 +1,5 @@
 defmodule Gits.Storefront.Event do
-  alias Gits.Accounts
+  require Decimal
   alias Gits.Accounts.{Host, User, Venue}
   alias Gits.Storefront.{EventCategory, Interaction, Order, TicketType}
 
@@ -279,6 +279,8 @@ defmodule Gits.Storefront.Event do
     calculate :start_date_invalid?, :boolean, expr(utc_starts_at < fragment("now()"))
     calculate :end_date_invalid?, :boolean, expr(utc_ends_at < utc_starts_at)
     calculate :venue_invalid?, :boolean, expr(is_nil(venue))
+
+    calculate :ticket_prices_vary?, :boolean, expr(minimum_ticket_price != maximum_ticket_price)
   end
 
   aggregates do
@@ -290,5 +292,8 @@ defmodule Gits.Storefront.Event do
     count :total_orders, :orders do
       filter state: :completed
     end
+
+    min :minimum_ticket_price, :ticket_types, :price, default: Decimal.new("0")
+    max :maximum_ticket_price, :ticket_types, :price, default: Decimal.new("0")
   end
 end

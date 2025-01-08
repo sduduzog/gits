@@ -52,7 +52,7 @@ defmodule GitsWeb.CoreComponents do
       <div class="flex grow items-center">
         <.logo />
       </div>
-      <.button variant={:ghost} href={~p"/search"}>
+      <.button :if={false} variant={:ghost} href={~p"/search"}>
         <.icon name="i-lucide-search" />
         <span>Search</span>
       </.button>

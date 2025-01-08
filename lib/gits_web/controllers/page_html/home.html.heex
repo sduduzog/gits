@@ -1,7 +1,7 @@
-<div class="mx-auto grid max-w-screen-xl gap-8 p-4 py-28">
-  <div :if={false}>
+<div class="mx-auto grid max-w-screen-xl gap-8 p-4 py-20">
+  <div>
     <div class="relative inline-flex rounded-3xl border border-zinc-300 p-8 dark:border-zinc-500">
-      <div class="absolute -top-4 left-36 h-12 w-40 rounded-xl border border-zinc-300 bg-zinc-300/20 dark:border-zinc-500 dark:bg-zinc-400/20">
+      <div class="absolute -top-4 left-36 h-12 w-40 rounded-xl border border-zinc-300 bg-zinc-300/20 dark:border-zinc-500 dark:bg-zinc-400/20 animate-bounce">
       </div>
       <svg xmlns="http://www.w3.org/2000/svg" class="size-28 text-brand-600" viewBox="0 0 14 14">
         <path
@@ -14,13 +14,13 @@
       </svg>
     </div>
   </div>
-  <h1 :if={false} class="text-5xl font-semibold text-zinc-950 md:text-6xl dark:text-zinc-300">
+  <h1 class="text-5xl font-semibold text-zinc-950 md:text-6xl dark:text-zinc-300">
     Unlock <span class="text-brand-base">Unforgettable</span> Experiences
   </h1>
-  <p :if={false} class="max-w-lg text-lg text-zinc-500 dark:text-zinc-300">
+  <p class="max-w-lg text-lg text-zinc-500 dark:text-zinc-300">
     Start planning and hosting your events today.
   </p>
-  <div :if={false} class="flex gap-8 font-medium">
+  <div class="flex gap-8 font-medium">
     <.button size={:lg} variant={:accent} href={~p"/host-with-us"}>
       Host with us
     </.button>
@@ -30,16 +30,34 @@
 <div class="mx-auto grid max-w-screen-xl gap-4 py-10">
   <h2 class="px-4 font-semibold text-zinc-700">Recently viewed</h2>
   <div class="flex items-start gap-4 overflow-auto whitespace-nowrap px-4 pb-2 lg:grid lg:grid-cols-4 lg:gap-8">
-    <div :for={event <- @recent_events} class="grid w-72 shrink-0 gap-2 lg:w-auto overflow-hidden">
-      <div class="aspect-[3/2] w-72 rounded-xl overflow-hidden">
-        <img src={Gits.Bucket.get_image_url(event.poster)} alt={event.name} class="size-full" />
-      </div>
+    <div
+      :for={event <- @recent_events}
+      class="grid w-72 shrink-0 gap-2 overflow-hidden p-0.5 lg:w-auto"
+    >
+      <.link
+        navigate={"/events/#{event.public_id}"}
+        class="aspect-[3/2] w-full overflow-hidden rounded-xl bg-red-100 focus-visible:ring-2 focus-visible:ring-zinc-200 lg:rounded-2xl"
+      >
+        <img
+          src={Gits.Bucket.get_image_url(event.poster)}
+          alt={event.name}
+          class="size-full scale-125 bg-green-200"
+        />
+      </.link>
       <div class="space-y-1 truncate">
-        <div class="flex justify-between gap-4">
-          <span class="text-sm/4 text-zinc-500 shrink-0">28 Aug, 12:30 PM</span>
-          <span class="text-sm/4 text-zinc-500 truncate">{event.venue.name}</span>
+        <div class="flex justify-between gap-2 font-medium text-zinc-950">
+          <span class="shrink-0 text-sm/4">28 Aug, 12:30 PM</span>
+          <span class="truncate text-sm/4">{event.venue.name}</span>
         </div>
-        <h3 class="text-lg/5 font-semibold text-zinc-900">{event.name}</h3>
+        <h3 class="text-lg/5 font-semibold text-zinc-600">{event.name}</h3>
+        <div class="flex items-center gap-2">
+          <span class="inline-flex items-center gap-x-1.5 rounded-md px-2 py-1 text-xs font-medium text-gray-900 ring-1 ring-inset ring-gray-200">
+            R {event.minimum_ticket_price |> Gits.Currency.format()}
+            <span :if={event.ticket_prices_vary?}>&plus;</span>
+          </span>
+          <span>&bull;</span>
+          <span class="shrink-0 text-sm/4 text-zinc-500">{event.host.name}</span>
+        </div>
       </div>
     </div>
   </div>

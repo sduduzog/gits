@@ -10,7 +10,7 @@ defmodule GitsWeb.StorefrontLive.EventListing do
     remote_ip = get_connect_info(socket, :peer_data).address
 
     Ash.Query.filter(Event, public_id == ^params["public_id"])
-    |> Ash.Query.load([:venue])
+    |> Ash.Query.load([:host, :venue, :minimum_ticket_price, :ticket_prices_vary?])
     |> Ash.read_one(actor: socket.assigns.current_user)
     |> case do
       {:ok, %Event{} = event} ->

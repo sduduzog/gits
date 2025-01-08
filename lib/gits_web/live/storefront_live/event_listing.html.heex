@@ -33,6 +33,11 @@
         </svg>
         {Gits.Storefront.EventCategory.description(@event.category)}
       </span>
+
+      <span class="inline-flex items-center gap-x-1.5 rounded-md px-2 py-1 text-xs font-medium text-gray-900 ring-1 ring-inset ring-gray-200">
+        R {@event.minimum_ticket_price |> Gits.Currency.format()}
+        <span :if={@event.ticket_prices_vary?}>&plus;</span>
+      </span>
     </div>
 
     <div class="grid gap-4">
@@ -78,7 +83,7 @@
         <.icon name="hero-megaphone" class="size-5" />
         <div class="flex gap-1.5">
           <span class="text-sm text-zinc-500">hosted by</span>
-          <span class="text-sm font-medium">Treehouse Inc</span>
+          <span class="text-sm font-medium">{@event.host.name}</span>
         </div>
       </div>
 
@@ -102,14 +107,14 @@
     :if={@event.state == :published}
     phx-submit="submit"
     for={@form}
-    class="sticky bottom-0 top-0 z-20 flex flex-wrap place-items-start items-center border-t border-zinc-100 bg-white p-2 shadow-sm lg:bottom-auto lg:top-6 lg:border-none lg:shadow-none"
+    class="sticky bottom-0 top-0 z-20 flex flex-wrap place-items-start items-center bg-white p-2 lg:bottom-auto lg:top-6 lg:border-none lg:shadow-none"
   >
     <.inputs_for :let={ef} field={f[:order]}>
       <.input :if={@current_user} type="hidden" value={@current_user.email} field={ef[:email]} />
     </.inputs_for>
     <Gits.Turnstile.widget events={[:success]} appearance="interaction-only" />
 
-    <.button variant={:accent} disabled={not @verified?}>
+    <.button variant={:fo} disabled={not @verified?}>
       <span>Get tickets</span>
     </.button>
   </.form>
