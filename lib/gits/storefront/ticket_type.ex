@@ -15,7 +15,6 @@ defmodule Gits.Storefront.TicketType do
   end
 
   paper_trail do
-    belongs_to_actor :user, User, domain: Accounts
     change_tracking_mode :changes_only
     store_action_name? true
     ignore_attributes [:created_at, :updated_at]

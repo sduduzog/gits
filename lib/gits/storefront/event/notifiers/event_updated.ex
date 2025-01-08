@@ -3,7 +3,7 @@ defmodule Gits.Storefront.Event.Notifiers.EventUpdated do
   use Ash.Notifier
   require Ash.Query
   alias Gits.Storefront.Event
-  use Oban.Worker, unique: [keys: [:id], timestamp: :scheduled_at]
+  use Oban.Worker, unique: [keys: [:id], timestamp: :scheduled_at, period: :infinity]
 
   @impl Ash.Notifier
   def notify(%Ash.Notifier.Notification{action: %{name: :publish}, data: event}) do
@@ -39,17 +39,20 @@ defmodule Gits.Storefront.Event.Notifiers.EventUpdated do
     end
   end
 
-  def notify(notification) do
-    IO.inspect(notification)
+  def notify(_) do
   end
 
   @impl Oban.Worker
   def perform(%Oban.Job{args: %{"id" => id}} = job) do
     Ash.Query.filter(Event, id == ^id)
-    |> Ash.bulk_update(:complete, %{}, actor: job)
-    |> IO.inspect()
+    |> Ash.read_one()
     |> case do
-      %Ash.BulkResult{status: :error} -> {:error, "bulk update error"}
+      {:ok, nil} ->
+        :discard
+
+      {:ok, event} ->
+        Ash.Changeset.for_update(event, :complete)
+        |> Ash.update(actor: job)
     end
   end
 end

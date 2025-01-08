@@ -1,5 +1,5 @@
 <div class="mx-auto grid max-w-screen-xl gap-8 p-4 py-28">
-  <div>
+  <div :if={false}>
     <div class="relative inline-flex rounded-3xl border border-zinc-300 p-8 dark:border-zinc-500">
       <div class="absolute -top-4 left-36 h-12 w-40 rounded-xl border border-zinc-300 bg-zinc-300/20 dark:border-zinc-500 dark:bg-zinc-400/20">
       </div>
@@ -14,15 +14,33 @@
       </svg>
     </div>
   </div>
-  <h1 class="text-5xl font-semibold text-zinc-950 md:text-6xl dark:text-zinc-300">
+  <h1 :if={false} class="text-5xl font-semibold text-zinc-950 md:text-6xl dark:text-zinc-300">
     Unlock <span class="text-brand-base">Unforgettable</span> Experiences
   </h1>
-  <p class="max-w-lg text-lg text-zinc-500 dark:text-zinc-300">
+  <p :if={false} class="max-w-lg text-lg text-zinc-500 dark:text-zinc-300">
     Start planning and hosting your events today.
   </p>
-  <div class="flex gap-8 font-medium">
-    <.button size={:lg} href={~p"/host-with-us"}>
+  <div :if={false} class="flex gap-8 font-medium">
+    <.button size={:lg} variant={:accent} href={~p"/host-with-us"}>
       Host with us
     </.button>
+  </div>
+</div>
+
+<div class="mx-auto grid max-w-screen-xl gap-4 py-10">
+  <h2 class="px-4 font-semibold text-zinc-700">Recently viewed</h2>
+  <div class="flex items-start gap-4 overflow-auto whitespace-nowrap px-4 pb-2 lg:grid lg:grid-cols-4 lg:gap-8">
+    <div :for={event <- @recent_events} class="grid w-72 shrink-0 gap-2 lg:w-auto overflow-hidden">
+      <div class="aspect-[3/2] w-72 rounded-xl overflow-hidden">
+        <img src={Gits.Bucket.get_image_url(event.poster)} alt={event.name} class="size-full" />
+      </div>
+      <div class="space-y-1 truncate">
+        <div class="flex justify-between gap-4">
+          <span class="text-sm/4 text-zinc-500 shrink-0">28 Aug, 12:30 PM</span>
+          <span class="text-sm/4 text-zinc-500 truncate">{event.venue.name}</span>
+        </div>
+        <h3 class="text-lg/5 font-semibold text-zinc-900">{event.name}</h3>
+      </div>
+    </div>
   </div>
 </div>

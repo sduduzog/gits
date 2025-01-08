@@ -2,11 +2,9 @@ defmodule Gits.Storefront.Event do
   alias Gits.Accounts
   alias Gits.Accounts.{Host, User, Venue}
   alias Gits.Storefront.{EventCategory, Interaction, Order, TicketType}
-  alias Gits.Support
-  alias Gits.Support.Job
 
   alias __MODULE__.Checks.ActorCanCreateEvent
-  alias __MODULE__.Notifiers.EventUpdated
+  alias __MODULE__.Notifiers.{EventCompleted, EventUpdated}
 
   use Ash.Resource,
     domain: Gits.Storefront,
@@ -34,8 +32,6 @@ defmodule Gits.Storefront.Event do
   end
 
   paper_trail do
-    belongs_to_actor :user, User, domain: Accounts
-    belongs_to_actor :job, Job, domain: Support, attribute_type: :integer
     change_tracking_mode :changes_only
     store_action_name? true
     ignore_attributes [:created_at, :updated_at]
@@ -136,6 +132,8 @@ defmodule Gits.Storefront.Event do
 
     update :complete do
       change atomic_update(:completed_at, expr(fragment("now()")))
+
+      notifiers [EventCompleted]
     end
   end
 

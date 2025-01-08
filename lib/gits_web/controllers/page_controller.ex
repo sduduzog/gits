@@ -9,11 +9,25 @@ defmodule GitsWeb.PageController do
   alias Gits.Storefront.Event
 
   def home(conn, _) do
+    viewer_id =
+      get_session(conn, :viewer_id)
+
+    recent_events =
+      Ash.Query.for_read(Event, :read)
+      |> Ash.Query.filter(interactions.viewer_id == ^viewer_id)
+      |> Ash.Query.load([:venue, :host])
+      |> Ash.read()
+      |> case do
+        {:ok, events} -> events
+        _ -> []
+      end
+
     conn
     |> assign(:slug, "/")
     |> assign(:title, "/")
     |> assign(:page_title, "Home")
     |> assign(:current_tab, :home)
+    |> assign(:recent_events, recent_events)
     |> render(:home)
   end
 

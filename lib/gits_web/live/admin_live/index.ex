@@ -28,7 +28,6 @@ defmodule GitsWeb.AdminLive.Index do
 
   def handle_event("retry-job", unsigned_params, socket) do
     Oban.retry_job(unsigned_params["id"] |> String.to_integer())
-    |> IO.inspect()
 
     socket |> noreply()
   end

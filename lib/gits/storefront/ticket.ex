@@ -27,7 +27,6 @@ defmodule Gits.Storefront.Ticket do
   alias Gits.Storefront.{Order, TicketType}
 
   paper_trail do
-    belongs_to_actor :user, User, domain: Accounts
     change_tracking_mode :changes_only
     store_action_name? true
     ignore_attributes [:created_at, :updated_at]
