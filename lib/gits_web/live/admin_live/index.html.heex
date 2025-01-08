@@ -1,6 +1,14 @@
-<nav class="flex px-4 pt-4 justify-between max-w-screen-sm">
+<nav class="flex px-4 pt-4 justify-between lg:gap-4 lg:justify-normal max-w-screen-sm">
   <.link
-    :for={{action} <- [{:dashboard}, {:jobs}, {:hosts}, {:users}, {:support}]}
+    :for={
+      {action} <- [
+        {:dashboard},
+        {:jobs}
+        # {:hosts},
+        # {:users},
+        # {:support}
+      ]
+    }
     class="text-sm"
     patch={Routes.admin_index_path(@socket, action)}
   >
@@ -34,6 +42,17 @@
           size={:sm}
         >
           <span>Retry</span>
+        </.button>
+
+        <.button
+          disabled={job.state != :retryable}
+          phx-click="cancel-job"
+          phx-value-name={job.worker}
+          phx-value-id={job.id}
+          variant={:outline}
+          size={:sm}
+        >
+          <span>Cancel</span>
         </.button>
       </:action>
     </.table>

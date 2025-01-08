@@ -1,6 +1,20 @@
 defmodule Gits.Storefront.Order do
   require Decimal
 
+  alias Gits.PaystackApi
+  alias Gits.Storefront.{Event, OrderFeesSplit, Ticket, TicketType}
+
+  alias __MODULE__.Notifiers.{
+    OrderCancelled,
+    OrderCompleted,
+    OrderConfirmed,
+    OrderCreated,
+    OrderRefunded,
+    OrderRefundRequested
+  }
+
+  alias __MODULE__.Checks.OrderUserLimitReached
+
   use Ash.Resource,
     domain: Gits.Storefront,
     data_layer: AshPostgres.DataLayer,
@@ -11,12 +25,6 @@ defmodule Gits.Storefront.Order do
     table "orders"
     repo Gits.Repo
   end
-
-  alias Gits.PaystackApi
-
-  alias Gits.Storefront.{Event, OrderFeesSplit, Ticket, TicketType}
-  alias __MODULE__.Notifiers.{OrderCompleted, OrderConfirmed, OrderRefunded, OrderRefundRequested}
-  alias __MODULE__.Checks.OrderUserLimitReached
 
   state_machine do
     initial_states [:open, :anonymous]
@@ -29,6 +37,8 @@ defmodule Gits.Storefront.Order do
       transition :confirm, from: :processed, to: [:confirmed, :completed]
       transition :complete, from: :confirmed, to: :completed
       transition :refund, from: :completed, to: :refunded
+
+      transition :cancel, from: [:anonymous, :open, :processed, :confirmed], to: :cancelled
     end
   end
 
@@ -47,6 +57,8 @@ defmodule Gits.Storefront.Order do
           changeset
         end
       end
+
+      notifiers [OrderCreated]
     end
 
     update :open do
@@ -122,6 +134,24 @@ defmodule Gits.Storefront.Order do
       notifiers [OrderRefundRequested]
     end
 
+    update :cancel do
+      change atomic_update(:cancelled_at, expr(fragment("now()")))
+      change transition_state(:cancelled)
+
+      change fn changeset, %{actor: actor} ->
+        Ash.Changeset.before_action(changeset, fn changeset ->
+          order =
+            Ash.reload!(changeset.data, load: [:tickets], actor: actor)
+
+          Ash.Changeset.manage_relationship(changeset, :tickets, order.tickets,
+            on_match: {:update, :release}
+          )
+        end)
+      end
+
+      notifiers [OrderCancelled]
+    end
+
     update :refund do
       require_atomic? false
       argument :otp, :string, allow_nil?: false
@@ -193,8 +223,15 @@ defmodule Gits.Storefront.Order do
       authorize_if always()
     end
 
-    policy action([:open, :process, :reopen, :confirm, :complete, :refund]) do
+    policy action([:open, :process, :reopen, :confirm, :complete, :refund, :cancel]) do
       authorize_if AshStateMachine.Checks.ValidNextState
+    end
+
+    policy action(:cancel) do
+      authorize_if actor_attribute_equals(
+                     :worker,
+                     to_string(OrderCreated) |> String.replace("Elixir.", "")
+                   )
     end
   end
 
@@ -217,6 +254,7 @@ defmodule Gits.Storefront.Order do
     attribute :email, :ci_string, public?: true
     attribute :total, :decimal, public?: true
 
+    attribute :cancelled_at, :utc_datetime_usec
     attribute :completed_at, :utc_datetime_usec
 
     attribute :requested_refund_secret, :binary, public?: true

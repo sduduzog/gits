@@ -151,6 +151,9 @@ defmodule GitsWeb.StorefrontLive.EventOrder do
 
       :refunded ->
         socket
+
+      :cancelled ->
+        socket
     end
   end
 
@@ -188,7 +191,7 @@ defmodule GitsWeb.StorefrontLive.EventOrder do
                   "Available #{Calendar.strftime(type.sale_starts_at, "%d %B %Y, %I:%M %p")}"
 
                 type.sold_out and can_remove_ticket? ->
-                  "You got the last ticket"
+                  "Got the last ticket"
 
                 type.sold_out ->
                   "Ticket sold out"
@@ -200,8 +203,11 @@ defmodule GitsWeb.StorefrontLive.EventOrder do
                   nil
               end
 
+            price = "R #{type.price |> Gits.Currency.format()}"
+
             tags =
               [
+                price,
                 not_on_sale
               ]
               |> Enum.filter(& &1)

@@ -4,7 +4,7 @@ defmodule Gits.Storefront.Event do
   alias Gits.Storefront.{EventCategory, Interaction, Order, TicketType}
 
   alias __MODULE__.Checks.ActorCanCreateEvent
-  alias __MODULE__.Notifiers.{EventCompleted, EventUpdated}
+  alias __MODULE__.Notifiers.{EventUpdated}
 
   use Ash.Resource,
     domain: Gits.Storefront,

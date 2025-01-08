@@ -15,7 +15,7 @@ defmodule GitsWeb.HostLive.Orders do
           Ash.Query.filter(Host, handle == ^handle)
           |> Ash.Query.load(
             orders:
-              Ash.Query.filter(Order, state not in [:anonymous, :open])
+              Ash.Query.filter(Order, state not in [:anonymous, :open, :cancelled])
               |> Ash.Query.sort(number: :desc)
           )
       ],

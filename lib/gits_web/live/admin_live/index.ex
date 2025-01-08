@@ -29,6 +29,32 @@ defmodule GitsWeb.AdminLive.Index do
   def handle_event("retry-job", unsigned_params, socket) do
     Oban.retry_job(unsigned_params["id"] |> String.to_integer())
 
-    socket |> noreply()
+    user = socket.assigns.current_user
+
+    Ash.Query.for_read(Job, :read)
+    |> Ash.Query.sort(id: :desc)
+    |> Ash.read(actor: user)
+    |> case do
+      {:ok, jobs} ->
+        socket
+        |> assign(:jobs, jobs)
+        |> noreply()
+    end
+  end
+
+  def handle_event("cancel-job", unsigned_params, socket) do
+    Oban.cancel_job(unsigned_params["id"] |> String.to_integer())
+
+    user = socket.assigns.current_user
+
+    Ash.Query.for_read(Job, :read)
+    |> Ash.Query.sort(id: :desc)
+    |> Ash.read(actor: user)
+    |> case do
+      {:ok, jobs} ->
+        socket
+        |> assign(:jobs, jobs)
+        |> noreply()
+    end
   end
 end

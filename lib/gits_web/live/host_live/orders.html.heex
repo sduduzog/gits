@@ -12,8 +12,9 @@
   <div class="border rounded-lg overflow-auto sm:overflow-hidden">
     <.table id="jobs" rows={@orders}>
       <:col :let={order} label="#">{order.number}</:col>
-      <:col :let={order} label="Total">R {order.total |> Gits.Currency.format()}</:col>
-      <:col :let={order} label="State">{order.state}</:col>
+      <:col :let={order} label="Total">R {(order.total || 0) |> Gits.Currency.format()}</:col>
+      <:col :let={order} label="State">{to_string(order.state) |> String.capitalize()}</:col>
+
       <:col :let={order} label="Completed at">
         <%= if order.completed_at do %>
           {order.completed_at

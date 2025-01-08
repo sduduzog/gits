@@ -128,6 +128,28 @@
         You're almost done!
       </p>
     <% end %>
+    <%= if @order_state == :cancelled do %>
+      <div class="flex items-center gap-4">
+        <.button size={:none} class="p-2" onclick="history.back()" variant={:outline}>
+          <.icon name="i-lucide-chevron-left" />
+        </.button>
+
+        <h3 class="text-lg font-semibold lg:col-span-full">Order Cancelled</h3>
+      </div>
+
+      <p class="text-sm text-zinc-700">
+        Your order was not completed within the expected timeframe, and as a result, it has been automatically cancelled. This helps us ensure that our inventory and services remain up-to-date and available for all our customers.
+      </p>
+
+      <p class="text-sm text-zinc-700">
+        Tickets that were added to this order have now been released back to availability. If you have already made a payment towards this order, a full refund will be processed.
+      </p>
+
+      <p class="text-sm text-zinc-700">
+        If you have any questions or need assistance, please don’t hesitate to reach out to our customer support team.
+      </p>
+    <% end %>
+
     <%= if @order_state == :refunded do %>
       <div class="flex items-center gap-4">
         <.button size={:none} class="p-2" onclick="history.back()" variant={:outline}>
