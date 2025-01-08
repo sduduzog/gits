@@ -15,7 +15,7 @@ defmodule GitsWeb.HostLive.Dashboard do
       <div class="flex w-full grow items-center gap-1 text-sm">
         <div class="flex shrink-0 items-center truncate rounded-lg border border-transparent p-2 text-sm/5 font-semibold">
           <span class="truncate ">
-            Events
+            Dashboard
           </span>
         </div>
       </div>

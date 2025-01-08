@@ -1,6 +1,6 @@
 <nav class="flex px-4 pt-4 justify-between max-w-screen-sm">
   <.link
-    :for={{action} <- [{:dashboard}, {:jobs}, {:hosts}, {:events}, {:orders}, {:users}]}
+    :for={{action} <- [{:dashboard}, {:jobs}, {:hosts}, {:users}, {:support}]}
     class="text-sm"
     patch={Routes.admin_index_path(@socket, action)}
   >
@@ -12,7 +12,7 @@
 
 <div :if={@live_action == :dashboard}></div>
 <div :if={@live_action == :jobs} class="p-2">
-  <div class="border rounded-lg overflow-auto">
+  <div class="border rounded-lg overflow-auto sm:overflow-hidden">
     <.table id="jobs" rows={@jobs}>
       <:col :let={job} label="ID">{job.id}</:col>
       <:col :let={job} label="Worker">{job.worker}</:col>
@@ -25,8 +25,15 @@
       </:col>
 
       <:action :let={job}>
-        <.button disabled={job.state == :completed} variant={:outline} size={:sm}>
-          <span>Reset</span>
+        <.button
+          disabled={job.state != :retryable}
+          phx-click="retry-job"
+          phx-value-name={job.worker}
+          phx-value-id={job.id}
+          variant={:outline}
+          size={:sm}
+        >
+          <span>Retry</span>
         </.button>
       </:action>
     </.table>

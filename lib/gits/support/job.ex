@@ -16,7 +16,18 @@ defmodule Gits.Support.Job do
 
     attribute :worker, :string
 
-    attribute :state, :atom, constraints: [one_of: [:completed]]
+    attribute :state, :atom,
+      constraints: [
+        one_of: [
+          :available,
+          :cancelled,
+          :completed,
+          :discarded,
+          :executing,
+          :retryable,
+          :scheduled
+        ]
+      ]
 
     attribute :attempt, :integer
     attribute :scheduled_at, :utc_datetime

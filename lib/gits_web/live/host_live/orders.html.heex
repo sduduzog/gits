@@ -1,0 +1,26 @@
+<div class="flex items-center gap-2 p-2">
+  <div class="flex w-full grow items-center gap-1 text-sm">
+    <div class="flex shrink-0 items-center truncate rounded-lg border border-transparent p-2 text-sm/5 font-semibold">
+      <span class="truncate ">
+        Orders
+      </span>
+    </div>
+  </div>
+</div>
+
+<div class="p-2">
+  <div class="border rounded-lg overflow-auto sm:overflow-hidden">
+    <.table id="jobs" rows={@orders}>
+      <:col :let={order} label="#">{order.number}</:col>
+      <:col :let={order} label="Total">R {order.total |> Gits.Currency.format()}</:col>
+      <:col :let={order} label="State">{order.state}</:col>
+      <:col :let={order} label="Completed at">
+        <%= if order.completed_at do %>
+          {order.completed_at
+          |> DateTime.shift_zone!("Africa/Johannesburg")
+          |> Calendar.strftime("%a, %d %b %Y %H:%M:%S")}
+        <% end %>
+      </:col>
+    </.table>
+  </div>
+</div>

@@ -1,16 +1,19 @@
 defmodule Gits.Storefront.Event do
-  alias Gits.Storefront.EventCategory
-  alias Gits.Storefront.{Interaction, Order, TicketType}
-  alias Gits.Accounts.{Host, User, Venue}
   alias Gits.Accounts
+  alias Gits.Accounts.{Host, User, Venue}
+  alias Gits.Storefront.{EventCategory, Interaction, Order, TicketType}
+  alias Gits.Support
+  alias Gits.Support.Job
 
   alias __MODULE__.Checks.ActorCanCreateEvent
+  alias __MODULE__.Notifiers.EventUpdated
 
   use Ash.Resource,
     domain: Gits.Storefront,
     data_layer: AshPostgres.DataLayer,
     authorizers: Ash.Policy.Authorizer,
-    extensions: [AshArchival.Resource, AshStateMachine, AshPaperTrail.Resource]
+    extensions: [AshArchival.Resource, AshStateMachine, AshPaperTrail.Resource],
+    notifiers: [EventUpdated]
 
   postgres do
     table "events"
@@ -32,6 +35,7 @@ defmodule Gits.Storefront.Event do
 
   paper_trail do
     belongs_to_actor :user, User, domain: Accounts
+    belongs_to_actor :job, Job, domain: Support, attribute_type: :integer
     change_tracking_mode :changes_only
     store_action_name? true
     ignore_attributes [:created_at, :updated_at]
@@ -129,6 +133,10 @@ defmodule Gits.Storefront.Event do
       argument :order, :map, allow_nil?: false
       change manage_relationship(:order, :orders, type: :create)
     end
+
+    update :complete do
+      change atomic_update(:completed_at, expr(fragment("now()")))
+    end
   end
 
   policies do
@@ -207,6 +215,13 @@ defmodule Gits.Storefront.Event do
 
     policy action(:destroy) do
       authorize_if always()
+    end
+
+    policy action(:complete) do
+      authorize_if actor_attribute_equals(
+                     :worker,
+                     to_string(EventUpdated) |> String.replace("Elixir.", "")
+                   )
     end
   end
 

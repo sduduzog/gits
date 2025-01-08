@@ -16,16 +16,22 @@
       ),
     href: ~p"/hosts/#{@host_handle}/events"
   },
-  # %{
-  #   label: "Orders",
-  #   icon: "hero-banknotes",
-  #   current:
-  #     Enum.any?(
-  #       [],
-  #       &(&1 == @socket.view)
-  #     ),
-  #   href: ~p"/hosts/#{@host_handle}/events"
-  # },
+  %{
+    label: "Orders",
+    icon: "hero-banknotes",
+    current:
+      Enum.any?(
+        [GitsWeb.HostLive.Orders],
+        &(&1 == @socket.view)
+      ),
+    href: ~p"/hosts/#{@host_handle}/orders"
+  },
+  %{
+    label: "Support",
+    icon: "i-lucide-headset",
+    current: Enum.any?([GitsWeb.HostLive.SupportBoard], &(&1 == @socket.view)),
+    href: ~p"/hosts/#{@host_handle}/support"
+  },
   %{
     label: "Settings",
     icon: "i-lucide-settings",

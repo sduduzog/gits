@@ -94,7 +94,9 @@ defmodule Gits.Storefront.Order do
             )
           end)
         else
-          changeset |> AshStateMachine.transition_state(:completed)
+          changeset
+          |> AshStateMachine.transition_state(:completed)
+          |> Ash.Changeset.atomic_update(:completed_at, expr(fragment("now()")))
         end
       end
 
@@ -108,6 +110,7 @@ defmodule Gits.Storefront.Order do
 
       change manage_relationship(:fees_split, type: :create)
       change transition_state(:completed)
+      change atomic_update(:completed_at, expr(fragment("now()")))
 
       notifiers [OrderCompleted]
     end
@@ -213,6 +216,8 @@ defmodule Gits.Storefront.Order do
 
     attribute :email, :ci_string, public?: true
     attribute :total, :decimal, public?: true
+
+    attribute :completed_at, :utc_datetime_usec
 
     attribute :requested_refund_secret, :binary, public?: true
     attribute :requested_refund_at, :utc_datetime_usec

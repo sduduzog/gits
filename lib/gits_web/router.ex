@@ -93,7 +93,10 @@ defmodule GitsWeb.Router do
       live "/hosts/:handle/events/:public_id/scanner", HostLive.Scanner, :index
       live "/hosts/:handle/events/:public_id/scanner/:camera", HostLive.Scanner, :scan
 
+      live "/hosts/:handle/orders", HostLive.Orders, :index
+
       live "/hosts/:handle/venues/create-new", HostLive.EditVenue, :create
+      live "/hosts/:handle/support", HostLive.SupportBoard, :index
 
       live "/hosts/:handle/settings", HostLive.Settings, :index
       live "/hosts/:handle/settings/general", HostLive.Settings, :general
@@ -137,18 +140,16 @@ defmodule GitsWeb.Router do
       live "/", AdminLive.Index, :dashboard
       live "/jobs", AdminLive.Index, :jobs
       live "/hosts", AdminLive.Index, :hosts
-      live "/events", AdminLive.Index, :events
-      live "/orders", AdminLive.Index, :orders
       live "/users", AdminLive.Index, :users
+      live "/support", AdminLive.Index, :support
       # remove when done with onboarding on all environments
       live "/start", AdminLive, :start
     end
 
     live_dashboard "/dashboard",
       ecto_repos: [Gits.Repo],
-      ecto_psql_extras_options: [long_running_queries: [threshold: "10 milliseconds"]],
-      metrics: GitsWeb.Telemetry,
-      additional_pages: [oban: Oban.LiveDashboard]
+      ecto_psql_extras_options: [long_running_queries: [threshold: "5 milliseconds"]],
+      metrics: GitsWeb.Telemetry
   end
 
   scope "/webhooks", GitsWeb do

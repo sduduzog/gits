@@ -27,6 +27,7 @@ defmodule Gits.Accounts.Role do
 
   policies do
     policy action(:read) do
+      authorize_if expr(user.id == ^actor(:id))
       authorize_if accessing_from(Host, :roles)
       authorize_if accessing_from(User, :roles)
     end
@@ -44,8 +45,8 @@ defmodule Gits.Accounts.Role do
   end
 
   relationships do
-    belongs_to :user, User, allow_nil?: false
+    belongs_to :user, User, public?: true, allow_nil?: false
 
-    belongs_to :host, Host, allow_nil?: false
+    belongs_to :host, Host, public?: true, allow_nil?: false
   end
 end

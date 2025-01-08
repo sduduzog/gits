@@ -1,6 +1,7 @@
 defmodule Gits.Accounts.User do
   alias Gits.Secrets
-  alias Gits.Accounts.{Role, Token}
+  alias Gits.Accounts.{Host, Role, Token}
+  alias Gits.Support.{Admin}
   alias Gits.Storefront.{Order}
   alias __MODULE__
 
@@ -128,7 +129,16 @@ defmodule Gits.Accounts.User do
   end
 
   relationships do
+    has_one :admin, Admin
     has_many :roles, Role
+
+    # has_many :hosts, Host do
+    #   no_attributes? true
+    # end
+
+    many_to_many :hosts, Host do
+      through Role
+    end
 
     has_many :orders, Order do
       no_attributes? true

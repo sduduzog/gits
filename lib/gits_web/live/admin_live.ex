@@ -27,7 +27,7 @@ defmodule GitsWeb.AdminLive do
           _ ->
             socket
         end
-        |> push_patch(to: Routes.admin_path(socket, :index))
+        |> push_patch(to: Routes.admin_index_path(socket, :dashboard))
         |> noreply()
 
       _ ->

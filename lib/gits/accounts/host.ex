@@ -1,6 +1,6 @@
 defmodule Gits.Accounts.Host do
   alias Gits.Storefront
-  alias Gits.Storefront.Event
+  alias Gits.Storefront.{Event, Order}
   alias Gits.PaystackApi
   alias Gits.Accounts
   alias Gits.Accounts.{Role, User}
@@ -162,9 +162,15 @@ defmodule Gits.Accounts.Host do
   relationships do
     belongs_to :owner, User, allow_nil?: false
 
-    has_many :roles, Role
+    has_many :roles, Role, public?: true
 
     has_many :events, Event, domain: Storefront
+
+    has_many :orders, Order do
+      domain Storefront
+      no_attributes? true
+      filter expr(event.id == parent(events.id))
+    end
   end
 
   calculations do
