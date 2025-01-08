@@ -27,7 +27,7 @@
   </div>
 </div>
 
-<div class="mx-auto grid max-w-screen-xl gap-4 py-10">
+<div :if={Enum.any?(@recent_events)} class="mx-auto grid max-w-screen-xl gap-4 py-10">
   <h2 class="px-4 font-semibold text-zinc-700">Recently viewed</h2>
   <div class="flex items-start gap-4 overflow-auto whitespace-nowrap px-4 pb-2 lg:grid lg:grid-cols-4 lg:gap-8">
     <div

@@ -293,6 +293,10 @@ defmodule Gits.Storefront.Event do
       filter state: :completed
     end
 
+    count :admissions, [:ticket_types, :tickets] do
+      join_filter [:ticket_types, :tickets], expr(not is_nil(admitted_at))
+    end
+
     min :minimum_ticket_price, :ticket_types, :price, default: Decimal.new("0")
     max :maximum_ticket_price, :ticket_types, :price, default: Decimal.new("0")
   end

@@ -1,4 +1,6 @@
 defmodule GitsWeb.HostLive.ViewEvent do
+  alias Gits.Accounts.User
+  alias Gits.Storefront.Order
   alias Gits.Accounts.Host
   alias Gits.Storefront.{Event}
   use GitsWeb, :live_view
@@ -14,22 +16,27 @@ defmodule GitsWeb.HostLive.ViewEvent do
     :venue,
     :unique_views,
     :total_orders,
+    :admissions,
     ticket_types: [:active_tickets_count]
   ]
 
-  def mount(params, _session, socket) do
-    Ash.Query.for_read(Host, :read, %{}, actor: socket.assigns.current_user)
-    |> Ash.Query.load(
-      events:
-        Ash.Query.filter(Event, public_id == ^params["public_id"])
-        |> Ash.Query.load(@event_load_keys)
-    )
-    |> Ash.read_one()
-    |> case do
-      {:ok, host} ->
-        [event] =
-          host.events
+  def mount(%{"handle" => handle, "public_id" => public_id}, _, socket) do
+    user = socket.assigns.current_user
 
+    Ash.load(
+      user,
+      [
+        hosts:
+          Ash.Query.filter(Host, handle == ^handle)
+          |> Ash.Query.load(
+            events:
+              Ash.Query.filter(Event, public_id == ^public_id) |> Ash.Query.load(@event_load_keys)
+          )
+      ],
+      actor: user
+    )
+    |> case do
+      {:ok, %{hosts: [%{events: [event]}]}} ->
         ticket_types =
           event.ticket_types
           |> Enum.map(fn type ->
@@ -82,12 +89,16 @@ defmodule GitsWeb.HostLive.ViewEvent do
     socket |> assign(:issues, list_issues(socket.assigns.event))
   end
 
-  defp list_issues(event) do
+  defp list_issues(%Event{state: :draft} = event) do
     [
       if(event.start_date_invalid?, do: "Start date should not be in the past", else: false),
       if(event.end_date_invalid?, do: "End date should not be before the start date", else: false),
       if(event.venue_invalid?, do: "The event location is not set", else: false)
     ]
     |> Enum.filter(& &1)
+  end
+
+  defp list_issues(_) do
+    []
   end
 end

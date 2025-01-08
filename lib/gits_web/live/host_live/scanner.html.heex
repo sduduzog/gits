@@ -1,0 +1,102 @@
+<div
+  :if={@live_action == :index}
+  class="grid gap-4"
+  id="camera-list"
+  phx-hook="QrScannerCameraList"
+>
+  <span>Choose camera to use</span>
+</div>
+
+<div :if={@live_action == :scan}>
+  <div
+    data-camera={@camera}
+    data-callback={show_modal("scan-results")}
+    class="sticky top-0 w-full max-w-md overflow-hidden rounded-xl"
+    id="qr-scanner"
+    phx-update="ignore"
+    phx-hook="QrScanner"
+  >
+  </div>
+  <.modal
+    id="scan-results"
+    show={@show_modal}
+    on_cancel={
+      JS.patch(
+        Routes.host_scanner_path(
+          @socket,
+          :scan,
+          @host_handle,
+          @public_id,
+          @camera
+        ),
+        replace: true
+      )
+    }
+  >
+    <div class="grid gap-8">
+      <%= if @ticket.ok? do %>
+        <GitsWeb.EventComponents.ticket_card
+          :if={@ticket.result}
+          name={@ticket.result.ticket_type.name}
+          color={@ticket.result.ticket_type.color}
+          id={@ticket.result.public_id}
+          tags={[
+            @ticket.result.public_id,
+            if(@ticket.result.state == :admitted,
+              do:
+                "Admitted at #{Calendar.strftime(@ticket.result.local_admitted_at, "%I:%M:%S %p")}",
+              else: to_string(@ticket.result.state) |> String.capitalize()
+            )
+          ]}
+        />
+
+        <div :if={@ticket.result && @ticket.result.attendee} class="flex gap-4 items-end">
+          <div class="size-28 rounded-xl bg-zinc-100"></div>
+          <dl class="grid gap-2 text-sm/7">
+            <div>
+              <dt class="text-zinc-500">Name</dt>
+              <dd class="font-medium text-base/4">Nkero</dd>
+            </div>
+
+            <div>
+              <dt class="text-zinc-500">Checked in?</dt>
+              <dd class="font-medium text-base/4">12:30 PM, 31 Jan 2024</dd>
+            </div>
+          </dl>
+        </div>
+
+        <div class="flex gap-2 h-10">
+          <div class="flex grow items-center gap-3">
+            <.icon name="i-lucide-circle-check" class=" text-green-500" />
+            <div class="flex grow items-center gap-6">
+              <p class="grow text-sm">Ticket validated</p>
+              <.button
+                :if={@ticket.result && is_nil(@ticket.result.admitted_at)}
+                phx-click="admit"
+                size={:sm}
+              >
+                <.icon name="i-lucide-user-round-check" />
+                <span>Admit</span>
+              </.button>
+            </div>
+          </div>
+        </div>
+      <% else %>
+        <div class="flex gap-2 h-10">
+          <div :if={@ticket.loading == [:ticket]} class="flex grow items-center gap-3">
+            <.icon name="i-lucide-loader-circle" class="animate-spin text-zinc-600" />
+            <div class="flex grow items-center gap-6">
+              <p class="text-sm">Loading...</p>
+            </div>
+          </div>
+          <div :if={@ticket.failed} class="flex grow items-center gap-3">
+            <.icon name="i-lucide-circle-x" class="text-red-500" />
+            <div class="flex grow items-center gap-6">
+              <p class="text-sm">{error_to_string(@ticket.failed)}</p>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </.modal>
+</div>
