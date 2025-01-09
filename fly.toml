@@ -1,17 +1,12 @@
-# fly.toml app configuration file generated for gits-staging on 2024-09-16T11:23:15+02:00
-#
-# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
-#
-
-app = 'gits-staging'
 primary_region = 'jnb'
 kill_signal = 'SIGTERM'
 
 [build]
 
 [deploy]
-  release_command = '/app/bin/migrate'
   strategy = 'bluegreen'
+  release_command = '/app/bin/migrate'
+
 
 [http_service]
   internal_port = 8080
@@ -27,12 +22,13 @@ kill_signal = 'SIGTERM'
     soft_limit = 1000
 
   [[http_service.checks]]
-    interval = '1m30s'
+    interval = '1m0s'
     timeout = '5s'
     grace_period = '10s'
     method = 'GET'
     path = '/healthz'
 
 [[vm]]
-  size = 'shared-cpu-1x'
-  memory = '512'
+  memory = '512mb'
+  cpu_kind = 'shared'
+  cpus = 1
