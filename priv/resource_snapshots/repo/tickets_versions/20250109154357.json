@@ -48,12 +48,12 @@
           "global": null,
           "strategy": null
         },
-        "name": "events_versions_version_source_id_fkey",
+        "name": "tickets_versions_version_source_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "events"
+        "table": "tickets"
       },
       "size": null,
       "source": "version_source_id",
@@ -95,7 +95,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "BDBA18165927AE65529D8B60A79490199B00CEAB1FA552C0299BCCED8DDD9B9B",
+  "hash": "D2613B09CC9AAD0CE2369FC83AB0DB82902C192649FFE364AFDAC0292F685956",
   "identities": [],
   "multitenancy": {
     "attribute": null,
@@ -104,5 +104,5 @@
   },
   "repo": "Elixir.Gits.Repo",
   "schema": null,
-  "table": "events_versions"
+  "table": "tickets_versions"
 }

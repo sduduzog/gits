@@ -17,6 +17,16 @@
       "primary_key?": false,
       "references": null,
       "size": null,
+      "source": "viewer_id",
+      "type": "text"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
       "source": "type",
       "type": "text"
     },
@@ -31,7 +41,7 @@
       "type": "utc_datetime_usec"
     },
     {
-      "allow_nil?": false,
+      "allow_nil?": true,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
@@ -48,7 +58,7 @@
           "global": null,
           "strategy": null
         },
-        "name": "host_roles_user_id_fkey",
+        "name": "interactions_user_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
@@ -60,7 +70,7 @@
       "type": "uuid"
     },
     {
-      "allow_nil?": false,
+      "allow_nil?": true,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
@@ -77,26 +87,16 @@
           "global": null,
           "strategy": null
         },
-        "name": "host_roles_host_id_fkey",
+        "name": "interactions_event_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "hosts"
+        "table": "events"
       },
       "size": null,
-      "source": "host_id",
+      "source": "event_id",
       "type": "uuid"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "archived_at",
-      "type": "utc_datetime_usec"
     }
   ],
   "base_filter": null,
@@ -104,7 +104,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "984327A52B82042CAA8AE79C5BBE809D71A4E2F0FF7F3CA179AB65380F9EC8C6",
+  "hash": "4452BE9E71B6DBB16B0CC844AF3E02AD6F893134AE73481B44CA631A8F0C245D",
   "identities": [],
   "multitenancy": {
     "attribute": null,
@@ -113,5 +113,5 @@
   },
   "repo": "Elixir.Gits.Repo",
   "schema": null,
-  "table": "host_roles"
+  "table": "interactions"
 }

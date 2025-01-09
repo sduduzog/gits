@@ -48,12 +48,12 @@
           "global": null,
           "strategy": null
         },
-        "name": "ticket_types_versions_version_source_id_fkey",
+        "name": "hosts_versions_version_source_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "ticket_types"
+        "table": "hosts"
       },
       "size": null,
       "source": "version_source_id",
@@ -95,7 +95,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "22A180979214075EC484BAB8A445B871AEBFEBF8C54DFB0F79CBD852BDB65FDF",
+  "hash": "07E3FC34700EF39D93B7EBFCA9D37B13E713CF495062C0879CB4FAEFCB6FB42B",
   "identities": [],
   "multitenancy": {
     "attribute": null,
@@ -104,5 +104,5 @@
   },
   "repo": "Elixir.Gits.Repo",
   "schema": null,
-  "table": "ticket_types_versions"
+  "table": "hosts_versions"
 }

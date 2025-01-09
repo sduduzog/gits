@@ -22,83 +22,83 @@
     },
     {
       "allow_nil?": false,
-      "default": "nil",
+      "default": "\"0\"",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "address",
-      "type": "text"
-    },
-    {
-      "allow_nil?": false,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "google_place_id",
-      "type": "text"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "surburb",
-      "type": "text"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "city_or_town",
-      "type": "text"
-    },
-    {
-      "allow_nil?": false,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "province",
-      "type": "text"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "postal_code",
-      "type": "text"
-    },
-    {
-      "allow_nil?": false,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "latitude",
+      "source": "price",
       "type": "decimal"
     },
     {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "description",
+      "type": "text"
+    },
+    {
       "allow_nil?": false,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "longitude",
-      "type": "decimal"
+      "source": "sale_starts_at",
+      "type": "naive_datetime"
+    },
+    {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "sale_ends_at",
+      "type": "naive_datetime"
+    },
+    {
+      "allow_nil?": false,
+      "default": "10",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "quantity",
+      "type": "bigint"
+    },
+    {
+      "allow_nil?": false,
+      "default": "10",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "limit_per_user",
+      "type": "bigint"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "color",
+      "type": "text"
+    },
+    {
+      "allow_nil?": false,
+      "default": "false",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "check_in_enabled",
+      "type": "boolean"
     },
     {
       "allow_nil?": false,
@@ -121,7 +121,7 @@
       "type": "utc_datetime_usec"
     },
     {
-      "allow_nil?": false,
+      "allow_nil?": true,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
@@ -138,15 +138,15 @@
           "global": null,
           "strategy": null
         },
-        "name": "venues_host_id_fkey",
+        "name": "ticket_types_event_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "hosts"
+        "table": "events"
       },
       "size": null,
-      "source": "host_id",
+      "source": "event_id",
       "type": "uuid"
     },
     {
@@ -165,7 +165,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "B3ADB64898790892C7C2B09DCE4B76A76CE11768FCC9A76480D6B3C0411006D4",
+  "hash": "08BBE1D0183A2713D99149648E1D6EC625A8BB2F906E4EF2E0A9833C78877BB4",
   "identities": [],
   "multitenancy": {
     "attribute": null,
@@ -174,5 +174,5 @@
   },
   "repo": "Elixir.Gits.Repo",
   "schema": null,
-  "table": "venues"
+  "table": "ticket_types"
 }
