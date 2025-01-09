@@ -18,13 +18,26 @@ config_dir_prefix =
 
 source!(["#{config_dir_prefix}.env", System.get_env()])
 
+config :gits, tz: env!("TZ")
+
+config :gits, :basic_auth,
+  username: env!("BASIC_AUTH_USERNAME"),
+  password: env!("BASIC_AUTH_PASSWORD")
+
+config :gits, :google,
+  client_id: env!("GOOGLE_CLIENT_ID"),
+  client_secret: env!("GOOGLE_CLIENT_SECRET"),
+  redirect_uri: env!("GOOGLE_REDIRECT_URI")
+
 config :gits, :google_api_options,
   base_url: "https://places.googleapis.com",
   headers: ["X-Goog-Api-Key": env!("GOOGLE_MAPS_API_KEY")]
 
+paystack_secret_key = env!("PAYSTACK_SECRET_KEY")
+
 config :gits, :paystack_api_options,
   base_url: "https://api.paystack.co",
-  auth: {:bearer, env!("PAYSTACK_SECRET_KEY")}
+  auth: {:bearer, paystack_secret_key}
 
 config :ex_aws,
   access_key_id: env!("AWS_ACCESS_KEY_ID"),
@@ -38,29 +51,21 @@ config :ex_aws, :s3,
 
 config :gits, :bucket_name, env!("BUCKET_NAME")
 
-config :logger, level: env!("LOG_LEVEL", :atom, :info)
+config :logger, level: env!("LOG_LEVEL", :atom, :debug)
+
+config :gits, :paystack, secret_key: paystack_secret_key
 
 if config_env() == :prod do
-  database_url =
-    System.get_env("DATABASE_URL") ||
-      raise """
-      environment variable DATABASE_URL is missing.
-      For example: ecto://USER:PASS@HOST/DATABASE
-      """
+  database_url = env!("DATABASE_URL")
 
   maybe_ipv6 = if System.get_env("ECTO_IPV6") in ~w(true 1), do: [:inet6], else: []
 
   config :gits, Gits.Repo,
     url: database_url,
-    pool_size: env!("POOL_SIZE", :integer, 2),
+    pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
     socket_options: maybe_ipv6
 
-  secret_key_base =
-    System.get_env("SECRET_KEY_BASE") ||
-      raise """
-      environment variable SECRET_KEY_BASE is missing.
-      You can generate one by calling: mix phx.gen.secret
-      """
+  secret_key_base = env!("SECRET_KEY_BASE", :string)
 
   host = env!("PHX_HOST", :string)
   port = env!("PORT", :integer, 4000)
@@ -75,20 +80,16 @@ if config_env() == :prod do
     ],
     secret_key_base: secret_key_base
 
-  config :gits, :base_url, "https://#{host}"
-
   config :phoenix_turnstile,
     site_key: env!("TURNSTILE_SITE_KEY"),
     secret_key: env!("TURNSTILE_SECRET_KEY")
 
-  domain = env!("MAILGUN_DOMAIN", :string)
-  api_key = env!("MAILGUN_API_KEY", :string)
-
   config :gits, Gits.Mailer,
     adapter: Swoosh.Adapters.Mailgun,
-    api_key: api_key,
-    domain: domain,
-    base_url: "https://api.eu.mailgun.net/v3"
+    api_key: env!("MAILGUN_API_KEY", :string),
+    base_url: env!("MAILGUN_BASE_URL", :string),
+    host: "https://" <> host,
+    domain: host
 
-  config :gits, :sender_email, "hey@#{domain}"
+  config :gits, :paystack, callback_url_base: "https://#{host}"
 end

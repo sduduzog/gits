@@ -1,0 +1,63 @@
+<nav class="flex px-4 pt-4 justify-between lg:gap-4 lg:justify-normal max-w-screen-sm">
+  <.link
+    :for={
+      {action} <- [
+        {:dashboard},
+        {:jobs}
+        # {:hosts},
+        # {:users},
+        # {:support}
+      ]
+    }
+    class="text-sm"
+    patch={Routes.admin_index_path(@socket, action)}
+  >
+    <span>{to_string(action) |> String.capitalize()}</span>
+  </.link>
+</nav>
+
+<h1 class="p-4 font-semibold capitalize">{@live_action}</h1>
+
+<div :if={@live_action == :dashboard}></div>
+<div :if={@live_action == :jobs} class="p-2">
+  <div class="border rounded-lg overflow-auto sm:overflow-hidden">
+    <.table id="jobs" rows={@jobs}>
+      <:col :let={job} label="ID">{job.id}</:col>
+      <:col :let={job} label="Worker">{job.worker}</:col>
+      <:col :let={job} label="State">{job.state}</:col>
+      <:col :let={job} label="Attempt">{job.attempt}</:col>
+      <:col :let={job} label="Scheduled at">
+        {job.scheduled_at
+        |> DateTime.shift_zone!("Africa/Johannesburg")
+        |> Calendar.strftime("%a, %d %b %Y %H:%M:%S")}
+      </:col>
+
+      <:action :let={job}>
+        <.button
+          disabled={job.state != :retryable}
+          phx-click="retry-job"
+          phx-value-name={job.worker}
+          phx-value-id={job.id}
+          variant={:outline}
+          size={:sm}
+        >
+          <span>Retry</span>
+        </.button>
+
+        <.button
+          disabled={job.state != :retryable}
+          phx-click="cancel-job"
+          phx-value-name={job.worker}
+          phx-value-id={job.id}
+          variant={:outline}
+          size={:sm}
+        >
+          <span>Cancel</span>
+        </.button>
+      </:action>
+    </.table>
+  </div>
+</div>
+<div :if={@live_action == :dashboard}></div>
+<div :if={@live_action == :dashboard}></div>
+<div :if={@live_action == :dashboard}></div>

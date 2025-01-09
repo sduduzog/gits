@@ -1,26 +1,16 @@
-# fly.toml app configuration file generated for gits on 2024-04-20T11:14:37+02:00
-#
-# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
-#
-
-app = 'gits'
 primary_region = 'jnb'
 kill_signal = 'SIGTERM'
 
 [build]
 
 [deploy]
+  strategy = 'bluegreen'
   release_command = '/app/bin/migrate'
-  strategy = "bluegreen"
-
-[env]
-  PORT = '8080'
-  TZ = 'Africa/Johannesburg'
 
 [http_service]
   internal_port = 8080
   force_https = true
-  auto_stop_machines = true
+  auto_stop_machines = 'stop'
   auto_start_machines = true
   min_machines_running = 1
   processes = ['app']
@@ -30,14 +20,14 @@ kill_signal = 'SIGTERM'
     hard_limit = 1000
     soft_limit = 1000
 
-[[http_service.checks]]
-  grace_period = "10s"
-  interval = "90s"
-  method = "GET"
-  timeout = "5s"
-  path = "/healthz"
+  [[http_service.checks]]
+    interval = '1m0s'
+    timeout = '5s'
+    grace_period = '10s'
+    method = 'GET'
+    path = '/healthz'
 
 [[vm]]
   memory = '512mb'
   cpu_kind = 'shared'
-  cpus = 2
+  cpus = 1

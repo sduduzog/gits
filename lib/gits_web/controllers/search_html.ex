@@ -1,7 +1,6 @@
 defmodule GitsWeb.SearchHTML do
   use GitsWeb, :html
   require Decimal
-  alias Gits.Storefront.Event
 
   def index(assigns) do
     ~H"""
@@ -47,7 +46,6 @@ defmodule GitsWeb.SearchHTML do
             :if={not is_nil(event.minimum_ticket_price)}
             class="whitespace-nowrap text-xs font-medium text-zinc-500 dark:text-zinc-400"
           >
-            <%= resolve_price_range_label(event) %>
           </span>
         </div>
       </.link>
@@ -57,29 +55,5 @@ defmodule GitsWeb.SearchHTML do
 
   def get_listing_image(account_id, event_id) do
     Gits.Bucket.get_listing_image_path(account_id, event_id)
-  end
-
-  defp resolve_min_price_label(price) do
-    if Decimal.eq?(price, 0) do
-      "FREE"
-    else
-      "R#{price |> Gits.Currency.format()}"
-    end
-  end
-
-  defp resolve_price_summary_label(%Event{minimum_ticket_price: min, maximum_ticket_price: max}) do
-    if min == max do
-      "#{resolve_min_price_label(min)}"
-    else
-      "#{resolve_min_price_label(min)}+"
-    end
-  end
-
-  defp resolve_price_range_label(%Event{minimum_ticket_price: min, maximum_ticket_price: max}) do
-    if min == max do
-      "#{resolve_min_price_label(min)}"
-    else
-      "#{resolve_min_price_label(min)} - R#{max |> Gits.Currency.format()}"
-    end
   end
 end

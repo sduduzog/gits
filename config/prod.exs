@@ -2,18 +2,17 @@ import Config
 
 config :gits, GitsWeb.Endpoint, cache_static_manifest: "priv/static/cache_manifest.json"
 
-config :swoosh, api_client: Swoosh.ApiClient.Finch, finch_name: Gits.Finch
+config :swoosh, api_client: Swoosh.ApiClient.Req
 
 config :swoosh, local: false
 
 config :gits, :presigned_url_options,
   virtual_host: true,
-  bucket_as_host: true,
-  expires_in: 900
+  bucket_as_host: true
 
 config :gits, :workers,
-  reclaim_open_basket_timeout: 1_200,
-  reclaim_payment_started_basket_timeout: 1_800
+  order_created_schedule_seconds: 60,
+  order_created_snooze_seconds: 60
 
 config :sentry,
   dsn:

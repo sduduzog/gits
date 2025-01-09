@@ -59,6 +59,24 @@ defmodule GitsWeb do
       unquote(html_helpers())
 
       def ok(socket, false), do: {:ok, socket, layout: false}
+
+      def ok(socket, :error, code),
+        do: {:ok, socket |> assign(:code, code), layout: {GitsWeb.Layouts, :error}}
+
+      def ok(socket, layout), do: {:ok, socket, layout: {GitsWeb.Layouts, layout}}
+      def ok(socket), do: {:ok, socket}
+      def noreply(socket), do: {:noreply, socket}
+    end
+  end
+
+  def host_live_view do
+    quote do
+      use Phoenix.LiveView,
+        layout: {GitsWeb.Layouts, :host}
+
+      unquote(html_helpers())
+
+      def ok(socket, false), do: {:ok, socket, layout: false}
       def ok(socket, layout), do: {:ok, socket, layout: {GitsWeb.Layouts, layout}}
       def ok(socket), do: {:ok, socket}
       def noreply(socket), do: {:noreply, socket}
@@ -144,6 +162,8 @@ defmodule GitsWeb do
         endpoint: GitsWeb.Endpoint,
         router: GitsWeb.Router,
         statics: GitsWeb.static_paths()
+
+      alias GitsWeb.Router.Helpers, as: Routes
     end
   end
 

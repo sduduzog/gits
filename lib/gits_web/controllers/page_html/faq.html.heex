@@ -18,10 +18,10 @@
           <dl class="space-y-10">
             <div :for={faq <- @faqs} id={faq.id}>
               <dt class="text-base font-semibold leading-7 text-gray-900">
-                <%= faq.question %>
+                {faq.question}
               </dt>
               <dd class="mt-2 text-base leading-7 text-gray-600">
-                <%= raw(faq.answer) %>
+                {raw(faq.answer)}
               </dd>
             </div>
           </dl>

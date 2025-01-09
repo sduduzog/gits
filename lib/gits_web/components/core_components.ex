@@ -1,153 +1,204 @@
 defmodule GitsWeb.CoreComponents do
-  @moduledoc """
-  Provides core UI components.
-
-  At first glance, this module may seem daunting, but its goal is to provide
-  core building blocks for your application, such as modals, tables, and
-  forms. The components consist mostly of markup and are well-documented
-  with doc strings and declarative assigns. You may customize and style
-  them in any way you want, based on your application growth and needs.
-
-  The default components use Tailwind CSS, a utility-first CSS framework.
-  See the [Tailwind CSS documentation](https://tailwindcss.com) to learn
-  how to customize them or feel free to swap in another framework altogether.
-
-  Icons are provided by [heroicons](https://heroicons.com). See `icon/1` for usage.
-  """
   use Phoenix.Component
+  alias Gits.Accounts.User
   use GitsWeb, :verified_routes
 
-  alias Gits.Auth.User
   alias Phoenix.HTML.Form
   alias Phoenix.LiveView.JS
   import GitsWeb.Gettext
 
-  attr :signed_in, :boolean, default: false
+  def logo(assigns) do
+    ~H"""
+    <.link
+      navigate="/"
+      class="inline-flex h-5 shrink-0 items-center justify-center rounded-lg text-xl font-black italic"
+    >
+      <img
+        phx-track-static
+        src={static_url(GitsWeb.Endpoint, "/images/gits_logo.png")}
+        alt="GiTS"
+        class="size-full object-contain dark:invert"
+      />
+    </.link>
+    """
+  end
+
+  attr :user, :map
 
   def header(assigns) do
-    user = assigns.user
-
-    assigns =
-      case user do
-        nil ->
-          assigns
-          |> assign(:signed_in, false)
-          |> assign(:menu, [
-            [
-              %{
-                label: "Register",
-                to: ~p"/register",
-                icon: "hero-arrow-right-end-on-rectangle-mini"
-              },
-              %{
-                label: "Sign in",
-                to: ~p"/sign-in",
-                icon: "hero-arrow-right-end-on-rectangle-mini"
-              }
-            ]
-          ])
-
+    tickets =
+      case assigns.user do
         %User{} = user ->
-          assigns
-          |> assign(:signed_in, true)
-          |> assign(:email, user.email)
-          |> assign(:menu, [
-            [
-              %{label: "My Tickets", to: ~p"/my/tickets", icon: "hero-ticket-mini"}
-              # %{label: "Profile", to: ~p"/my/profile", icon: "hero-user-mini"}
-            ],
-            [
-              %{
-                label: "Sign out",
-                to: ~p"/sign-out",
-                icon: "hero-arrow-left-start-on-rectangle-mini"
-              }
-            ]
-          ])
+          user = Ash.load!(user, [:tickets_count], actor: user)
+          user.tickets_count
+
+        _ ->
+          false
       end
 
+    assigns =
+      assigns
+      |> assign(:menus, [
+        [
+          {"Orders", ~p"/my/orders", false},
+          {"Tickets", ~p"/my/tickets", tickets},
+          {"Settings", ~p"/settings/profile", false}
+        ],
+        [{"Sign out", ~p"/sign-out", false}]
+      ])
+
     ~H"""
-    <div
-      class="sticky top-0 z-20 bg-white bg-red-400 bg-opacity-0 p-2 text-sm font-medium transition-all"
-      phx-hook="HeaderOpacityOnScroll"
-      id="homepage_header"
-    >
-      <div class="mx-auto flex max-w-screen-xl items-center gap-4">
-        <div class="relative flex grow">
-          <.link navigate="/" class="text-2xl font-black italic text-zinc-800">
-            GiTS
-          </.link>
-          <span class="text-[12px] leading-2 absolute -top-1 left-14 inline-flex items-center rounded-md px-1 font-medium text-yellow-800">
-            Beta
-          </span>
-        </div>
+    <header class="mx-auto flex max-w-screen-xl items-center gap-2 p-2 lg:gap-8">
+      <div class="flex grow items-center">
+        <.logo />
+      </div>
+      <.button :if={false} variant={:ghost} href={~p"/search"}>
+        <.icon name="i-lucide-search" />
+        <span>Search</span>
+      </.button>
+
+      <%= if not is_nil(assigns[:user]) do %>
         <div
-          class="relative inline-block text-left md:hidden"
-          id="header_menu"
-          phx-hook="Dropdown"
-          phx-click-away={JS.hide(to: "#header_menu>div[data-dropdown]")}
+          class="relative inline-block text-left"
+          phx-click-away={
+            JS.hide(
+              to: "div#header-menu[role=menu]",
+              transition:
+                {"transition ease-in duration-75", "transform opacity-100 scale-100",
+                 "transform opacity-0 scale-95"}
+            )
+          }
         >
-          <button
-            class="flex rounded-lg p-1.5 hover:bg-zinc-200"
-            phx-click={JS.toggle(to: "#header_menu>div[data-dropdown]")}
-            data-dropdown
-          >
-            <.icon name="hero-bars-2-mini" />
-          </button>
+          <div>
+            <.button
+              phx-click={
+                JS.toggle(
+                  to: "div#header-menu[role=menu]",
+                  in:
+                    {"transition ease-out duration-100", "transform opacity-0 scale-95",
+                     "transform opacity-100 scale-100"},
+                  out:
+                    {"transition ease-in duration-75", "transform opacity-100 scale-100",
+                     "transform opacity-0 scale-95"}
+                )
+              }
+              id="menu-button"
+              variant={:outline}
+              aria-expanded="true"
+              aria-haspopup="true"
+            >
+              <span>Account</span>
+              <.icon name="i-lucide-chevron-down" />
+            </.button>
+          </div>
           <div
-            class="absolute top-0 right-0 z-20 hidden w-56 divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+            id="header-menu"
+            class="absolute right-0 z-20 mt-2 hidden w-56 origin-top-right divide-y divide-zinc-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none"
             role="menu"
             aria-orientation="vertical"
             aria-labelledby="menu-button"
             tabindex="-1"
-            data-dropdown
           >
-            <div :if={@signed_in} class="px-4 py-3" role="none">
+            <div class="px-4 py-3" role="none">
               <p class="text-sm" role="none">Signed in as</p>
-              <p class="truncate text-sm font-medium text-gray-900" role="none"><%= @email %></p>
+              <p class="truncate text-sm font-medium text-zinc-900" role="none">
+                {@user.email}
+              </p>
             </div>
-            <div :for={group <- @menu} class="py-1" role="none">
+            <div :for={{items, outer_index} <- Enum.with_index(@menus)} class="py-1" role="none">
               <.link
-                :for={item <- group}
-                navigate={item.to}
-                class="block px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-100 hover:text-zinc-900"
+                :for={{{name, href, badge}, index} <- Enum.with_index(items)}
+                navigate={href}
+                class="flex items-center justify-between px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-50 active:bg-zinc-100 active:text-zinc-900 active:outline-none"
                 role="menuitem"
                 tabindex="-1"
+                id={"menu-item-#{outer_index}-#{index}"}
               >
-                <%= item.label %>
+                <span>{name}</span>
+                <span
+                  :if={badge}
+                  class="inline-flex items-center gap-x-1.5 rounded-md bg-white px-2 py-1 text-xs font-medium text-gray-900 ring-1 ring-inset ring-gray-200"
+                >
+                  {badge}
+                </span>
               </.link>
             </div>
           </div>
         </div>
-        <div class="hidden max-w-screen-2xl gap-8 lg:flex xl:gap-12">
-          <.link
-            :for={item <- @menu |> Enum.flat_map(& &1)}
-            navigate={item.to}
-            class="flex items-center gap-1.5"
-          >
-            <.icon name={item.icon} />
-            <span class=""><%= item.label %></span>
-          </.link>
+      <% else %>
+        <div>
+          <.button variant={:outline} href={~p"/sign-in"}>
+            Sign in
+          </.button>
         </div>
-      </div>
-    </div>
+      <% end %>
+    </header>
     """
   end
 
   attr :class, :string, default: ""
+  attr :minimal, :boolean, default: false
 
   def footer(assigns) do
+    assigns =
+      assigns
+      |> assign(:nav_tree, [
+        {"i-lucide-tickets", "Events & Hosting", [{"Host with us", "/host-with-us"}]},
+        # {"i-lucide-headset", "Support",
+        #  [
+        #    # {"I need help", "/support/help"},
+        #    {"FAQ", "/support/faq"},
+        #    {"Contact", "/contact-us"}
+        #  ]},
+        # {"i-lucide-scale", "Legal",
+        #  [
+        #    {"Terms of service", "/terms"},
+        #    {"Privacy Policy", "/privacy"}
+        #  ]},
+        {"i-lucide-at-sign", "Social",
+         [
+           {"Instagram", "https://instagram.com/gits_za"},
+           {"X (Formerly twitter)", "https://x.com/gits_za"}
+         ]}
+      ])
+
     ~H"""
-    <div class={["p-4", @class]}>
-      <nav class="flex flex-wrap justify-center gap-8 pt-4 *:text-sm">
-        <.link navigate="/organizers">
-          Business & Organizers
-        </.link>
-        <.link :if={FunWithFlags.enabled?(:privacy)} href="/privacy">Privacy</.link>
-        <.link :if={FunWithFlags.enabled?(:terms)} href="/terms">Terms</.link>
-        <.link :if={false} href="/faq">Frequently Asked Questions</.link>
-      </nav>
-    </div>
+    <footer class="grid gap-10 bg-zinc-50 py-10 dark:bg-zinc-900">
+      <div :if={not @minimal} class="mx-auto grid w-full max-w-screen-xl gap-8 lg:grid-cols-5">
+        <div :for={{icon, heading, children} <- @nav_tree} class="space-y-2 p-4">
+          <div class="flex items-center gap-3">
+            <.icon name={icon} class="size-4 text-zinc-400" />
+            <span class="text-xs text-zinc-500 dark:text-zinc-300">{heading}</span>
+          </div>
+          <div class="relative grid gap-4 px-2 pt-4">
+            <span class="absolute bottom-0 left-2 top-2 h-full w-[1px] bg-zinc-200 dark:bg-zinc-700">
+            </span>
+            <.link
+              :for={{child, href} <- children}
+              navigate={href}
+              class="border-transparent z-10 inline-flex border-l pl-5 text-xs font-medium leading-4 dark:text-zinc-100 text-zinc-950 hover:border-zinc-500 dark:border-zinc-700 dark:hover:border-zinc-100"
+            >
+              {child}
+            </.link>
+          </div>
+        </div>
+      </div>
+      <div class="mx-auto flex w-full max-w-screen-xl">
+        <div class="space-y-4 p-2">
+          <div class="grow">
+            <.logo />
+          </div>
+          <p class="max-w-96 text-xs text-zinc-500 dark:text-zinc-300">
+            We offer better security, faster check-in, and lower costs. Whether it’s concerts, conferences, festivals, or sports events, we’ve got you covered.
+          </p>
+        </div>
+      </div>
+      <div class="mx-auto w-full max-w-screen-xl p-2">
+        <span class="text-xs text-zinc-500 dark:text-zinc-300">
+          &copy; 2024 PRPL Group | All Rights Reserved
+        </span>
+      </div>
+    </footer>
     """
   end
 
@@ -171,7 +222,71 @@ defmodule GitsWeb.CoreComponents do
   attr :id, :string, required: true
   attr :show, :boolean, default: false
   attr :on_cancel, JS, default: %JS{}
+  attr :new, :boolean, default: false
+  attr :size, :atom, default: :sm
   slot :inner_block, required: true
+
+  def modal(%{new: true} = assigns) do
+    assigns =
+      assign(
+        assigns,
+        :size_class,
+        case assigns.size do
+          :sm -> "max-w-lg"
+          :lg -> "max-w-5xl"
+        end
+      )
+
+    ~H"""
+    <div
+      id={@id}
+      phx-mounted={@show && show_modal(@id)}
+      phx-remove={hide_modal(@id)}
+      data-cancel={JS.exec(@on_cancel, "phx-remove")}
+      class="relative z-50 hidden"
+    >
+      <div
+        id={"#{@id}-bg"}
+        class="bg-black/20x fixed inset-0 bg-zinc-50/50 transition-opacity"
+        aria-hidden="true"
+      />
+      <div
+        class="fixed inset-0 overflow-y-auto"
+        aria-labelledby={"#{@id}-title"}
+        aria-describedby={"#{@id}-description"}
+        role="dialog"
+        aria-modal="true"
+        tabindex="0"
+      >
+        <div class="flex min-h-full items-end justify-center sm:items-center">
+          <div class={["w-full sm:p-6 lg:py-8", @size_class]}>
+            <.focus_wrap
+              id={"#{@id}-container"}
+              phx-window-keydown={JS.exec("data-cancel", to: "##{@id}")}
+              phx-key="escape"
+              phx-click-away={JS.exec("data-cancel", to: "##{@id}")}
+              class="relative hidden bg-white p-4 shadow-zinc-700/10 ring-1 ring-zinc-700/10 transition lg:rounded-2xl lg:shadow-lg"
+            >
+              <div class="absolute right-4 top-4">
+                <button
+                  phx-click={JS.exec("data-cancel", to: "##{@id}")}
+                  type="button"
+                  class="inline-flex flex-none items-center justify-center p-2 opacity-40 hover:opacity-60"
+                  aria-label={gettext("close")}
+                >
+                  <.icon name="i-lucide-x" />
+                </button>
+              </div>
+              <div id={"#{@id}-content"} class="p-2">
+                {render_slot(@inner_block)}
+              </div>
+            </.focus_wrap>
+          </div>
+        </div>
+      </div>
+    </div>
+    """
+  end
 
   def modal(assigns) do
     ~H"""
@@ -182,7 +297,7 @@ defmodule GitsWeb.CoreComponents do
       data-cancel={JS.exec(@on_cancel, "phx-remove")}
       class="relative z-50 hidden"
     >
-      <div id={"#{@id}-bg"} class="bg-zinc-50/90 fixed inset-0 transition-opacity" aria-hidden="true" />
+      <div id={"#{@id}-bg"} class="fixed inset-0 bg-zinc-50/90 transition-opacity" aria-hidden="true" />
       <div
         class="fixed inset-0 overflow-y-auto"
         aria-labelledby={"#{@id}-title"}
@@ -198,9 +313,9 @@ defmodule GitsWeb.CoreComponents do
               phx-window-keydown={JS.exec("data-cancel", to: "##{@id}")}
               phx-key="escape"
               phx-click-away={JS.exec("data-cancel", to: "##{@id}")}
-              class="shadow-zinc-700/10 ring-zinc-700/10 relative hidden rounded-2xl bg-white py-6 px-8 sm:p-14 shadow-lg ring-1 transition"
+              class="relative hidden rounded-2xl bg-white px-8 py-6 shadow-lg shadow-zinc-700/10 ring-1 ring-zinc-700/10 transition sm:p-14"
             >
-              <div class="absolute top-6 right-5">
+              <div class="absolute right-5 top-6">
                 <button
                   phx-click={JS.exec("data-cancel", to: "##{@id}")}
                   type="button"
@@ -211,7 +326,7 @@ defmodule GitsWeb.CoreComponents do
                 </button>
               </div>
               <div id={"#{@id}-content"}>
-                <%= render_slot(@inner_block) %>
+                {render_slot(@inner_block)}
               </div>
             </.focus_wrap>
           </div>
@@ -258,10 +373,10 @@ defmodule GitsWeb.CoreComponents do
         <.icon :if={@kind == :info} name="hero-information-circle-mini" class="h-4 w-4" />
         <.icon :if={@kind == :warn} name="hero-information-circle-mini" class="h-4 w-4" />
         <.icon :if={@kind == :error} name="hero-exclamation-circle-mini" class="h-4 w-4" />
-        <%= @title %>
+        {@title}
       </p>
-      <p class="mt-2 text-sm leading-5"><%= msg %></p>
-      <button type="button" class="group absolute top-1 right-1 p-2" aria-label={gettext("close")}>
+      <p class="mt-2 text-sm leading-5">{msg}</p>
+      <button type="button" class="group absolute right-1 top-1 p-2" aria-label={gettext("close")}>
         <.icon name="hero-x-mark-solid" class="h-5 w-5 opacity-40 group-hover:opacity-70" />
       </button>
     </div>
@@ -292,7 +407,7 @@ defmodule GitsWeb.CoreComponents do
         phx-connected={hide("#client-error")}
         hidden
       >
-        <%= gettext("Attempting to reconnect") %>
+        {gettext("Attempting to reconnect")}
         <.icon name="hero-arrow-path" class="ml-1 h-3 w-3 animate-spin" />
       </.flash>
 
@@ -304,7 +419,7 @@ defmodule GitsWeb.CoreComponents do
         phx-connected={hide("#server-error")}
         hidden
       >
-        <%= gettext("Hang in there while we get back on track") %>
+        {gettext("Hang in there while we get back on track")}
         <.icon name="hero-arrow-path" class="ml-1 h-3 w-3 animate-spin" />
       </.flash>
     </div>
@@ -337,40 +452,89 @@ defmodule GitsWeb.CoreComponents do
   def simple_form(assigns) do
     ~H"""
     <.form :let={f} for={@for} as={@as} {@rest}>
-      <%= render_slot(@inner_block, f) %>
+      {render_slot(@inner_block, f)}
     </.form>
     """
   end
 
-  @doc """
-  Renders a button.
-
-  ## Examples
-
-      <.button>Send!</.button>
-      <.button phx-click="go" class="ml-2">Send!</.button>
-  """
   attr :type, :string, default: nil
   attr :class, :string, default: nil
+  attr :size, :atom, default: nil
+  attr :href, :string, default: nil
+  attr :variant, :atom, default: nil
   attr :rest, :global, include: ~w(disabled form name value)
 
   slot :inner_block, required: true
 
   def button(assigns) do
+    assigns =
+      assign(
+        assigns,
+        :size_class,
+        case assigns.size do
+          :lg -> "py-4 px-8 text-base/6"
+          :md -> "py-3 px-6 text-sm/4"
+          :none -> "text-sm/4"
+          :sm -> "py-2 px-4 text-sm/4"
+          _ -> "py-3 px-4 text-sm/4"
+        end
+      )
+      |> assign(
+        :variant_class,
+        case assigns.variant do
+          :accent ->
+            "border-transparent text-white active:text-white bg-brand-500 hover:bg-brand-600 active:bg-brand-700  phx-submit-loading:bg-brand-100 phx-submit-loading:text-brand-400 disabled:bg-brand-100 disabled:text-brand-400"
+
+          :subtle ->
+            "border-transparent bg-zinc-50 text-zinc-500 hover:bg-zinc-100 disabled:bg-zinc-50 hover:dark:text-zinc-400 dark:bg-zinc-950 hover:dark:bg-zinc-900 active:dark:text-zinc-300 active:dark:bg-zinc-800 disabled:text-zinc-200 disabled:bg-transparent"
+
+          :surface ->
+            "border-zinc-200 bg-zinc-50 text-zinc-950 hover:bg-zinc-100"
+
+          :outline ->
+            "text-zinc-400 border-zinc-400 hover:text-zinc-500 hover:border-zinc-500 active:text-zinc-600 active:border-zinc-600 disabled:text-zinc-100 disabled:border-zinc-100 dark:disabled:text-zinc-800 dark:disabled:border-zinc-800"
+
+          :ghost ->
+            "border-transparent bg-transparent text-zinc-400 hover:text-zinc-500"
+
+          _ ->
+            "border-transparent bg-zinc-500 text-white active:text-white bg-black hover:bg-zinc-600 active:bg-zinc-700  phx-submit-loading:bg-zinc-100 phx-submit-loading:text-zinc-400 disabled:bg-zinc-100 disabled:text-zinc-400 dark:phx-loading:text-zinc-700 dark:phx-loading:bg-zinc-950 dark:disabled:text-zinc-700 dark:disabled:bg-zinc-950"
+        end
+      )
+
     ~H"""
-    <button
-      type={@type}
-      class={
-        Twix.tw([
-          "rounded-lg bg-zinc-900 px-3 py-2 hover:bg-zinc-700 phx-submit-loading:opacity-75",
-          "text-sm font-semibold leading-6 text-white active:text-white",
+    <%= if is_nil(@href) do %>
+      <button
+        type={@type}
+        class={[
+          "font-medium  border inline-flex gap-2",
+          "rounded-lg items-center justify-center",
+          "outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-200 dark:focus-visible:ring-zinc-700",
+          @size_class,
+          @variant_class,
           @class
-        ])
-      }
-      {@rest}
-    >
-      <%= render_slot(@inner_block) %>
-    </button>
+        ]}
+        {@rest}
+      >
+        {render_slot(@inner_block)}
+      </button>
+    <% else %>
+      <.link
+        navigate={@href}
+        type={@type}
+        class={[
+          "font-medium border inline-flex gap-2",
+          "rounded-lg items-center justify-center",
+          "outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-200 dark:focus-visible:ring-zinc-700",
+          @size_class,
+          @variant_class,
+          @class
+        ]}
+        {@rest}
+      >
+        {render_slot(@inner_block)}
+      </.link>
+    <% end %>
     """
   end
 
@@ -402,6 +566,8 @@ defmodule GitsWeb.CoreComponents do
   attr :id, :any, default: nil
   attr :name, :any
   attr :label, :string, default: nil
+  attr :hint, :string, default: nil
+  attr :description, :string, default: nil
   attr :value, :any
 
   attr :type, :string,
@@ -442,8 +608,8 @@ defmodule GitsWeb.CoreComponents do
       end)
 
     ~H"""
-    <div phx-feedback-for={@name}>
-      <label class="flex items-center gap-4 text-sm leading-6 text-zinc-600">
+    <div class={["max-w-3xl space-y-1 text-sm", @class]}>
+      <div phx-feedback-for={@name} class="flex items-center gap-2">
         <input type="hidden" name={@name} value="false" />
         <input
           type="checkbox"
@@ -454,65 +620,202 @@ defmodule GitsWeb.CoreComponents do
           class="rounded border-zinc-300 text-zinc-900 focus:ring-0"
           {@rest}
         />
-        <%= @label %>
-      </label>
-      <.error :for={msg <- @errors}><%= msg %></.error>
+
+        <.label for={@id}>{@label}</.label>
+        <%= if @errors == [] do %>
+          <span :if={@hint} class="text-zinc-500">&nbsp;({@hint})</span>
+        <% else %>
+          <.error :for={msg <- @errors}>{msg}</.error>
+        <% end %>
+      </div>
+      <span :if={@description} class="inline-flex text-zinc-500">{@description}</span>
     </div>
+    """
+  end
+
+  def input(%{type: "radio"} = assigns) do
+    ~H"""
+    <fieldset class={["max-w-3xl space-y-1 text-sm", @class]}>
+      <legend class="inline-flex w-full items-center justify-between text-sm font-medium">
+        <span class="block text-sm/6 font-medium text-zinc-700">{@label}</span>
+        <%= if @errors == [] do %>
+          <span :if={@hint} class="text-zinc-500">{@hint}</span>
+        <% else %>
+          <.error :for={msg <- @errors}>{msg}</.error>
+        <% end %>
+      </legend>
+
+      <div class="flex flex-wrap gap-4">
+        <label
+          :for={{item, index} <- Enum.with_index(@options, 1)}
+          for={item}
+          class={[
+            "inline-flex py-2 text-sm px-3 rounded-lg border",
+            "border-zinc-200 focus-visible:border-transparent focus-visible:ring-2 focus-visible:outline-none outline-none",
+            "has-[:checked]:ring-2 has-[:checked]:ring-zinc-600",
+            @errors == [] && "border-zinc-300 focus-visible:ring-zinc-600",
+            @errors != [] && "border-rose-400 focus-visible:border-rose-600"
+          ]}
+        >
+          <input
+            type="radio"
+            id={item}
+            name={@name}
+            value={item}
+            class="peer sr-only"
+            checked={@value == item or (index == 1 and is_nil(@value))}
+          />
+          <span class="">
+            {to_string(item)
+            |> String.split("_")
+            |> Enum.map(&String.capitalize(&1))
+            |> Enum.join(" ")}
+          </span>
+        </label>
+      </div>
+    </fieldset>
     """
   end
 
   def input(%{type: "select"} = assigns) do
     ~H"""
-    <div phx-feedback-for={@name} class={Twix.tw(["grid max-w-3xl gap-2 text-sm", @class])}>
-      <div class="flex justify-between text-zinc-600">
-        <.label for={@id}><%= @label %></.label>
+    <div class={["max-w-3xl space-y-1 text-sm", @class]}>
+      <div phx-feedback-for={@name} class="flex justify-between">
+        <.label for={@id}>{@label}</.label>
+        <%= if @errors == [] do %>
+          <span :if={@hint} class="text-zinc-500">{@hint}</span>
+        <% else %>
+          <.error :for={msg <- @errors}>{msg}</.error>
+        <% end %>
       </div>
-
       <select
         id={@id}
         name={@name}
-        class="w-full rounded-md border-zinc-300 p-4 text-sm outline-none focus:border-transparent focus:outline-none focus:ring-zinc-500"
+        class={[
+          "w-full p-3 text-sm rounded-lg",
+          "bg-transparent border border-zinc-400",
+          "text-zinc-900 dark:text-zinc-200",
+          "focus-visible:outline-none focus-visible:border-zinc-400 focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:dark:ring-zinc-700",
+          @errors == [] && "border-zinc-300 focus:ring-zinc-400",
+          @errors != [] && "border-rose-400 focus:border-rose-400"
+        ]}
         multiple={@multiple}
         {@rest}
       >
-        <option :if={@prompt} value=""><%= @prompt %></option>
-        <%= Phoenix.HTML.Form.options_for_select(@options, @value) %>
+        <option :if={@prompt} value="">{@prompt}</option>
+        {Phoenix.HTML.Form.options_for_select(@options, @value)}
       </select>
-      <.error :for={msg <- @errors}><%= msg %></.error>
+      <span :if={@description} class="inline-flex text-zinc-500">{@description}</span>
+      {render_slot(@inner_block)}
     </div>
     """
   end
 
   def input(%{type: "textarea"} = assigns) do
     ~H"""
-    <div phx-feedback-for={@name} class={Twix.tw(["", @class])}>
-      <.label for={@id}><%= @label %></.label>
+    <div phx-feedback-for={@name} class={["max-w-3xl space-y-1 text-sm", @class]}>
+      <div class="flex justify-between">
+        <.label for={@id}>{@label}</.label>
+        <%= if @errors == [] do %>
+          <span :if={@hint} class="text-zinc-500">{@hint}</span>
+        <% else %>
+          <.error :for={msg <- @errors}>{msg}</.error>
+        <% end %>
+      </div>
       <textarea
-        id={@id}
-        name={@name}
         class={[
-          "mt-2 block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6",
-          "min-h-[6rem] phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400",
-          @errors == [] && "border-zinc-300 focus:border-zinc-400",
+          "w-full text-sm p-3 rounded-lg",
+          "bg-transparent border border-zinc-400",
+          "text-zinc-900 dark:text-zinc-200",
+          "focus-visible:outline-none focus-visible:border-zinc-400 focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:dark:ring-zinc-700",
+          @errors == [] && "border-zinc-300 focus:ring-zinc-400",
           @errors != [] && "border-rose-400 focus:border-rose-400"
         ]}
+        id={@id}
+        name={@name}
         {@rest}
       ><%= Phoenix.HTML.Form.normalize_value("textarea", @value) %></textarea>
-      <.error :for={msg <- @errors}><%= @label <> " " <> msg %></.error>
+      <span :if={@description} class="inline-flex text-zinc-500">{@description}</span>
     </div>
     """
   end
 
-  # All other inputs text, datetime-local, url, password, etc. are handled here...
+  def input(%{type: "richtext"} = assigns) do
+    ~H"""
+    <div phx-feedback-for={@name} class={["max-w-3xl space-y-1 text-sm", @class]}>
+      <div class="flex justify-between">
+        <.label for={@id}>{@label}</.label>
+        <%= if @errors == [] do %>
+          <span :if={@hint} class="text-zinc-500">{@hint}</span>
+        <% else %>
+          <.error :for={msg <- @errors}>{msg}</.error>
+        <% end %>
+      </div>
+      <div
+        id={@id}
+        name={@name}
+        phx-update="ignore"
+        data-contents={@value}
+        phx-hook="QuillEditor"
+        class="quill-editor h-full"
+      >
+      </div>
+      <span :if={@description} class="inline-flex text-zinc-500">{@description}</span>
+    </div>
+    """
+  end
+
+  def input(%{type: "hidden"} = assigns) do
+    ~H"""
+    <input
+      type={@type}
+      name={@name}
+      id={@id}
+      value={Phoenix.HTML.Form.normalize_value(@type, @value)}
+      {@rest}
+    />
+    """
+  end
+
+  def input(%{type: "color"} = assigns) do
+    ~H"""
+    <div class={["max-w-3xl space-y-1 text-sm", @class]}>
+      <div phx-feedback-for={@name} class="flex justify-between">
+        <.label for={@id}>{@label}</.label>
+        <%= if @errors == [] do %>
+          <span :if={@hint} class="text-zinc-500">{@hint}</span>
+        <% else %>
+          <.error :for={msg <- @errors}>{msg}</.error>
+        <% end %>
+      </div>
+      <div class="relative inline-flex w-full items-center gap-2 rounded-lg border border-zinc-200 px-3 py-2 text-sm outline-none focus:outline-none focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-zinc-600">
+        <input type="color" name={@name} value={@value} class="absolute inset-0 size-full opacity-0" />
+        <span class="inline-flex size-5 rounded-full" style={"background-color: #{@value}"}></span>
+        <span>{@value}</span>
+      </div>
+      <span :if={@description} class="inline-flex text-zinc-500">{@description}</span>
+    </div>
+    """
+  end
+
   def input(assigns) do
     ~H"""
-    <div class={Twix.tw(["max-w-3xl space-y-2 text-sm", @class])}>
-      <div class="flex justify-between text-zinc-600">
-        <.label for={@id}><%= @label %></.label>
+    <div class={["max-w-3xl space-y-1 text-sm", @class]}>
+      <div phx-feedback-for={@name} class="flex justify-between">
+        <.label for={@id}>{@label}</.label>
+        <%= if @errors == [] do %>
+          <span :if={@hint} class="text-zinc-500">{@hint}</span>
+        <% else %>
+          <.error :for={msg <- @errors}>{msg}</.error>
+        <% end %>
       </div>
       <input
         class={[
-          "w-full rounded-md p-4 text-sm outline-none focus:border-transparent focus:outline-none ",
+          "p-3",
+          "w-full text-sm rounded-lg",
+          "bg-transparent border border-zinc-400",
+          "text-zinc-900 dark:text-zinc-200",
+          "focus-visible:outline-none focus-visible:border-zinc-400 focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:dark:ring-zinc-700",
           @errors == [] && "border-zinc-300 focus:ring-zinc-400",
           @errors != [] && "border-rose-400 focus:border-rose-400"
         ]}
@@ -522,25 +825,7 @@ defmodule GitsWeb.CoreComponents do
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
         {@rest}
       />
-      <.error :for={msg <- @errors}><%= @label <> " " <> msg %></.error>
-    </div>
-
-    <div :if={false} phx-feedback-for={@name}>
-      <.label for={@id}><%= @label %></.label>
-      <input
-        type={@type}
-        name={@name}
-        id={@id}
-        value={Phoenix.HTML.Form.normalize_value(@type, @value)}
-        class={[
-          "mt-2 block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6",
-          "phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400",
-          @errors == [] && "border-zinc-300 focus:border-zinc-400",
-          @errors != [] && "border-rose-400 focus:border-rose-400"
-        ]}
-        {@rest}
-      />
-      <.error :for={msg <- @errors}><%= @label <> " " <> msg %></.error>
+      <span :if={@description} class="inline-flex text-zinc-500">{@description}</span>
     </div>
     """
   end
@@ -554,8 +839,8 @@ defmodule GitsWeb.CoreComponents do
 
   def label(assigns) do
     ~H"""
-    <label for={@for} class={["block text-sm font-medium leading-6 text-zinc-600", @class]}>
-      <%= render_slot(@inner_block) %>
+    <label for={@for} class={["block text-sm/6 font-medium text-zinc-700 dark:text-zinc-300", @class]}>
+      {render_slot(@inner_block)}
     </label>
     """
   end
@@ -572,8 +857,8 @@ defmodule GitsWeb.CoreComponents do
   def radio_group(assigns) do
     ~H"""
     <fieldset class={["", @class]}>
-      <legend class="text-sm font-medium leading-6 text-zinc-600"><%= @label %></legend>
-      <!-- <p class="mt-1 text-sm leading-6 text-gray-600">How do you prefer to receive notifications?</p> -->
+      <legend class="text-sm font-medium leading-6 text-zinc-600">{@label}</legend>
+      <!-- <p class="mt-1 text-sm leading-6 text-zinc-600">How do you prefer to receive notifications?</p> -->
       <div class="mt-6 space-y-6 sm:flex sm:items-center sm:space-x-10 sm:space-y-0">
         <div :for={{%{value: value} = rad, idx} <- Enum.with_index(@radio)} class="flex items-center">
           <input
@@ -582,13 +867,13 @@ defmodule GitsWeb.CoreComponents do
             value={value}
             checked={value == @field.value}
             type="radio"
-            class="h-4 w-4 border-gray-300 text-zinc-600 focus:ring-zinc-600"
+            class="h-4 w-4 border-zinc-300 text-zinc-600 focus:ring-zinc-600"
           />
           <label
             for={"#{@field.id}-#{idx}"}
             class="ml-3 block text-sm font-medium leading-6 text-zinc-900"
           >
-            <%= render_slot(rad) %>
+            {render_slot(rad)}
           </label>
         </div>
       </div>
@@ -605,7 +890,7 @@ defmodule GitsWeb.CoreComponents do
     ~H"""
     <p class="flex gap-3 text-sm leading-6 text-rose-600 phx-no-feedback:hidden">
       <.icon name="hero-exclamation-circle-mini" class="mt-0.5 h-5 w-5 flex-none" />
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </p>
     """
   end
@@ -631,6 +916,7 @@ defmodule GitsWeb.CoreComponents do
 
   slot :col, required: true do
     attr :label, :string
+    attr :optional, :boolean
   end
 
   slot :action, doc: "the slot for showing user actions in the last table column"
@@ -642,100 +928,57 @@ defmodule GitsWeb.CoreComponents do
       end
 
     ~H"""
-    <div class="overflow-y-auto px-4 sm:overflow-visible sm:px-0">
-      <table class="w-[40rem] sm:w-full">
-        <thead class="text-left text-sm leading-6 text-zinc-500">
-          <tr>
-            <th :for={col <- @col} class="p-0 py-4 pr-6 font-normal"><%= col[:label] %></th>
-            <th :if={@action != []} class="relative p-0 pb-4">
-              <span class="sr-only"><%= gettext("Actions") %></span>
-            </th>
-          </tr>
-        </thead>
-        <tbody
-          id={@id}
-          phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"}
-          class="relative divide-y divide-zinc-100 border-t border-zinc-200 text-sm leading-6 text-zinc-700"
-        >
-          <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class="group hover:bg-zinc-50">
-            <td
-              :for={{col, i} <- Enum.with_index(@col)}
-              phx-click={@row_click && @row_click.(row)}
-              class={["relative p-0", @row_click && "hover:cursor-pointer"]}
-            >
-              <div class="block py-4 pr-6">
-                <span class="absolute -inset-y-px right-0 -left-4 group-hover:bg-zinc-50 sm:rounded-l-xl" />
-                <span class={["relative", i == 0 && "font-semibold text-zinc-900"]}>
-                  <%= render_slot(col, @row_item.(row)) %>
-                </span>
-              </div>
-            </td>
-            <td :if={@action != []} class="relative w-14 p-0">
-              <div class="relative whitespace-nowrap py-4 text-right text-sm font-medium">
-                <span class="absolute -inset-y-px -right-4 left-0 group-hover:bg-zinc-50 sm:rounded-r-xl" />
-                <span
-                  :for={action <- @action}
-                  class="relative ml-4 font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
-                >
-                  <%= render_slot(action, @row_item.(row)) %>
-                </span>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    """
-  end
-
-  @doc """
-  Renders a data list.
-
-  ## Examples
-
-      <.list>
-        <:item title="Title"><%= @post.title %></:item>
-        <:item title="Views"><%= @post.views %></:item>
-      </.list>
-  """
-  slot :item, required: true do
-    attr :title, :string, required: true
-  end
-
-  def list(assigns) do
-    ~H"""
-    <div class="mt-14">
-      <dl class="-my-4 divide-y divide-zinc-100">
-        <div :for={item <- @item} class="flex gap-4 py-4 text-sm leading-6 sm:gap-8">
-          <dt class="w-1/4 flex-none text-zinc-500"><%= item.title %></dt>
-          <dd class="text-zinc-700"><%= render_slot(item) %></dd>
-        </div>
-      </dl>
-    </div>
-    """
-  end
-
-  @doc """
-  Renders a back navigation link.
-
-  ## Examples
-
-      <.back navigate={~p"/posts"}>Back to posts</.back>
-  """
-  attr :navigate, :any, required: true
-  slot :inner_block, required: true
-
-  def back(assigns) do
-    ~H"""
-    <div class="mt-16">
-      <.link
-        navigate={@navigate}
-        class="text-sm font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
+    <table class="w-full">
+      <thead class="text-left text-sm leading-6 text-zinc-500">
+        <tr>
+          <th
+            :for={col <- @col}
+            class={[
+              "py-4 truncate px-2 font-normal",
+              if(col[:optional], do: "hidden lg:table-cell", else: "")
+            ]}
+          >
+            {col[:label]}
+          </th>
+          <th :if={@action != []} class="relative p-0 pb-4">
+            <span class="sr-only">{gettext("Actions")}</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody
+        id={@id}
+        phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"}
+        class="relative divide-y divide-zinc-100 border-t border-zinc-100 text-sm leading-6 text-zinc-700"
       >
-        <.icon name="hero-arrow-left-solid" class="h-3 w-3" />
-        <%= render_slot(@inner_block) %>
-      </.link>
-    </div>
+        <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class="group hover:bg-zinc-50">
+          <td
+            :for={{col, i} <- Enum.with_index(@col)}
+            phx-click={@row_click && @row_click.(row)}
+            class={[
+              "relative p-0",
+              @row_click && "hover:cursor-pointer",
+              if(col[:optional], do: "hidden lg:table-cell", else: "")
+            ]}
+          >
+            <div class="w-full px-2 py-4 hover:bg-zinc-50">
+              <span class={["relative", i == 0 && "font-semibold text-zinc-900"]}>
+                {render_slot(col, @row_item.(row))}
+              </span>
+            </div>
+          </td>
+          <td :if={@action != []} class="relative w-14 p-0">
+            <div class="relative flex gap-4 whitespace-nowrap py-4 pr-2 text-right text-sm font-medium">
+              <span
+                :for={action <- @action}
+                class="relative font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
+              >
+                {render_slot(action, @row_item.(row))}
+              </span>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
     """
   end
 
@@ -766,7 +1009,11 @@ defmodule GitsWeb.CoreComponents do
     """
   end
 
-  ## JS Commands
+  def icon(assigns) do
+    ~H"""
+    <span class={[@name, @class]}></span>
+    """
+  end
 
   def show(js \\ %JS{}, selector) do
     JS.show(js,

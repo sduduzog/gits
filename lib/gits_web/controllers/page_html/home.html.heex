@@ -1,95 +1,64 @@
-<%= if FunWithFlags.enabled?(:beta, for: @current_user) do %>
-<% else %>
-  <div class="fixed inset-0 overflow-hidden bg-zinc-50 blur-3xl">
-    <div class="size-72 fixed -top-16 -left-16 animate-pulse rounded-full bg-purple-300 opacity-50 mix-blend-multiply blur-3xl lg:size-[40rem]">
-    </div>
-    <div class="size-40 size-72 fixed top-4 left-48 animate-pulse rounded-full bg-yellow-300 opacity-50 mix-blend-multiply blur-3xl lg:left-[26rem] lg:top-96">
-    </div>
-    <div class="size-96 fixed right-4 bottom-0 animate-pulse rounded-full bg-pink-300 opacity-50 mix-blend-multiply blur-3xl lg:size-[50rem] lg:-right-40 lg:-bottom-20">
+<div class="mx-auto grid max-w-screen-xl gap-8 p-4 py-20">
+  <div>
+    <div class="relative inline-flex rounded-3xl border border-zinc-300 p-8 dark:border-zinc-500">
+      <div class="absolute -top-4 left-36 h-12 w-40 rounded-xl border border-zinc-300 bg-zinc-300/20 dark:border-zinc-500 dark:bg-zinc-400/20 animate-bounce">
+      </div>
+      <svg xmlns="http://www.w3.org/2000/svg" class="size-28 text-brand-600" viewBox="0 0 14 14">
+        <path
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="m4.656 2.255l-.39.09a1.19 1.19 0 0 1-.91 1.43a1.22 1.22 0 0 1-1.44-.92l-.78.16a.81.81 0 0 0-.61 1s.36 1.67.78 3.55m10.85-5.32a1.32 1.32 0 1 1-2.44-1l-.81-.38a.89.89 0 0 0-1.16.47l-3.36 7.91l-.44 1a.89.89 0 0 0 .47 1.16l4.06 1.73a.89.89 0 0 0 1.16-.47l3.8-8.94a.89.89 0 0 0-.43-1.13z"
+        />
+      </svg>
     </div>
   </div>
+  <h1 class="text-5xl font-semibold text-zinc-950 md:text-6xl dark:text-zinc-300">
+    Unlock <span class="text-brand-base">Unforgettable</span> Experiences
+  </h1>
+  <p class="max-w-lg text-lg text-zinc-500 dark:text-zinc-300">
+    Start planning and hosting your events today.
+  </p>
+  <div class="flex gap-8 font-medium">
+    <.button size={:lg} variant={:accent} href={~p"/host-with-us"}>
+      Host with us
+    </.button>
+  </div>
+</div>
 
-  <div class="flex min-h-screen flex-col">
-    <.header user={@current_user} />
-
-    <div class="relative grid gap-8 p-4 pt-8 md:text-center lg:pt-40">
-      <h1 class="text-5xl font-semibold leading-tight md:text-6xl">
-        Unlock Unforgettable Experiences
-      </h1>
-      <p class="mx-auto max-w-xl font-light text-zinc-800 lg:text-xl">
-        We offer better security, faster check-in, and lower costs. Whether it’s concerts, conferences, festivals, or sports events, we’ve got you covered.
-      </p>
-      <div class="flex items-center gap-8 font-medium md:mx-auto md:justify-center">
-        <.link
-          navigate={~p"/accounts/new"}
-          class="border-2 rounded-lg border-zinc-600 p-3 px-4 hover:underline"
-        >
-          Sell your event tickets
-        </.link>
-        <.link :if={FunWithFlags.enabled?(:why_choose_button)} class="hover:underline">
-          Why choose <span class="font-black italic text-zinc-700">GiTS</span>?
-        </.link>
-      </div>
-    </div>
-
-    <div class="relative w-full bg-gradient-to-t from-white to-transparent py-0">
-      <.simple_form
-        :if={FunWithFlags.enabled?(:search_bar)}
-        action="/events"
-        for={%{}}
-        method="get"
-        class="mx-auto flex max-w-screen-lg items-center p-4 gap-2"
+<div :if={Enum.any?(@recent_events)} class="mx-auto grid max-w-screen-xl gap-4 py-10">
+  <h2 class="px-4 font-semibold text-zinc-700">Recently viewed</h2>
+  <div class="flex items-start gap-4 overflow-auto whitespace-nowrap px-4 pb-2 lg:grid lg:grid-cols-4 lg:gap-8">
+    <div
+      :for={event <- @recent_events}
+      class="grid w-72 shrink-0 gap-2 overflow-hidden p-0.5 lg:w-auto"
+    >
+      <.link
+        navigate={"/events/#{event.public_id}"}
+        class="aspect-[3/2] w-full overflow-hidden rounded-xl bg-red-100 focus-visible:ring-2 focus-visible:ring-zinc-200 lg:rounded-2xl"
       >
-        <input
-          name="q"
-          type="search"
-          class="bg-white/50 w-full rounded-md border-none bg-zinc-50 p-4 text-sm outline-none ring-1 ring-zinc-200 focus-visible:ring-zinc-400"
-          placeholder="Search for an event, city, etc"
+        <img
+          src={Gits.Bucket.get_image_url(event.poster)}
+          alt={event.name}
+          class="size-full scale-125 bg-green-200"
         />
-      </.simple_form>
-      <div class="min-h-96 mx-auto max-w-screen-lg pt-8">
-        <h2 :if={Enum.any?(@events)} class="px-4 text-xl font-medium">Coming up</h2>
-        <div class="flex gap-8 overflow-x-auto p-4">
-          <.link
-            :for={event <- @events}
-            navigate={~p"/events/#{event.masked_id}"}
-            class="aspect-[4/5] group relative shrink-0 overflow-hidden rounded-2xl shadow-sm w-56"
-          >
-            <img
-              loading="eager"
-              src={Gits.Bucket.get_listing_image_path(event.account_id, event.id)}
-              alt=""
-              class="size-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-110"
-            />
-
-            <GitsWeb.EventLive.EventComponents.floating_event_date
-              day={event.starts_at |> Timex.format!("%e", :strftime)}
-              month={event.starts_at |> Timex.format!("%b", :strftime)}
-            />
-
-            <div class="absolute inset-x-2 bottom-2 space-y-1.5 rounded-xl bg-white p-2 px-2.5 shadow-md">
-              <span class="p0.5 line-clamp-2 text-sm font-medium"><%= event.name %></span>
-              <div class="flex items-center justify-between gap-1">
-                <span class="flex items-center gap-1 truncate text-sm">
-                  <.icon name="hero-map-pin-micro" class="shrink-0 opacity-50" />
-                  <span :if={not is_nil(event.address)} class="truncate">
-                    <%= event.address.city %>
-                  </span>
-                </span>
-                <span
-                  :if={not is_nil(event.minimum_ticket_price)}
-                  class="block whitespace-nowrap rounded-lg border p-1 px-1.5 text-sm font-medium"
-                >
-                  <%= resolve_price_summary_label(event) %>
-                </span>
-              </div>
-            </div>
-          </.link>
+      </.link>
+      <div class="space-y-1 truncate">
+        <div class="flex justify-between gap-2 font-medium text-zinc-950">
+          <span class="shrink-0 text-sm/4">28 Aug, 12:30 PM</span>
+          <span class="truncate text-sm/4">{event.venue.name}</span>
+        </div>
+        <h3 class="text-lg/5 font-semibold text-zinc-600">{event.name}</h3>
+        <div class="flex items-center gap-2">
+          <span class="inline-flex items-center gap-x-1.5 rounded-md px-2 py-1 text-xs font-medium text-gray-900 ring-1 ring-inset ring-gray-200">
+            R {event.minimum_ticket_price |> Gits.Currency.format()}
+            <span :if={event.ticket_prices_vary?}>&plus;</span>
+          </span>
+          <span>&bull;</span>
+          <span class="shrink-0 text-sm/4 text-zinc-500">{event.host.name}</span>
         </div>
       </div>
     </div>
-    <div class="relative grow bg-white p-6">
-      <.footer />
-    </div>
   </div>
-<% end %>
+</div>

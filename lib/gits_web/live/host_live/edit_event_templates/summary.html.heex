@@ -1,0 +1,15 @@
+<h2 class="text-lg/7 font-semibold text-gray-900">Summary</h2>
+<p class="mt-1 mb-4 text-sm/5 text-gray-600"></p>
+
+<div class="grid gap-8 max-w-screen-sm">
+  <div :if={@payout_details_required} class="text-sm/6 flex border p-4 gap-4 rounded-xl">
+    <.icon name="i-lucide-triangle-alert" class="text-orange-500 mt-1" />
+    <div class="grid grow">
+      <span class="font-medium">Payout details required!</span>
+      <span></span>
+    </div>
+    <.button size={:none} href={@host_settings_payouts_path} variant={:ghost}>
+      <span>Update payout details &rarr;</span>
+    </.button>
+  </div>
+</div>

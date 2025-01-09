@@ -1,26 +1,21 @@
 defmodule GitsWeb.EmailHTML do
   use GitsWeb, :html
   use GitsWeb, :verified_routes
-  use PhoenixHTMLHelpers
-  alias Gits.EmailTemplates
 
-  def test(_assigns) do
-    # template =
-    #   EmailTemplates.PasswordReset.render(
-    #     title: "Reset your password",
-    #     user_name: "Sdu",
-    #     base_url: Application.get_env(:gits, :base_url),
-    #     url: "/foo"
-    #   )
-    subject = "Complimentary ticket to The ZATechRadio 📻 Meet: Rooftop Edition"
+  embed_templates "email_html/*"
 
-    template =
-      Gits.EmailTemplates.TicketInvite.render(
-        title: subject,
-        base_url: Application.get_env(:gits, :base_url),
-        url: "/foo"
-      )
+  def layout(assigns) do
+    ~H"""
+    <!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>MyApp Email</title>
+      </head>
 
-    raw(template)
+      <body><%= @inner_content %></body>
+    </html>
+    """
   end
 end

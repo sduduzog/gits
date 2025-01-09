@@ -1,0 +1,37 @@
+<%= if @order.state == :completed do %>
+  <h2 class="text-lg/7 font-semibold text-zinc-900">Request refund and return tickets</h2>
+  <p class="text-sm/5 text-zinc-600">Order #{@order.number}</p>
+  <p class="text-sm/5">
+    A refund of R {@order.refund_value} will be processsed and all tickets for this order will be invalid and will not be usable at the event for access.
+  </p>
+
+  <div>
+    <.button phx-click={JS.push("refund_requested") |> show_modal("confirm-refund-request")}>
+      <span>Request Refund</span>
+    </.button>
+  </div>
+  <.modal id="confirm-refund-request" show={@order.requested_refund_at}>
+    <div class="grid gap-4">
+      <h3 class="text-lg/4 font-semibold mt-1">Refund Order #{@order.number}</h3>
+      <div class="text-sm text-zinc-500 space-y-2">
+        <p></p>
+      </div>
+      <.form :let={f} for={@form} class="grid gap-4" phx-submit="submit">
+        <.input type="text" field={f[:otp]} label="One time pin (OTP)" />
+        <div class="flex gap-4">
+          <.button>
+            <span>Refund</span>
+          </.button>
+
+          <.button variant={:ghost}>
+            <span>Resend OTP</span>
+          </.button>
+        </div>
+      </.form>
+    </div>
+  </.modal>
+<% else %>
+  <h2 class="text-lg/7 font-semibold text-zinc-900">
+    The refund has been actioned. Please check your emails for further progress
+  </h2>
+<% end %>

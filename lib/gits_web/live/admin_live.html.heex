@@ -1,0 +1,28 @@
+<div class="p-4 grid lg:grid-cols-2">
+  <div :if={false} class="col-span-full">
+    <.link href="">Overview</.link>
+  </div>
+  <div class="border rounded-xl">
+    <.table id="events" rows={@hosts}>
+      <:col :let={host} label="Name">{host.name}</:col>
+      <:col :let={host} label="Handle">{host.handle}</:col>
+      <:col :let={host} label="State">
+        <span class="inline-flex items-center gap-x-1.5 rounded-md px-2 py-1 text-xs font-medium text-gray-900 ring-1 ring-inset ring-gray-200 capitalize">
+          {host.state}
+        </span>
+      </:col>
+      <:action :let={host}>
+        <.button
+          :if={host.state == :pending}
+          size={:none}
+          variant={:subtle}
+          class="p-2"
+          phx-click="verify"
+          phx-value-id={host.id}
+        >
+          <span>Verify</span>
+        </.button>
+      </:action>
+    </.table>
+  </div>
+</div>

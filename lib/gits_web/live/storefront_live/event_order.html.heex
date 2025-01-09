@@ -1,0 +1,263 @@
+<div class="mx-auto grid max-w-screen-xl items-start gap-4 gap-x-12 lg:grid-cols-[minmax(auto,48rem)_1fr] lg:gap-6">
+  <div class="space-y-4 p-2 lg:row-span-3">
+    <%= if @order_state == :anonymous do %>
+      <div class="flex items-center gap-4">
+        <.button size={:none} class="p-2" onclick="history.back()" variant={:outline}>
+          <.icon name="i-lucide-chevron-left" />
+        </.button>
+        <h3 class="text-lg font-semibold lg:col-span-full">Who are the tickets for?</h3>
+      </div>
+      <p :if={false} class=" text-sm text-zinc-700">
+        Please provide your email address to receive your order confirmation for the {@event.name} tickets.
+      </p>
+
+      <p class=" text-sm text-zinc-700">
+        We use your email address to send you important details about your purchase, the event and to keep your tickets safe.
+      </p>
+
+      <.form :let={f} phx-submit="open" for={@open_form} class="grid items-center max-w-96 gap-4">
+        <.input field={f[:email]} type="email" label="Email address" />
+        <div class="flex">
+          <.button>
+            <span>Continue</span>
+          </.button>
+        </div>
+      </.form>
+    <% end %>
+    <%= if @order_state == :open do %>
+      <div class="flex items-center gap-4">
+        <.button size={:none} class="p-2" onclick="history.back()" variant={:outline}>
+          <.icon name="i-lucide-chevron-left" />
+        </.button>
+        <h3 class="text-lg font-semibold lg:col-span-full">Get Tickets</h3>
+      </div>
+      <div class="grid items-start gap-4 lg:grid-cols-2">
+        <div :for={type <- @ticket_types} class="border rounded-xl p-4">
+          <GitsWeb.EventComponents.ticket_card
+            color={type.color}
+            name={type.name}
+            id={type.id}
+            tags={type.tags}
+          >
+            <div :if={type.on_sale?} class="flex items-center gap-2">
+              <.form :let={f} for={@remove_ticket_form} phx-submit="remove_ticket">
+                <.inputs_for :let={tt} field={f[:ticket_type]}>
+                  <.input field={tt[:id]} value={type.id} id={"remove_#{type.id}"} type="hidden" />
+
+                  <.inputs_for :let={t} field={tt[:ticket]}>
+                    <.input
+                      :if={Enum.any?(type.tickets)}
+                      field={t[:id]}
+                      value={List.first(type.tickets || []) |> Map.get(:id)}
+                      id={"remove_#{type.id}_ticket"}
+                      type="hidden"
+                    />
+                  </.inputs_for>
+                </.inputs_for>
+
+                <.button
+                  size={:none}
+                  disabled={not type.can_remove_ticket?}
+                  variant={:subtle}
+                  class="lg:p-2.5 p-3"
+                >
+                  <.icon name="i-lucide-minus" />
+                </.button>
+              </.form>
+
+              <span class="w-5 tabular-nums text-base/4 text-center font-medium">
+                {Enum.count(type.tickets)}
+              </span>
+
+              <.form :let={f} for={@add_ticket_form} phx-submit="add_ticket">
+                <.inputs_for :let={tt} field={f[:ticket_type]}>
+                  <.input field={tt[:id]} value={type.id} id={type.id} type="hidden" />
+
+                  <.inputs_for :let={t} field={tt[:ticket]}>
+                    <.inputs_for :let={o} field={t[:order]}>
+                      <.input
+                        field={o[:id]}
+                        id={"#{type.id}_ticket"}
+                        value={@order_id}
+                        type="hidden"
+                      />
+                    </.inputs_for>
+                  </.inputs_for>
+                </.inputs_for>
+                <.button
+                  disabled={not type.can_add_ticket?}
+                  size={:none}
+                  variant={:subtle}
+                  class="lg:p-2.5 p-3"
+                >
+                  <.icon name="i-lucide-plus" />
+                </.button>
+              </.form>
+            </div>
+          </GitsWeb.EventComponents.ticket_card>
+        </div>
+      </div>
+      <.form
+        :let={f}
+        phx-submit="process"
+        phx-change="validate"
+        for={@process_form}
+        class="sticky bottom-0 top-0 z-20 grid items-center gap-4 lg:bottom-auto lg:top-6 lg:border-none lg:shadow-none"
+      >
+        <.input type="hidden" field={f[:total]} value={@total} />
+        <div class="flex">
+          <.button disabled={not @can_process_order?}>
+            <span>Continue</span>
+          </.button>
+        </div>
+      </.form>
+    <% end %>
+
+    <%= if @order_state == :processed do %>
+      <div class="flex items-center gap-4">
+        <.form :let={f} phx-submit="reopen" for={@reopen_form}>
+          <.button size={:none} class="p-2" variant={:outline}>
+            <.icon name="i-lucide-chevron-left" />
+          </.button>
+        </.form>
+
+        <h3 class="text-lg font-semibold lg:col-span-full">Confirm your order details</h3>
+      </div>
+
+      <p class=" text-sm text-zinc-700">
+        You're almost done!
+      </p>
+    <% end %>
+    <%= if @order_state == :cancelled do %>
+      <div class="flex items-center gap-4">
+        <.button size={:none} class="p-2" onclick="history.back()" variant={:outline}>
+          <.icon name="i-lucide-chevron-left" />
+        </.button>
+
+        <h3 class="text-lg font-semibold lg:col-span-full">Order Cancelled</h3>
+      </div>
+
+      <p class="text-sm text-zinc-700">
+        Your order was not completed within the expected timeframe, and as a result, it has been automatically cancelled. This helps us ensure that our inventory and services remain up-to-date and available for all our customers.
+      </p>
+
+      <p class="text-sm text-zinc-700">
+        Tickets that were added to this order have now been released back to availability. If you have already made a payment towards this order, a full refund will be processed.
+      </p>
+
+      <p class="text-sm text-zinc-700">
+        If you have any questions or need assistance, please don’t hesitate to reach out to our customer support team.
+      </p>
+    <% end %>
+
+    <%= if @order_state == :refunded do %>
+      <div class="flex items-center gap-4">
+        <.button size={:none} class="p-2" onclick="history.back()" variant={:outline}>
+          <.icon name="i-lucide-chevron-left" />
+        </.button>
+
+        <h3 class="text-lg font-semibold lg:col-span-full">Order Refunded</h3>
+      </div>
+
+      <p class=" text-sm text-zinc-700">
+        This order has been refunded.
+      </p>
+    <% end %>
+
+    <%= if @order_state == :completed do %>
+      <div class="flex items-center gap-4">
+        <.button size={:none} class="p-2" onclick="history.back()" variant={:outline}>
+          <.icon name="i-lucide-chevron-left" />
+        </.button>
+
+        <h3 class="text-lg font-semibold lg:col-span-full">Order Complete</h3>
+      </div>
+
+      <p class=" text-sm text-zinc-700">
+        Your order has been placed successfully. We've also sent a confirmation email with these details to your email address.
+      </p>
+    <% end %>
+
+    <%= if @order_state == :confirmed do %>
+      <div class="flex items-center gap-4">
+        <.button size={:none} class="p-2" onclick="history.back()" variant={:outline}>
+          <.icon name="i-lucide-chevron-left" />
+        </.button>
+
+        <h3 class="text-lg font-semibold lg:col-span-full">Order Confirmed</h3>
+      </div>
+
+      <p class=" text-sm text-zinc-700">
+        Your order has been confirmed. You will shortly be redirected to a payment page. If you are not redirected, please use this link to continue to payments
+      </p>
+    <% end %>
+  </div>
+
+  <div class="p-2">
+    <div class="grid max-w-lg grow gap-8 rounded-xl bg-zinc-100/70 p-4 lg:px-8 lg:py-10">
+      <h3 class="text-lg font-semibold lg:col-span-full">Order Summary</h3>
+      <dl class="grid gap-6 text-sm/6">
+        <div :if={@order_email} class="grid gap-1">
+          <dt class="font-medium text-gray-600">Customer</dt>
+          <dd class="text-zinc-500">
+            {@order_email}
+          </dd>
+        </div>
+
+        <div class="grid gap-1">
+          <dt class="font-medium text-gray-600">Event</dt>
+          <dd class="text-gray-500">
+            {@event_name}
+          </dd>
+        </div>
+
+        <%= if Enum.any?(@ticket_types) do %>
+          <div class="grid gap-1">
+            <dt class="font-medium text-gray-600">Tickets</dt>
+            <dd class="divide-y text-gray-500">
+              <%= for type <- @ticket_types do %>
+                <div :if={Enum.any?(type.tickets)} class="py-2">
+                  <div class="flex justify-between">
+                    <span>{Enum.count(type.tickets)} &times; {type.name}</span>
+                    <span class="font-medium text-zinc-800">
+                      R {Decimal.mult(type.price, Enum.count(type.tickets))}
+                    </span>
+                  </div>
+                </div>
+              <% end %>
+            </dd>
+          </div>
+        <% end %>
+      </dl>
+
+      <div class="grid text-right">
+        <span>Total payment</span>
+        <span class="text-2xl font-medium">
+          R {@total}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <%= if @order_state == :processed do %>
+    <.form :let={f} phx-submit="confirm" for={@confirm_form} class="grid  items-center gap-4 p-2">
+      <div class="flex">
+        <.button>
+          <span>Confirm Order</span>
+        </.button>
+      </div>
+    </.form>
+  <% end %>
+
+  <%= if @order_state == :completed do %>
+    <div class="flex gap-4 p-2">
+      <.button phx-click={JS.navigate(~p"/my/tickets?order=#{@order_id}")}>
+        <span>View tickets</span>
+      </.button>
+
+      <.button phx-click={JS.navigate(~p"/refund?order=#{@order_id}")} variant={:subtle}>
+        <span>Return tickets</span>
+      </.button>
+    </div>
+  <% end %>
+</div>

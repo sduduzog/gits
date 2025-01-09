@@ -1,0 +1,169 @@
+<.flash_group flash={@flash} />
+<% navigation_items = [
+  %{
+    label: "Dashboard",
+    icon: "i-lucide-layout-dashboard",
+    current: Enum.any?([GitsWeb.HostLive.Dashboard], &(&1 == @socket.view)),
+    href: ~p"/hosts/#{@host_handle}/dashboard"
+  },
+  %{
+    label: "Events",
+    icon: "i-lucide-calendar-range",
+    current:
+      Enum.any?(
+        [GitsWeb.HostLive.ListEvents, GitsWeb.HostLive.ViewEvent, GitsWeb.HostLive.EditEvent],
+        &(&1 == @socket.view)
+      ),
+    href: ~p"/hosts/#{@host_handle}/events"
+  },
+  %{
+    label: "Orders",
+    icon: "hero-banknotes",
+    current:
+      Enum.any?(
+        [GitsWeb.HostLive.Orders],
+        &(&1 == @socket.view)
+      ),
+    href: ~p"/hosts/#{@host_handle}/orders"
+  },
+  %{
+    label: "Support",
+    icon: "i-lucide-headset",
+    current: Enum.any?([GitsWeb.HostLive.SupportBoard], &(&1 == @socket.view)),
+    href: ~p"/hosts/#{@host_handle}/support"
+  },
+  %{
+    label: "Settings",
+    icon: "i-lucide-settings",
+    current: Enum.any?([GitsWeb.HostLive.Settings], &(&1 == @socket.view)),
+    href: ~p"/hosts/#{@host_handle}/settings"
+  }
+] %>
+
+<% menus = [
+  [{"Settings", ~p"/settings/profile", false}],
+  [{"Sign out", ~p"/sign-out", false}]
+] %>
+
+<div class="mx-auto flex min-h-dvh w-full max-w-screen-2xl gap-8">
+  <aside
+    class="fixed inset-0 z-10 hidden w-full flex-col gap-6 lg:static lg:flex lg:max-w-64"
+    id="sidebar"
+  >
+    <div class="flex items-center justify-between p-2">
+      <div class="inline-flex grow">
+        <.logo />
+      </div>
+      <.button
+        size={:none}
+        variant={:ghost}
+        class="p-2 lg:hidden"
+        phx-click={JS.hide(to: "aside#sidebar")}
+      >
+        <.icon name="hero-x-mark" />
+      </.button>
+    </div>
+    <nav class="flex w-full flex-col gap-2">
+      <.link
+        :for={i <- navigation_items}
+        navigate={i.href}
+        replace={true}
+        aria-selected={"#{i.current}"}
+        class={[
+          "gap-2 inline-flex pr-4 pl-1 lg:px-0 group items-center text-zinc-500",
+          if(i.current,
+            do: "is-active ",
+            else: ""
+          )
+        ]}
+      >
+        <span class="h-6 w-1 rounded bg-zinc-500 opacity-0 group-aria-selected:opacity-100">
+        </span>
+        <div class="flex w-full items-center gap-3 rounded-lg px-2 py-4 group-hover:bg-zinc-50 group-[.is-active]:bg-zinc-100 group-[.is-active]:text-zinc-950 lg:py-2">
+          <.icon name={i.icon} class="size-5 shrink-0" />
+          <span class="text-sm font-semibold">{i.label}</span>
+        </div>
+      </.link>
+    </nav>
+  </aside>
+  <main class="mx-auto relative flex max-h-dvh w-full max-w-screen-xl grow flex-col gap-5 overflow-auto">
+    <div class="absolute right-0 flex items-center justify-between gap-4 p-2">
+      <.button
+        size={:none}
+        variant={:ghost}
+        class="p-2 lg:hidden"
+        phx-click={JS.show(to: "aside#sidebar", display: "flex")}
+      >
+        <.icon name="hero-bars-3" />
+      </.button>
+
+      <div
+        class="relative grid"
+        phx-click-away={
+          JS.hide(
+            to: "div#header-menu[role=menu]",
+            transition:
+              {"transition ease-in duration-75", "transform opacity-100 scale-100",
+               "transform opacity-0 scale-95"}
+          )
+        }
+      >
+        <button
+          size={:none}
+          variant={:surface}
+          phx-click={
+            JS.toggle(
+              to: "div#header-menu[role=menu]",
+              in:
+                {"transition ease-out duration-100", "transform opacity-0 scale-95",
+                 "transform opacity-100 scale-100"},
+              out:
+                {"transition ease-in duration-75", "transform opacity-100 scale-100",
+                 "transform opacity-0 scale-95"}
+            )
+          }
+          id="menu-button"
+          class="size-9 rounded-full bg-zinc-200 overflow-hidden"
+        >
+          <img src={Gits.Bucket.get_image_url(@current_user.avatar)} alt={@current_user.name} />
+        </button>
+        <div
+          id="header-menu"
+          class="absolute right-0 top-full z-20 mt-2 hidden w-56 origin-top-right divide-y divide-zinc-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none"
+          role="menu"
+          aria-orientation="vertical"
+          aria-labelledby="menu-button"
+          tabindex="-1"
+        >
+          <div :if={@current_user} class="px-4 py-3" role="none">
+            <p class="text-sm" role="none">Signed in as</p>
+            <p class="truncate text-sm font-medium text-zinc-900" role="none">
+              {@current_user.email}
+            </p>
+          </div>
+          <div :for={{items, outer_index} <- Enum.with_index(menus)} class="py-1" role="none">
+            <.link
+              :for={{{name, href, badge}, index} <- Enum.with_index(items)}
+              navigate={href}
+              class="flex items-center justify-between px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-50 active:bg-zinc-100 active:text-zinc-900 active:outline-none"
+              role="menuitem"
+              tabindex="-1"
+              id={"menu-item-#{outer_index}-#{index}"}
+            >
+              <span>{name}</span>
+              <span
+                :if={badge}
+                class="inline-flex items-center gap-x-1.5 rounded-md bg-white px-2 py-1 text-xs font-medium text-gray-900 ring-1 ring-inset ring-gray-200"
+              >
+                {badge}
+              </span>
+            </.link>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {@inner_content}
+  </main>
+</div>
+<.footer />

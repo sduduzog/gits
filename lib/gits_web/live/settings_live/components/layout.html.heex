@@ -1,0 +1,22 @@
+<h1 class="mx-auto max-w-screen-xl p-2 text-xl font-semibold">Settings</h1>
+<div class="mx-auto max-w-screen-xl space-y-4 p-2 pb-16 lg:space-y-16">
+  <div class="grid items-start gap-8 lg:grid-cols-[theme(space.48)_1fr] lg:gap-0">
+    <div class="flex gap-4 lg:grid">
+      <.link
+        :for={
+          {name, icon} <-
+            [{:profile, "i-lucide-user"}]
+        }
+        navigate={Routes.settings_profile_path(@socket, :index)}
+        aria-selected={"#{name == @live_action}"}
+        class="group flex items-center gap-2  border-b-2 border-transparent py-2 font-medium text-zinc-500 hover:text-zinc-950 aria-selected:border-zinc-950 aria-selected:text-zinc-950 lg:rounded-lg lg:border-none lg:p-2 lg:hover:bg-zinc-50"
+      >
+        <.icon name={icon} class="hidden lg:inline" />
+        <span class="font-medium capitalize">{name}</span>
+      </.link>
+    </div>
+    <div class="mx-auto max-w-screen-sm w-full space-y-8">
+      {render_slot(@inner_block)}
+    </div>
+  </div>
+</div>

@@ -1,9 +1,8 @@
 defmodule GitsWeb.Router do
   use GitsWeb, :router
-  use AshAuthentication.Phoenix.Router
 
   import Phoenix.LiveDashboard.Router
-  import Plug.BasicAuth
+  import GitsWeb.AuthPlug
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -13,10 +12,24 @@ defmodule GitsWeb.Router do
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug :load_from_session
+    plug :ensure_viewer_id
   end
 
-  pipeline :office do
-    plug :basic_auth, username: "sdu", password: "cheese and onions"
+  defp ensure_viewer_id(conn, _opts) do
+    if get_session(conn, :viewer_id) do
+      conn
+    else
+      viewer_id = :crypto.strong_rand_bytes(20) |> Base.encode64()
+      put_session(conn, :viewer_id, viewer_id)
+    end
+  end
+
+  defp basic_auth(conn, _opts) do
+    Plug.BasicAuth.basic_auth(conn, Application.get_env(:gits, :basic_auth))
+  end
+
+  pipeline :admin do
+    plug :basic_auth
   end
 
   pipeline :api do
@@ -25,107 +38,123 @@ defmodule GitsWeb.Router do
 
   scope "/", GitsWeb do
     pipe_through :browser
-
-    sign_out_route AuthController
-    auth_routes_for Gits.Auth.User, to: AuthController
-
     get "/", PageController, :home
     get "/events", PageController, :events
     get "/settings", PageController, :settings
     get "/organizers", PageController, :organizers
+    get "/host-with-us", PageController, :host
     get "/privacy", PageController, :privacy
     get "/terms", PageController, :terms
-    get "/faq", PageController, :faq
+    get "/help", PageController, :help
+    get "/support/faq", PageController, :faq
+    get "/contact-us", PageController, :contact_us
     get "/assets/:filename", PageController, :assets
     get "/healthz", PageController, :healthz
     get "/beta", PageController, :beta
+    get "/orders/paystack/callback", OrderController, :paystack_callback
 
-    resources "/search", SearchController, only: [:index]
-    resources "/accounts", AccountController, only: [:index, :new, :create]
+    resources "/accounts", AccountController, only: [:index]
 
     get "/sign-in", AuthController, :sign_in
-    get "/register", AuthController, :register
-    get "/forgot-password", AuthController, :forgot_password
-    post "/resend-verification", AuthController, :resend_verification_email
-    get "/email-not-verified", AuthController, :email_not_verified
-    sign_out_route AuthController
-    auth_routes_for Gits.Auth.User, to: AuthController
+    get "/sign-out", AuthController, :sign_out
 
     get "/bucket/*keys", PageController, :bucket
 
-    ash_authentication_live_session :authentication_optional,
+    live_session :user_optional, on_mount: {GitsWeb.LiveUserAuth, :live_user_optional} do
+      live "/search", SearchLive, :index
+      live "/tickets/:public_id", TicketLive, :show
+      live "/t/:public_id", TicketLive, :show
+      live "/refund", RefundLive, :index
+    end
+
+    live_session :user_required, on_mount: {GitsWeb.LiveUserAuth, :live_user_required} do
+      live "/settings/profile", SettingsLive.Profile, :index
+      live "/hosts/get-started", HostLive.Onboarding, :get_started
+      live "/hosts/:handle/dashboard", HostLive.Dashboard, :overview
+      live "/hosts/:handle/events/published", HostLive.ListEvents, :published
+      live "/hosts/:handle/events/drafts", HostLive.ListEvents, :drafts
+      live "/hosts/:handle/events/archived", HostLive.ListEvents, :archived
+      live "/hosts/:handle/events", HostLive.ListEvents, :all
+      live "/hosts/:handle/events/create-new", HostLive.EditEvent, :details
+      live "/hosts/:handle/events/:public_id", HostLive.ViewEvent, :overview
+      live "/hosts/:handle/events/:public_id/attendees", HostLive.ViewEvent, :attendees
+      live "/hosts/:handle/events/:public_id/edit/details", HostLive.EditEvent, :details
+      live "/hosts/:handle/events/:public_id/edit/location", HostLive.EditEvent, :location
+      live "/hosts/:handle/events/:public_id/edit/live-stream", HostLive.EditEvent, :live_stream
+      live "/hosts/:handle/events/:public_id/edit/description", HostLive.EditEvent, :description
+      live "/hosts/:handle/events/:public_id/edit/media", HostLive.EditEvent, :media
+      live "/hosts/:handle/events/:public_id/edit/tickets", HostLive.EditEvent, :tickets
+      live "/hosts/:handle/events/:public_id/edit/tickets/add", HostLive.EditTicket, :add_ticket
+
+      live "/hosts/:handle/events/:public_id/edit/tickets/:ticket_id",
+           HostLive.EditTicket,
+           :edit_ticket
+
+      live "/hosts/:handle/events/:public_id/scanner", HostLive.Scanner, :index
+      live "/hosts/:handle/events/:public_id/scanner/:camera", HostLive.Scanner, :scan
+
+      live "/hosts/:handle/orders", HostLive.Orders, :index
+
+      live "/hosts/:handle/venues/create-new", HostLive.EditVenue, :create
+      live "/hosts/:handle/support", HostLive.SupportBoard, :index
+
+      live "/hosts/:handle/settings", HostLive.Settings, :index
+      live "/hosts/:handle/settings/general", HostLive.Settings, :general
+      live "/hosts/:handle/settings/billing", HostLive.Settings, :billing
+    end
+  end
+
+  scope "/events/:public_id", GitsWeb do
+    pipe_through :browser
+
+    live_session :events_authentication_optional,
       on_mount: {GitsWeb.LiveUserAuth, :live_user_optional} do
-      live "/events/:id", EventLive.Feature
-      live "/ticket-invite/:invite_id", EventLive.Invite
+      live "/", StorefrontLive.EventListing, :index
+      live "/order/:order_id", StorefrontLive.EventOrder, :index
     end
+  end
 
-    ash_authentication_live_session :authentication_required,
-      on_mount: {GitsWeb.LiveUserAuth, :live_user_required} do
-      live "/events/:id/tickets/:basket_id", EventLive.Tickets
-      live "/events/:id/tickets/:basket_id/summary", EventLive.TicketsSummary
-      live "/events/:id/tickets/:basket_id/checkout", EventLive.Checkout
-
-      live "/attendees/scanner/:account_id/:event_id", ScanAttendeeLive
-      live "/accounts/:slug", DashboardLive.Home
-      live "/accounts/:slug/events", DashboardLive.Events
-      live "/accounts/:slug/events/new", DashboardLive.ManageEvent
-      live "/accounts/:slug/events/:event_id", DashboardLive.Event
-      live "/accounts/:slug/events/:event_id/edit", DashboardLive.ManageEvent
-      live "/accounts/:slug/events/:event_id/scan", DashboardLive.ScanTickets
-
-      live "/accounts/:slug/events/:event_id/tickets/:ticket_id/invites",
-           DashboardLive.TicketInvites
-
-      live "/accounts/:slug/events/:event_id/tickets/:ticket_id/invites/email",
-           DashboardLive.TicketInvitesViaEmail
-
-      live "/accounts/:slug/events/:event_id/address", DashboardLive.UpdateEventAddress
-      live "/accounts/:slug/events/:event_id/upload-graphics", DashboardLive.UploadGraphic
-      live "/accounts/:slug/events/:event_id/attendees", DashboardLive.Attendees, :list
-      live "/accounts/:slug/events/:event_id/attendees/scan", DashboardLive.Attendees, :scan
-      live "/accounts/:slug/team", DashboardLive.Team
-      live "/accounts/:slug/team/invites/new", DashboardLive.TeamInviteNewMember
-      live "/accounts/:slug/team/invites/:invite_id", DashboardLive.TeamInvite
-      live "/accounts/:slug/settings", DashboardLive.Settings
-      live "/accounts/:slug/settings/paystack", DashboardLive.SetupPaystack
-      live "/accounts/:slug/test", DashboardLive.Dashboard
-
-      live "/portal/support", SupportLive
-      live "/portal/support/users", SupportLive, :users
-      live "/portal/support/jobs", SupportLive, :jobs
-      live "/portal/support/accounts", SupportLive, :accounts
-      live "/portal/support/events", SupportLive, :events
-    end
-
-    ash_authentication_live_session :authentication_forbidden,
-      on_mount: {GitsWeb.LiveUserAuth, :live_no_user} do
-      live "/password-reset/:token", AuthLive.PasswordReset
-    end
-
-    ash_authentication_live_session :authentication_redirect,
-      on_mount: {GitsWeb.LiveUserAuth, :live_redirect} do
-    end
+  scope "/auth" do
+    pipe_through :browser
+    forward "/", GitsWeb.AuthPlug
   end
 
   scope "/my", GitsWeb do
     pipe_through :browser
-    get "/profile", UserController, :profile
-    get "/profile/settings", UserController, :settings
-    get "/tickets", UserController, :tickets
-    get "/tickets/past", UserController, :past_tickets
-    get "/tickets/:token", UserController, :ticket
+
+    live_session :my_authentication_required,
+      on_mount: {GitsWeb.LiveUserAuth, :my_live} do
+      live "/tickets", MyLive.Tickets, :index
+      live "/tickets/:public_id", MyLive.Tickets, :show
+      live "/orders", MyLive.Orders, :index
+      live "/orders/:order_id", MyLive.Orders, :show
+      live "/settings", MyLive.Settings, :profile
+      live "/settings/partner", MyLive.Settings, :partner
+    end
   end
 
-  scope "/admin" do
-    pipe_through [:browser, :office]
+  scope "/admin", GitsWeb do
+    pipe_through [:browser, :admin]
+
+    live_session :admin_required, on_mount: {GitsWeb.LiveUserAuth, :live_user_required} do
+      live "/", AdminLive.Index, :dashboard
+      live "/jobs", AdminLive.Index, :jobs
+      live "/hosts", AdminLive.Index, :hosts
+      live "/users", AdminLive.Index, :users
+      live "/support", AdminLive.Index, :support
+      # remove when done with onboarding on all environments
+      live "/start", AdminLive, :start
+    end
 
     live_dashboard "/dashboard",
       ecto_repos: [Gits.Repo],
-      ecto_psql_extras_options: [long_running_queries: [threshold: "20 milliseconds"]],
-      metrics: GitsWeb.Telemetry,
-      additional_pages: [oban: Oban.LiveDashboard]
+      ecto_psql_extras_options: [long_running_queries: [threshold: "5 milliseconds"]],
+      metrics: GitsWeb.Telemetry
+  end
 
-    forward "/flags", FunWithFlags.UI.Router, namespace: "admin/flags"
+  scope "/webhooks", GitsWeb do
+    pipe_through :api
+    post "/paystack", WebhookController, :paystack
   end
 
   if Application.compile_env(:gits, :dev_routes) do

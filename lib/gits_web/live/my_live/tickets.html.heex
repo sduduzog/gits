@@ -1,0 +1,42 @@
+<h1 class="mx-auto max-w-screen-xl p-2 text-xl font-semibold">
+  {@page_title}
+</h1>
+
+<div
+  :for={{event_name, event_starts_at, ticket_types, host} <- @events}
+  class="mx-auto grid max-w-screen-xl lg:grid-cols-[theme(space.64)_1fr] items-start gap-4 p-4 lg:gap-8"
+>
+  <div class="gap-4 flex items-start">
+    <div class="grid text-zinc-500 mt-1 text-center">
+      <span class="text-3xl/6 font-semibold">
+        {Calendar.strftime(event_starts_at, "%d")}
+      </span>
+      <span class=" text-xl/5">
+        {Calendar.strftime(event_starts_at, "%b")}
+      </span>
+    </div>
+
+    <div>
+      <h3 class="text-lg/6 font-medium">
+        {event_name}
+      </h3>
+      <span class="text-sm/6 text-zinc-500">Hosted by {host}</span>
+    </div>
+  </div>
+  <div class="grid grow gap-2 lg:grid-cols-3 lg:gap-8">
+    <%= for type <- ticket_types do %>
+      <.link
+        :for={ticket <- type.tickets}
+        navigate={~p"/t/#{ticket.id}"}
+        class="ring-zinc-200 hover:ring-2 rounded-xl border p-4"
+      >
+        <GitsWeb.EventComponents.ticket_card
+          color={type.color}
+          name={type.name}
+          id={ticket.id}
+          tags={ticket.tags}
+        />
+      </.link>
+    <% end %>
+  </div>
+</div>

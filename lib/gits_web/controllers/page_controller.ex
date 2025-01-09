@@ -1,33 +1,37 @@
 defmodule GitsWeb.PageController do
+  require Ash.Sort
   use GitsWeb, :controller
 
   require Ash.Query
+  alias Gits.Accounts.{Host, User}
   alias Gits.Bucket
   alias Gits.Dashboard.Member
   alias Gits.Documentation
   alias Gits.Storefront.Event
 
   def home(conn, _) do
-    events =
-      Event
-      |> Ash.Query.for_read(:read)
-      |> Ash.Query.filter(starts_at >= fragment("now()") and visibility == :public)
-      |> Ash.Query.load([:minimum_ticket_price, :maximum_ticket_price, :address, :masked_id])
-      |> Ash.read!(actor: conn.assigns.current_user)
+    viewer_id =
+      get_session(conn, :viewer_id)
+
+    recent_events =
+      Ash.Query.for_read(Event, :read)
+      |> Ash.Query.filter(interactions.viewer_id == ^viewer_id)
+      |> Ash.Query.load([:venue, :host, :minimum_ticket_price, :ticket_prices_vary?])
+      |> Ash.Query.sort([{Ash.Sort.expr_sort(interactions.created_at), :desc}])
+      |> Ash.Query.limit(4)
+      |> Ash.read()
+      |> case do
+        {:ok, events} -> events
+        _ -> []
+      end
 
     conn
     |> assign(:slug, "/")
     |> assign(:title, "/")
-    |> assign(:events, events)
     |> assign(:page_title, "Home")
     |> assign(:current_tab, :home)
-    |> render(:home,
-      layout:
-        if(FunWithFlags.enabled?(:beta, for: conn.assigns.current_user),
-          do: {GitsWeb.Layouts, :app},
-          else: false
-        )
-    )
+    |> assign(:recent_events, recent_events)
+    |> render(:home)
   end
 
   def search(conn, _) do
@@ -55,6 +59,26 @@ defmodule GitsWeb.PageController do
     conn
     |> assign(:events, events)
     |> render(:events)
+  end
+
+  def host(%{assigns: %{current_user: %User{}}} = conn, _) do
+    Host
+    |> Ash.Query.filter(owner.id == ^conn.assigns.current_user.id)
+    |> Ash.read()
+    |> case do
+      {:ok, [%Host{handle: handle}]} ->
+        conn
+        |> redirect(to: Routes.host_dashboard_path(conn, :overview, handle))
+
+      _ ->
+        conn
+        |> render(:host)
+    end
+  end
+
+  def host(conn, _) do
+    conn
+    |> render(:host)
   end
 
   def organizers(conn, _) do
@@ -90,7 +114,25 @@ defmodule GitsWeb.PageController do
   end
 
   def privacy(conn, _params) do
-    render(conn, :privacy)
+    conn
+    |> assign(:article, Documentation.Articles.get_article_by_id!("privacy"))
+    |> render(:article)
+  end
+
+  def terms(conn, _params) do
+    conn
+    |> assign(:article, Documentation.Articles.get_article_by_id!("terms"))
+    |> render(:article)
+  end
+
+  def contact_us(conn, _params) do
+    conn
+    |> assign(:article, Documentation.Articles.get_article_by_id!("contact-us"))
+    |> render(:article)
+  end
+
+  def help(conn, _params) do
+    render(conn, :help)
   end
 
   def assets(conn, params) do
@@ -98,29 +140,6 @@ defmodule GitsWeb.PageController do
   end
 
   def healthz(conn, _) do
-    time_zone = Application.get_env(:gits, :time_zone)
-    {:ok, datetime} = NaiveDateTime.local_now() |> DateTime.from_naive(time_zone)
-
-    conn |> json(%{datetime: datetime})
-  end
-
-  def beta(conn, %{"enable" => "true"}) do
-    if conn.assigns.current_user do
-      FunWithFlags.enable(:beta, for_actor: conn.assigns.current_user)
-    end
-
-    conn |> render(:beta)
-  end
-
-  def beta(conn, %{"enable" => "false"}) do
-    if conn.assigns.current_user do
-      FunWithFlags.disable(:beta, for_actor: conn.assigns.current_user)
-    end
-
-    conn |> render(:beta)
-  end
-
-  def beta(conn, _) do
-    conn |> render(:beta)
+    conn |> json(%{hello: "world"})
   end
 end

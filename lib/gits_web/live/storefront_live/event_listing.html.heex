@@ -1,0 +1,138 @@
+<div class="mx-auto grid max-w-screen-xl items-start gap-4 gap-x-12 lg:grid-cols-[minmax(auto,48rem)_1fr] lg:gap-6 lg:pb-6">
+  <div class="space-y-4 lg:row-span-3">
+    <div class="aspect-[3/2] overflow-hidden bg-zinc-200 lg:rounded-2xl">
+      <img src={Gits.Bucket.get_image_url(@event.poster)} alt={@event.name} class="size-full" />
+    </div>
+  </div>
+
+  <div class="space-y-2 px-2">
+    <div :if={false} class="flex items-center gap-4">
+      <div class="flex items-center gap-2">
+        <.icon name="hero-calendar-days" class="size-5" />
+        <span class="text-sm">
+          {Calendar.strftime(@event.starts_at, "%A %d %B %Y")}
+        </span>
+      </div>
+    </div>
+
+    <h1 class="text-2xl font-semibold">{@event.name}</h1>
+    <div class="flex flex-wrap gap-4">
+      <span
+        :if={@event.state == :draft}
+        class="inline-flex items-center gap-x-1.5 rounded-md px-2 py-1 text-xs font-medium text-yellow-800 bg-yellow-50 ring-1 ring-inset ring-yellow-600/20"
+      >
+        <svg class="h-1.5 w-1.5 fill-yellow-800" viewBox="0 0 6 6" aria-hidden="true">
+          <circle cx="3" cy="3" r="3" />
+        </svg>
+        Draft
+      </span>
+
+      <span class="inline-flex items-center gap-x-1.5 rounded-md px-2 py-1 text-xs font-medium text-gray-900 ring-1 ring-inset ring-gray-200">
+        <svg class="h-1.5 w-1.5 fill-zinc-900" viewBox="0 0 6 6" aria-hidden="true">
+          <circle cx="3" cy="3" r="3" />
+        </svg>
+        {Gits.Storefront.EventCategory.description(@event.category)}
+      </span>
+
+      <span class="inline-flex items-center gap-x-1.5 rounded-md px-2 py-1 text-xs font-medium text-gray-900 ring-1 ring-inset ring-gray-200">
+        R {@event.minimum_ticket_price |> Gits.Currency.format()}
+        <span :if={@event.ticket_prices_vary?}>&plus;</span>
+      </span>
+    </div>
+
+    <div class="grid gap-4">
+      <div class="flex items-start gap-2">
+        <.icon name="hero-clock" class="size-5" />
+        <div class="grid text-zinc-700">
+          <span class="text-sm">
+            Starts {Calendar.strftime(@event.starts_at, "%I:%M %p, %d %B %Y")}
+          </span>
+          <span class="text-sm">
+            Ends {Calendar.strftime(
+              @event.ends_at,
+              if(
+                NaiveDateTime.diff(
+                  NaiveDateTime.end_of_day(@event.ends_at),
+                  NaiveDateTime.end_of_day(@event.starts_at),
+                  :day
+                ) == 0,
+                do: "%I:%M %p",
+                else: "%I:%M %p, %d %B %Y"
+              )
+            )}
+          </span>
+        </div>
+      </div>
+
+      <div class="flex items-start gap-2">
+        <.icon name="hero-map-pin" class="size-5" />
+        <div class="grid">
+          <%= if @event.location_is_private or is_nil(@event.venue) do %>
+            <span class="text-sm font-medium">Private Location</span>
+            <span class="text-sm text-zinc-500">
+              Details will be shared with ticket holders
+            </span>
+          <% else %>
+            <span class="text-sm font-medium">{@event.venue.name}</span>
+            <span class="text-sm text-zinc-500">{@event.venue.address}</span>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="flex items-start gap-2">
+        <.icon name="hero-megaphone" class="size-5" />
+        <div class="flex gap-1.5">
+          <span class="text-sm text-zinc-500">hosted by</span>
+          <span class="text-sm font-medium">{@event.host.name}</span>
+        </div>
+      </div>
+
+      <div class="flex items-start gap-2">
+        <.icon name="hero-banknotes" class="size-5" />
+        <div class="">
+          <span class="text-sm text-zinc-500">
+            You can <span class="font-medium text-zinc-800">get a refund</span> if:
+          </span>
+          <ul class="list-disc text-sm text-zinc-500">
+            <li class="ml-6">it's within 24 hours of buying tickets</li>
+            <li class="ml-6">this event is rescheduled or cancelled</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <.form
+    :let={f}
+    :if={@event.state == :published}
+    phx-submit="submit"
+    for={@form}
+    class="sticky bottom-0 top-0 z-20 flex flex-wrap place-items-start items-center bg-white p-2 lg:bottom-auto lg:top-6 lg:border-none lg:shadow-none"
+  >
+    <.inputs_for :let={ef} field={f[:order]}>
+      <.input :if={@current_user} type="hidden" value={@current_user.email} field={ef[:email]} />
+    </.inputs_for>
+    <Gits.Turnstile.widget events={[:success]} appearance="interaction-only" />
+
+    <.button variant={:fo} disabled={not @verified?}>
+      <span>Get tickets</span>
+    </.button>
+  </.form>
+
+  <div class="grid gap-2 px-2 lg:row-start-4">
+    <h3 class="text-lg font-medium">About this event</h3>
+    <div class="space-y-2 font-medium text-zinc-600">
+      <p>
+        {@event.summary}
+      </p>
+    </div>
+
+    <div
+      class="quill-content text-zinc-700"
+      id="quill-content"
+      phx-hook="QuillContentParser"
+      data-content={@event.description}
+    >
+    </div>
+  </div>
+</div>

@@ -26,10 +26,6 @@ defmodule GitsWeb.ScanAttendeeLive do
     {:noreply, socket}
   end
 
-  def handle_event("change_camera", unsigned_params, socket) do
-    {:noreply, push_event(socket, "change_camera", %{id: unsigned_params["id"]})}
-  end
-
   def handle_event("scanned", unsigned_params, socket) do
     url =
       "/accounts/#{socket.assigns.account_id}/events/#{socket.assigns.event_id}/attendees/new?code=#{unsigned_params}"

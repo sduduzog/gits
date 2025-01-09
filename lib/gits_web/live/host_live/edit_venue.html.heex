@@ -1,0 +1,48 @@
+<h2 class="text-lg/7 font-semibold text-zinc-900">
+  {if(@venue, do: "Venue created", else: "Create venue")}
+</h2>
+<.form
+  :let={f}
+  for={@form}
+  class="grid gap-6"
+  phx-submit="submit"
+  phx-change="validate"
+  phx-auto-recover="validate"
+>
+  <div class="grid max-w-screen-sm grid-cols-2 gap-4">
+    <.inputs_for :let={v} :if={is_nil(@venue)} field={f[:venue]}>
+      <.input
+        field={v[:name]}
+        label="Name of the venue"
+        placeholder="e.g. Artistry JHB"
+        type="text"
+        class="col-span-full"
+      />
+      <.input :for={{key, value} <- @details} field={v[key]} type="hidden" value={value} />
+      <.input field={v[:google_place_id]} type="hidden" value={@place_id} />
+
+      <.inputs_for :let={h} field={v[:host]}>
+        <.input field={h[:id]} type="hidden" value={@host.id} />
+      </.inputs_for>
+    </.inputs_for>
+    <div class="grid text-sm/6 text-zinc-600">
+      <span :if={not is_nil(@venue)} class="font-semibold text-zinc-950">{@venue.name}</span>
+      <span>{@address}</span>
+      <span>{@postal_code}</span>
+    </div>
+  </div>
+  <div class="col-span-full flex gap-6 py-4 pb-8">
+    <.button :if={is_nil(@venue)}>
+      <span>
+        Save venue
+      </span>
+    </.button>
+
+    <.button variant={:subtle} type="button" onclick="history.back()">
+      <span class="text-sm font-semibold">
+        Back
+      </span>
+    </.button>
+    <div role="none" class="grow"></div>
+  </div>
+</.form>

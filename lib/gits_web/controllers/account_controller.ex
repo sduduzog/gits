@@ -7,21 +7,10 @@ defmodule GitsWeb.AccountController do
 
   alias Gits.Dashboard.Account
 
-  plug :auth_guard
   plug :set_layout
 
   defp set_layout(conn, _) do
     put_layout(conn, html: :dashboard)
-  end
-
-  defp auth_guard(conn, _) do
-    if conn.assigns.current_user do
-      conn
-    else
-      conn
-      |> redirect(to: ~p"/register?return_to=#{conn.request_path <> "?" <> conn.query_string}")
-      |> halt()
-    end
   end
 
   def new(conn, _) do
@@ -32,24 +21,6 @@ defmodule GitsWeb.AccountController do
       )
 
     conn |> put_layout(html: :app) |> assign(:form, form) |> render(:new)
-  end
-
-  def create(conn, params) do
-    user = conn.assigns.current_user
-
-    form =
-      Form.for_create(Account, :create,
-        as: "account",
-        actor: user
-      )
-      |> Form.validate(params["account"])
-
-    with true <- form.valid?, {:ok, account} <- Form.submit(form) do
-      redirect(conn, to: ~p"/accounts/#{account.id}")
-    else
-      _error ->
-        assign(conn, :form, form) |> render(:new, layout: false)
-    end
   end
 
   def show(conn, params) do
@@ -70,28 +41,6 @@ defmodule GitsWeb.AccountController do
     conn
     |> assign(:members, account.members)
     |> render(:show)
-  end
-
-  def index(conn, params) do
-    route = params["to"]
-
-    accounts =
-      Ash.Query.for_read(Account, :read, %{}, actor: conn.assigns.current_user)
-      |> Ash.Query.filter(members.user.id == ^conn.assigns.current_user.id)
-      |> Ash.Query.load(:members)
-      |> Ash.read!()
-
-    case accounts do
-      [head | []] when not is_nil(route) ->
-        redirect(conn, to: ~p"/accounts/#{head.id}/" <> route)
-
-      [head | []] ->
-        redirect(conn, to: ~p"/accounts/#{head.id}")
-
-      list ->
-        assign(conn, :accounts, list)
-        |> render(:index, layout: false)
-    end
   end
 
   def next(conn, _) do

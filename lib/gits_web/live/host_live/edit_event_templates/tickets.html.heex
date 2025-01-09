@@ -1,0 +1,58 @@
+<div class="flex items-center">
+  <div class="grow">
+    <h2 class="text-lg/7 font-semibold text-gray-900">Tickets</h2>
+    <p class="mb-4 mt-1 text-sm/5 text-gray-600"></p>
+  </div>
+  <.button class="shrink-0" phx-click={JS.patch(@on_add_ticket_path, replace: true)}>
+    <.icon name="i-lucide-plus" />
+    <span class="font-semibold">Add ticket</span>
+  </.button>
+</div>
+
+<div class="mt-8 rounded-xl border">
+  <.table id="tickets" rows={@ticket_types}>
+    <:col :let={ticket} label="Ticket">
+      <div class="flex gap-3">
+        <span class="w-1.5 self-stretch rounded-full" style={"background-color: #{ticket.color}"}>
+        </span>
+
+        {ticket.name}
+      </div>
+    </:col>
+    <:col :let={ticket} label="Quantity">{ticket.quantity}</:col>
+    <:col :let={ticket} label="Price">{ticket.price}</:col>
+    <:col :let={ticket} label="Limit p.p" optional>{ticket.limit_per_user}</:col>
+
+    <:action :let={ticket}>
+      <.button
+        variant={:ghost}
+        size={:none}
+        class="p-2"
+        phx-click={
+          JS.patch(
+            Routes.host_edit_ticket_path(
+              @socket,
+              :edit_ticket,
+              @host_handle,
+              @event_public_id,
+              ticket.id
+            ),
+            replace: true
+          )
+        }
+      >
+        <.icon name="i-lucide-pen-line" />
+      </.button>
+    </:action>
+  </.table>
+</div>
+
+<div class="col-span-full flex gap-6 py-4 pb-8">
+  <div role="none" class="grow"></div>
+  <.button type="button" variant={:subtle} onclick="history.back()">
+    <span class="text-sm font-semibold">
+      Done
+    </span>
+    <.icon name="i-lucide-circle-check" />
+  </.button>
+</div>

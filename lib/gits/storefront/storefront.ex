@@ -1,18 +1,25 @@
 defmodule Gits.Storefront do
   use Ash.Domain, extensions: [AshPaperTrail.Domain]
 
-  alias Gits.Storefront.{Basket, Customer, Event, Ticket, TicketInstance, TicketInvite}
-
-  paper_trail do
-    include_versions? true
-  end
+  alias __MODULE__.{
+    Event,
+    Interaction,
+    Order,
+    OrderFeesSplit,
+    Ticket,
+    TicketType
+  }
 
   resources do
-    resource Basket
     resource Event
-    resource Customer
+    resource Event.Version
+    resource Interaction
+    resource Order
+    resource Order.Version
+    resource OrderFeesSplit
     resource Ticket
-    resource TicketInstance
-    resource TicketInvite
+    resource Ticket.Version
+    resource TicketType
+    resource TicketType.Version
   end
 end
