@@ -25,8 +25,12 @@ defmodule Gits.GooglePlaces do
       json: %{input: query, regionCode: "za"}
     )
     |> case do
-      {:ok, %Req.Response{status: 200, body: body}} -> {:ok, body}
-      _ -> {:error, :issues_fetching_from_api}
+      {:ok, %Req.Response{status: 200, body: body}} ->
+        {:ok, body}
+
+      error ->
+        IO.inspect(error)
+        {:error, :issues_fetching_from_api}
     end
     |> format_suggestions()
   end
@@ -63,6 +67,7 @@ defmodule Gits.GooglePlaces do
       }
     )
     |> Req.get(url: "/v1/places/#{place_id}")
+    |> IO.inspect()
     |> case do
       {:ok, %Req.Response{status: 200, body: body}} -> {:ok, body}
       _ -> {:error, :issues_fetching_from_api}
