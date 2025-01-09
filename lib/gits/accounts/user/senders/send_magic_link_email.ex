@@ -22,5 +22,6 @@ defmodule Gits.Accounts.User.Senders.SendMagicLinkEmail do
   @impl Oban.Worker
   def perform(%Oban.Job{args: %{"email" => email, "token" => token}}) do
     Gits.Mailer.magic_link(token, email)
+    |> IO.inspect()
   end
 end
