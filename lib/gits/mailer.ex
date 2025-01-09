@@ -30,7 +30,7 @@ defmodule Gits.Mailer do
   def refund_requested(to, otp, order_no) do
     new()
     |> to(to)
-    |> sender("orders")
+    |> sender("refunds")
     |> subject("Refund Requested")
     |> render_body(:refund_requested, %{otp: otp, order_no: order_no})
     |> premail()
@@ -55,11 +55,9 @@ defmodule Gits.Mailer do
     |> text_body(text)
   end
 
-  defp sender(email, username \\ "hey") do
+  defp sender(email, username) do
     host = Application.get_env(:gits, :host)
 
-    sender = "#{username}@#{host}"
-
-    email |> from(sender)
+    from(email, {"GiTS", "#{username}@#{host}"})
   end
 end
