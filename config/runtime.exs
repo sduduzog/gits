@@ -18,6 +18,10 @@ config_dir_prefix =
 
 source!(["#{config_dir_prefix}.env", System.get_env()])
 
+host = env!("PHX_HOST", :string)
+
+config :gits, host: host
+
 config :gits, tz: env!("TZ")
 
 config :gits, :basic_auth,
@@ -67,7 +71,6 @@ if config_env() == :prod do
 
   secret_key_base = env!("SECRET_KEY_BASE", :string)
 
-  host = env!("PHX_HOST", :string)
   port = env!("PORT", :integer, 4000)
 
   config :gits, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")

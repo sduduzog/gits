@@ -56,9 +56,9 @@ defmodule Gits.Mailer do
   end
 
   defp sender(email, username \\ "hey") do
-    config = Application.get_env(:gits, Gits.Mailer)
+    host = Application.get_env(:gits, :host)
 
-    sender = "#{username}@#{config[:domain]}"
+    sender = "#{username}@#{host}"
 
     email |> from(sender)
   end
