@@ -171,6 +171,32 @@ defmodule Gits.PaystackApi do
     end
   end
 
+  def get_transaction_status(reference) do
+    options = Application.get_env(:gits, :paystack_api_options)
+
+    Req.new(options)
+    |> Req.request(url: "/transaction/verify/#{reference}")
+    |> case do
+      {:ok, %Req.Response{body: %{"data" => transaction, "status" => true}}} ->
+        case transaction do
+          %{"status" => "abandoned"} ->
+            {:ok, :abandoned}
+
+          %{"status" => "failed", "gateway_response" => "Declined"} ->
+            {:ok, :declined}
+
+          %{"status" => "ongoing"} ->
+            {:ok, :ongoing}
+
+          %{"status" => "reversed"} ->
+            {:ok, :reversed}
+
+          %{"status" => "success"} ->
+            {:ok, :success}
+        end
+    end
+  end
+
   def create_refund(reference, amount) do
     options = Application.get_env(:gits, :paystack_api_options)
 
@@ -180,6 +206,23 @@ defmodule Gits.PaystackApi do
       json: %{
         transaction: reference,
         amount: amount
+      }
+    )
+    |> case do
+      {:ok, %Req.Response{body: %{"data" => refund, "status" => true}}} ->
+        {:ok, refund}
+    end
+  end
+
+  def create_full_refund(reference, reason) do
+    options = Application.get_env(:gits, :paystack_api_options)
+
+    Req.new(options)
+    |> Req.post(
+      url: "/refund",
+      json: %{
+        transaction: reference,
+        merchant_note: reason
       }
     )
     |> case do

@@ -15,6 +15,7 @@ defmodule Gits.Storefront do
     resource Event.Version
     resource Interaction
     resource Order
+    resource Order.Version
     resource OrderFeesSplit
     resource Ticket
     resource Ticket.Version

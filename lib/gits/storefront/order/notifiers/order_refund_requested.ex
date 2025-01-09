@@ -9,6 +9,8 @@ defmodule Gits.Storefront.Order.Notifiers.OrderRefundRequested do
     %{id: order.id}
     |> __MODULE__.new()
     |> Oban.insert()
+
+    :ok
   end
 
   def notify(_) do

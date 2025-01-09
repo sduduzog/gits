@@ -115,15 +115,14 @@ defmodule Gits.Storefront.TicketType do
 
     calculate :sold_out, :boolean, expr(valid_tickets_count == quantity)
 
+    calculate :test, :integer, expr(count(tickets, query: [filter: expr(true)]))
+
     calculate :limit_reached,
               :boolean,
               expr(
                 count(tickets,
                   query: [
-                    filter:
-                      expr(
-                        state in [:ready, :checked_in, :admitted] and order.email == ^arg(:email)
-                      )
+                    filter: expr(state != :released and order.email == ^arg(:email))
                   ]
                 ) ==
                   limit_per_user

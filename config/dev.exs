@@ -50,8 +50,8 @@ config :gits, :presigned_url_options,
   bucket_as_host: false
 
 config :gits, :workers,
-  reclaim_open_basket_timeout: 40,
-  reclaim_payment_started_basket_timeout: 60
+  order_created_schedule_seconds: 60,
+  order_created_snooze_seconds: 60
 
 config :gits, Gits.Mailer,
   host: "http://localhost",

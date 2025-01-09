@@ -19,7 +19,7 @@ defmodule Gits.Storefront.Order do
     domain: Gits.Storefront,
     data_layer: AshPostgres.DataLayer,
     authorizers: Ash.Policy.Authorizer,
-    extensions: [AshArchival.Resource, AshStateMachine]
+    extensions: [AshArchival.Resource, AshStateMachine, AshPaperTrail.Resource]
 
   postgres do
     table "orders"
@@ -40,6 +40,12 @@ defmodule Gits.Storefront.Order do
 
       transition :cancel, from: [:anonymous, :open, :processed, :confirmed], to: :cancelled
     end
+  end
+
+  paper_trail do
+    change_tracking_mode :changes_only
+    store_action_name? true
+    ignore_attributes [:created_at, :updated_at]
   end
 
   actions do
@@ -135,11 +141,18 @@ defmodule Gits.Storefront.Order do
     end
 
     update :cancel do
+      require_atomic? false
+
+      argument :reason, :string, allow_nil?: false
+
       change atomic_update(:cancelled_at, expr(fragment("now()")))
       change transition_state(:cancelled)
 
       change fn changeset, %{actor: actor} ->
-        Ash.Changeset.before_action(changeset, fn changeset ->
+        reason = Ash.Changeset.get_argument(changeset, :reason)
+
+        Ash.Changeset.change_attribute(changeset, :cancellation_reason, reason)
+        |> Ash.Changeset.before_action(fn changeset ->
           order =
             Ash.reload!(changeset.data, load: [:tickets], actor: actor)
 
@@ -255,6 +268,7 @@ defmodule Gits.Storefront.Order do
     attribute :total, :decimal, public?: true
 
     attribute :cancelled_at, :utc_datetime_usec
+    attribute :cancellation_reason, :string, public?: true
     attribute :completed_at, :utc_datetime_usec
 
     attribute :requested_refund_secret, :binary, public?: true

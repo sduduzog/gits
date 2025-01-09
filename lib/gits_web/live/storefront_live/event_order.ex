@@ -188,7 +188,7 @@ defmodule GitsWeb.StorefrontLive.EventOrder do
                   "Ticket no longer available"
 
                 not type.sale_started? ->
-                  "Available #{Calendar.strftime(type.sale_starts_at, "%d %B %Y, %I:%M %p")}"
+                  "Available #{Calendar.strftime(type.sale_starts_at, " %I:%M %p, %d %b %Y")}"
 
                 type.sold_out and can_remove_ticket? ->
                   "Got the last ticket"
@@ -207,10 +207,14 @@ defmodule GitsWeb.StorefrontLive.EventOrder do
 
             tags =
               [
-                price,
+                if(not_on_sale, do: false, else: price),
                 not_on_sale
               ]
               |> Enum.filter(& &1)
+
+            can_add_ticket? =
+              Ash.Changeset.for_update(order, :add_ticket, %{ticket_type: %{"id" => type.id}})
+              |> Ash.can?(actor: user) and not type.sold_out
 
             %{
               id: type.id,
@@ -221,9 +225,7 @@ defmodule GitsWeb.StorefrontLive.EventOrder do
               on_sale?: type.on_sale?,
               can_remove_ticket?: can_remove_ticket?,
               tags: tags,
-              can_add_ticket?:
-                Ash.Changeset.for_update(order, :add_ticket, %{ticket_type: %{"id" => type.id}})
-                |> Ash.can?(actor: user) and not type.sold_out
+              can_add_ticket?: can_add_ticket?
             }
           end)
 

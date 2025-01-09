@@ -11,8 +11,8 @@ config :gits, :presigned_url_options,
   bucket_as_host: true
 
 config :gits, :workers,
-  reclaim_open_basket_timeout: 1_200,
-  reclaim_payment_started_basket_timeout: 1_800
+  order_created_schedule_seconds: 60,
+  order_created_snooze_seconds: 60
 
 config :sentry,
   dsn:

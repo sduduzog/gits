@@ -19,7 +19,9 @@ defmodule Gits.Storefront.Order.Checks.OrderUserLimitReached do
         ticket_types:
           Ash.Query.filter(TicketType, id == ^ticket_type["id"])
           |> Ash.Query.load(
-            tickets: Ash.Query.filter(Ticket, order.email == ^changeset.data.email)
+            tickets:
+              Ash.Query.filter(Ticket, order.email == ^changeset.data.email)
+              |> Ash.Query.filter(state != :released)
           )
       ],
       actor: actor
