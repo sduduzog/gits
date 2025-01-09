@@ -1,4 +1,4 @@
-defmodule Gits.Repo.Migrations.AddOban do
+defmodule Gits.Repo.Migrations.ObanSetup do
   use Ecto.Migration
 
   def up do
