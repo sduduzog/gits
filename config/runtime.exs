@@ -18,6 +18,10 @@ config_dir_prefix =
 
 source!(["#{config_dir_prefix}.env", System.get_env()])
 
+host = env!("PHX_HOST", :string)
+
+config :gits, host: host
+
 config :gits, tz: env!("TZ")
 
 config :gits, :basic_auth,
@@ -40,16 +44,16 @@ config :gits, :paystack_api_options,
   auth: {:bearer, paystack_secret_key}
 
 config :ex_aws,
-  access_key_id: env!("AWS_ACCESS_KEY_ID"),
-  secret_access_key: env!("AWS_SECRET_ACCESS_KEY"),
-  region: env!("AWS_REGION")
+  access_key_id: env!("AWS_S3_ACCESS_KEY_ID"),
+  secret_access_key: env!("AWS_S3_SECRET_ACCESS_KEY"),
+  region: env!("AWS_S3_REGION")
 
 config :ex_aws, :s3,
   scheme: env!("AWS_S3_SCHEME"),
   host: env!("AWS_S3_HOST"),
   port: env!("AWS_S3_PORT", :integer)
 
-config :gits, :bucket_name, env!("BUCKET_NAME")
+config :gits, :bucket_name, env!("AWS_S3_BUCKET_NAME")
 
 config :logger, level: env!("LOG_LEVEL", :atom, :debug)
 
@@ -67,7 +71,6 @@ if config_env() == :prod do
 
   secret_key_base = env!("SECRET_KEY_BASE", :string)
 
-  host = env!("PHX_HOST", :string)
   port = env!("PORT", :integer, 4000)
 
   config :gits, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
@@ -85,11 +88,8 @@ if config_env() == :prod do
     secret_key: env!("TURNSTILE_SECRET_KEY")
 
   config :gits, Gits.Mailer,
-    adapter: Swoosh.Adapters.Mailgun,
-    api_key: env!("MAILGUN_API_KEY", :string),
-    base_url: env!("MAILGUN_BASE_URL", :string),
-    host: "https://" <> host,
-    domain: host
+    adapter: Swoosh.Adapters.Brevo,
+    api_key: env!("BREVO_API_KEY", :string)
 
   config :gits, :paystack, callback_url_base: "https://#{host}"
 end

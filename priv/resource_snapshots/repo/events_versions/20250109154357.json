@@ -88,35 +88,6 @@
       "size": null,
       "source": "version_updated_at",
       "type": "utc_datetime_usec"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": {
-        "deferrable": false,
-        "destination_attribute": "id",
-        "destination_attribute_default": null,
-        "destination_attribute_generated": null,
-        "index?": false,
-        "match_type": null,
-        "match_with": null,
-        "multitenancy": {
-          "attribute": null,
-          "global": null,
-          "strategy": null
-        },
-        "name": "events_versions_user_id_fkey",
-        "on_delete": "nothing",
-        "on_update": "update",
-        "primary_key?": true,
-        "schema": "public",
-        "table": "users"
-      },
-      "size": null,
-      "source": "user_id",
-      "type": "uuid"
     }
   ],
   "base_filter": null,
@@ -124,7 +95,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "8D3694B13DE82B0D9B9ACBBEA7C6314C2191A2D4EDB71B3F50643864474D8E02",
+  "hash": "7C8E603B6C7F64954613EB10E7E90BCE2D398EDA337DDE106BEF418FCE8654BD",
   "identities": [],
   "multitenancy": {
     "attribute": null,

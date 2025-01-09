@@ -13,12 +13,52 @@
     {
       "allow_nil?": false,
       "default": "nil",
-      "generated?": true,
+      "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "number",
-      "type": "bigint"
+      "source": "public_id",
+      "type": "text"
+    },
+    {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "name",
+      "type": "text"
+    },
+    {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "starts_at",
+      "type": "naive_datetime"
+    },
+    {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "ends_at",
+      "type": "naive_datetime"
+    },
+    {
+      "allow_nil?": false,
+      "default": "\"other\"",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "category",
+      "type": "text"
     },
     {
       "allow_nil?": true,
@@ -27,8 +67,8 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "email",
-      "type": "citext"
+      "source": "visibility",
+      "type": "text"
     },
     {
       "allow_nil?": true,
@@ -37,8 +77,58 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "total",
-      "type": "decimal"
+      "source": "location_notes",
+      "type": "text"
+    },
+    {
+      "allow_nil?": true,
+      "default": "false",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "location_is_private",
+      "type": "boolean"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "summary",
+      "type": "text"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "description",
+      "type": "text"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "poster",
+      "type": "text"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "published_at",
+      "type": "utc_datetime"
     },
     {
       "allow_nil?": true,
@@ -48,47 +138,7 @@
       "references": null,
       "size": null,
       "source": "completed_at",
-      "type": "utc_datetime_usec"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "requested_refund_secret",
-      "type": "binary"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "requested_refund_at",
-      "type": "utc_datetime_usec"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "paystack_reference",
-      "type": "text"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "paystack_authorization_url",
-      "type": "text"
+      "type": "utc_datetime"
     },
     {
       "allow_nil?": false,
@@ -128,15 +178,44 @@
           "global": null,
           "strategy": null
         },
-        "name": "orders_event_id_fkey",
+        "name": "events_host_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "events"
+        "table": "hosts"
       },
       "size": null,
-      "source": "event_id",
+      "source": "host_id",
+      "type": "uuid"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": {
+        "deferrable": false,
+        "destination_attribute": "id",
+        "destination_attribute_default": null,
+        "destination_attribute_generated": null,
+        "index?": false,
+        "match_type": null,
+        "match_with": null,
+        "multitenancy": {
+          "attribute": null,
+          "global": null,
+          "strategy": null
+        },
+        "name": "events_venue_id_fkey",
+        "on_delete": null,
+        "on_update": null,
+        "primary_key?": true,
+        "schema": "public",
+        "table": "venues"
+      },
+      "size": null,
+      "source": "venue_id",
       "type": "uuid"
     },
     {
@@ -151,7 +230,7 @@
     },
     {
       "allow_nil?": false,
-      "default": "\"anonymous\"",
+      "default": "\"draft\"",
       "generated?": false,
       "primary_key?": false,
       "references": null,
@@ -165,7 +244,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "047C7DC072EDD081F1B19DB2C99F0EE76DDE2C8A10CBD21DBA384A77D3F5C4CC",
+  "hash": "853ABDD84F9780E0AD1727A920910C3CE0882CB3E476FC50A8F14B65A5169E80",
   "identities": [],
   "multitenancy": {
     "attribute": null,
@@ -174,5 +253,5 @@
   },
   "repo": "Elixir.Gits.Repo",
   "schema": null,
-  "table": "orders"
+  "table": "events"
 }

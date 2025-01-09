@@ -17,16 +17,6 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "public_id",
-      "type": "text"
-    },
-    {
-      "allow_nil?": false,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
       "source": "name",
       "type": "text"
     },
@@ -37,27 +27,7 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "starts_at",
-      "type": "naive_datetime"
-    },
-    {
-      "allow_nil?": false,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "ends_at",
-      "type": "naive_datetime"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "visibility",
+      "source": "handle",
       "type": "text"
     },
     {
@@ -67,27 +37,7 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "location_notes",
-      "type": "text"
-    },
-    {
-      "allow_nil?": true,
-      "default": "false",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "location_is_private",
-      "type": "boolean"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "summary",
+      "source": "logo",
       "type": "text"
     },
     {
@@ -97,7 +47,7 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "description",
+      "source": "paystack_subaccount_code",
       "type": "text"
     },
     {
@@ -107,17 +57,7 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "poster",
-      "type": "text"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "published_at",
+      "source": "verified_at",
       "type": "utc_datetime"
     },
     {
@@ -127,7 +67,7 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "completed_at",
+      "source": "suspended_at",
       "type": "utc_datetime"
     },
     {
@@ -168,44 +108,15 @@
           "global": null,
           "strategy": null
         },
-        "name": "events_host_id_fkey",
+        "name": "hosts_owner_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "hosts"
+        "table": "users"
       },
       "size": null,
-      "source": "host_id",
-      "type": "uuid"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": {
-        "deferrable": false,
-        "destination_attribute": "id",
-        "destination_attribute_default": null,
-        "destination_attribute_generated": null,
-        "index?": false,
-        "match_type": null,
-        "match_with": null,
-        "multitenancy": {
-          "attribute": null,
-          "global": null,
-          "strategy": null
-        },
-        "name": "events_venue_id_fkey",
-        "on_delete": null,
-        "on_update": null,
-        "primary_key?": true,
-        "schema": "public",
-        "table": "venues"
-      },
-      "size": null,
-      "source": "venue_id",
+      "source": "owner_id",
       "type": "uuid"
     },
     {
@@ -220,7 +131,7 @@
     },
     {
       "allow_nil?": false,
-      "default": "\"draft\"",
+      "default": "\"pending\"",
       "generated?": false,
       "primary_key?": false,
       "references": null,
@@ -234,8 +145,23 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "21ED867CEFDB4C66AC997D50657FBBC0F671A2EC2F0EB615C280FFAE7620CF41",
-  "identities": [],
+  "hash": "D944B2EB83F6878316399A889FFCDB094EB415940D1FADF61176D1EB934CA179",
+  "identities": [
+    {
+      "all_tenants?": false,
+      "base_filter": null,
+      "index_name": "hosts_handle_index",
+      "keys": [
+        {
+          "type": "atom",
+          "value": "handle"
+        }
+      ],
+      "name": "handle",
+      "nils_distinct?": true,
+      "where": null
+    }
+  ],
   "multitenancy": {
     "attribute": null,
     "global": null,
@@ -243,5 +169,5 @@
   },
   "repo": "Elixir.Gits.Repo",
   "schema": null,
-  "table": "events"
+  "table": "hosts"
 }

@@ -48,12 +48,12 @@
           "global": null,
           "strategy": null
         },
-        "name": "orders_versions_version_source_id_fkey",
+        "name": "ticket_types_versions_version_source_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "orders"
+        "table": "ticket_types"
       },
       "size": null,
       "source": "version_source_id",
@@ -95,7 +95,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "3531CC3742386E0E52BD4F75A02BAAB4EACF94AA47C371D55F7F314F0DA5B3D7",
+  "hash": "289833FFF31F22F446883DD5908196309A0C2A73E8E6DE80F8DDE10A73EB8BFB",
   "identities": [],
   "multitenancy": {
     "attribute": null,
@@ -104,5 +104,5 @@
   },
   "repo": "Elixir.Gits.Repo",
   "schema": null,
-  "table": "orders_versions"
+  "table": "ticket_types_versions"
 }

@@ -13,21 +13,51 @@
     {
       "allow_nil?": false,
       "default": "nil",
-      "generated?": false,
+      "generated?": true,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "name",
-      "type": "text"
+      "source": "number",
+      "type": "bigint"
     },
     {
-      "allow_nil?": false,
+      "allow_nil?": true,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "handle",
+      "source": "email",
+      "type": "citext"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "total",
+      "type": "decimal"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "cancelled_at",
+      "type": "utc_datetime_usec"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "cancellation_reason",
       "type": "text"
     },
     {
@@ -37,7 +67,37 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "logo",
+      "source": "completed_at",
+      "type": "utc_datetime_usec"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "requested_refund_secret",
+      "type": "binary"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "requested_refund_at",
+      "type": "utc_datetime_usec"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "paystack_reference",
       "type": "text"
     },
     {
@@ -47,28 +107,8 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "paystack_subaccount_code",
+      "source": "paystack_authorization_url",
       "type": "text"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "verified_at",
-      "type": "utc_datetime"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "suspended_at",
-      "type": "utc_datetime"
     },
     {
       "allow_nil?": false,
@@ -108,15 +148,15 @@
           "global": null,
           "strategy": null
         },
-        "name": "hosts_owner_id_fkey",
+        "name": "orders_event_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "users"
+        "table": "events"
       },
       "size": null,
-      "source": "owner_id",
+      "source": "event_id",
       "type": "uuid"
     },
     {
@@ -131,7 +171,7 @@
     },
     {
       "allow_nil?": false,
-      "default": "\"pending\"",
+      "default": "\"anonymous\"",
       "generated?": false,
       "primary_key?": false,
       "references": null,
@@ -145,7 +185,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "0C4008A82B8FFEDE75F26DDE13DD3CD9364AB7092B2A88CBAD4F7058C44CA699",
+  "hash": "1968889D639E57DEEAD1751038BB0C951EA474A00A5ABD1B6DDE51564A1193C3",
   "identities": [],
   "multitenancy": {
     "attribute": null,
@@ -154,5 +194,5 @@
   },
   "repo": "Elixir.Gits.Repo",
   "schema": null,
-  "table": "hosts"
+  "table": "orders"
 }

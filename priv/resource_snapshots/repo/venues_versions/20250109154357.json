@@ -48,12 +48,12 @@
           "global": null,
           "strategy": null
         },
-        "name": "ticket_types_versions_version_source_id_fkey",
+        "name": "venues_versions_version_source_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "ticket_types"
+        "table": "venues"
       },
       "size": null,
       "source": "version_source_id",
@@ -88,35 +88,6 @@
       "size": null,
       "source": "version_updated_at",
       "type": "utc_datetime_usec"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": {
-        "deferrable": false,
-        "destination_attribute": "id",
-        "destination_attribute_default": null,
-        "destination_attribute_generated": null,
-        "index?": false,
-        "match_type": null,
-        "match_with": null,
-        "multitenancy": {
-          "attribute": null,
-          "global": null,
-          "strategy": null
-        },
-        "name": "ticket_types_versions_user_id_fkey",
-        "on_delete": "nothing",
-        "on_update": "update",
-        "primary_key?": true,
-        "schema": "public",
-        "table": "users"
-      },
-      "size": null,
-      "source": "user_id",
-      "type": "uuid"
     }
   ],
   "base_filter": null,
@@ -124,7 +95,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "61CE61E071093A61D2DFA1C0613C9151889633A7AB26B5A746646E66BA90CC61",
+  "hash": "BF1AB37C8C75A803A0246DF961B5284162569D6C16B347AAF91091524A764FBC",
   "identities": [],
   "multitenancy": {
     "attribute": null,
@@ -133,5 +104,5 @@
   },
   "repo": "Elixir.Gits.Repo",
   "schema": null,
-  "table": "ticket_types_versions"
+  "table": "venues_versions"
 }
