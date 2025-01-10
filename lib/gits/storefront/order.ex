@@ -45,7 +45,7 @@ defmodule Gits.Storefront.Order do
   paper_trail do
     change_tracking_mode :changes_only
     store_action_name? true
-    ignore_attributes [:created_at, :updated_at]
+    ignore_attributes [:created_at, :updated_at, :requested_refund_secret]
   end
 
   actions do

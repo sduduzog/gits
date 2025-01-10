@@ -2,7 +2,7 @@ defmodule Gits.Storefront.Order.Notifiers.OrderRefundRequested do
   require Decimal
   use Ash.Notifier
   alias Gits.Storefront.Order
-  use Oban.Worker, max_attempts: 1
+  use Oban.Worker
 
   @impl Ash.Notifier
   def notify(%Ash.Notifier.Notification{data: %Order{state: :completed} = order}) do
@@ -17,8 +17,8 @@ defmodule Gits.Storefront.Order.Notifiers.OrderRefundRequested do
   end
 
   @impl Oban.Worker
-  def perform(%Oban.Job{args: %{"id" => id}}) do
-    Ash.get(Order, id)
+  def perform(%Oban.Job{args: %{"id" => id}} = job) do
+    Ash.get(Order, id, actor: job)
     |> case do
       {:ok, order} ->
         otp =
