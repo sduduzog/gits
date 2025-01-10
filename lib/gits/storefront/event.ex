@@ -1,6 +1,6 @@
 defmodule Gits.Storefront.Event do
   require Decimal
-  alias Gits.Accounts.{Host, User, Venue}
+  alias Gits.Accounts.{Host, Venue}
   alias Gits.Storefront.{EventCategory, Interaction, Order, TicketType}
 
   alias __MODULE__.Checks.ActorCanCreateEvent

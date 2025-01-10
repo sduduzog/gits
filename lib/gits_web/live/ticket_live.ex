@@ -23,7 +23,7 @@ defmodule GitsWeb.TicketLive do
     end
   end
 
-  def handle_params(unsigned_params, url, socket) do
+  def handle_params(_, _, socket) do
     socket
     |> noreply()
   end
