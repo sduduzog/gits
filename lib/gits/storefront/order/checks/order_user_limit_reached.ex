@@ -9,6 +9,10 @@ defmodule Gits.Storefront.Order.Checks.OrderUserLimitReached do
     "order user limit reached"
   end
 
+  def match?(_, %{changeset: %{data: %{email: nil}}}, _) do
+    true
+  end
+
   def match?(actor, %{resource: Order, changeset: changeset}, _) do
     ticket_type =
       Ash.Changeset.get_argument(changeset, :ticket_type)
@@ -20,7 +24,10 @@ defmodule Gits.Storefront.Order.Checks.OrderUserLimitReached do
           Ash.Query.filter(TicketType, id == ^ticket_type["id"])
           |> Ash.Query.load(
             tickets:
-              Ash.Query.filter(Ticket, order.email == ^changeset.data.email)
+              Ash.Query.filter(
+                Ticket,
+                not is_nil(^changeset.data.email) and order.email == ^changeset.data.email
+              )
               |> Ash.Query.filter(state != :released)
           )
       ],
