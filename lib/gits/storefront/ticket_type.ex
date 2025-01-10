@@ -93,7 +93,7 @@ defmodule Gits.Storefront.TicketType do
     attribute :limit_per_user, :integer, public?: true, allow_nil?: false, default: 10
 
     attribute :color, :string, public?: true
-    attribute :check_in_enabled, :boolean, public?: true, allow_nil?: false, default: false
+    attribute :rsvp_enabled, :boolean, public?: true, allow_nil?: false, default: false
 
     create_timestamp :created_at
     update_timestamp :updated_at

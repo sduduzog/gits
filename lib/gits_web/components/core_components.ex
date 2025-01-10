@@ -486,9 +486,6 @@ defmodule GitsWeb.CoreComponents do
           :accent ->
             "border-transparent text-white active:text-white bg-brand-500 hover:bg-brand-600 active:bg-brand-700  phx-submit-loading:bg-brand-100 phx-submit-loading:text-brand-400 disabled:bg-brand-100 disabled:text-brand-400"
 
-          :subtle ->
-            "border-transparent bg-zinc-50 text-zinc-500 hover:bg-zinc-100 disabled:bg-zinc-50 hover:dark:text-zinc-400 dark:bg-zinc-950 hover:dark:bg-zinc-900 active:dark:text-zinc-300 active:dark:bg-zinc-800 disabled:text-zinc-200 disabled:bg-transparent"
-
           :surface ->
             "border-zinc-200 bg-zinc-50 text-zinc-950 hover:bg-zinc-100"
 
@@ -498,8 +495,11 @@ defmodule GitsWeb.CoreComponents do
           :ghost ->
             "border-transparent bg-transparent text-zinc-400 hover:text-zinc-500"
 
-          _ ->
+          :solid ->
             "border-transparent bg-zinc-500 text-white active:text-white bg-black hover:bg-zinc-600 active:bg-zinc-700  phx-submit-loading:bg-zinc-100 phx-submit-loading:text-zinc-400 disabled:bg-zinc-100 disabled:text-zinc-400 dark:phx-loading:text-zinc-700 dark:phx-loading:bg-zinc-950 dark:disabled:text-zinc-700 dark:disabled:bg-zinc-950"
+
+          _ ->
+            "border-transparent bg-zinc-50 text-zinc-500 hover:bg-zinc-100 disabled:bg-zinc-50 hover:dark:text-zinc-400 dark:bg-zinc-950 hover:dark:bg-zinc-900 active:dark:text-zinc-300 active:dark:bg-zinc-800 disabled:text-zinc-200 disabled:bg-transparent"
         end
       )
 

@@ -2,11 +2,11 @@
 
 <% navigation = [
   {"Home", "i-lucide-home", ~p"/hosts/#{@host.handle}/dashboard",
-   Enum.any?([GitsWeb.HostLive.Dashboard], &(&1 == @socket.view)), []},
+   Enum.any?([Dashboard], &(&1 == @socket.view)), []},
   {"Events", "i-lucide-calendar-range", ~p"/hosts/#{@host.handle}/events",
-   @socket.view == GitsWeb.HostLive.ListEvents,
+   Enum.any?([ListEvents, ViewEvent], &(&1 == @socket.view)),
    [
-     {"New event", ~p"/hosts/#{@host.handle}/events/create-new", false},
+     {"Create new", ~p"/hosts/#{@host.handle}/events/create-new", false},
      {"All", ~p"/hosts/#{@host.handle}/events", @live_action == :all},
      {"Drafts", ~p"/hosts/#{@host.handle}/events/drafts", @live_action == :drafts},
      {"Published", ~p"/hosts/#{@host.handle}/events/published", @live_action == :published},
@@ -27,7 +27,7 @@
 ] %>
 
 <div class="grid h-dvh lg:grid-cols-[theme(space.64)_1fr]">
-  <aside class="hiddenx absolute inset-0 z-10 space-y-8 bg-white lg:static lg:block">
+  <aside class="hidden absolute inset-0 z-10 space-y-8 bg-white lg:static lg:block">
     <div class="flex items-center px-4 py-2">
       <div class="grow lg:py-1">
         <div class="">
@@ -190,3 +190,18 @@
     </div>
   </div>
 </div>
+<!-- Brevo Conversations {literal} -->
+<script>
+  (function(d, w, c) {
+      w.BrevoConversationsID = '677fe0ffc2a878d34e090918';
+      w[c] = w[c] || function() {
+          (w[c].q = w[c].q || []).push(arguments);
+      };
+      var s = d.createElement('script');
+      s.async = true;
+      s.src = 'https://conversations-widget.brevo.com/brevo-conversations.js';
+      if (d.head) d.head.appendChild(s);
+  })(document, window, 'BrevoConversations');
+</script>
+<!-- /Brevo Conversations {/literal} -->
+

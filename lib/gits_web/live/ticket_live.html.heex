@@ -6,26 +6,35 @@
 </div>
 
 <div class="mx-auto grid max-w-screen-xl items-start lg:grid-cols-6">
-  <div class="px-4 lg:col-span-2 space-y-4">
-    <div class="border rounded-xl p-4">
+  <div class="space-y-4 px-4 lg:col-span-2">
+    <div class="rounded-xl border p-4">
       <GitsWeb.EventComponents.ticket_card
         name={@ticket.ticket_type.name}
         color={@ticket.ticket_type.color}
         id={@ticket.id}
         tags={@ticket.tags}
-      />
+      >
+        <.button
+          :if={@ticket.ticket_type.rsvp_enabled}
+          phx-click={JS.patch(~p"/t/#{@ticket.id}/rsvp") |> show_modal("rsvp")}
+          size={:sm}
+        >
+          <.icon name="i-lucide-calendar-check" />
+          <span>RSVP Now</span>
+        </.button>
+      </GitsWeb.EventComponents.ticket_card>
     </div>
 
     <div class="lg:col-start-3 lg:row-end-1">
       <div class="rounded-lg bg-gray-50 ring-1 ring-gray-900/5">
-        <dl class="flex gap-4 px-6 py-4 flex-wrap">
+        <dl class="flex flex-wrap gap-4 px-6 py-4">
           <div class="text-sm/6 font-semibold text-gray-900">
             {@ticket.ticket_type.event.name}
           </div>
           <div class="flex w-full flex-none gap-x-4">
             <dt class="flex-none">
               <span class="sr-only">Start date</span>
-              <.icon name="i-lucide-calendar-range" class="text-zinc-400 mt-0.5" />
+              <.icon name="i-lucide-calendar-range" class="mt-0.5 text-zinc-400" />
             </dt>
             <dd class="text-sm/6 text-gray-500">
               <time datetime={@ticket.ticket_type.event.starts_at}>
@@ -39,7 +48,7 @@
           <div class="flex w-full flex-none gap-x-4">
             <dt class="flex-none">
               <span class="sr-only">Location</span>
-              <.icon name="i-lucide-map-pin" class="text-zinc-400 mt-0.5" />
+              <.icon name="i-lucide-map-pin" class="mt-0.5 text-zinc-400" />
             </dt>
             <dd class="text-sm/6 text-gray-500">
               {if(@ticket.ticket_type.event.location_is_private,
@@ -53,7 +62,7 @@
       </div>
     </div>
   </div>
-  <div class="w-full max-w-80 place-self-center lg:place-self-end py-8 lg:col-start-5 lg:col-end-7 lg:p-0">
+  <div class="w-full max-w-80 place-self-center py-8 lg:col-start-5 lg:col-end-7 lg:place-self-end lg:p-0">
     {raw(
       url(GitsWeb.Endpoint, ~p"/t/#{@ticket.id}")
       |> EQRCode.encode()
@@ -67,3 +76,67 @@
     )}
   </div>
 </div>
+<.modal id="rsvp" show={@live_action == :rsvp} on_cancel={JS.patch(~p"/t/#{@ticket.id}")}>
+  <div class="grid gap-6">
+    <div class="flex gap-8">
+      <div
+        :for={
+          {{label, done, current}, idx} <-
+            Enum.with_index(
+              [
+                {"Sign in", not is_nil(@current_user), is_nil(@current_user)},
+                {"RSVP", false, @live_action == :rsvp and not is_nil(@current_user)}
+                # {"Details", false, false}
+              ],
+              1
+            )
+        }
+        class="flex items-center gap-2"
+      >
+        <%= if current do %>
+          <div class="flex size-6 shrink-0 items-center justify-center rounded-full border border-zinc-600 bg-zinc-600 text-white">
+            <span class="text-sm">{idx}</span>
+          </div>
+        <% else %>
+          <div class="flex size-6 shrink-0 items-center justify-center rounded-full border border-zinc-300">
+            <.icon :if={done} name="i-lucide-check" />
+            <span :if={not done} class="text-zinc-700 text-sm">{idx}</span>
+          </div>
+        <% end %>
+        <span class="hidden lg:inline-flex">{label}</span>
+      </div>
+    </div>
+    <%= if is_nil(@current_user) do %>
+      <div>
+        <h2 class="text-base/7 font-semibold text-gray-900">Sign in to secure your spot</h2>
+        <p class="mt-1 text-sm/5 text-gray-600">
+          Signing in allows us to securely save your RSVP and ensure you receive important updates about the event. Plus, it helps us personalize your experience and manage attendance effectively!
+        </p>
+      </div>
+
+      <div>
+        <.button href={"/sign-in?return_to=/t/#{@ticket.id}/rsvp"} variant={:solid}>
+          <span>Sign in</span>
+        </.button>
+      </div>
+    <% end %>
+
+    <%= if not is_nil(@current_user) do %>
+      <div>
+        <h2 class="text-base/7 font-semibold text-gray-900">Confirm your RSVP</h2>
+        <p class="mt-1 text-sm/5 text-gray-600">
+          By proceeding, you agree to our terms and conditions and consent to share your information with the event organizer for the purpose of managing your RSVP and providing updates.
+        </p>
+      </div>
+
+      <.form :let={f} for={@form} phx-submit="rsvp">
+        <.inputs_for :let={a} field={f[:attendee]}>
+          <.input field={a[:id]} value={@current_user.id} type="hidden" />
+        </.inputs_for>
+        <.button variant={:solid}>
+          <span>RSVP Now</span>
+        </.button>
+      </.form>
+    <% end %>
+  </div>
+</.modal>

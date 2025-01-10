@@ -18,8 +18,7 @@ defmodule Gits.Storefront.Ticket do
     default_initial_state :ready
 
     transitions do
-      transition :check_in, from: :ready, to: :checked_in
-      transition :admit, from: [:ready, :checked_in], to: :admitted
+      transition :admit, from: [:ready], to: :admitted
       transition :release, from: :ready, to: :released
     end
   end
@@ -43,7 +42,13 @@ defmodule Gits.Storefront.Ticket do
       change manage_relationship(:order, type: :append)
     end
 
-    update :check_in do
+    update :rsvp do
+      require_atomic? false
+
+      argument :attendee, :map, allow_nil?: false
+
+      change atomic_update(:rsvp_confirmed_at, expr(fragment("now()")))
+      change manage_relationship(:attendee, type: :append)
     end
 
     update :admit do
@@ -80,6 +85,18 @@ defmodule Gits.Storefront.Ticket do
     policy action(:admit) do
       authorize_if expr(ticket_type.event.host.roles.user.id == ^actor(:id))
     end
+
+    policy action(:rsvp) do
+      authorize_if expr(state == :ready)
+    end
+
+    policy action(:rsvp) do
+      authorize_if expr(is_nil(rsvp_confirmed_at))
+    end
+
+    policy action(:rsvp) do
+      authorize_if actor_present()
+    end
   end
 
   attributes do
@@ -92,7 +109,8 @@ defmodule Gits.Storefront.Ticket do
       default: fn -> Nanoid.generate(6, "0123456789abcdef") end
 
     attribute :admitted_at, :utc_datetime, public?: true
-    attribute :checked_in_at, :utc_datetime, public?: true
+
+    attribute :rsvp_confirmed_at, :utc_datetime, public?: true
 
     create_timestamp :created_at
     update_timestamp :updated_at
