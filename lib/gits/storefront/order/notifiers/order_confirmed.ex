@@ -1,6 +1,6 @@
 defmodule Gits.Storefront.Order.Notifiers.OrderConfirmed do
   use Ash.Notifier
-  # use Oban.Worker, max_attempts: 1
+  alias Gits.Storefront.Order
 
   @impl Ash.Notifier
   def notify(_) do

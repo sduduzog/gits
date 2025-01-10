@@ -49,6 +49,9 @@ defmodule Gits.Storefront.Order.Notifiers.OrderCreated do
             end
         end
 
+      {:ok, %{state: :anonymous}} ->
+        :ok
+
       {:error, error} ->
         {:error, error}
     end

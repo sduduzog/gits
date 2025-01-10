@@ -17,10 +17,10 @@
         phx-value-id={item.id}
       >
         <span>
-          <%= item.main_text %>
+          {item.main_text}
         </span>
         <span>
-          <%= item.secondary_text %>
+          {item.secondary_text}
         </span>
       </button>
     </div>
@@ -32,10 +32,10 @@
   <div class="px-4">
     <div class="grid">
       <span>
-        <%= @address.name %>
+        {@address.name}
       </span>
       <span>
-        <%= @address.formatted_address %>
+        {@address.formatted_address}
       </span>
     </div>
 

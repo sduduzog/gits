@@ -5,7 +5,7 @@ defmodule Gits.Storefront.Order.Notifiers.OrderCompleted do
   use Oban.Worker, max_attempts: 1
 
   @impl Ash.Notifier
-  def notify(%Ash.Notifier.Notification{data: order}) do
+  def notify(%Ash.Notifier.Notification{data: %{state: :completed} = order}) do
     %{id: order.id}
     |> __MODULE__.new()
     |> Oban.insert()
