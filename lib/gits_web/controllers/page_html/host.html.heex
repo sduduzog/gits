@@ -13,6 +13,8 @@
     </div>
   </div>
 
+  {live_render(@conn, GitsWeb.DemoPricingCalculator)}
+
   <dl class="grid max-w-2xl grid-cols-1 gap-8 text-base leading-7 sm:grid-cols-2 lg:mx-0 lg:max-w-none lg:grid-cols-3">
     <div>
       <dt class="font-semibold text-gray-900x text-brand-800">Exceptional customer service</dt>
@@ -35,8 +37,6 @@
       </dd>
     </div>
   </dl>
-
-  {live_render(@conn, GitsWeb.DemoPricingCalculator)}
 
   <div class="grid w-full gap-y-6 lg:flex lg:items-center lg:justify-between">
     <h2 class="w-full text-brand-950 text-3xl font-bold tracking-tight sm:text-4xl">
