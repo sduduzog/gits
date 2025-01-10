@@ -28,7 +28,7 @@ defmodule Gits.GooglePlaces do
       {:ok, %Req.Response{status: 200, body: body}} ->
         {:ok, body}
 
-      error ->
+      _ ->
         {:error, :issues_fetching_from_api}
     end
     |> format_suggestions()
