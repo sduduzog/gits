@@ -29,7 +29,6 @@ defmodule Gits.GooglePlaces do
         {:ok, body}
 
       error ->
-        IO.inspect(error)
         {:error, :issues_fetching_from_api}
     end
     |> format_suggestions()
@@ -67,7 +66,6 @@ defmodule Gits.GooglePlaces do
       }
     )
     |> Req.get(url: "/v1/places/#{place_id}")
-    |> IO.inspect()
     |> case do
       {:ok, %Req.Response{status: 200, body: body}} -> {:ok, body}
       _ -> {:error, :issues_fetching_from_api}

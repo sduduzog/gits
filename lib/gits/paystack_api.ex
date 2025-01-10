@@ -46,7 +46,7 @@ defmodule Gits.PaystackApi do
         business_name: business_name,
         account_number: account_number,
         settlement_bank: settlement_bank,
-        percentage_charge: 1
+        percentage_charge: 5
       }
     )
     |> case do
@@ -129,7 +129,6 @@ defmodule Gits.PaystackApi do
         email: customer_email,
         amount: price_in_cents,
         callback_url: "#{base_url}/orders/paystack/callback",
-        bearer: "subaccount",
         metadata: %{
           cancel_action: "#{base_url}/orders/paystack/callback/cancel"
         }

@@ -79,6 +79,11 @@ defmodule GitsWeb.HostLive.EditTicket do
               replace: true
             )
             |> noreply()
+
+          {:error, form} ->
+            socket
+            |> assign(:form, form)
+            |> noreply()
         end
 
       :edit_ticket ->
@@ -97,6 +102,11 @@ defmodule GitsWeb.HostLive.EditTicket do
                 ),
               replace: true
             )
+            |> noreply()
+
+          {:error, form} ->
+            socket
+            |> assign(:form, form)
             |> noreply()
         end
     end

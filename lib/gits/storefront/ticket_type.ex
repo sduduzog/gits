@@ -2,6 +2,7 @@ defmodule Gits.Storefront.TicketType do
   alias Gits.Storefront.{Event, Order, Ticket}
   alias Gits.Accounts
   alias Gits.Accounts.User
+  alias __MODULE__.Validations.PriceValid
 
   use Ash.Resource,
     domain: Gits.Storefront,
@@ -73,6 +74,10 @@ defmodule Gits.Storefront.TicketType do
     policy action(:remove_ticket) do
       authorize_if accessing_from(Order, :ticket_types)
     end
+  end
+
+  validations do
+    validate {PriceValid, [:price]}
   end
 
   attributes do
