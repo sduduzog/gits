@@ -27,7 +27,7 @@ defmodule Gits.Support.Admin do
 
   policies do
     policy action(:read) do
-      authorize_if actor_present()
+      authorize_if accessing_from(User, :admin)
     end
 
     policy action(:create) do

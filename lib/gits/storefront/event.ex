@@ -132,8 +132,6 @@ defmodule Gits.Storefront.Event do
 
     update :complete do
       change atomic_update(:completed_at, expr(fragment("now()")))
-
-      notifiers [EventCompleted]
     end
   end
 

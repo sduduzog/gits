@@ -1,5 +1,10 @@
 defmodule Gits.Support.Job do
-  use Ash.Resource, domain: Gits.Support, data_layer: AshPostgres.DataLayer
+  alias __MODULE__.Checks.{CanRead}
+
+  use Ash.Resource,
+    domain: Gits.Support,
+    data_layer: AshPostgres.DataLayer,
+    authorizers: Ash.Policy.Authorizer
 
   postgres do
     repo Gits.Repo
@@ -9,6 +14,12 @@ defmodule Gits.Support.Job do
 
   actions do
     defaults [:read, :destroy, create: :*, update: :*]
+  end
+
+  policies do
+    policy action(:read) do
+      authorize_if CanRead
+    end
   end
 
   attributes do
