@@ -1,7 +1,5 @@
 defmodule Gits.Bucket do
-  def get_image_url(nil) do
-    {:ok, "/images/placeholder.png"}
-  end
+  def get_image_url(nil), do: "/images/placeholder.png"
 
   def get_image_url(filename) do
     presigned_url_options = Application.get_env(:gits, :presigned_url_options)
@@ -13,22 +11,33 @@ defmodule Gits.Bucket do
            {:ok, signed_url} <-
              ExAws.Config.new(:s3)
              |> ExAws.S3.presigned_url(:get, bucket_name, key, presigned_url_options) do
-        {:ok, signed_url}
+        {:commit, signed_url, expire: :timer.seconds(3600)}
       else
         _ ->
           {:ignore, "/images/placeholder.png"}
       end
     end)
     |> case do
-      {_, url} -> url
+      {:commit, url, _} -> url
+      {:ok, url} -> url
     end
   end
 
-  def get_image_url!(filename) do
-    {:ok, url} = get_image_url(filename)
-    url
-  end
+  def upload_image(image) do
+    bucket_name = Application.get_env(:gits, :bucket_name)
 
-  def upload_image() do
+    filename = Nanoid.generate(24) <> ".jpg"
+
+    image
+    |> ExAws.S3.upload(
+      bucket_name,
+      filename,
+      content_type: "image/jpeg",
+      cache_control: "public,max-age=3600 s-maxage=7200"
+    )
+    |> ExAws.request()
+    |> case do
+      {:ok, _} -> {:ok, filename}
+    end
   end
 end

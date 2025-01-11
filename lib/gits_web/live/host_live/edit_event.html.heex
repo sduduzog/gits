@@ -62,7 +62,7 @@
       :if={@live_action == :media}
       form={@form}
       uploads={@uploads}
-      poster={Gits.Bucket.get_image_url!(@event_poster)}
+      poster={Gits.Bucket.get_image_url(@event_poster)}
       on_next={JS.patch(@on_next_path, replace: true)}
     />
 

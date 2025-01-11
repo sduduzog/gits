@@ -214,17 +214,6 @@ defmodule GitsWeb.HostLive.EditEvent do
 
   def handle_event("media", _unsigned_params, socket) do
     consume_uploaded_entries(socket, :poster, fn %{path: path}, _entry ->
-      bucket_name = Application.get_env(:gits, :bucket_name)
-
-      initial_hash_state = :crypto.hash_init(:sha256)
-
-      sha256 =
-        File.stream!(path, [], 32 * 1024)
-        |> Enum.reduce(initial_hash_state, &:crypto.hash_update(&2, &1))
-        |> :crypto.hash_final()
-
-      filename = Base.encode16(sha256, case: :lower) <> ".jpg"
-
       Image.open!(path)
       |> Image.thumbnail!("768x512", fit: :cover)
       |> Image.stream!(
@@ -232,15 +221,9 @@ defmodule GitsWeb.HostLive.EditEvent do
         buffer_size: 5_242_880,
         quality: 100
       )
-      |> ExAws.S3.upload(
-        bucket_name,
-        filename,
-        content_type: "image/jpeg",
-        cache_control: "public,max-age=3600"
-      )
-      |> ExAws.request()
+      |> Gits.Bucket.upload_image()
       |> case do
-        {:ok, _} ->
+        {:ok, filename} ->
           Form.submit(socket.assigns.form, params: %{"poster" => filename})
       end
     end)
@@ -273,30 +256,6 @@ defmodule GitsWeb.HostLive.EditEvent do
     end
     |> noreply()
   end
-
-  # defp current_form(:details, nil, actor) do
-  #   Form.for_create(Event, :create, forms: [auto?: true], actor: actor)
-  #   |> Form.add_form([:host], type: :read, validate?: false)
-  # end
-  #
-  # defp current_form(:details, event, actor) do
-  #   event
-  #   |> Form.for_update(:details, forms: [auto?: true], actor: actor)
-  # end
-  #
-  # defp current_form(:location, event, actor) do
-  #   event
-  #   |> Form.for_update(:location, forms: [auto?: true], actor: actor)
-  # end
-  #
-  # defp current_form(:tickets, event, actor) do
-  #   event
-  #   |> Form.for_update(:update, forms: [auto?: true], actor: actor)
-  # end
-  #
-  # defp current_form(_, _, _) do
-  #   nil
-  # end
 
   def assign_event_update(socket, event, actor) do
     case socket.assigns.live_action do
