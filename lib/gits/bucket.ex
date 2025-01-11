@@ -19,6 +19,7 @@ defmodule Gits.Bucket do
     end)
     |> case do
       {:commit, url, _} -> url
+      {:ignore, url} -> url
       {:ok, url} -> url
     end
   end
