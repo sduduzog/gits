@@ -1,7 +1,7 @@
 defmodule Gits.Storefront.Event do
   require Decimal
   alias Gits.Accounts.{Host, Venue}
-  alias Gits.Storefront.{EventCategory, Interaction, Order, TicketType}
+  alias Gits.Storefront.{EventCategory, Interaction, Order, Ticket, TicketType}
 
   alias __MODULE__.Checks.ActorCanCreateEvent
   alias __MODULE__.Notifiers.{EventUpdated}
@@ -259,6 +259,12 @@ defmodule Gits.Storefront.Event do
     belongs_to :venue, Venue
 
     has_many :ticket_types, TicketType
+
+    has_many :tickets, Ticket do
+      no_attributes? true
+      filter expr(state in [:ready, :admitted] and ticket_type.id == parent(ticket_types.id))
+    end
+
     has_many :orders, Order
     has_many :interactions, Interaction
   end
@@ -295,7 +301,11 @@ defmodule Gits.Storefront.Event do
       join_filter [:ticket_types, :tickets], expr(not is_nil(admitted_at))
     end
 
-    min :minimum_ticket_price, :ticket_types, :price, default: Decimal.new("0")
-    max :maximum_ticket_price, :ticket_types, :price, default: Decimal.new("0")
+    min :minimum_ticket_price, :ticket_types, :price, default: Decimal.new(0)
+    max :maximum_ticket_price, :ticket_types, :price, default: Decimal.new(0)
+
+    sum :total_revenue, :orders, :total, default: Decimal.new(0)
+
+    sum :actual_revenue, [:orders, :fees_split], :subaccount, default: Decimal.new(0)
   end
 end

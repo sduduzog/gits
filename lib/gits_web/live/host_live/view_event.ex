@@ -1,6 +1,5 @@
 defmodule GitsWeb.HostLive.ViewEvent do
-  alias Gits.Accounts.User
-  alias Gits.Storefront.Order
+  alias Gits.Storefront.Ticket
   alias Gits.Accounts.Host
   alias Gits.Storefront.{Event}
   use GitsWeb, :live_view
@@ -17,7 +16,12 @@ defmodule GitsWeb.HostLive.ViewEvent do
     :unique_views,
     :total_orders,
     :admissions,
-    ticket_types: [:active_tickets_count]
+    :total_revenue,
+    :actual_revenue,
+    ticket_types: [
+      :active_tickets_count,
+      tickets: Ash.Query.filter(Ticket, not is_nil(attendee)) |> Ash.Query.load(:attendee)
+    ]
   ]
 
   def mount(%{"handle" => handle, "public_id" => public_id}, _, socket) do
@@ -50,6 +54,7 @@ defmodule GitsWeb.HostLive.ViewEvent do
 
         assign(socket, :event, event)
         |> assign_issues()
+        |> assign_attendees()
         |> assign(:ticket_types, ticket_types)
         |> assign(:page_title, "Events / #{event.name}")
         |> assign(:section, event.name)
@@ -83,6 +88,27 @@ defmodule GitsWeb.HostLive.ViewEvent do
   defp can_publish?(event, actor) do
     Ash.Changeset.for_update(event, :publish, %{})
     |> Ash.can?(actor)
+  end
+
+  defp assign_attendees(socket) do
+    # name 
+    # rsvp time 
+    # admitted time
+    # ticket id (copyable url) 
+    # socket |> assign(:attendees, socket.assigns.event.attendees)
+    attendees =
+      Enum.flat_map(socket.assigns.event.ticket_types, fn type ->
+        Enum.map(type.tickets, fn ticket ->
+          %{
+            name: ticket.attendee.name,
+            ticket: type.name,
+            rsvp_confirmed_at: ticket.rsvp_confirmed_at,
+            admitted_at: ticket.admitted_at
+          }
+        end)
+      end)
+
+    socket |> assign(:attendees, attendees)
   end
 
   defp assign_issues(socket) do
