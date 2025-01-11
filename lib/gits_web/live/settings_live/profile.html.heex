@@ -9,7 +9,7 @@
           />
         <% else %>
           <img
-            src={Gits.Bucket.get_image_url(@current_user.avatar)}
+            src={Gits.Bucket.get_image_url!(@current_user.avatar)}
             alt={@current_user.name}
             class="h-full w-full object-cover"
           />

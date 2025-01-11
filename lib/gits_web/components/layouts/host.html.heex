@@ -8,10 +8,12 @@
    [
      {"Create new", ~p"/hosts/#{@host.handle}/events/create-new", false},
      {"All", ~p"/hosts/#{@host.handle}/events", @live_action == :all},
-     {"Drafts", ~p"/hosts/#{@host.handle}/events/drafts", @live_action == :drafts},
      {"Published", ~p"/hosts/#{@host.handle}/events/published", @live_action == :published},
+     {"Drafts", ~p"/hosts/#{@host.handle}/events/drafts", @live_action == :drafts},
      {"Archived", ~p"/hosts/#{@host.handle}/events/archived", @live_action == :archived}
-   ]}
+   ]},
+  {"Settings", "i-lucide-settings", ~p"/hosts/#{@host.handle}/settings",
+   Enum.any?([Settings], &(&1 == @socket.view)), []}
 ] %>
 
 <% menus = [
@@ -19,15 +21,15 @@
     {@current_user.email, nil, nil, false},
     {"Profile", "i-lucide-user", ~p"/settings/profile", false}
   ],
-  [
-    {"Organization", nil, nil, false},
-    {"Settings", "i-lucide-settings", ~p"/hosts/#{@host.handle}/settings", false}
-  ],
+  # [
+  # {"Organization", nil, nil, false}
+  # {"Settings", "i-lucide-settings", ~p"/hosts/#{@host.handle}/settings", false}
+  # ],
   [{"Sign out", "i-lucide-log-out", ~p"/sign-out", false}]
 ] %>
 
 <div class="grid h-dvh lg:grid-cols-[theme(space.64)_1fr]">
-  <aside class="hidden absolute inset-0 z-10 space-y-8 bg-white lg:static lg:block">
+  <aside class="absolute inset-0 z-10 hidden space-y-8 bg-white lg:static lg:block">
     <div class="flex items-center px-4 py-2">
       <div class="grow lg:py-1">
         <div class="">
@@ -39,7 +41,7 @@
         <.icon name="i-lucide-x" />
       </.button>
     </div>
-    <div class="grid gap-1">
+    <div class="grid gap-2">
       <div
         :for={{label, icon, href, current, children} <- navigation}
         class="flex flex-wrap gap-y-2"
@@ -48,7 +50,7 @@
           navigate={href}
           aria-selected={"#{current}"}
           class={[
-            "peer flex text-zinc-400 grow font-medium gap-3 peer/link rounded-l-lg px-2 py-3 hover:bg-zinc-50 lg:py-2 ml-0.5 aria-selected:text-zinc-900",
+            "peer flex text-zinc-400 grow font-medium gap-3 peer/link rounded-l-lg px-2 py-3 hover:text-zinc-900 lg:py-2 ml-0.5 aria-selected:text-zinc-900",
             if(children == [], do: "lg:rounded-r-lg", else: "")
           ]}
         >
@@ -56,7 +58,7 @@
           <span>{label}</span>
         </.link>
 
-        <span class="order-first w-1 rounded-r-lg peer-hover/link:bg-zinc-50 peer-aria-selected/link:bg-zinc-600">
+        <span class="order-first w-1 rounded-r-lg peer-hover/link:bg-zinc-100 peer-aria-selected/link:bg-zinc-600">
         </span>
 
         <%= if children != [] do %>
@@ -67,13 +69,13 @@
             id={"toggle-#{label}"}
           />
           <label
-            class="inline-flex p-3.5 hover:bg-zinc-50 peer-checked/input:hidden peer-hover/link:bg-zinc-50 lg:rounded-r-lg lg:p-2.5"
+            class="inline-flex cursor-pointer p-3.5 hover:text-zinc-900 peer-checked/input:hidden peer-hover/link:text-zinc-900 lg:rounded-r-lg lg:p-2.5"
             for={"toggle-#{label}"}
           >
             <.icon name="i-lucide-chevron-right" class="text-sm/4" />
           </label>
           <label
-            class="hidden p-3.5 hover:bg-zinc-50 peer-checked/input:inline-flex peer-hover/link:bg-zinc-50 lg:rounded-r-lg lg:p-2.5"
+            class="hidden cursor-pointer p-3.5 hover:text-zinc-900 peer-checked/input:inline-flex peer-hover/link:text-zinc-900 lg:rounded-r-lg lg:p-2.5"
             for={"toggle-#{label}"}
           >
             <.icon name="i-lucide-chevron-down" class="text-sm/4" />
@@ -86,7 +88,7 @@
           <.link
             navigate={href}
             aria-selected={"#{current}"}
-            class="inline-flex w-full rounded-l-lg px-2 py-3 pl-7 font-medium text-zinc-400 hover:bg-zinc-50 aria-selected:text-zinc-900 lg:rounded-r-lg lg:py-2"
+            class="inline-flex w-full rounded-l-lg px-2 py-3 pl-7 font-medium text-zinc-400 hover:text-zinc-900 aria-selected:text-zinc-900 lg:rounded-r-lg lg:py-2"
           >
             <span class="pl-0.5">{label}</span>
           </.link>

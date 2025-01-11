@@ -12,19 +12,13 @@
       <span class="text-sm font-medium capitalize">{i}</span>
     </.link>
   </div>
-  <div>
-    <.button phx-click={JS.navigate(~p"/hosts/#{@host.handle}/events/create-new")}>
-      <.icon name="i-lucide-calendar-plus" />
-      <span class="hidden font-semibold sm:inline">Create</span>
-    </.button>
-  </div>
 </div>
 
 <%= if @live_action == :archived do %>
   <div class="divide-y divide-zinc-100 p-2">
     <div :for={event <- @events} class="flex items-center gap-4 py-4">
       <.link class="aspect-[3/2] h-20 shrink-0 overflow-hidden rounded-xl bg-zinc-200">
-        <img src={Gits.Bucket.get_image_url(event.poster)} alt="Event poster" class="size-full" />
+        <img src={Gits.Bucket.get_image_url!(event.poster)} alt="Event poster" class="size-full" />
       </.link>
       <div class="grid w-full grow gap-1.5">
         <.link class="overflow-hidden">
@@ -52,7 +46,7 @@
         navigate={~p"/hosts/#{@host_handle}/events/#{event.public_id}"}
         class="aspect-[3/2] h-20 shrink-0 overflow-hidden rounded-xl bg-zinc-200"
       >
-        <img src={Gits.Bucket.get_image_url(event.poster)} alt="Event poster" class="size-full" />
+        <img src={Gits.Bucket.get_image_url!(event.poster)} alt="Event poster" class="size-full" />
       </.link>
       <div class="grid w-full grow gap-1.5">
         <.link
