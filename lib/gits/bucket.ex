@@ -28,4 +28,7 @@ defmodule Gits.Bucket do
     {:ok, url} = get_image_url(filename)
     url
   end
+
+  def upload_image() do
+  end
 end
