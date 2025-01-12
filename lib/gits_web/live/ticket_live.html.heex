@@ -15,7 +15,7 @@
         tags={@ticket.tags}
       >
         <.button
-          :if={@ticket.ticket_type.rsvp_enabled}
+          :if={@ticket.ticket_type.rsvp_enabled and is_nil(@ticket.attendee)}
           phx-click={JS.patch(~p"/t/#{@ticket.id}/rsvp") |> show_modal("rsvp")}
           size={:sm}
         >
@@ -76,8 +76,12 @@
     )}
   </div>
 </div>
-<.modal id="rsvp" show={@live_action == :rsvp} on_cancel={JS.patch(~p"/t/#{@ticket.id}")}>
-  <div class="grid gap-6">
+<.modal
+  id="rsvp"
+  show={@live_action == :rsvp and is_nil(@ticket.attendee)}
+  on_cancel={JS.patch(~p"/t/#{@ticket.id}")}
+>
+  <div :if={is_nil(@ticket.attendee)} class="grid gap-6">
     <div class="flex gap-8">
       <div
         :for={

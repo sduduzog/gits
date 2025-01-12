@@ -12,11 +12,11 @@
   </div>
 </div>
 
-<div class="gap-4 flex flex-wrap p-2 items-end">
-  <div class="aspect-[3/2] h-20 lg:h-24 rounded-lg bg-zinc-200 overflow-hidden">
+<div class="flex flex-wrap items-end gap-4 p-2">
+  <div class="aspect-[3/2] h-20 overflow-hidden rounded-lg bg-zinc-200 lg:h-24">
     <img src={Gits.Bucket.get_image_url(@event.poster)} alt="Event poster" class="size-full" />
   </div>
-  <div class="grid items-start gap-2 grow">
+  <div class="grid grow items-start gap-2">
     <h1 class="inline-flex flex-wrap gap-1 text-lg/5 font-semibold">
       {@event.name}
     </h1>
@@ -46,7 +46,7 @@
         <.icon name="i-lucide-link-2" />
       </.button>
 
-      <div class="grow capitalize gap-2">
+      <div class="grow gap-2 capitalize">
         <%= if @event.state == :published do %>
           <span class="inline-flex items-center rounded-full bg-green-50 px-1.5 py-0.5 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
             {@event.state}
@@ -82,8 +82,8 @@
 <div class="grid gap-4 lg:grid-cols-[24rem_1fr] lg:gap-8">
   <div class="space-y-4 p-2">
     <div class="grid w-full divide-y rounded-xl border">
-      <div class="p-4 space-y-2">
-        <h3 class="font-semibold px-2">Event Details</h3>
+      <div class="space-y-2 p-4">
+        <h3 class="px-2 font-semibold">Event Details</h3>
         <dl class="flex flex-wrap gap-2 p-2">
           <div class="grid w-full grid-cols-[theme(space.28)_1fr]">
             <dt class="flex-none">
@@ -142,7 +142,7 @@
       </div>
       <div class="p-2">
         <div class="flex items-center justify-between">
-          <h3 class="font-semibold px-2">Tickets</h3>
+          <h3 class="px-2 font-semibold">Tickets</h3>
           <.button
             size={:none}
             variant={:ghost}
@@ -170,17 +170,8 @@
           </GitsWeb.EventComponents.ticket_card>
         </div>
       </div>
-      <div class="grid grid-cols-3 divide-x p-4">
-        <div
-          :for={
-            {label, unit} <- [
-              {"Unique views", @event.unique_views},
-              {"Total orders", @event.total_orders},
-              {"Admissions", @event.admissions}
-            ]
-          }
-          class="grid pl-2 first:pl-0"
-        >
+      <div :if={false} class="grid grid-cols-3 divide-x p-4">
+        <div :for={{label, unit} <- []} class="grid pl-2 first:pl-0">
           <span class="text-xs font-medium text-zinc-600">{label}</span>
           <span class="text-2xl font-medium">{unit}</span>
         </div>
@@ -190,7 +181,7 @@
   <div class="grow space-y-4 lg:pr-2">
     <div class="flex items-center gap-8 border-b-2 border-zinc-100">
       <.link
-        :for={action <- [:overview]}
+        :for={action <- [:overview, :attendees]}
         patch={Routes.host_view_event_path(@socket, action, @host.handle, @event.public_id)}
         replace={true}
         aria-selected={"#{action == @live_action}"}
@@ -209,6 +200,33 @@
       issues={@issues}
       host_settings_payouts_path={Routes.host_settings_path(@socket, :billing, @host.handle)}
     />
+    <div
+      :if={@live_action == :overview}
+      class="grid gap-8 p-2 md:grid-cols-2 xl:grid-cols-3 lg:p-0 max-w-screen-xl"
+    >
+      <div
+        :for={
+          {label, value, icon} <- [
+            {"Total Revenue", "R #{@event.total_revenue |> Gits.Currency.format()}",
+             "i-lucide-wallet-cards"},
+            {"Actual Revenue", "R #{@event.actual_revenue |> Gits.Currency.format()}",
+             "i-lucide-hand-coins"},
+            {"Unique views", @event.unique_views, "i-lucide-view"},
+            {"Total orders", @event.total_orders, "i-lucide-shopping-cart"},
+            {"Admissions", @event.admissions, "i-lucide-ticket-slash"}
+          ]
+        }
+        class="grid gap-1 rounded-xl border p-6"
+      >
+        <div class="pb-4">
+          <.icon name={icon} class="text-zinc-400 text-xl" />
+        </div>
+        <span class="font-medium text-zinc-500">{label}</span>
+        <span class="text-5xl font-semibold text-zinc-800">
+          {value}
+        </span>
+      </div>
+    </div>
     <.attendees :if={@live_action == :attendees} attendees={@attendees} />
   </div>
 </div>

@@ -37,6 +37,7 @@ defmodule GitsWeb.MyLive.Tickets do
           Ash.Query.load(TicketType,
             tickets:
               Ash.Query.filter(Ticket, order.email == ^user.email and order.state == :completed)
+              |> Ash.Query.load(:attendee)
           )
       )
       |> Ash.read()
@@ -60,13 +61,16 @@ defmodule GitsWeb.MyLive.Tickets do
             |> Enum.map(fn ticket ->
               %{
                 id: ticket.public_id,
-                tags: [
-                  ticket.public_id,
-                  to_string(ticket.state)
-                  |> String.split("_")
-                  |> Enum.map(&String.capitalize(&1))
-                  |> Enum.join(" ")
-                ]
+                tags:
+                  [
+                    ticket.public_id,
+                    to_string(ticket.state)
+                    |> String.split("_")
+                    |> Enum.map(&String.capitalize(&1))
+                    |> Enum.join(" "),
+                    if(ticket.attendee, do: "#{ticket.attendee.name} attending", else: false)
+                  ]
+                  |> Enum.filter(& &1)
               }
             end)
 

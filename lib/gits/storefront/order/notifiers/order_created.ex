@@ -52,6 +52,12 @@ defmodule Gits.Storefront.Order.Notifiers.OrderCreated do
       {:ok, %{state: :anonymous}} ->
         :ok
 
+      {:ok, %{state: :open} = order} ->
+        Ash.Changeset.for_update(order, :cancel, %{
+          reason: "Order timeout."
+        })
+        |> Ash.update(actor: job)
+
       {:error, error} ->
         {:error, error}
     end

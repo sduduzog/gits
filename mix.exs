@@ -32,6 +32,7 @@ defmodule Gits.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:assent, "== 0.2.10"},
       {:premailex, "~> 0.3"},
       {:nanoid, "~> 2.0"},
       {:ash_slug, "~> 0.1"},
@@ -72,7 +73,7 @@ defmodule Gits.MixProject do
       {:picosat_elixir, "~> 0.2.0"},
       {:ash_phoenix, "~> 2.0"},
       {:ash_postgres, "~> 2.0"},
-      {:ash_authentication, "~> 4.0"},
+      {:ash_authentication, "== 4.3.4"},
       {:ash_archival, "~> 1.0.3"},
       {:slugify, "~> 1.3"},
       {:eqrcode, "~> 0.1.10"},

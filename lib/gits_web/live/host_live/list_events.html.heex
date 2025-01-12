@@ -12,12 +12,6 @@
       <span class="text-sm font-medium capitalize">{i}</span>
     </.link>
   </div>
-  <div>
-    <.button phx-click={JS.navigate(~p"/hosts/#{@host.handle}/events/create-new")}>
-      <.icon name="i-lucide-calendar-plus" />
-      <span class="hidden font-semibold sm:inline">Create</span>
-    </.button>
-  </div>
 </div>
 
 <%= if @live_action == :archived do %>

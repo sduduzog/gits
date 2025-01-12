@@ -23,7 +23,7 @@ defmodule GitsWeb.TicketLive do
     end
   end
 
-  def handle_params(unsigned_params, url, socket) do
+  def handle_params(_, _, socket) do
     socket
     |> noreply()
   end
@@ -42,7 +42,7 @@ defmodule GitsWeb.TicketLive do
   end
 
   defp assign_ticket(socket, ticket) do
-    Ash.load(ticket, ticket_type: [event: :venue])
+    Ash.load(ticket, [:attendee, ticket_type: [event: :venue]])
     |> case do
       {:ok, ticket} ->
         socket
@@ -52,13 +52,19 @@ defmodule GitsWeb.TicketLive do
           admitted_at: ticket.admitted_at,
           rsvp_confirmed_at: ticket.rsvp_confirmed_at,
           attendee: ticket.attendee,
-          tags: [
-            ticket.public_id,
-            to_string(ticket.state)
-            |> String.split("_")
-            |> Enum.map(&String.capitalize(&1))
-            |> Enum.join(" ")
-          ]
+          tags:
+            [
+              ticket.public_id,
+              to_string(ticket.state)
+              |> String.split("_")
+              |> Enum.map(&String.capitalize(&1))
+              |> Enum.join(" "),
+              if(ticket.attendee,
+                do: "#{ticket.attendee.name} attending",
+                else: false
+              )
+            ]
+            |> Enum.filter(& &1)
         })
     end
   end
