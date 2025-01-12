@@ -1,12 +1,3 @@
-import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
-import {
-  computePosition,
-  flip,
-  shift,
-  autoUpdate,
-  offset,
-} from "@floating-ui/dom";
-
 function turnstileCallbackEvent(self, name, eventName) {
   return (payload) => {
     const events = self.el.dataset.events || "";
@@ -53,7 +44,7 @@ export const TurnstileHook = {
 
 const QrScannerCameraList = {
   async mounted() {
-    const cameras = await Html5Qrcode.getCameras();
+    const cameras = await window.Html5Qrcode.getCameras();
     for (const camera of cameras) {
       const element = document.createElement("span");
       element.classList.add(
@@ -79,8 +70,8 @@ const QrScanner = {
   async mounted() {
     console.log(this.liveSocket);
     const cameraId = this.el.dataset.camera;
-    const html5QrCode = new Html5Qrcode(this.el.id, {
-      formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
+    const html5QrCode = new window.Html5Qrcode(this.el.id, {
+      formatsToSupport: [window.Html5QrcodeSupportedFormats.QR_CODE],
     });
 
     html5QrCode.start(
