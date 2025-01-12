@@ -1,13 +1,11 @@
 {
   "type": "module",
   "dependencies": {
-    "@floating-ui/dom": "^1.6.7",
     "@fontsource/poppins": "^5.1.1",
     "html5-qrcode": "^2.3.8",
     "phoenix": "file:../deps/phoenix",
     "phoenix_html": "file:../deps/phoenix_html",
-    "phoenix_live_view": "file:../deps/phoenix_live_view",
-    "quill": "^2.0.3"
+    "phoenix_live_view": "file:../deps/phoenix_live_view"
   },
   "devDependencies": {
     "@egoist/tailwindcss-icons": "^1.8.1",
