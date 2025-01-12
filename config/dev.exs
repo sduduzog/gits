@@ -16,8 +16,16 @@ config :gits, GitsWeb.Endpoint,
   debug_errors: false,
   secret_key_base: "LM4JibxEdu9bKBXtor7YzZQlHpjn5655cfndsFI7HAUQ92uvj0q7wsB0+VHS4eZV",
   watchers: [
-    esbuild: {Esbuild, :install_and_run, [:gits, ~w(--sourcemap=inline --watch)]},
-    tailwind: {Tailwind, :install_and_run, [:gits, ~w(--watch)]}
+    npx: [
+      "vite",
+      "build",
+      "--mode",
+      "development",
+      "--watch",
+      "--config",
+      "vite.config.ts",
+      cd: Path.expand("../assets", __DIR__)
+    ]
   ]
 
 config :gits, GitsWeb.Endpoint,

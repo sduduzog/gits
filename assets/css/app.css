@@ -1,81 +1,8 @@
 @import url("../node_modules/quill/dist/quill.snow.css");
 
-
-
-@font-face {
-  font-family: "Inter";
-  src: url("/fonts/Inter_var.ttf") format("truetype-variations");
-  font-weight: 100 1000;
-  font-stretch: 25% 151%;
-}
-
-@font-face {
-  font-family: "Poppins";
-  font-style: italic;
-  font-weight: 900;
-  src: url("/fonts/Poppins-BlackItalic.ttf") format("truetype");
-}
-
-@font-face {
-  font-family: "Poppins";
-  font-style: normal;
-  font-weight: 700;
-  src: url("/fonts/Poppins-Bold.ttf") format("truetype");
-}
-
-@font-face {
-  font-family: "Poppins";
-  font-style: normal;
-  font-weight: 600;
-  src: url("/fonts/Poppins-SemiBold.ttf") format("truetype");
-}
-
-@font-face {
-  font-family: "Poppins";
-  font-style: normal;
-  font-weight: 500;
-  src: url("/fonts/Poppins-Medium.ttf") format("truetype");
-}
-
-@font-face {
-  font-family: "Poppins";
-  font-style: normal;
-  font-weight: 400;
-  src: url("/fonts/Poppins-Regular.ttf") format("truetype");
-}
-
-@font-face {
-  font-family: "Poppins";
-  font-style: normal;
-  font-weight: 300;
-  src: url("/fonts/Poppins-Light.ttf") format("truetype");
-}
-
-@font-face {
-  font-family: "Poppins";
-  font-style: italic;
-  font-weight: 300;
-  src: url("/fonts/Poppins-LightItalic.ttf") format("truetype");
-}
-
-@font-face {
-  font-family: "Poppins";
-  font-style: normal;
-  font-weight: 100;
-  src: url("/fonts/Poppins-Thin.ttf") format("truetype");
-}
-
-@font-face {
-  font-family: "Poppins";
-  font-style: italic;
-  font-weight: 100;
-  src: url("/fonts/Poppins-ThinItalic.ttf") format("truetype");
-}
-
-
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 @layer base {
   a, button, input {

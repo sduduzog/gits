@@ -52,8 +52,6 @@ defmodule Gits.MixProject do
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:floki, ">= 0.30.0"},
       {:phoenix_live_dashboard, "~> 0.8.3"},
-      {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
-      {:tailwind, "~> 0.2", runtime: Mix.env() == :dev},
       {:heroicons,
        github: "tailwindlabs/heroicons",
        tag: "v2.1.5",
@@ -108,11 +106,10 @@ defmodule Gits.MixProject do
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ash.setup --quiet", "test"],
-      "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
-      "assets.build": ["tailwind gits", "esbuild gits"],
+      "assets.setup": ["cmd --cd assets npm i"],
+      "assets.build": ["cmd --cd assets npx vite build --config vite.config.ts"],
       "assets.deploy": [
-        "tailwind gits --minify",
-        "esbuild gits --minify",
+        "cmd --cd assets npx vite build --mode production --config vite.config.ts",
         "phx.digest"
       ],
       "ash.setup": ["ash.setup", "run priv/repo/seeds.exs"]
