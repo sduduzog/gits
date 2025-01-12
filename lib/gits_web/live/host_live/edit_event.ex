@@ -2,7 +2,6 @@ defmodule GitsWeb.HostLive.EditEvent do
   alias Gits.Accounts.Venue
   alias Gits.GooglePlaces
   alias Gits.Storefront.Event
-  alias Gits.Storefront.TicketType
   alias Gits.Storefront.{Event, EventCategory}
   alias AshPhoenix.Form
   require Ash.Query
