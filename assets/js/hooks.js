@@ -1,4 +1,4 @@
-import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
+// import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
 import {
   computePosition,
   flip,
@@ -6,8 +6,6 @@ import {
   autoUpdate,
   offset,
 } from "@floating-ui/dom";
-
-import Quill from "quill";
 
 function turnstileCallbackEvent(self, name, eventName) {
   return (payload) => {
@@ -53,114 +51,48 @@ export const TurnstileHook = {
   },
 };
 
-const QuillEditor = {
-  _setup() {
-    const onTextChange = (_, __, source) => {
-      if (source === "user") {
-        const delta = this.quill.getContents();
-        hiddenField.value = JSON.stringify(delta);
-        hiddenField.dispatchEvent(new Event("input", { bubbles: true }));
-      }
-    };
+// const QrScannerCameraList = {
+//   async mounted() {
+//     const cameras = await Html5Qrcode.getCameras();
+//     for (const camera of cameras) {
+//       const element = document.createElement("span");
+//       element.classList.add(
+//         "text-sm",
+//         "p-2",
+//         "hover:bg-zinc-50",
+//         "rounded-lg",
+//         "font-semibold",
+//       );
+//
+//       element.id = camera.id;
+//       element.setAttribute("phx-value-id", camera.id);
+//       element.innerText = camera.label;
+//       element.addEventListener("click", () => {
+//         this.pushEvent("camera_choice", camera);
+//       });
+//       this.el.appendChild(element);
+//     }
+//   },
+// };
 
-    this.quill?.off("text-change", onTextChange);
-
-    const ops = JSON.parse(this.el.dataset.contents || '{"ops": []}');
-
-    const editor = document.createElement("div");
-    editor.style.height = "calc(100% - 48px)";
-
-    const hiddenField = document.createElement("input");
-    hiddenField.type = "hidden";
-    hiddenField.name = this.el.getAttribute("name");
-    hiddenField.value = this.el.dataset.contents;
-
-    this.el.appendChild(editor);
-    this.el.appendChild(hiddenField);
-
-    const quill = new Quill(editor, {
-      modules: {
-        toolbar: [
-          [{ header: [false, 1, 2, 3, 4] }],
-          ["bold", "italic", "underline", "strike"],
-          ["blockquote"],
-          ["link"],
-          [{ list: "bullet" }],
-        ],
-      },
-      theme: "snow",
-    });
-
-    quill.on("text-change", onTextChange);
-    this.quill = quill;
-
-    this.quill.setContents(ops);
-  },
-  mounted() {
-    this._setup();
-  },
-  updated() {
-    if (this.quill) {
-    } else {
-      this._setup();
-    }
-  },
-};
-
-const QuillContentParser = {
-  mounted() {
-    const element = document.createElement("div");
-    const quill = new Quill(element, {});
-
-    const ops = JSON.parse(this.el.dataset.content || '{"ops": []}');
-    quill.setContents(ops);
-    const html = quill.getSemanticHTML();
-    this.el.innerHTML = html;
-  },
-};
-
-const QrScannerCameraList = {
-  async mounted() {
-    const cameras = await Html5Qrcode.getCameras();
-    for (const camera of cameras) {
-      const element = document.createElement("span");
-      element.classList.add(
-        "text-sm",
-        "p-2",
-        "hover:bg-zinc-50",
-        "rounded-lg",
-        "font-semibold",
-      );
-
-      element.id = camera.id;
-      element.setAttribute("phx-value-id", camera.id);
-      element.innerText = camera.label;
-      element.addEventListener("click", () => {
-        this.pushEvent("camera_choice", camera);
-      });
-      this.el.appendChild(element);
-    }
-  },
-};
-
-const QrScanner = {
-  async mounted() {
-    console.log(this.liveSocket);
-    const cameraId = this.el.dataset.camera;
-    const html5QrCode = new Html5Qrcode(this.el.id, {
-      formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
-    });
-
-    html5QrCode.start(
-      cameraId,
-      { fps: 2, aspectRatio: 1 },
-      async (decodedText) => {
-        this.pushEvent("scanned", { text: decodedText });
-        this.liveSocket.execJS(this.el, this.el.getAttribute("data-callback"));
-      },
-    );
-  },
-};
+// const QrScanner = {
+//   async mounted() {
+//     console.log(this.liveSocket);
+//     const cameraId = this.el.dataset.camera;
+//     const html5QrCode = new Html5Qrcode(this.el.id, {
+//       formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
+//     });
+//
+//     html5QrCode.start(
+//       cameraId,
+//       { fps: 2, aspectRatio: 1 },
+//       async (decodedText) => {
+//         this.pushEvent("scanned", { text: decodedText });
+//         this.liveSocket.execJS(this.el, this.el.getAttribute("data-callback"));
+//       },
+//     );
+//   },
+// };
 
 const CopyLinkButton = {
   mounted() {
@@ -198,10 +130,8 @@ const Dropdown = {
 };
 
 export const Hooks = {
-  QuillEditor,
-  QuillContentParser,
-  QrScanner,
-  QrScannerCameraList,
+  // QrScanner,
+  // QrScannerCameraList,
   Turnstile: TurnstileHook,
   CopyLinkButton,
   Dropdown,

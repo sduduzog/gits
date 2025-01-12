@@ -5,7 +5,7 @@ import topbar from "../vendor/topbar";
 import "unfonts.css";
 import "../css/app.css";
 
-// import { Hooks } from "./hooks";
+import { Hooks } from "./hooks";
 
 const csrfToken = document
   .querySelector("meta[name='csrf-token']")
@@ -14,7 +14,7 @@ const csrfToken = document
 const liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
   params: { _csrf_token: csrfToken },
-  // hooks: Hooks,
+  hooks: Hooks,
 });
 
 topbar.config({ barColors: { 0: "#29d" }, shadowColor: "rgba(0, 0, 0, .3)" });
