@@ -88,8 +88,8 @@ if config_env() == :prod do
     secret_key: env!("TURNSTILE_SECRET_KEY")
 
   config :gits, Gits.Mailer,
-    adapter: Swoosh.Adapters.Brevo,
-    api_key: env!("BREVO_API_KEY", :string)
+    adapter: Swoosh.Adapters.SMTP2GO,
+    api_key: env!("SMTP2GO_API_KEY", :string)
 
   config :gits, :paystack, callback_url_base: "https://#{host}"
 end
