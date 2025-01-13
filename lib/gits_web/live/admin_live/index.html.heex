@@ -3,8 +3,8 @@
     :for={
       {action} <- [
         {:dashboard},
-        {:jobs}
-        # {:hosts},
+        {:jobs},
+        {:hosts}
         # {:users},
         # {:support}
       ]
@@ -18,7 +18,6 @@
 
 <h1 class="p-4 font-semibold capitalize">{@live_action}</h1>
 
-<div :if={@live_action == :dashboard}></div>
 <div :if={@live_action == :jobs} class="p-2">
   <div class="border rounded-lg overflow-auto sm:overflow-hidden">
     <.table id="jobs" rows={@jobs}>
@@ -58,6 +57,17 @@
     </.table>
   </div>
 </div>
+
+<div :if={@live_action == :hosts} class="p-2">
+  <div class="border rounded-lg overflow-auto sm:overflow-hidden">
+    <.table id="jobs" rows={@hosts}>
+      <:col :let={host} label="Name">{host.name}</:col>
+      <:col :let={host} label="Owner">{host.owner.name}</:col>
+      <:col :let={host} label="Paystack Name">{host.paystack_business_name}</:col>
+    </.table>
+  </div>
+</div>
+
 <div :if={@live_action == :dashboard}></div>
 <div :if={@live_action == :dashboard}></div>
 <div :if={@live_action == :dashboard}></div>

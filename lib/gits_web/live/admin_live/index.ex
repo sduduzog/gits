@@ -1,4 +1,5 @@
 defmodule GitsWeb.AdminLive.Index do
+  alias Gits.Accounts.Host
   alias Gits.Support.Job
   use GitsWeb, :live_view
 
@@ -18,6 +19,17 @@ defmodule GitsWeb.AdminLive.Index do
           {:ok, jobs} ->
             socket
             |> assign(:jobs, jobs)
+            |> noreply()
+        end
+
+      :hosts ->
+        Ash.Query.for_read(Host, :read)
+        |> Ash.Query.load([:owner, :paystack_business_name])
+        |> Ash.read(actor: user)
+        |> case do
+          {:ok, hosts} ->
+            socket
+            |> assign(:hosts, hosts)
             |> noreply()
         end
 
