@@ -8,7 +8,6 @@ defmodule Gits.Mailer do
     |> sender("auth")
     |> subject("Sign in to GiTS")
     |> render_body(:magic_link, %{token: token})
-    |> premail()
     |> deliver()
   end
 
@@ -23,7 +22,6 @@ defmodule Gits.Mailer do
       event_name: event_name,
       order_id: order_id
     })
-    |> premail()
     |> deliver()
   end
 
@@ -33,7 +31,6 @@ defmodule Gits.Mailer do
     |> sender("refunds")
     |> subject("Refund Requested")
     |> render_body(:refund_requested, %{otp: otp, order_no: order_no})
-    |> premail()
     |> deliver()
   end
 
@@ -46,13 +43,6 @@ defmodule Gits.Mailer do
     heex
     |> Phoenix.HTML.Safe.to_iodata()
     |> IO.chardata_to_string()
-  end
-
-  defp premail(email) do
-    text = Premailex.to_text(email.html_body)
-
-    email
-    |> text_body(text)
   end
 
   defp sender(email, username) do

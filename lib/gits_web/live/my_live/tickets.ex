@@ -16,7 +16,11 @@ defmodule GitsWeb.MyLive.Tickets do
     |> Ash.Query.sort(starts_at: :desc)
     |> Ash.Query.load(
       ticket_types:
-        Ash.Query.load(TicketType, tickets: Ash.Query.filter(Ticket, order.id == ^order))
+        Ash.Query.load(TicketType,
+          tickets:
+            Ash.Query.filter(Ticket, order.id == ^order)
+            |> Ash.Query.load(:attendee)
+        )
     )
     |> Ash.read()
     |> case do

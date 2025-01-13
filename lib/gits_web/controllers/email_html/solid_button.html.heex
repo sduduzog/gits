@@ -1,0 +1,17 @@
+<div>
+  <a
+    href={@href}
+    style="display: inline-block; text-decoration: none; padding: 12px 16px; margin: 0 16px 24px 0; border-radius: 8px; background-color: #60637a; font-size: 14px; line-height: 16px; font-weight: 500; color: #fffffe; outline: 2px solid transparent; outline-offset: 2px"
+    class="active-text-white hover-bg-zinc-600 active-bg-zinc-700"
+  >
+    <!--[if mso]>
+      <i style="mso-font-width: 150%; mso-text-raise: 30px" hidden>&emsp;</i>
+    <![endif]-->
+    <span style="mso-text-raise: 16px">
+      {render_slot(@inner_block)}
+    </span>
+    <!--[if mso]>
+      <i hidden style="mso-font-width: 150%">&emsp;&#8203;</i>
+    <![endif]-->
+  </a>
+</div>

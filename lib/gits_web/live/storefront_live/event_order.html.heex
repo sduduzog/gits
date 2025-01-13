@@ -240,7 +240,7 @@
   </div>
 
   <%= if @order_state == :processed do %>
-    <.form :let={f} phx-submit="confirm" for={@confirm_form} class="grid  items-center gap-4 p-2">
+    <.form phx-submit="confirm" for={@confirm_form} class="grid  items-center gap-4 p-2">
       <div class="flex">
         <.button>
           <span>Confirm Order</span>

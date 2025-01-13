@@ -5,10 +5,16 @@ defmodule Gits.Storefront.TicketType.Validations.PriceValid do
   def validate(changeset, opts, context) do
     price = Ash.Changeset.get_attribute(changeset, :price)
 
-    if Decimal.eq?(price, Decimal.new(0)) or Decimal.gte?(price, Decimal.new(50)) do
-      :ok
-    else
-      {:error, field: :price, message: "must be zero or greater than 50"}
+    case price do
+      nil ->
+        {:error, field: :price, message: "must be zero or greater than 50"}
+
+      price ->
+        if Decimal.eq?(price, Decimal.new(0)) or Decimal.gte?(price, Decimal.new(50)) do
+          :ok
+        else
+          {:error, field: :price, message: "must be zero or greater than 50"}
+        end
     end
   end
 
