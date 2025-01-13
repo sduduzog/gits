@@ -29,7 +29,7 @@ defimpl SEO.OpenGraph.Build, for: Gits.Storefront.Event do
     SEO.OpenGraph.build(
       detail:
         SEO.OpenGraph.Article.build(
-          published_time: event.updated_at,
+          published_time: event.published_at || event.updated_at,
           author: "GiTS"
         ),
       image: image(event, conn),
