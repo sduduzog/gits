@@ -104,7 +104,7 @@
 <div :if={@live_action == :users} class="p-2">
   <div class="overflow-auto rounded-lg border sm:overflow-hidden">
     <.table id="jobs" rows={@users}>
-      <:col :let={user} label="Name">{user.name}</:col>
+      <:col :let={user} label="User">{user.email} ({user.name || "_"})</:col>
       <:col :let={user} label="Created at">
         {user.created_at
         |> DateTime.shift_zone!("Africa/Johannesburg")

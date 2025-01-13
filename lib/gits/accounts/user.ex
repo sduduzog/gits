@@ -135,10 +135,6 @@ defmodule Gits.Accounts.User do
     has_one :admin, Admin
     has_many :roles, Role
 
-    # has_many :hosts, Host do
-    #   no_attributes? true
-    # end
-
     many_to_many :hosts, Host do
       through Role
     end
