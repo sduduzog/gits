@@ -11,7 +11,7 @@ defmodule GitsWeb.HostLive.Dashboard do
 
   def render(assigns) do
     ~H"""
-    <h1 class="p-2 text-xl font-semibold">Hello {@current_user.name}</h1>
+    <h1 class="p-2 text-xl font-medium">Hello {@current_user.name}</h1>
     """
   end
 end

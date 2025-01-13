@@ -29,24 +29,22 @@ defimpl SEO.OpenGraph.Build, for: Gits.Storefront.Event do
     SEO.OpenGraph.build(
       detail:
         SEO.OpenGraph.Article.build(
-          published_time: event.updated_at,
+          published_time: event.published_at || event.updated_at,
           author: "GiTS"
         ),
       image: image(event, conn),
       title: event.name,
-      description: event.description
+      description: event.summary
     )
   end
 
-  defp image(event, conn) do
-    file = Gits.Bucket.get_feature_image_path(event.account_id, event.id)
+  defp image(event, _) do
+    file = Gits.Bucket.get_image_url(event.poster)
 
-    if Gits.Bucket.feature_image_exists?(event.account_id, event.id) do
-      SEO.OpenGraph.Image.build(
-        url: static_url(conn, file),
-        alt: event.name
-      )
-    end
+    SEO.OpenGraph.Image.build(
+      url: file,
+      alt: event.name
+    )
   end
 end
 
@@ -55,16 +53,16 @@ defimpl SEO.Site.Build, for: Gits.Storefront.Event do
 
   def build(event, conn) do
     SEO.Site.build(
-      url: url(conn, ~p"/events/#{event.masked_id}"),
+      url: url(conn, ~p"/events/#{event.public_id}"),
       title: event.name,
-      description: event.description
+      description: event.summary
     )
   end
 end
 
 defimpl SEO.Twitter.Build, for: Gits.Storefront.Event do
   def build(event, _conn) do
-    SEO.Twitter.build(description: event.description, title: event.name)
+    SEO.Twitter.build(description: event.summary, title: event.name)
   end
 end
 
@@ -83,7 +81,7 @@ defimpl SEO.Breadcrumb.Build, for: Gits.Storefront.Event do
   def build(event, conn) do
     SEO.Breadcrumb.List.build([
       %{name: "Events", item: url(conn, ~p"/events")},
-      %{name: event.name, item: url(conn, ~p"/events/#{event.masked_id}")}
+      %{name: event.name, item: url(conn, ~p"/events/#{event.public_id}")}
     ])
   end
 end
