@@ -142,6 +142,7 @@ defmodule GitsWeb.Router do
       live "/jobs", AdminLive.Index, :jobs
       live "/hosts", AdminLive.Index, :hosts
       live "/users", AdminLive.Index, :users
+      live "/events", AdminLive.Index, :events
       live "/support", AdminLive.Index, :support
       # remove when done with onboarding on all environments
       live "/start", AdminLive, :start

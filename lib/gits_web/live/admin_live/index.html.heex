@@ -4,8 +4,9 @@
       {action} <- [
         {:dashboard},
         {:jobs},
-        {:hosts}
-        # {:users},
+        {:hosts},
+        {:users},
+        {:events}
         # {:support}
       ]
     }
@@ -64,6 +65,14 @@
       <:col :let={host} label="Name">{host.name}</:col>
       <:col :let={host} label="Owner">{host.owner.name}</:col>
       <:col :let={host} label="Paystack Name">{host.paystack_business_name}</:col>
+    </.table>
+  </div>
+</div>
+
+<div :if={@live_action == :events} class="p-2">
+  <div class="border rounded-lg overflow-auto sm:overflow-hidden">
+    <.table id="jobs" rows={@events}>
+      <:col :let={event} label="Name">{event.name}</:col>
     </.table>
   </div>
 </div>

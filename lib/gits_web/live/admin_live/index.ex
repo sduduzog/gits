@@ -1,4 +1,5 @@
 defmodule GitsWeb.AdminLive.Index do
+  alias Gits.Storefront.Event
   alias Gits.Accounts.Host
   alias Gits.Support.Job
   use GitsWeb, :live_view
@@ -30,6 +31,17 @@ defmodule GitsWeb.AdminLive.Index do
           {:ok, hosts} ->
             socket
             |> assign(:hosts, hosts)
+            |> noreply()
+        end
+
+      :events ->
+        Ash.Query.for_read(Event, :read)
+        # |> Ash.Query.load([:owner, :paystack_business_name])
+        |> Ash.read(actor: user)
+        |> case do
+          {:ok, events} ->
+            socket
+            |> assign(:events, events)
             |> noreply()
         end
 
