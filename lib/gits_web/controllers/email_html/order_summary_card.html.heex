@@ -1,0 +1,53 @@
+<table style="margin: 0 0 16px 0; width: 100%" cellpadding="0" cellspacing="0" role="none">
+  <tr>
+    <td style="border-radius: 12px; background-color: #f4f5f7; padding: 32px">
+      <h3 style="font-size: 18px; font-weight: 600">Order Summary</h3>
+      <dl style="display: grid; gap: 24px; font-size: 14px; line-height: 24px">
+        <div style="display: grid; gap: 4px">
+          <dt style="font-weight: 500; color: #4b5563">Event</dt>
+          <dd style="margin: 0; color: #6b7280">
+            {@event_name}
+          </dd>
+        </div>
+        <div style="display: grid; gap: 4px">
+          <dt style="font-weight: 500; color: #4b5563">Tickets</dt>
+          <dd style="margin: 0; color: #6b7280">
+            <table
+              :for={{name, price, count} <- @tickets}
+              class="sm-w-full"
+              style="width: 100%"
+              cellpadding="0"
+              cellspacing="0"
+              role="none"
+            >
+              <tr>
+                <td style="width: 300px">{count} x {name}</td>
+                <td style="width: 300px; text-align: right; font-weight: 500; color: #3f3f4b">
+                  R {price}
+                </td>
+              </tr>
+            </table>
+          </dd>
+        </div>
+      </dl>
+      <table
+        class="sm-w-full"
+        style="width: 100%; padding-top: 8px; padding-bottom: 8px"
+        cellpadding="0"
+        cellspacing="0"
+        role="none"
+      >
+        <tr>
+          <td style="width: 300px; text-align: right; font-weight: 500; color: #3f3f4b">
+            Payment Total
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 300px; text-align: right; font-size: 24px; font-weight: 600; color: #3f3f4b">
+            R {@total}
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
