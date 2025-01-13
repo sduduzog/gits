@@ -63,6 +63,12 @@
   <div class="border rounded-lg overflow-auto sm:overflow-hidden">
     <.table id="jobs" rows={@hosts}>
       <:col :let={host} label="Name">{host.name}</:col>
+      <:col :let={host} label="Created at">
+        {host.created_at
+        |> DateTime.shift_zone!("Africa/Johannesburg")
+        |> Calendar.strftime("%a, %d %b %Y %H:%M:%S")}
+      </:col>
+
       <:col :let={host} label="Owner">{host.owner.name} ({host.owner.email})</:col>
       <:col :let={host} label="Paystack Name">{host.paystack_business_name}</:col>
     </.table>
@@ -73,6 +79,18 @@
   <div class="border rounded-lg overflow-auto sm:overflow-hidden">
     <.table id="jobs" rows={@events}>
       <:col :let={event} label="Name">{event.name}</:col>
+      <:col :let={event} label="Url">
+        <.link navigate={~p"/events/#{event.public_id}"}>{~p"/events/#{event.public_id}"}</.link>
+      </:col>
+      <:col :let={event} label="Created at">
+        {event.created_at
+        |> DateTime.shift_zone!("Africa/Johannesburg")
+        |> Calendar.strftime("%a, %d %b %Y %H:%M:%S")}
+      </:col>
+      <:col :let={event} label="Published">{event.published?}</:col>
+      <:col :let={event} label="Price range">
+        R {event.minimum_ticket_price} - R {event.maximum_ticket_price}
+      </:col>
     </.table>
   </div>
 </div>
