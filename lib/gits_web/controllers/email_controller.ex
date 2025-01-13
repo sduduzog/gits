@@ -14,6 +14,6 @@ defmodule GitsWeb.EmailController do
     ])
     |> assign(:total, Decimal.new("30"))
     |> assign(:token, "foo")
-    |> render(:order_completed)
+    |> render(:magic_link)
   end
 end

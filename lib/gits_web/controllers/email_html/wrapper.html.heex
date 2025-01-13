@@ -39,15 +39,39 @@
                   </td>
                 </tr>
               </table>
-              <table style="width: 100%" cellpadding="0" cellspacing="0" role="none">
+
+              <table
+                style="width: 100%; padding: 16px"
+                cellpadding="0"
+                cellspacing="0"
+                role="none"
+              >
                 <tr>
-                  <td style="padding-left: 16px; padding-right: 16px; font-size: 12px; color: #60637a">
+                  <td style="padding-top: 4px; font-size: 12px; color: #60637a">
+                    <%= for {label, path} <- [
+                            {"Privacy Policy", ~p"/privacy"},
+                            {"Terms & Conditions", ~p"/terms"},
+                            {"Contact Us", ~p"/contact-us"}
+                          ] do %>
+                      <%= if label != "Privacy Policy" do %>
+                        &bull;
+                      <% end %>
+                      <a
+                        href={unverified_url(GitsWeb.Endpoint, path)}
+                        style="margin-left: 4px; margin-right: 4px; color: #60637a; text-decoration: none"
+                      >
+                        {label}
+                      </a>
+                    <% end %>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding-top: 8px; padding-bottom: 8px; font-size: 12px; color: #60637a">
                     <%= for {label, path} <- [
                             {"gits.co.za", ~p"/"},
-                            {"My Tickets", ~p"/my/tickets"},
-                            {"Host with us", ~p"/host-with-us"},
-                            {"Privacy", ~p"/privacy"},
-                            {"Terms", ~p"/terms"}
+                            {"Tickets", ~p"/my/tickets"},
+                            {"Orders", ~p"/my/orders"},
+                            {"Host with us", ~p"/host-with-us"}
                           ] do %>
                       <%= if label != "gits.co.za" do %>
                         &bull;
@@ -62,8 +86,8 @@
                   </td>
                 </tr>
                 <tr>
-                  <td style="padding-left: 16px; padding-right: 16px">
-                    <p style="margin-top: 16px; margin-bottom: 16px; font-size: 12px; color: #60637a">
+                  <td style="padding-top: 8px; padding-left: 4px; padding-bottom: 8px">
+                    <p style="font-size: 12px; color: #60637a">
                       &copy; 2025 PRPL Group | All Rights Reserved
                     </p>
                   </td>
