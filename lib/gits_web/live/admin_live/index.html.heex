@@ -63,7 +63,7 @@
   <div class="border rounded-lg overflow-auto sm:overflow-hidden">
     <.table id="jobs" rows={@hosts}>
       <:col :let={host} label="Name">{host.name}</:col>
-      <:col :let={host} label="Owner">{host.owner.name}</:col>
+      <:col :let={host} label="Owner">{host.owner.name} ({host.owner.email})</:col>
       <:col :let={host} label="Paystack Name">{host.paystack_business_name}</:col>
     </.table>
   </div>
