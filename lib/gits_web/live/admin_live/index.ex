@@ -1,4 +1,5 @@
 defmodule GitsWeb.AdminLive.Index do
+  alias Gits.Support.Admin
   alias Gits.Accounts.User
   alias Gits.Storefront.Event
   alias Gits.Accounts.Host
@@ -6,11 +7,20 @@ defmodule GitsWeb.AdminLive.Index do
   use GitsWeb, :live_view
 
   def mount(_, _, socket) do
-    socket |> ok(false)
+    Ash.load(socket.assigns.current_user, [:admin])
+    |> case do
+      {:ok, %User{admin: %Admin{}} = user} ->
+        socket
+        |> assign(:current_user, user)
+        |> ok(false)
+
+      _ ->
+        socket |> ok(:not_found)
+    end
   end
 
   def handle_params(_, _, socket) do
-    user = Ash.load!(socket.assigns.current_user, [:admin])
+    user = socket.assigns.current_user
 
     socket = assign(socket, :current_user, user)
 
