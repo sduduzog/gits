@@ -251,11 +251,11 @@
 
   <%= if @order_state == :completed do %>
     <div class="flex gap-4 p-2">
-      <.button phx-click={JS.navigate(~p"/my/tickets?order=#{@order_id}")}>
+      <.button phx-click={JS.navigate(~p"/my/tickets?order=#{@order_id}")} variant={:solid}>
         <span>View tickets</span>
       </.button>
 
-      <.button phx-click={JS.navigate(~p"/refund?order=#{@order_id}")} variant={:subtle}>
+      <.button phx-click={JS.navigate(~p"/refund?order=#{@order_id}")}>
         <span>Return tickets</span>
       </.button>
     </div>
