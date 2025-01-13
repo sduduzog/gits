@@ -1,4 +1,4 @@
-<nav class="flex px-4 pt-4 justify-between lg:gap-4 lg:justify-normal max-w-screen-sm">
+<nav class="flex max-w-screen-sm justify-between px-4 pt-4 lg:justify-normal lg:gap-4">
   <.link
     :for={
       {action} <- [
@@ -17,10 +17,15 @@
   </.link>
 </nav>
 
-<h1 class="p-4 font-semibold capitalize">{@live_action}</h1>
+<div class="p-4">
+  <h1 class=" font-semibold capitalize">{@live_action}</h1>
+  <span class="inline-flex text-sm text-zinc-400">
+    {@current_user.email} - {@current_user.admin.id}
+  </span>
+</div>
 
 <div :if={@live_action == :jobs} class="p-2">
-  <div class="border rounded-lg overflow-auto sm:overflow-hidden">
+  <div class="overflow-auto rounded-lg border sm:overflow-hidden">
     <.table id="jobs" rows={@jobs}>
       <:col :let={job} label="ID">{job.id}</:col>
       <:col :let={job} label="Worker">{job.worker}</:col>
@@ -60,7 +65,7 @@
 </div>
 
 <div :if={@live_action == :hosts} class="p-2">
-  <div class="border rounded-lg overflow-auto sm:overflow-hidden">
+  <div class="overflow-auto rounded-lg border sm:overflow-hidden">
     <.table id="jobs" rows={@hosts}>
       <:col :let={host} label="Name">{host.name}</:col>
       <:col :let={host} label="Created at">
@@ -76,7 +81,7 @@
 </div>
 
 <div :if={@live_action == :events} class="p-2">
-  <div class="border rounded-lg overflow-auto sm:overflow-hidden">
+  <div class="overflow-auto rounded-lg border sm:overflow-hidden">
     <.table id="jobs" rows={@events}>
       <:col :let={event} label="Name">{event.name}</:col>
       <:col :let={event} label="Url">

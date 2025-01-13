@@ -9,7 +9,9 @@ defmodule GitsWeb.AdminLive.Index do
   end
 
   def handle_params(_, _, socket) do
-    user = socket.assigns.current_user
+    user = Ash.load!(socket.assigns.current_user, [:admin])
+
+    socket = assign(socket, :current_user, user)
 
     case socket.assigns.live_action do
       :jobs ->

@@ -46,8 +46,11 @@
       </.link>
       <div class="space-y-1 truncate">
         <div class="flex justify-between gap-2 font-medium text-zinc-950">
-          <span class="shrink-0 text-sm/4">28 Aug, 12:30 PM</span>
-          <span class="truncate text-sm/4">{event.venue.name}</span>
+          <span class="shrink-0 text-sm/5">28 Aug, 12:30 PM</span>
+          <span class="truncate inline-flex gap-1 items-center text-sm/5">
+            <.icon name="i-lucide-map-pin" class="text-zinc-400" />
+            {if(event.location_is_private, do: "Private", else: event.venue.name)}
+          </span>
         </div>
         <h3 class="text-lg/5 font-semibold text-zinc-600">{event.name}</h3>
         <div class="flex items-center gap-2">
