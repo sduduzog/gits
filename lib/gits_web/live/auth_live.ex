@@ -39,7 +39,7 @@ defmodule GitsWeb.AuthLive do
 
         <.input field={f[:email]} type="email" class="mt-4" label="Email address" />
 
-        <.button size={:md} disabled={@disabled_submit?} type="submit" class="mt-6">
+        <.button variant={:solid} size={:md} disabled={@disabled_submit?} type="submit" class="mt-6">
           <span>
             Send me a magic link
           </span>
