@@ -19,6 +19,8 @@ defmodule GitsWeb.StorefrontLive.EventListing do
         |> assign(:viewer_id, session["viewer_id"])
         |> assign(:remote_ip, remote_ip)
         |> assign(:event, event)
+        |> assign(:page_title, event.name)
+        |> SEO.assign(event)
         |> ok()
 
       _ ->
