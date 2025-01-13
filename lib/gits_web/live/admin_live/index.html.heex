@@ -10,7 +10,8 @@
         # {:support}
       ]
     }
-    class="text-sm"
+    aria-selected={"#{action == @live_action}"}
+    class="text-sm aria-selected:font-bold text-zinc-600 aria-selected:text-zinc-800"
     patch={Routes.admin_index_path(@socket, action)}
   >
     <span>{to_string(action) |> String.capitalize()}</span>
@@ -100,6 +101,15 @@
   </div>
 </div>
 
-<div :if={@live_action == :dashboard}></div>
-<div :if={@live_action == :dashboard}></div>
-<div :if={@live_action == :dashboard}></div>
+<div :if={@live_action == :users} class="p-2">
+  <div class="overflow-auto rounded-lg border sm:overflow-hidden">
+    <.table id="jobs" rows={@users}>
+      <:col :let={user} label="Name">{user.name}</:col>
+      <:col :let={user} label="Created at">
+        {user.created_at
+        |> DateTime.shift_zone!("Africa/Johannesburg")
+        |> Calendar.strftime("%a, %d %b %Y %H:%M:%S")}
+      </:col>
+    </.table>
+  </div>
+</div>
