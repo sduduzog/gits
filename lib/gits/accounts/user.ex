@@ -126,15 +126,14 @@ defmodule Gits.Accounts.User do
     attribute :username, :string, allow_nil?: false, public?: true, default: &Nanoid.generate/0
     attribute :name, :string, public?: true
     attribute :avatar, :string, public?: true
+
+    create_timestamp :created_at
+    update_timestamp :updated_at
   end
 
   relationships do
     has_one :admin, Admin
     has_many :roles, Role
-
-    # has_many :hosts, Host do
-    #   no_attributes? true
-    # end
 
     many_to_many :hosts, Host do
       through Role

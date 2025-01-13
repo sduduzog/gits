@@ -1,4 +1,5 @@
 defmodule GitsWeb.AdminLive.Index do
+  alias Gits.Accounts.User
   alias Gits.Storefront.Event
   alias Gits.Accounts.Host
   alias Gits.Support.Job
@@ -37,46 +38,6 @@ defmodule GitsWeb.AdminLive.Index do
         end
 
       :events ->
-        # calculations do
-        #     calculate :published?, :boolean, expr(not is_nil(published_at))
-        #
-        #     calculate :utc_starts_at,
-        #               :utc_datetime,
-        #               expr(fragment("? at time zone (?)", starts_at, "Africa/Johannesburg"))
-        #
-        #     calculate :utc_ends_at,
-        #               :utc_datetime,
-        #               expr(fragment("? at time zone (?)", ends_at, "Africa/Johannesburg"))
-        #
-        #     calculate :start_date_invalid?, :boolean, expr(utc_starts_at < fragment("now()"))
-        #     calculate :end_date_invalid?, :boolean, expr(utc_ends_at < utc_starts_at)
-        #     calculate :venue_invalid?, :boolean, expr(is_nil(venue))
-        #
-        #     calculate :ticket_prices_vary?, :boolean, expr(minimum_ticket_price != maximum_ticket_price)
-        #   end
-        #
-        #   aggregates do
-        #     count :unique_views, :interactions do
-        #       field :viewer_id
-        #       uniq? true
-        #     end
-        #
-        #     count :total_orders, :orders do
-        #       filter state: :completed
-        #     end
-        #
-        #     count :admissions, [:ticket_types, :tickets] do
-        #       join_filter [:ticket_types, :tickets], expr(not is_nil(admitted_at))
-        #     end
-        #
-        #     min :minimum_ticket_price, :ticket_types, :price, default: Decimal.new(0)
-        #     max :maximum_ticket_price, :ticket_types, :price, default: Decimal.new(0)
-        #
-        #     sum :total_revenue, :orders, :total, default: Decimal.new(0)
-        #
-        #     sum :actual_revenue, [:orders, :fees_split], :subaccount, default: Decimal.new(0)
-        #   end
-
         Ash.Query.for_read(Event, :read)
         |> Ash.Query.load([
           :published?,
@@ -90,6 +51,16 @@ defmodule GitsWeb.AdminLive.Index do
           {:ok, events} ->
             socket
             |> assign(:events, events)
+            |> noreply()
+        end
+
+      :users ->
+        Ash.Query.for_read(User, :read)
+        |> Ash.read(actor: user)
+        |> case do
+          {:ok, users} ->
+            socket
+            |> assign(:users, users)
             |> noreply()
         end
 
