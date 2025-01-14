@@ -39,18 +39,20 @@ defmodule GitsWeb.Router do
   scope "/", GitsWeb do
     pipe_through :browser
     get "/", PageController, :home
+    get "/about", PageController, :story
     get "/events", PageController, :events
     get "/settings", PageController, :settings
     get "/organizers", PageController, :organizers
     get "/host-with-us", PageController, :host
     get "/privacy", PageController, :privacy
+    get "/refunds", PageController, :refunds
     get "/terms", PageController, :terms
     get "/help", PageController, :help
-    get "/support/faq", PageController, :faq
+    get "/faqs", PageController, :faqs
     get "/contact-us", PageController, :contact_us
     get "/assets/:filename", PageController, :assets
     get "/healthz", PageController, :healthz
-    get "/beta", PageController, :beta
+    get "/storyblok", PageController, :storyblok_admin
     get "/orders/paystack/callback", OrderController, :paystack_callback
 
     resources "/accounts", AccountController, only: [:index]

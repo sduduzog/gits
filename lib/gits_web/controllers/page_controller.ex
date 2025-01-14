@@ -105,12 +105,37 @@ defmodule GitsWeb.PageController do
     end
   end
 
-  def faq(conn, _) do
-    faqs = Documentation.Faqs.all_faqs()
+  def faqs(conn, params) do
+    {token, version, cv} =
+      case params do
+        %{"_storyblok_tk" => %{"timestamp" => cv}} ->
+          token =
+            Application.get_env(:gits, :storyblok)
+            |> Keyword.get(:preview_token)
 
-    conn
-    |> assign(:faqs, faqs)
-    |> render(:faq)
+          {token, "draft", cv}
+
+        _ ->
+          token =
+            Application.get_env(:gits, :storyblok)
+            |> Keyword.get(:public_token)
+
+          ts =
+            DateTime.to_unix(DateTime.utc_now(), :millisecond)
+            |> to_string()
+
+          {token, "published", ts}
+      end
+
+    Req.get(
+      "https://api.storyblok.com/v2/cdn/stories/faqs?token=#{token}&version=#{version}&cv=#{cv}"
+    )
+    |> case do
+      {:ok, %{body: %{"story" => %{"content" => %{"body" => faqs}}}}} ->
+        conn
+        |> assign(:faqs, faqs)
+        |> render(:faq)
+    end
   end
 
   def privacy(conn, _params) do
@@ -122,6 +147,12 @@ defmodule GitsWeb.PageController do
   def terms(conn, _params) do
     conn
     |> assign(:article, Documentation.Articles.get_article_by_id!("terms"))
+    |> render(:article)
+  end
+
+  def refunds(conn, _params) do
+    conn
+    |> assign(:article, Documentation.Articles.get_article_by_id!("refunds"))
     |> render(:article)
   end
 
@@ -141,5 +172,34 @@ defmodule GitsWeb.PageController do
 
   def healthz(conn, _) do
     conn |> json(%{hello: "world"})
+  end
+
+  def story(conn, %{"_storyblok_tk" => %{"timestamp" => cv}}) do
+    %{
+      "_storyblok" => "608759471",
+      "_storyblok_c" => "article",
+      "_storyblok_lang" => "default",
+      "_storyblok_release" => "0",
+      "_storyblok_rl" => "1736859485637",
+      "_storyblok_tk" => %{
+        "space_id" => "126300",
+        "timestamp" => "1736859479",
+        "token" => "c9f1a31183a63702b31ee670da47e3f416f0fc26"
+      },
+      "_storyblok_version" => ""
+    }
+
+    token = "YaT03a9oeCyuLjNgCKIzewtt"
+
+    Req.get(
+      "https://api.storyblok.com/v2/cdn/stories/about?token=#{token}&version=draft&cv=#{cv}"
+    )
+    |> IO.inspect()
+
+    conn |> put_layout(false) |> render(:story)
+  end
+
+  def storyblok_admin(conn, _) do
+    conn |> put_layout(false) |> render(:storyblok_admin)
   end
 end

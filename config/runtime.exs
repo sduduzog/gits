@@ -59,6 +59,10 @@ config :logger, level: env!("LOG_LEVEL", :atom, :debug)
 
 config :gits, :paystack, secret_key: paystack_secret_key
 
+config :gits, :storyblok,
+  preview_token: env!("STORYBLOK_PREVIEW_TOKEN"),
+  public_token: env!("STORYBLOK_PUBLIC_TOKEN")
+
 if config_env() == :prod do
   database_url = env!("DATABASE_URL")
 
