@@ -152,9 +152,9 @@ defmodule GitsWeb.CoreComponents do
         #  ]},
         {"i-lucide-scale", "Legal",
          [
-           # {"Privacy Policy", "/privacy"},
-           {"Terms & Conditions", "/terms"}
-           # {"Refund Policy", "/refunds"}
+           {"Privacy Policy", "/privacy"},
+           {"Terms & Conditions", "/terms"},
+           {"Refund Policy", "/refund-policy"}
          ]},
         {"i-lucide-at-sign", "Social",
          [
