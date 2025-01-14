@@ -4,9 +4,7 @@ defmodule GitsWeb.PageController do
 
   require Ash.Query
   alias Gits.Accounts.{Host, User}
-  alias Gits.Bucket
   alias Gits.Dashboard.Member
-  alias Gits.Documentation
   alias Gits.Storefront.Event
 
   def home(conn, _) do
@@ -105,38 +103,37 @@ defmodule GitsWeb.PageController do
     end
   end
 
-  def faq(conn, _) do
-    faqs = Documentation.Faqs.all_faqs()
+  def faqs(conn, params) do
+    {token, version, cv} =
+      case params do
+        %{"_storyblok_tk" => %{"timestamp" => cv}} ->
+          token =
+            Application.get_env(:gits, :storyblok)
+            |> Keyword.get(:preview_token)
 
-    conn
-    |> assign(:faqs, faqs)
-    |> render(:faq)
-  end
+          {token, "draft", cv}
 
-  def privacy(conn, _params) do
-    conn
-    |> assign(:article, Documentation.Articles.get_article_by_id!("privacy"))
-    |> render(:article)
-  end
+        _ ->
+          token =
+            Application.get_env(:gits, :storyblok)
+            |> Keyword.get(:public_token)
 
-  def terms(conn, _params) do
-    conn
-    |> assign(:article, Documentation.Articles.get_article_by_id!("terms"))
-    |> render(:article)
-  end
+          ts =
+            DateTime.to_unix(DateTime.utc_now(), :millisecond)
+            |> to_string()
 
-  def contact_us(conn, _params) do
-    conn
-    |> assign(:article, Documentation.Articles.get_article_by_id!("contact-us"))
-    |> render(:article)
-  end
+          {token, "published", ts}
+      end
 
-  def help(conn, _params) do
-    render(conn, :help)
-  end
-
-  def assets(conn, params) do
-    conn |> redirect(external: Bucket.get_image_url(params["filename"]))
+    Req.get(
+      "https://api.storyblok.com/v2/cdn/stories/faqs?token=#{token}&version=#{version}&cv=#{cv}"
+    )
+    |> case do
+      {:ok, %{body: %{"story" => %{"content" => %{"body" => faqs}}}}} ->
+        conn
+        |> assign(:faqs, faqs)
+        |> render(:faq)
+    end
   end
 
   def healthz(conn, _) do

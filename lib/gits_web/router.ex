@@ -43,14 +43,9 @@ defmodule GitsWeb.Router do
     get "/settings", PageController, :settings
     get "/organizers", PageController, :organizers
     get "/host-with-us", PageController, :host
-    get "/privacy", PageController, :privacy
-    get "/terms", PageController, :terms
-    get "/help", PageController, :help
-    get "/support/faq", PageController, :faq
-    get "/contact-us", PageController, :contact_us
-    get "/assets/:filename", PageController, :assets
+    get "/faqs", PageController, :faqs
     get "/healthz", PageController, :healthz
-    get "/beta", PageController, :beta
+    get "/storyblok", StoryblokController, :admin
     get "/orders/paystack/callback", OrderController, :paystack_callback
 
     resources "/accounts", AccountController, only: [:index]
@@ -157,6 +152,11 @@ defmodule GitsWeb.Router do
   scope "/webhooks", GitsWeb do
     pipe_through :api
     post "/paystack", WebhookController, :paystack
+  end
+
+  scope "/*path", GitsWeb do
+    pipe_through [:browser]
+    get "/", StoryblokController, :show
   end
 
   if Application.compile_env(:gits, :dev_routes) do
