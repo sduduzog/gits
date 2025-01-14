@@ -4,9 +4,7 @@ defmodule GitsWeb.PageController do
 
   require Ash.Query
   alias Gits.Accounts.{Host, User}
-  alias Gits.Bucket
   alias Gits.Dashboard.Member
-  alias Gits.Documentation
   alias Gits.Storefront.Event
 
   def home(conn, _) do

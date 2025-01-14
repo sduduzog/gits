@@ -10,8 +10,6 @@ defmodule GitsWeb.StoryblokHTML do
   end
 
   def blok(%{story: %{"component" => "article"}} = assigns) do
-    IO.inspect(assigns.story)
-
     ~H"""
     <div>
       <.blok :for={blok <- @story["body"]["content"]} story={blok} />
