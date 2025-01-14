@@ -52,16 +52,4 @@ If you have any questions or concerns regarding this Privacy Policy, please cont
 - Email: [Your Contact Email]
 - Phone: [Your Contact Number]
 
----
 
-Feel free to modify this template according to your specific needs and consult with a legal professional to ensure compliance with applicable laws such as GDPR or other relevant regulations in your jurisdiction.
-
-Sources
-[1] Privacy Policy - EventsPass https://eventspass.co/privacy-policy/
-[2] Privacy policy for event registrations - Oniva Event https://www.oniva.events/en/support/article/privacy-policy-for-event-registrations
-[3] Event Privacy Policy - Instructure https://www.instructure.com/policies/event-privacy
-[4] Privacy Policy Generator for Event Organisers - Ticket Tailor https://privacypolicygenerator.tickettailor.com
-[5] Privacy Policy - Knowledge Base - Quicket https://help.quicket.com/portal/en/kb/articles/privacy-policy
-[6] [PDF] Events Privacy Policy - Consumers International https://www.consumersinternational.org/media/261886/event-privacy-policy.pdf
-[7] Privacy Policy for Marketing Activities - TicketSource https://www.ticketsource.us/kb/terms-of-use/privacy-policy-for-marketing-activities
-[8] Event Organiser Data Privacy Policy - EU - TicketSource https://www.ticketsource.eu/kb/terms-of-use/event-organiser-data-privacy-policy

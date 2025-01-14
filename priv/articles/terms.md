@@ -64,8 +64,4 @@ If you have any questions about these Terms and Conditions, please contact us at
 - Email: [Your Contact Email]
 - Phone: [Your Contact Number]
 
----
 
-Feel free to adjust sections as needed based on your specific business model, legal requirements, or user needs! It's also recommended to consult with a legal professional to ensure compliance with local laws and regulations relevant to your platform.
-
-Sources

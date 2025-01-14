@@ -138,68 +138,7 @@ defmodule GitsWeb.PageController do
     end
   end
 
-  def privacy(conn, _params) do
-    conn
-    |> assign(:article, Documentation.Articles.get_article_by_id!("privacy"))
-    |> render(:article)
-  end
-
-  def terms(conn, _params) do
-    conn
-    |> assign(:article, Documentation.Articles.get_article_by_id!("terms"))
-    |> render(:article)
-  end
-
-  def refunds(conn, _params) do
-    conn
-    |> assign(:article, Documentation.Articles.get_article_by_id!("refunds"))
-    |> render(:article)
-  end
-
-  def contact_us(conn, _params) do
-    conn
-    |> assign(:article, Documentation.Articles.get_article_by_id!("contact-us"))
-    |> render(:article)
-  end
-
-  def help(conn, _params) do
-    render(conn, :help)
-  end
-
-  def assets(conn, params) do
-    conn |> redirect(external: Bucket.get_image_url(params["filename"]))
-  end
-
   def healthz(conn, _) do
     conn |> json(%{hello: "world"})
-  end
-
-  def story(conn, %{"_storyblok_tk" => %{"timestamp" => cv}}) do
-    %{
-      "_storyblok" => "608759471",
-      "_storyblok_c" => "article",
-      "_storyblok_lang" => "default",
-      "_storyblok_release" => "0",
-      "_storyblok_rl" => "1736859485637",
-      "_storyblok_tk" => %{
-        "space_id" => "126300",
-        "timestamp" => "1736859479",
-        "token" => "c9f1a31183a63702b31ee670da47e3f416f0fc26"
-      },
-      "_storyblok_version" => ""
-    }
-
-    token = "YaT03a9oeCyuLjNgCKIzewtt"
-
-    Req.get(
-      "https://api.storyblok.com/v2/cdn/stories/about?token=#{token}&version=draft&cv=#{cv}"
-    )
-    |> IO.inspect()
-
-    conn |> put_layout(false) |> render(:story)
-  end
-
-  def storyblok_admin(conn, _) do
-    conn |> put_layout(false) |> render(:storyblok_admin)
   end
 end

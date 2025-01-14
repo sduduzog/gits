@@ -150,12 +150,12 @@ defmodule GitsWeb.CoreComponents do
         #    {"FAQ", "/support/faq"},
         #    {"Contact", "/contact-us"}
         #  ]},
-        # {"i-lucide-scale", "Legal",
-        #  [
-        #    {"Privacy Policy", "/privacy"},
-        #    {"Terms & Conditions", "/terms"},
-        #    {"Refund Policy", "/refunds"}
-        #  ]},
+        {"i-lucide-scale", "Legal",
+         [
+           # {"Privacy Policy", "/privacy"},
+           {"Terms & Conditions", "/terms"}
+           # {"Refund Policy", "/refunds"}
+         ]},
         {"i-lucide-at-sign", "Social",
          [
            {"Instagram", "https://instagram.com/gits_za"},
