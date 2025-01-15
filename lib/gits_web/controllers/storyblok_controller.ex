@@ -22,22 +22,14 @@ defmodule GitsWeb.StoryblokController do
           {token, "draft", cv}
 
         _ ->
-          token =
-            Application.get_env(:gits, :storyblok)
-            |> Keyword.get(:public_token)
+          {token, cv} = get_token_and_version()
 
-          ts =
-            DateTime.to_unix(DateTime.utc_now(), :millisecond)
-            |> to_string()
-
-          {token, "published", ts}
+          {token, "published", cv}
       end
 
-    Req.get(
-      "https://api.storyblok.com/v2/cdn/stories/#{path}?token=#{token}&version=#{version}&cv=#{cv}"
-    )
+    fetch_stories(path, token, version, cv)
     |> case do
-      {:ok, %{body: %{"story" => story}}} ->
+      %{} = story ->
         conn
         |> assign(:page_title, story["name"])
         |> assign(:story, story)
@@ -47,6 +39,49 @@ defmodule GitsWeb.StoryblokController do
         conn
         |> put_layout(html: :not_found)
         |> render(:story)
+    end
+  end
+
+  defp get_token_and_version() do
+    token =
+      Application.get_env(:gits, :storyblok)
+      |> Keyword.get(:public_token)
+
+    url = "https://api.storyblok.com/v2/cdn/spaces/me?token=#{token}"
+
+    Cachex.fetch(:cache, url, fn key ->
+      Req.get(key)
+      |> case do
+        {:ok, %{body: body}} ->
+          {:commit, body["space"]["version"], expire: :timer.seconds(3600)}
+
+        _ ->
+          {:ignore, nil}
+      end
+    end)
+    |> case do
+      {_, response, _} -> {token, response}
+      {_, response} -> {token, response}
+    end
+  end
+
+  defp fetch_stories(path, token, version, cv) do
+    url =
+      "https://api.storyblok.com/v2/cdn/stories/#{path}?token=#{token}&version=#{version}&cv=#{cv}"
+
+    Cachex.fetch(:cache, url, fn key ->
+      Req.get(key)
+      |> case do
+        {:ok, %{body: %{"story" => story}}} ->
+          {:commit, story, expire: :timer.seconds(3600)}
+
+        _ ->
+          {:ignore, nil}
+      end
+    end)
+    |> case do
+      {_, response, _} -> response
+      {_, response} -> response
     end
   end
 end
