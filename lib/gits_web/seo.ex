@@ -3,8 +3,7 @@ defmodule GitsWeb.SEO do
 
   use SEO,
     site: &__MODULE__.site_config/1,
-    open_graph:
-      SEO.OpenGraph.build(description: "Easy events, affordable tickets", site_name: "GiTS"),
+    open_graph: &__MODULE__.og_config/1,
     twitter:
       SEO.Twitter.build(
         site: "@gits_za",
@@ -12,12 +11,20 @@ defmodule GitsWeb.SEO do
         card: :summary_large_image
       )
 
-  def site_config(_conn) do
+  def site_config(conn) do
     SEO.Site.build(
       default_title: "GiTS - Ticketing & events",
       title_suffix: " - GiTS",
       description: "Easy events, affortable tickets",
-      manifest_url: "/site.webmanifest"
+      manifest_url: url(conn, ~p"/site.webmanifest")
+    )
+  end
+
+  def og_config(conn) do
+    SEO.OpenGraph.build(
+      description: "Easy events, affordable tickets",
+      site_name: "GiTS",
+      image: static_url(conn, "/images/gits_site_cover.png")
     )
   end
 end

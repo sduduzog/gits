@@ -1,0 +1,10 @@
+<h1 class="p-2 text-xl font-medium">Hello {@current_user.name}</h1>
+<div class="grid grid-cols-2 gap-4 p-2 md:grid-cols-3 lg:grid-cols-4 lg:gap-8">
+  <div
+    :for={{label, metric} <- [{"Total Events", @host.total_events |> IO.inspect()}]}
+    class="grid gap-2 rounded-xl border px-4 py-6"
+  >
+    <span class="text-sm font-medium text-zinc-700">{label}</span>
+    <span class="text-4xl font-semibold">{metric}</span>
+  </div>
+</div>

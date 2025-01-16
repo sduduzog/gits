@@ -11,7 +11,7 @@ defmodule GitsWeb.StoryblokHTML do
 
   def blok(%{story: %{"component" => "article"}} = assigns) do
     ~H"""
-    <div>
+    <div class="max-w-screen-md">
       <.blok :for={blok <- @story["body"]["content"]} story={blok} />
     </div>
     """

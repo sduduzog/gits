@@ -1,17 +1,29 @@
 defmodule GitsWeb.HostLive.Dashboard do
+  alias Gits.Accounts.User
+  alias Gits.Storefront.Order
+  alias Gits.Accounts.Host
   use GitsWeb, :live_view
 
   require Ash.Query
 
-  def mount(_params, _session, socket) do
-    socket
-    |> assign(:page_title, "Dashboard")
-    |> ok(:host)
-  end
+  def mount(%{"handle" => handle}, _, socket) do
+    user = socket.assigns.current_user
 
-  def render(assigns) do
-    ~H"""
-    <h1 class="p-2 text-xl font-medium">Hello {@current_user.name}</h1>
-    """
+    Ash.load(
+      user,
+      [
+        hosts:
+          Ash.Query.filter(Host, handle == ^handle)
+          |> Ash.Query.load(:total_events)
+      ],
+      actor: user
+    )
+    |> case do
+      {:ok, %User{hosts: [%Host{} = host]}} ->
+        socket
+        |> assign(:host, host)
+        |> assign(:page_title, "Dashboard")
+        |> ok(:host)
+    end
   end
 end

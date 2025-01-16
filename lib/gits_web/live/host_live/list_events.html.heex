@@ -1,17 +1,12 @@
-<h1 class="p-2 text-xl font-semibold">Events</h1>
-
-<div class="flex items-center gap-4 p-2">
-  <div class="flex grow gap-8 p-2 lg:p-0">
-    <.link
-      :for={i <- [:all, :published, :drafts, :archived]}
-      patch={Routes.host_list_events_path(@socket, i, @host.handle)}
-      replace={true}
-      aria-selected={"#{i == @live_action}"}
-      class="rounded-lg text-zinc-400 aria-selected:text-zinc-950"
-    >
-      <span class="text-sm font-medium capitalize">{i}</span>
-    </.link>
+<div class="p-2 items-center flex flex-wrap">
+  <div class="grow">
+    <h1 class="text-xl font-medium">Events</h1>
+    <span class="text-sm text-zinc-500 capitalize">{@live_action}</span>
   </div>
+  <.button href={~p"/hosts/#{@host.handle}/events/create-new"}>
+    <.icon name="i-lucide-plus" />
+    <span>New event</span>
+  </.button>
 </div>
 
 <%= if @live_action == :archived do %>
