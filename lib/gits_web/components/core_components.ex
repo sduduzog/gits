@@ -11,7 +11,7 @@ defmodule GitsWeb.CoreComponents do
     ~H"""
     <.link
       navigate="/"
-      class="inline-flex h-5 shrink-0 items-center justify-center rounded-lg text-xl font-black italic"
+      class="inline-block max-w-16 h-5 shrink-0 items-center justify-center rounded-lg text-xl font-black italic"
     >
       <img
         phx-track-static
@@ -48,10 +48,12 @@ defmodule GitsWeb.CoreComponents do
       ])
 
     ~H"""
-    <header class="mx-auto flex max-w-screen-xl items-center gap-2 p-2 lg:gap-8">
-      <div class="flex grow items-center">
+    <header class="mx-auto justify-start flex max-w-screen-xl items-center gap-2 p-2 lg:gap-8">
+      <div class="items-center">
         <.logo />
       </div>
+      <div class="flex bg-red-200 grow items-center"></div>
+
       <.button :if={false} variant={:ghost} href={~p"/search"}>
         <.icon name="i-lucide-search" />
         <span>Search</span>
