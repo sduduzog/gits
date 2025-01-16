@@ -224,6 +224,10 @@ defmodule Gits.Accounts.Host do
     end
   end
 
+  aggregates do
+    count :total_events, :events
+  end
+
   identities do
     identity :handle, [:handle]
   end

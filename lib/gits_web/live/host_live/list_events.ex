@@ -37,15 +37,20 @@ defmodule GitsWeb.HostLive.ListEvents do
 
   defp list_event_query(:drafts, _) do
     Event
-    |> Ash.Query.filter(is_nil(published_at))
+    |> Ash.Query.filter(state == :draft)
   end
 
-  defp list_event_query(:all, params) do
+  defp list_event_query(:completed, _params) do
+    Event
+    |> Ash.Query.filter(state == :completed)
+  end
+
+  defp list_event_query(:all, _params) do
     Event
   end
 
-  defp list_event_query(_, _) do
+  defp list_event_query(:published, _) do
     Event
-    |> Ash.Query.filter(not is_nil(published_at))
+    |> Ash.Query.filter(state == :published)
   end
 end

@@ -6,9 +6,9 @@
   {"Events", "i-lucide-calendar-range", ~p"/hosts/#{@host.handle}/events",
    Enum.any?([ListEvents, ViewEvent], &(&1 == @socket.view)),
    [
-     {"Create new", ~p"/hosts/#{@host.handle}/events/create-new", false},
      {"All", ~p"/hosts/#{@host.handle}/events", @live_action == :all},
      {"Published", ~p"/hosts/#{@host.handle}/events/published", @live_action == :published},
+     {"Completed", ~p"/hosts/#{@host.handle}/events/completed", @live_action == :completed},
      {"Drafts", ~p"/hosts/#{@host.handle}/events/drafts", @live_action == :drafts},
      {"Archived", ~p"/hosts/#{@host.handle}/events/archived", @live_action == :archived}
    ]},

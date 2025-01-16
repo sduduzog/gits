@@ -68,6 +68,7 @@ defmodule GitsWeb.Router do
       live "/hosts/get-started", HostLive.Onboarding, :get_started
       live "/hosts/:handle/dashboard", HostLive.Dashboard, :overview
       live "/hosts/:handle/events/published", HostLive.ListEvents, :published
+      live "/hosts/:handle/events/completed", HostLive.ListEvents, :completed
       live "/hosts/:handle/events/drafts", HostLive.ListEvents, :drafts
       live "/hosts/:handle/events/archived", HostLive.ListEvents, :archived
       live "/hosts/:handle/events", HostLive.ListEvents, :all
@@ -154,11 +155,6 @@ defmodule GitsWeb.Router do
     post "/paystack", WebhookController, :paystack
   end
 
-  scope "/*path", GitsWeb do
-    pipe_through [:browser]
-    get "/", StoryblokController, :show
-  end
-
   if Application.compile_env(:gits, :dev_routes) do
     scope "/dev" do
       pipe_through :browser
@@ -167,5 +163,10 @@ defmodule GitsWeb.Router do
 
       get "/email", GitsWeb.EmailController, :test
     end
+  end
+
+  scope "/*path", GitsWeb do
+    pipe_through [:browser]
+    get "/", StoryblokController, :show
   end
 end

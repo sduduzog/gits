@@ -28,6 +28,7 @@ defmodule Gits.Storefront.Event do
 
     transitions do
       transition :publish, from: :draft, to: :published
+      transition :complete, from: :published, to: :completed
     end
   end
 
@@ -132,6 +133,7 @@ defmodule Gits.Storefront.Event do
 
     update :complete do
       change atomic_update(:completed_at, expr(fragment("now()")))
+      change transition_state(:completed)
     end
   end
 
