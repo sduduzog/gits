@@ -46,7 +46,7 @@ defmodule Gits.PaystackApi do
         business_name: business_name,
         account_number: account_number,
         settlement_bank: settlement_bank,
-        percentage_charge: 5
+        percentage_charge: 0
       }
     )
     |> case do

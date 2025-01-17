@@ -61,6 +61,7 @@ defmodule GitsWeb.Router do
       live "/t/:public_id", TicketLive, :show
       live "/t/:public_id/rsvp", TicketLive, :rsvp
       live "/refund", RefundLive, :index
+      live "/pricing", PricingLive, :index
     end
 
     live_session :user_required, on_mount: {GitsWeb.LiveUserAuth, :live_user_required} do

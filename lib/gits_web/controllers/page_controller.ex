@@ -103,6 +103,10 @@ defmodule GitsWeb.PageController do
     end
   end
 
+  def pricing(conn, _) do
+    render(conn, :pricing)
+  end
+
   def faqs(conn, params) do
     {token, version, cv} =
       case params do

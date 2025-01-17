@@ -145,7 +145,8 @@ defmodule GitsWeb.CoreComponents do
     assigns =
       assigns
       |> assign(:nav_tree, [
-        {"i-lucide-tickets", "Events & Hosting", [{"Host with us", "/host-with-us"}]},
+        {"i-lucide-tickets", "Events & Hosting",
+         [{"Host with us", "/host-with-us"}, {"Pricing", "/pricing"}]},
         # {"i-lucide-headset", "Support",
         #  [
         #    # {"I need help", "/support/help"},
