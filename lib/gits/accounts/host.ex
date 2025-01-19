@@ -165,6 +165,11 @@ defmodule Gits.Accounts.Host do
 
     has_many :events, Event, domain: Storefront
 
+    has_many :upcoming_events, Event do
+      domain Storefront
+      filter expr(state == :published)
+    end
+
     has_many :orders, Order do
       domain Storefront
       no_attributes? true

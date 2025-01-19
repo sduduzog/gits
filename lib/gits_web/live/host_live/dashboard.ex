@@ -1,6 +1,5 @@
 defmodule GitsWeb.HostLive.Dashboard do
   alias Gits.Accounts.User
-  alias Gits.Storefront.Order
   alias Gits.Accounts.Host
   use GitsWeb, :live_view
 
@@ -14,7 +13,7 @@ defmodule GitsWeb.HostLive.Dashboard do
       [
         hosts:
           Ash.Query.filter(Host, handle == ^handle)
-          |> Ash.Query.load(:total_events)
+          |> Ash.Query.load([:total_events, :upcoming_events])
       ],
       actor: user
     )

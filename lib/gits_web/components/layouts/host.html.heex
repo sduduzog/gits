@@ -1,33 +1,5 @@
 <.flash_group flash={@flash} />
 
-<% navigation = [
-  {"Home", "i-lucide-home", ~p"/hosts/#{@host.handle}/dashboard",
-   Enum.any?([Dashboard], &(&1 == @socket.view)), []},
-  {"Events", "i-lucide-calendar-range", ~p"/hosts/#{@host.handle}/events",
-   Enum.any?([ListEvents, ViewEvent], &(&1 == @socket.view)),
-   [
-     {"All", ~p"/hosts/#{@host.handle}/events", @live_action == :all},
-     {"Published", ~p"/hosts/#{@host.handle}/events/published", @live_action == :published},
-     {"Completed", ~p"/hosts/#{@host.handle}/events/completed", @live_action == :completed},
-     {"Drafts", ~p"/hosts/#{@host.handle}/events/drafts", @live_action == :drafts},
-     {"Archived", ~p"/hosts/#{@host.handle}/events/archived", @live_action == :archived}
-   ]},
-  {"Settings", "i-lucide-settings", ~p"/hosts/#{@host.handle}/settings",
-   Enum.any?([Settings], &(&1 == @socket.view)), []}
-] %>
-
-<% menus = [
-  [
-    {@current_user.email, nil, nil, false},
-    {"Profile", "i-lucide-user", ~p"/settings/profile", false}
-  ],
-  # [
-  # {"Organization", nil, nil, false}
-  # {"Settings", "i-lucide-settings", ~p"/hosts/#{@host.handle}/settings", false}
-  # ],
-  [{"Sign out", "i-lucide-log-out", ~p"/sign-out", false}]
-] %>
-
 <div class="grid h-dvh lg:grid-cols-[theme(space.64)_1fr]">
   <aside class="absolute inset-0 z-10 hidden space-y-8 bg-white lg:static lg:block">
     <div class="flex items-center px-4 py-2">
@@ -43,7 +15,10 @@
     </div>
     <div class="grid gap-2">
       <div
-        :for={{label, icon, href, current, children} <- navigation}
+        :for={
+          {label, icon, href, current, children} <-
+            host_navigation_items(@host, @socket.view, @live_action)
+        }
         class="flex flex-wrap gap-y-2"
       >
         <.link
@@ -97,19 +72,17 @@
     </div>
   </aside>
   <div class="overflow-auto">
-    <header class="sticky top-0 flex items-center gap-2 bg-white p-2 pr-4 shadow-sm lg:static lg:pl-0 lg:shadow-none">
-      <div class="flex grow items-center">
-        <.button :if={false} size={:box} variant={:ghost}>
+    <header class="sticky top-0 flex justify-end items-center gap-2 bg-white p-2 pr-4 shadow-sm lg:static lg:pl-0 lg:shadow-none">
+      <div :if={false} class="flex grow items-center">
+        <.button size={:box} href={~p"/hosts/#{@host.handle}/dashboard"} variant={:ghost}>
           <.icon name="i-lucide-home" />
         </.button>
-        <.icon :if={false} name="i-lucide-chevron-right" class="text-zinc-600" />
-        <.button :if={false} size={:box} variant={:ghost}>
-          <span>Events</span>
-        </.button>
-        <.icon :if={false} name="i-lucide-chevron-right" class="text-zinc-600" />
-        <.button :if={false} size={:box} variant={:ghost} disabled>
-          <span>Events</span>
-        </.button>
+        <%= for {label, href} <- host_breadcrumbs(@host, @socket.view, @live_action) do %>
+          <.icon name="i-lucide-chevron-right" class="text-zinc-600" />
+          <.button href={href} size={:box} variant={:ghost}>
+            <span>{label}</span>
+          </.button>
+        <% end %>
       </div>
 
       <div
@@ -152,7 +125,11 @@
           aria-labelledby="menu-button"
           tabindex="-1"
         >
-          <div :for={{items, outer_index} <- Enum.with_index(menus)} class="py-1" role="none">
+          <div
+            :for={{items, outer_index} <- Enum.with_index(host_menu_items(@current_user, @host))}
+            class="py-1"
+            role="none"
+          >
             <%= for {{name, icon,href, badge}, index} <- Enum.with_index(items) do %>
               <%= if href do %>
                 <.link
@@ -192,18 +169,3 @@
     </div>
   </div>
 </div>
-<!-- Brevo Conversations {literal} -->
-<script>
-  (function(d, w, c) {
-      w.BrevoConversationsID = '677fe0ffc2a878d34e090918';
-      w[c] = w[c] || function() {
-          (w[c].q = w[c].q || []).push(arguments);
-      };
-      var s = d.createElement('script');
-      s.async = true;
-      s.src = 'https://conversations-widget.brevo.com/brevo-conversations.js';
-      if (d.head) d.head.appendChild(s);
-  })(document, window, 'BrevoConversations');
-</script>
-<!-- /Brevo Conversations {/literal} -->
-

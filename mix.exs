@@ -32,6 +32,7 @@ defmodule Gits.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:oban_web, "~> 2.0"},
       {:assent, "== 0.2.10"},
       {:premailex, "~> 0.3"},
       {:nanoid, "~> 2.0"},
@@ -89,7 +90,7 @@ defmodule Gits.MixProject do
       {:mock, "~> 0.3.8", only: :test},
       {:power_assert, "~> 0.3.0", only: :test},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
-      {:igniter, "~> 0.4"},
+      {:igniter, "~> 0.5"},
       {:dialyxir, "~> 1.1", only: [:dev], runtime: false}
     ]
   end

@@ -2,6 +2,7 @@ defmodule GitsWeb.Router do
   use GitsWeb, :router
 
   import Phoenix.LiveDashboard.Router
+  import Oban.Web.Router
   import GitsWeb.AuthPlug
 
   pipeline :browser do
@@ -144,6 +145,8 @@ defmodule GitsWeb.Router do
       # remove when done with onboarding on all environments
       live "/start", AdminLive, :start
     end
+
+    oban_dashboard("/oban")
 
     live_dashboard "/dashboard",
       ecto_repos: [Gits.Repo],

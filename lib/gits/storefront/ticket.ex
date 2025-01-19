@@ -106,7 +106,7 @@ defmodule Gits.Storefront.Ticket do
       allow_nil?: false,
       writable?: false,
       public?: true,
-      default: fn -> Nanoid.generate(6, "0123456789abcdef") end
+      default: fn -> Nanoid.generate(10, "0123456789abcdef") end
 
     attribute :admitted_at, :utc_datetime, public?: true
 
