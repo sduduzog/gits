@@ -20,7 +20,7 @@
       </div>
     </:col>
     <:col :let={ticket} label="Quantity">{ticket.quantity}</:col>
-    <:col :let={ticket} label="Price">{ticket.price}</:col>
+    <:col :let={ticket} label="Price">R{ticket.price}</:col>
     <:col :let={ticket} label="Limit p.p" optional>{ticket.limit_per_user}</:col>
 
     <:action :let={ticket}>
