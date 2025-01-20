@@ -44,39 +44,26 @@
           class="size-full scale-125 bg-zinc-50"
         />
       </.link>
+      <h3 class="text-lg/5 font-semibold text-zinc-900">{event.name}</h3>
       <div class="space-y-1 truncate">
         <div class="flex justify-between gap-2 font-medium text-zinc-950">
-          <span class="shrink-0 text-sm/5">28 Aug, 12:30 PM</span>
+          <span class="shrink-0 text-sm/5">
+            {Calendar.strftime(event.starts_at, "%a, %d %b, %I:%m %p")}
+          </span>
           <span class="truncate inline-flex gap-1 items-center text-sm/5">
             <.icon name="i-lucide-map-pin" class="text-zinc-400" />
             {if(event.location_is_private, do: "Private", else: event.venue.name)}
           </span>
         </div>
-        <h3 class="text-lg/5 font-semibold text-zinc-600">{event.name}</h3>
         <div class="flex items-center gap-2">
+          <span class="shrink-0 text-sm/4 text-zinc-500">{event.host.name}</span>
+          <span>&bull;</span>
           <span class="inline-flex items-center gap-x-1.5 rounded-md px-2 py-1 text-xs font-medium text-gray-900 ring-1 ring-inset ring-gray-200">
             R {event.minimum_ticket_price |> Gits.Currency.format()}
             <span :if={event.ticket_prices_vary?}>&plus;</span>
           </span>
-          <span>&bull;</span>
-          <span class="shrink-0 text-sm/4 text-zinc-500">{event.host.name}</span>
         </div>
       </div>
     </div>
   </div>
 </div>
-<!-- Brevo Conversations {literal} -->
-<script>
-  (function(d, w, c) {
-      w.BrevoConversationsID = '677fe0ffc2a878d34e090918';
-      w[c] = w[c] || function() {
-          (w[c].q = w[c].q || []).push(arguments);
-      };
-      var s = d.createElement('script');
-      s.async = true;
-      s.src = 'https://conversations-widget.brevo.com/brevo-conversations.js';
-      if (d.head) d.head.appendChild(s);
-  })(document, window, 'BrevoConversations');
-</script>
-<!-- /Brevo Conversations {/literal} -->
-

@@ -18,7 +18,13 @@ defmodule GitsWeb.Layouts do
          {"Archived", ~p"/hosts/#{host.handle}/events/archived", live_action == :archived}
        ]},
       {"Settings", "i-lucide-settings", ~p"/hosts/#{host.handle}/settings",
-       Enum.any?([Settings], &(&1 == view)), []}
+       Enum.any?([Settings], &(&1 == view)),
+       [
+         {"General", "", false},
+         {"Members", "", false},
+         {"Billing", "", false},
+         {"API", "", false}
+       ]}
     ]
   end
 
