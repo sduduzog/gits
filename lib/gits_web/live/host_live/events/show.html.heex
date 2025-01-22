@@ -8,7 +8,7 @@
   <div class="grid gap-8 max-w-screen-xl p-4 lg:p-2">
     <div class="flex w-full flex-wrap items-start gap-2">
       <div class="grow space-y-1">
-        <h2 class="col-span-full text-4xl font-medium">{@event.name}</h2>
+        <h2 class="col-span-full text-3xl font-medium">{@event.name}</h2>
         <div>
           <span class="flex items-center gap-2 text-sm text-zinc-500">
             <.icon name="i-lucide-calendar-range" /> {Calendar.strftime(
@@ -27,21 +27,17 @@
   <div class="grid items-start gap-4 lg:grid-cols-[theme(space.64)_1fr] max-w-screen-xl lg:gap-8 lg:p-2">
     <div class="flex gap-2 overflow-x-auto px-2 pb-2 lg:grid lg:rounded-xl lg:bg-zinc-50/70 lg:py-2">
       <.link
-        :for={
-          {action, href} <- [
-            {:overview, ~p"/hosts/#{@host.handle}/events/#{@event.public_id}"}
-          ]
-        }
-        patch={href}
-        aria-selected={"#{@action == action}"}
+        patch={~p"/hosts/#{@host.handle}/events/#{@event.public_id}/dashboard"}
         class="p-2 text-sm font-medium capitalize text-zinc-400 aria-selected:text-zinc-950"
       >
-        {action}
+        Overview (old)
       </.link>
 
       <.link
         :for={
           {label, action} <- [
+            {"Overview", :overview},
+            # {"Event Details", :details},
             {"Settings", :settings}
           ]
         }
@@ -54,6 +50,16 @@
     </div>
 
     <.live_component
+      :if={@action == :overview}
+      id={@event.id}
+      module={__MODULE__.Dashboard}
+      current_user={@current_user}
+      host={@host}
+      event={@event}
+    />
+
+    <.live_component
+      :if={@action == :settings}
       id={@event.id}
       module={__MODULE__.Settings}
       current_user={@current_user}

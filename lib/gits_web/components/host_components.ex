@@ -42,7 +42,7 @@ defmodule GitsWeb.HostComponents do
     ~H"""
     <div class="items-center truncate rounded-lg border border-transparent p-2 text-sm/5 font-semibold">
       <span class="truncate ">
-        {@text} Festival
+        {@text}
       </span>
     </div>
     """
