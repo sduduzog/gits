@@ -3,10 +3,10 @@
     <.host_breadcrumb_label text="Events" />
   </.host_header>
   <div class="lg:p-2 p-4 grid gap-8">
-    <div class="flex w-full">
+    <div class="flex w-full items-center">
       <h2 class="text-4xl grow font-medium col-span-full">Events</h2>
 
-      <.button href={~p"/hosts/#{@host.handle}/events/create-new"} size={:box}>
+      <.button variant={:solid} href={~p"/hosts/#{@host.handle}/events/create-new"}>
         <.icon name="i-lucide-plus" />
         <span>New event</span>
       </.button>

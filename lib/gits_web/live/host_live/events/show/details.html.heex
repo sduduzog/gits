@@ -1,0 +1,20 @@
+<div>
+  <.form :let={f} for={@form} class="grid gap-8 grid-cols-6">
+    <div class="col-span-full">
+      <h2 class="text-base/7 font-semibold text-gray-900">Basic Information</h2>
+      <p class="text-sm text-gray-600">
+        <!-- This information will be displayed publicly so be careful what you share. -->
+      </p>
+    </div>
+
+    <.input type="text" class="col-span-full" label="Name" field={f[:name]} />
+    <.input type="textarea" class="col-span-full" label="Summary" field={f[:summary]} rows="8" />
+
+    <div class="flex gap-2">
+      <.button size={:box}>
+        <.icon name="i-lucide-save" />
+        <span>Save</span>
+      </.button>
+    </div>
+  </.form>
+</div>

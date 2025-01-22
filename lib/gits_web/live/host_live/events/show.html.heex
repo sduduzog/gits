@@ -5,27 +5,45 @@
     <.host_breadcrumb_label text={@event.name} />
   </.host_header>
 
-  <div class="grid gap-8 max-w-screen-xl p-4 lg:p-2">
-    <div class="flex w-full flex-wrap items-start gap-2">
+  <div class="grid max-w-screen-xl gap-8 p-4 lg:p-2">
+    <div class="flex w-full flex-wrap items-end gap-2">
       <div class="grow space-y-1">
         <h2 class="col-span-full text-3xl font-medium">{@event.name}</h2>
-        <div>
+        <div class="flex gap-4">
           <span class="flex items-center gap-2 text-sm text-zinc-500">
             <.icon name="i-lucide-calendar-range" /> {Calendar.strftime(
               @event.starts_at,
               "%a, %d %b %Y, %I:%m %p"
             )}
           </span>
+          <span
+            :if={@event.state == :completed}
+            class="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10"
+          >
+            Completed
+          </span>
+          <span
+            :if={@event.state == :draft}
+            class="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20"
+          >
+            Draft
+          </span>
+          <span
+            :if={@event.state == :published}
+            class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20"
+          >
+            Badge
+          </span>
         </div>
       </div>
-      <.button :if={false} href={~p"/hosts/#{@host.handle}/events/create-new"} size={:box}>
-        <.icon name="i-lucide-plus" />
-        <span>New event</span>
+      <.button variant={:solid}>
+        <.icon name="i-lucide-rocket" />
+        <span>Publish</span>
       </.button>
     </div>
   </div>
-  <div class="grid items-start gap-4 lg:grid-cols-[theme(space.64)_1fr] max-w-screen-xl lg:gap-8 lg:p-2">
-    <div class="flex gap-2 overflow-x-auto px-2 pb-2 lg:grid lg:rounded-xl lg:bg-zinc-50/70 lg:py-2">
+  <div class="grid max-w-screen-xl items-start gap-4 lg:grid-cols-[theme(space.64)_1fr] lg:gap-8 lg:p-2">
+    <div class="flex gap-2 overflow-x-auto whitespace-nowrap px-2 pb-2 lg:grid lg:rounded-xl lg:bg-zinc-50/70 lg:py-2">
       <.link
         patch={~p"/hosts/#{@host.handle}/events/#{@event.public_id}/dashboard"}
         class="p-2 text-sm font-medium capitalize text-zinc-400 aria-selected:text-zinc-950"
@@ -37,7 +55,7 @@
         :for={
           {label, action} <- [
             {"Overview", :overview},
-            # {"Event Details", :details},
+            {"Event Details", :details},
             {"Settings", :settings}
           ]
         }
@@ -49,22 +67,33 @@
       </.link>
     </div>
 
-    <.live_component
-      :if={@action == :overview}
-      id={@event.id}
-      module={__MODULE__.Dashboard}
-      current_user={@current_user}
-      host={@host}
-      event={@event}
-    />
+    <div class="px-2">
+      <.live_component
+        :if={@action == :overview}
+        id={@event.id}
+        module={__MODULE__.Dashboard}
+        current_user={@current_user}
+        host={@host}
+        event={@event}
+      />
 
-    <.live_component
-      :if={@action == :settings}
-      id={@event.id}
-      module={__MODULE__.Settings}
-      current_user={@current_user}
-      host={@host}
-      event={@event}
-    />
+      <.live_component
+        :if={@action == :details}
+        id={@event.id}
+        module={__MODULE__.Details}
+        current_user={@current_user}
+        host={@host}
+        event={@event}
+      />
+
+      <.live_component
+        :if={@action == :settings}
+        id={@event.id}
+        module={__MODULE__.Settings}
+        current_user={@current_user}
+        host={@host}
+        event={@event}
+      />
+    </div>
   </div>
 </div>

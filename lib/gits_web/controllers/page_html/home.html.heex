@@ -1,7 +1,7 @@
 <div class="mx-auto grid max-w-screen-xl gap-8 p-4 py-20">
   <div>
     <div class="relative inline-flex rounded-3xl border border-zinc-300 p-8 dark:border-zinc-500">
-      <div class="absolute -top-4 left-36 h-12 w-40 rounded-xl border border-zinc-300 bg-zinc-300/20 dark:border-zinc-500 dark:bg-zinc-400/20 animate-bounce">
+      <div class="absolute -top-4 left-36 h-12 w-40 animate-bounce rounded-xl border border-zinc-300 bg-zinc-300/20 dark:border-zinc-500 dark:bg-zinc-400/20">
       </div>
       <svg xmlns="http://www.w3.org/2000/svg" class="size-28 text-brand-600" viewBox="0 0 14 14">
         <path
@@ -35,7 +35,7 @@
       class="grid w-72 shrink-0 gap-2 overflow-hidden p-0.5 lg:w-auto"
     >
       <.link
-        navigate={"/events/#{event.public_id}"}
+        navigate={~p"/events/#{event.public_id}"}
         class="aspect-[3/2] w-full overflow-hidden rounded-xl bg-red-100 focus-visible:ring-2 focus-visible:ring-zinc-200 lg:rounded-2xl"
       >
         <img
@@ -46,15 +46,16 @@
       </.link>
       <h3 class="text-lg/5 font-semibold text-zinc-900">{event.name}</h3>
       <div class="space-y-1 truncate">
-        <div class="flex justify-between gap-2 font-medium text-zinc-950">
+        <div class="flex items-center justify-between gap-2 font-medium text-zinc-950">
           <span class="shrink-0 text-sm/5">
+            <.icon name="i-lucide-calendar-range" class="text-zinc-400" />
             {Calendar.strftime(event.starts_at, "%a, %d %b, %I:%m %p")}
           </span>
-          <span class="truncate inline-flex gap-1 items-center text-sm/5">
-            <.icon name="i-lucide-map-pin" class="text-zinc-400" />
-            {if(event.location_is_private, do: "Private", else: event.venue.name)}
-          </span>
         </div>
+        <span class="inline-flex items-center gap-1 truncate text-sm/5">
+          <.icon name="i-lucide-map-pin" class="text-zinc-400" />
+          {if(event.location_is_private, do: "Private", else: event.venue.name)}
+        </span>
         <div class="flex items-center gap-2">
           <span class="shrink-0 text-sm/4 text-zinc-500">{event.host.name}</span>
           <span>&bull;</span>

@@ -60,7 +60,7 @@ defmodule GitsWeb.HostComponents do
 
   def host_header(assigns) do
     ~H"""
-    <header class="sticky top-0 grid grid-cols-[auto_auto_1fr] lg:grid-cols-[1fr_auto] items-center justify-between gap-2 bg-white p-2 pr-4 shadow-sm lg:static lg:pl-0 lg:shadow-none">
+    <header class="sticky top-0 grid grid-cols-[1fr_auto_auto] lg:grid-cols-[1fr_auto] items-center justify-between gap-2 bg-white p-2 pr-4 shadow-sm lg:static lg:pl-0 lg:shadow-none">
       <div class="flex overflow-hidden items-center gap-1 text-sm">
         {render_slot(@inner_block)}
       </div>
