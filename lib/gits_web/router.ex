@@ -89,6 +89,7 @@ defmodule GitsWeb.Router do
            HostLive.EditTicket,
            :edit_ticket
 
+      live "/hosts/:handle/events/create", HostLive.Events, :details
       live "/hosts/:handle/events/:public_id", HostLive.Events, :overview
       live "/hosts/:handle/events/:public_id/details", HostLive.Events, :details
       live "/hosts/:handle/events/:public_id/settings", HostLive.Events, :settings

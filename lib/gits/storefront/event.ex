@@ -155,6 +155,10 @@ defmodule Gits.Storefront.Event do
       authorize_if expr(host.roles.user.id == ^actor(:id))
     end
 
+    policy changing_attributes(visibility: [from: :private, to: :public]) do
+      authorize_if expr(host.state == :verified)
+    end
+
     policy action(:create_venue) do
       authorize_if actor_present()
     end

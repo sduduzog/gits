@@ -37,7 +37,10 @@ defmodule GitsWeb.HostLive.Events do
     |> Ash.Query.load([:name])
     |> Ash.read(actor: socket.assigns.current_user)
     |> case do
-      {:ok, events} -> socket |> assign(:events, events)
+      {:ok, events} ->
+        socket
+        |> assign(:events, events)
+        |> assign(:event, nil)
     end
     |> noreply()
   end

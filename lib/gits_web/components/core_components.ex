@@ -640,7 +640,32 @@ defmodule GitsWeb.CoreComponents do
 
   def input(%{type: "radio"} = assigns) do
     ~H"""
-    <fieldset class={["max-w-3xl space-y-1 text-sm", @class]}>
+    <fieldset class={@class}>
+      <legend class="text-sm/6 font-semibold text-gray-900">{@label}</legend>
+      <%= if @errors == [] do %>
+        <p :if={@hint} class="mt-1 text-sm/6 text-gray-600">{@hint}</p>
+      <% else %>
+        <.error :for={msg <- @errors}>{msg}</.error>
+      <% end %>
+
+      <div class="mt-4 space-y-4 sm:flex sm:items-center sm:space-x-10 sm:space-y-0">
+        <div :for={{item, index} <- Enum.with_index(@options, 1)} class="flex items-center">
+          <input
+            id={item}
+            name={@name}
+            checked={(is_nil(@value) and index == 1) or @value == item}
+            type="radio"
+            value={item}
+            class="relative size-4 appearance-none rounded-full border border-gray-300 bg-white text-zinc-950 before:absolute before:inset-1 before:rounded-full before:bg-white checked:border-zinc-600 checked:bg-zinc-600 focus:ring-zinc-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400 forced-colors:appearance-auto forced-colors:before:hidden [&:not(:checked)]:before:hidden"
+          />
+          <label for={item} class="ml-3 block text-sm/6 font-medium capitalize text-gray-900">
+            {item}
+          </label>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset :if={false} class={["max-w-3xl space-y-1 text-sm", @class]}>
       <legend class="inline-flex w-full items-center justify-between text-sm font-medium">
         <span class="block text-sm/6 font-medium text-zinc-700">{@label}</span>
         <%= if @errors == [] do %>

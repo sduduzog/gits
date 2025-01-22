@@ -4,7 +4,7 @@
     for={@form}
     class="grid grid-cols-6 gap-8"
     phx-change="validate"
-    phx-submit="submit"
+    phx-submit={@submit_action}
     phx-target={@myself}
   >
     <div class="col-span-full">
@@ -13,6 +13,10 @@
         <!-- This information will be displayed publicly so be careful what you share. -->
       </p>
     </div>
+
+    <.inputs_for :let={h} :if={@form.type == :create} field={f[:host]}>
+      <.input field={h[:id]} type="hidden" value={@host.id} />
+    </.inputs_for>
 
     <.input type="text" class="col-span-full" label="Name" field={f[:name]} />
     <.input type="textarea" class="col-span-full" label="Summary" field={f[:summary]} rows="8" />
@@ -43,11 +47,12 @@
     />
 
     <.input
-      type="radio"
       field={f[:visibility]}
-      options={[:private, :public]}
       label="Visibility"
+      hint="A private event is only visible to users with a URL to the event"
+      type="radio"
       class="col-span-full"
+      options={if(@host.state == :verified, do: [:private, :public], else: [:private])}
     />
 
     <div class="col-span-full flex gap-2">

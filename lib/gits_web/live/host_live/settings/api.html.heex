@@ -12,35 +12,4 @@
       </.button>
     </div>
   </div>
-
-  <.modal id="manage-webhook">
-    <.form :let={f} for={@form} class="grid gap-4">
-      <h3 class="text-xl font-medium">Create webhook</h3>
-      <.input field={f[:url]} type="text" placeholder="https://" label="URL" />
-      <div class="flex flex-wrap gap-2">
-        <span
-          :for={i <- Gits.Accounts.WebhookTriggerType.values()}
-          class="inline-flex items-center gap-x-1.5 rounded-md px-2 py-1  text-xs font-medium text-zinc-500 truncate aria-checked:text-gray-900 ring-1 ring-inset ring-gray-200"
-        >
-          <svg
-            class="size-1.5 fill-zinc-100 aria-checked:fill-brand-base"
-            viewBox="0 0 6 6"
-            aria-hidden="true"
-          >
-            <circle cx="3" cy="3" r="3" />
-          </svg>
-          {Gits.Accounts.WebhookTriggerType.description(i)}
-        </span>
-      </div>
-      <div class="flex justify-end gap-4">
-        <.button variant={:ghost}>
-          <span class="text-sm font-semibold">Cancel</span>
-        </.button>
-
-        <.button phx-click={JS.push("archive") |> hide_modal("archive-event")}>
-          <span class="text-sm font-semibold">Yes, Archive</span>
-        </.button>
-      </div>
-    </.form>
-  </.modal>
 </div>
