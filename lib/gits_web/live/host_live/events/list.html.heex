@@ -1,0 +1,93 @@
+<div class="grid gap-4">
+  <.host_header current_user={@current_user} host={@host}>
+    <.host_breadcrumb_label text="Events" />
+  </.host_header>
+  <div class="lg:p-2 p-4 grid gap-8">
+    <div class="flex w-full">
+      <h2 class="text-4xl grow font-medium col-span-full">Events</h2>
+
+      <.button href={~p"/hosts/#{@host.handle}/events/create-new"} size={:box}>
+        <.icon name="i-lucide-plus" />
+        <span>New event</span>
+      </.button>
+    </div>
+  </div>
+
+  <div class="p-2">
+    <div class="border rounded-lg overflow-x-auto">
+      <.table id="events" rows={@events}>
+        <:col :let={event} label="Name">
+          <.link navigate={~p"/hosts/#{@host.handle}/events/#{event.public_id}"}>
+            {event.name}
+          </.link>
+        </:col>
+
+        <:col :let={event} optional label="Start">
+          {Calendar.strftime(event.starts_at, "%d %b %Y, at %I:%M %p")}
+        </:col>
+
+        <:col :let={event} optional label="End">
+          {Calendar.strftime(event.ends_at, "%d %b %Y, at %I:%M %p")}
+        </:col>
+
+        <:col :let={event} label="Status">
+          <span
+            :if={event.state == :completed}
+            class="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10"
+          >
+            Completed
+          </span>
+          <span
+            :if={event.state == :draft}
+            class="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20"
+          >
+            Draft
+          </span>
+          <span
+            :if={event.state == :published}
+            class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20"
+          >
+            Badge
+          </span>
+        </:col>
+
+        <:action :let={job} :if={false}>
+          <.button disabled={job.state == :completed} variant={:outline} size={:sm}>
+            <span>Reset</span>
+          </.button>
+        </:action>
+      </.table>
+    </div>
+  </div>
+
+  <.modal id="manage-webhook">
+    <.form :let={f} for={@form} class="grid gap-4">
+      <h3 class="text-xl font-medium">Create webhook</h3>
+      <.input field={f[:url]} type="text" placeholder="https://" label="URL" />
+      <div class="flex flex-wrap gap-2">
+        <span
+          :for={i <- Gits.Accounts.WebhookTriggerType.values()}
+          class="inline-flex items-center gap-x-1.5 rounded-md px-2 py-1  text-xs font-medium text-zinc-500 truncate aria-checked:text-gray-900 ring-1 ring-inset ring-gray-200"
+        >
+          <svg
+            class="size-1.5 fill-zinc-100 aria-checked:fill-brand-base"
+            viewBox="0 0 6 6"
+            aria-hidden="true"
+          >
+            <circle cx="3" cy="3" r="3" />
+          </svg>
+          {Gits.Accounts.WebhookTriggerType.description(i)}
+        </span>
+      </div>
+      <div class="flex justify-end gap-4">
+        <.button variant={:ghost}>
+          <span class="text-sm font-semibold">Cancel</span>
+        </.button>
+
+        <.button phx-click={JS.push("archive") |> hide_modal("archive-event")}>
+          <span class="text-sm font-semibold">Yes, Archive</span>
+        </.button>
+      </div>
+    </.form>
+  </.modal>
+</div>

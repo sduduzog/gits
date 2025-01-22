@@ -1,6 +1,6 @@
 <.flash_group flash={@flash} />
 
-<div class="grid h-dvh lg:grid-cols-[theme(space.64)_1fr]">
+<div class="grid gap-4 h-dvh lg:grid-cols-[theme(space.64)_1fr]">
   <aside class="absolute inset-0 z-10 hidden space-y-8 bg-white lg:static lg:block">
     <div class="flex items-center px-4 py-2">
       <div class="grow lg:py-1">
@@ -17,7 +17,7 @@
       <div
         :for={
           {label, icon, href, current, children} <-
-            host_navigation_items(@host, @socket.view, @live_action)
+            GitsWeb.HostComponents.host_navigation_items(@host, @socket.view, @live_action)
         }
         class="flex flex-wrap gap-y-2"
       >
@@ -72,99 +72,7 @@
     </div>
   </aside>
   <div class="overflow-auto">
-    <header class="sticky top-0 flex justify-end items-center gap-2 bg-white p-2 pr-4 shadow-sm lg:static lg:pl-0 lg:shadow-none">
-      <div :if={false} class="flex grow items-center">
-        <.button size={:box} href={~p"/hosts/#{@host.handle}/dashboard"} variant={:ghost}>
-          <.icon name="i-lucide-home" />
-        </.button>
-        <%= for {label, href} <- host_breadcrumbs(@host, @socket.view, @live_action) do %>
-          <.icon name="i-lucide-chevron-right" class="text-zinc-600" />
-          <.button href={href} size={:box} variant={:ghost}>
-            <span>{label}</span>
-          </.button>
-        <% end %>
-      </div>
-
-      <div
-        phx-click-away={
-          JS.hide(
-            to: "div#header-menu[role=menu]",
-            transition:
-              {"transition ease-in duration-75", "transform opacity-100 scale-100",
-               "transform opacity-0 scale-95"}
-          )
-        }
-        class="relative"
-      >
-        <.button
-          size={:box}
-          variant={:ghost}
-          phx-click={
-            JS.toggle(
-              to: "div#header-menu[role=menu]",
-              in:
-                {"transition ease-out duration-100", "transform opacity-0 scale-95",
-                 "transform opacity-100 scale-100"},
-              out:
-                {"transition ease-in duration-75", "transform opacity-100 scale-100",
-                 "transform opacity-0 scale-95"}
-            )
-          }
-          id="menu-button"
-        >
-          <.icon name="i-lucide-building-2" />
-          <span class="hidden lg:inline-flex">{@host.name}</span>
-          <.icon name="i-lucide-chevron-down" />
-        </.button>
-
-        <div
-          id="header-menu"
-          class="absolute right-0 top-full z-20 hidden w-56 origin-top-right divide-y divide-zinc-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none"
-          role="menu"
-          aria-orientation="vertical"
-          aria-labelledby="menu-button"
-          tabindex="-1"
-        >
-          <div
-            :for={{items, outer_index} <- Enum.with_index(host_menu_items(@current_user, @host))}
-            class="py-1"
-            role="none"
-          >
-            <%= for {{name, icon,href, badge}, index} <- Enum.with_index(items) do %>
-              <%= if href do %>
-                <.link
-                  navigate={href}
-                  class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 active:bg-zinc-100 active:text-zinc-900 active:outline-none"
-                  role="menuitem"
-                  tabindex="-1"
-                  id={"menu-item-#{outer_index}-#{index}"}
-                >
-                  <.icon :if={icon} name={icon} />
-                  <span>{name}</span>
-                  <span
-                    :if={badge}
-                    class="inline-flex items-center gap-x-1.5 rounded-md bg-white px-2 py-1 text-xs font-medium text-gray-900 ring-1 ring-inset ring-gray-200"
-                  >
-                    {badge}
-                  </span>
-                </.link>
-              <% else %>
-                <div class="px-4 py-1" role="none">
-                  <p class="truncate text-sm text-zinc-400" role="none">
-                    {name}
-                  </p>
-                </div>
-              <% end %>
-            <% end %>
-          </div>
-        </div>
-      </div>
-
-      <.button size={:box} variant={:ghost} phx-click={JS.show(to: "aside")} class="md:hidden">
-        <.icon name="i-lucide-menu" />
-      </.button>
-    </header>
-    <div class="lg:px-4">
+    <div>
       {@inner_content}
     </div>
   </div>

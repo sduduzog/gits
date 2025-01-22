@@ -1,6 +1,7 @@
 defmodule GitsWeb.HostLive.Settings do
   alias AshPhoenix.Form
   alias Gits.PaystackApi
+  alias __MODULE__.{Api, Index}
   use GitsWeb, :host_live_view
 
   def mount(_params, _session, socket) do
@@ -65,6 +66,9 @@ defmodule GitsWeb.HostLive.Settings do
         assign(socket, :page_title, "Settings")
         |> assign(:host, host)
         |> assign(:bank_name, bank_name)
+
+      :api ->
+        assign(socket, :page_title, "Settings / API")
     end
     |> noreply()
   end

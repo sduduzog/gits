@@ -1,0 +1,137 @@
+<div class="grid gap-4 p-2">
+  <div class="flex">
+    <h3 class="grow text-lg/8 font-medium">
+      Webhooks
+    </h3>
+    <.button
+      size={:box}
+      variant={:ghost}
+      phx-click={JS.push("manage_webhook") |> show_modal("manage-webhook")}
+      phx-target={@myself}
+    >
+      <.icon name="i-lucide-plus" />
+      <span>Add webhook</span>
+    </.button>
+  </div>
+
+  <div class="grid gap-4 lg:grid-cols-2">
+    <div :for={webhook <- @webhooks} class="grid gap-4 rounded-xl border p-6">
+      <div class="flex w-full gap-2 overflow-hidden">
+        <span class="grow truncate text-sm font-medium">{webhook.url}</span>
+      </div>
+      <dl class="space-y-4">
+        <div class="flex gap-2 text-sm">
+          <dt class="text-zinc-400">
+            <span class="sr-only">Webhook triggers</span>
+            <.icon name="i-lucide-zap" class="mt-1" />
+          </dt>
+          <dd class="flex flex-wrap gap-2">
+            <%= for i <- [:order_completed, :order_refunded] do %>
+              <span
+                :if={Map.get(webhook, i)}
+                class="inline-flex items-center gap-x-1.5 truncate rounded-md px-2  py-1 text-xs font-medium text-gray-900 ring-1 ring-inset ring-gray-200"
+              >
+                <svg class="size-1.5 fill-brand-base" viewBox="0 0 6 6" aria-hidden="true">
+                  <circle cx="3" cy="3" r="3" />
+                </svg>
+                {i}
+              </span>
+            <% end %>
+          </dd>
+        </div>
+
+        <div class="flex gap-2 text-sm">
+          <dt class="text-zinc-400">
+            <span class="sr-only">Webhook details</span>
+            <.icon name="i-lucide-sticky-note" class="mt-0.5" />
+          </dt>
+          <dd>{webhook.details}</dd>
+        </div>
+      </dl>
+      <div class="flex justify-end gap-2">
+        <.button
+          phx-click={JS.push("manage_webhook") |> show_modal("manage-webhook")}
+          phx-target={@myself}
+          phx-value-id={webhook.id}
+          size={:box}
+          variant={:ghost}
+        >
+          <.icon name="i-lucide-pen-square" />
+          <span>Edit</span>
+        </.button>
+      </div>
+    </div>
+  </div>
+
+  <.modal id="manage-webhook">
+    <.form
+      :let={f}
+      for={@form}
+      class="grid gap-4"
+      phx-target={@myself}
+      phx-change="validate_webhook"
+      phx-submit="submit_webhook"
+    >
+      <h3 class="text-xl font-medium">Create webhook</h3>
+      <input type="text" class="sr-only" />
+
+      <.input field={f[:url]} type="url" placeholder="https://" label="URL" />
+      <div class="space-y-1">
+        <span
+          class="block text-sm/6 font-medium text-zinc-700 dark:text-zinc-300 "
+          data-phx-id="m26-phx-GBznfwI1s4K0zDPC"
+        >
+          When
+        </span>
+
+        <div class="flex flex-wrap gap-4">
+          <label
+            :for={key <- [:order_completed, :order_refunded]}
+            class="inline-flex items-center gap-x-1.5 truncate rounded-md px-2  py-1 text-xs font-medium text-zinc-400 ring-1 ring-inset ring-gray-200 has-[:checked]:text-gray-900"
+          >
+            <input type="hidden" name={f[key].name} value="false" />
+            <input
+              type="checkbox"
+              value="true"
+              checked={Phoenix.HTML.Form.normalize_value("checkbox", f[key].value)}
+              class="peer sr-only"
+              name={f[key].name}
+            />
+            <svg
+              class="size-1.5 fill-zinc-100 peer-checked:fill-brand-base"
+              viewBox="0 0 6 6"
+              aria-hidden="true"
+            >
+              <circle cx="3" cy="3" r="3" />
+            </svg>
+            {key}
+          </label>
+        </div>
+      </div>
+      <.input type="textarea" field={f[:details]} label="Details (optional)" />
+
+      <.inputs_for :let={e} :if={f.source.type == :create} field={f[:event]}>
+        <.input field={e[:id]} type="hidden" value={@event.id} />
+      </.inputs_for>
+
+      <div class="flex justify-end gap-4">
+        <.button
+          :if={f[:id].value}
+          variant={:ghost}
+          type="button"
+          phx-value-id={f[:id].value}
+          phx-click={JS.push("delete_webhook") |> hide_modal("manage-webhook")}
+          phx-target={@myself}
+        >
+          <span class="text-sm font-semibold text-red-600">Delete</span>
+        </.button>
+
+        <div role="none" class="grow"></div>
+
+        <.button>
+          <span class="text-sm font-semibold">Save</span>
+        </.button>
+      </div>
+    </.form>
+  </.modal>
+</div>

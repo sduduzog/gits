@@ -3,8 +3,6 @@ defmodule GitsWeb.HostLive.ListEvents do
   require Ash.Query
   use GitsWeb, :live_view
 
-  require Ash.Query
-
   def mount(_params, _session, socket) do
     case socket.assigns.current_user do
       nil ->
@@ -22,6 +20,7 @@ defmodule GitsWeb.HostLive.ListEvents do
   def handle_params(unsigned_params, _, socket) do
     list_event_query(socket.assigns.live_action, unsigned_params)
     |> Ash.Query.filter(host.handle == ^unsigned_params["handle"])
+    |> Ash.Query.sort(state: :desc, starts_at: :asc)
     |> Ash.Query.load([:name])
     |> Ash.read(actor: socket.assigns.current_user)
     |> case do

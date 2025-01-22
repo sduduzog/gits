@@ -9,60 +9,49 @@
   </.button>
 </div>
 
-<%= if @live_action == :archived do %>
-  <div class="divide-y divide-zinc-100 p-2">
-    <div :for={event <- @events} class="flex items-center gap-4 py-4">
-      <.link class="aspect-[3/2] h-20 shrink-0 overflow-hidden rounded-xl bg-zinc-200">
-        <img src={Gits.Bucket.get_image_url(event.poster)} alt="Event poster" class="size-full" />
-      </.link>
-      <div class="grid w-full grow gap-1.5">
-        <.link class="overflow-hidden">
-          <h2 class="truncate font-semibold">
-            {event.name}
-          </h2>
+<div class="p-2">
+  <div class="border rounded-lg">
+    <.table id="events" rows={@events}>
+      <:col :let={event} label="Name">
+        <.link navigate={~p"/hosts/#{@host.handle}/events/#{event.public_id}"}>
+          {event.name}
         </.link>
-        <span class="text-sm text-zinc-500">
-          {Calendar.strftime(event.starts_at, "%d %b %Y, at %I:%M %p")}
-        </span>
-        <!-- <span class="text-sm text-zinc-500">5/40 tickets sold</span> -->
-      </div>
-      <div>
-        <!-- <span class="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">Badge</span> -->
-      <!-- <span class="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">Badge</span> -->
-<!-- <span class="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20">Badge</span> -->
-<!-- <span class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">Badge</span> -->
-      </div>
-    </div>
-  </div>
-<% else %>
-  <div class="divide-y divide-zinc-100 p-2">
-    <div :for={event <- @events} class="flex items-center gap-4 py-4">
-      <.link
-        navigate={~p"/hosts/#{@host.handle}/events/#{event.public_id}"}
-        class="aspect-[3/2] h-20 shrink-0 overflow-hidden rounded-xl bg-zinc-200"
-      >
-        <img src={Gits.Bucket.get_image_url(event.poster)} alt="Event poster" class="size-full" />
-      </.link>
-      <div class="grid w-full grow gap-1.5">
-        <.link
-          class="overflow-hidden"
-          navigate={~p"/hosts/#{@host.handle}/events/#{event.public_id}"}
+      </:col>
+
+      <:col :let={event} label="Start">
+        {Calendar.strftime(event.starts_at, "%d %b %Y, at %I:%M %p")}
+      </:col>
+
+      <:col :let={event} label="End">
+        {Calendar.strftime(event.ends_at, "%d %b %Y, at %I:%M %p")}
+      </:col>
+
+      <:col :let={event} label="Status">
+        <span
+          :if={event.state == :completed}
+          class="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10"
         >
-          <h2 class="truncate font-semibold">
-            {event.name}
-          </h2>
-        </.link>
-        <span class="text-sm text-zinc-500">
-          {Calendar.strftime(event.starts_at, "%d %b %Y, at %I:%M %p")}
+          Completed
         </span>
-        <!-- <span class="text-sm text-zinc-500">5/40 tickets sold</span> -->
-      </div>
-      <div>
-        <!-- <span class="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">Badge</span> -->
-      <!-- <span class="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">Badge</span> -->
-<!-- <span class="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20">Badge</span> -->
-<!-- <span class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">Badge</span> -->
-      </div>
-    </div>
+        <span
+          :if={event.state == :draft}
+          class="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20"
+        >
+          Draft
+        </span>
+        <span
+          :if={event.state == :published}
+          class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20"
+        >
+          Badge
+        </span>
+      </:col>
+
+      <:action :let={job} :if={false}>
+        <.button disabled={job.state == :completed} variant={:outline} size={:sm}>
+          <span>Reset</span>
+        </.button>
+      </:action>
+    </.table>
   </div>
-<% end %>
+</div>

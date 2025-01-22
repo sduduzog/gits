@@ -1,0 +1,18 @@
+<%= if @live_action  == :index do %>
+  <.live_component
+    id="list-events"
+    module={__MODULE__.List}
+    current_user={@current_user}
+    host={@host}
+    events={@events}
+  />
+<% else %>
+  <.live_component
+    id="show-event"
+    module={__MODULE__.Show}
+    current_user={@current_user}
+    host={@host}
+    event={@event}
+    live_action={@live_action}
+  />
+<% end %>

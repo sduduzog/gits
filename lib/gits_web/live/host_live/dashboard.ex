@@ -1,6 +1,7 @@
 defmodule GitsWeb.HostLive.Dashboard do
   alias Gits.Accounts.User
   alias Gits.Accounts.Host
+  import GitsWeb.HostComponents
   use GitsWeb, :live_view
 
   require Ash.Query

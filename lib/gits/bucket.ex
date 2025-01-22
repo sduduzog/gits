@@ -11,7 +11,7 @@ defmodule Gits.Bucket do
            {:ok, signed_url} <-
              ExAws.Config.new(:s3)
              |> ExAws.S3.presigned_url(:get, bucket_name, key, presigned_url_options) do
-        {:commit, signed_url, expire: :timer.seconds(60)}
+        {:commit, signed_url, expire: :timer.seconds(30)}
       else
         _ ->
           {:ignore, "/images/placeholder.png"}

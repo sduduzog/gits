@@ -5,6 +5,8 @@ defmodule GitsWeb.HostLive.ViewEvent do
   use GitsWeb, :live_view
   require Ash.Query
 
+  import GitsWeb.HostComponents
+
   embed_templates "view_event_templates/*"
 
   @event_load_keys [

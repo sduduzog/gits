@@ -479,7 +479,7 @@ defmodule GitsWeb.CoreComponents do
           :lg -> "py-4 px-8 text-base/6"
           :md -> "py-3 px-6 text-sm/4"
           :sm -> "py-2 px-4 text-sm/4"
-          :box -> "p-3 text-sm/4"
+          :box -> "p-2 text-sm/4"
           :none -> "text-sm/4"
           _ -> "py-3 px-4 text-sm/4"
         end

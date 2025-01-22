@@ -7,6 +7,7 @@ defmodule GitsWeb.MyLive.Orders do
     Order
     |> Ash.Query.for_read(:read)
     |> Ash.Query.filter(state == :completed)
+    |> Ash.Query.sort(number: :desc)
     |> Ash.Query.load(:event_name)
     |> Ash.read()
     |> case do

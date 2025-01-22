@@ -1,58 +1,71 @@
-<h1 class="p-2 text-xl font-medium">Hello, {@current_user.name}</h1>
-<div :if={false} class="grid grid-cols-2 gap-4 p-2 md:grid-cols-3 lg:grid-cols-4 lg:gap-8">
-  <div
-    :for={{label, metric} <- [{"Total Events", @host.total_events}]}
-    class="grid gap-2 rounded-xl border px-4 py-6"
-  >
-    <span class="text-sm font-medium text-zinc-700">{label}</span>
-    <span class="text-4xl font-semibold">{metric}</span>
-  </div>
-</div>
-
-<div class="grid max-w-screen-2xl gap-8 p-2 lg:grid-cols-3">
-  <div class="grid rounded-xl border p-4 lg:px-6 lg:py-8">
-    <span class="text-4xl font-semibold">R0</span>
-    <span class="text-sm/6 text-zinc-500">Total Income</span>
-  </div>
-
-  <div class="grid grid-cols-2 items-center rounded-xl border lg:col-span-2 lg:grid-cols-3 lg:divide-x">
-    <div
-      :for={{label, value} <- [{"Unique Views", 0}, {"Total Orders", 0}, {"Refunded Orders", 0}]}
-      class="grid p-4 lg:px-6 lg:py-8"
-    >
-      <span class="text-4xl font-semibold">{value}</span>
-      <span class="text-sm/6 text-zinc-500">{label}</span>
+<div class="grid gap-4">
+  <.host_header current_user={@current_user} host={@host}>
+    <.host_breadcrumb_label text="Home" />
+  </.host_header>
+  <div class="lg:p-2 p-4 grid gap-8">
+    <div class="flex w-full">
+      <h2 class="text-4xl grow font-medium col-span-full">Hello, {@current_user.name}</h2>
+      <.button size={:box} variant={:sublte}>
+        <span>Add</span>
+      </.button>
     </div>
   </div>
-</div>
 
-<div class="grid gap-4 p-2 lg:grid-cols-7 lg:gap-8">
-  <div class="lg:col-span-4">
-    <h2 class="p-2 text-lg font-medium">Upcoming events</h2>
-    <div :for={event <- @host.upcoming_events} class="flex gap-2 items-start">
-      <div class="aspect-[3/2] w-32 shrink-0 overflow-hidden rounded-lg bg-zinc-200 lg:w-36">
-        <img src={Gits.Bucket.get_image_url(event.poster)} alt="Event poster" class="size-full" />
+  <div class="grid max-w-screen-2xl gap-8 p-2 lg:grid-cols-3">
+    <div class="grid rounded-xl border p-4 lg:px-6 lg:py-8">
+      <span class="text-3xl/8 font-semibold">R0</span>
+      <span class="text-sm/6 text-zinc-500">Total Income</span>
+    </div>
+
+    <div class="grid grid-cols-2 items-center rounded-xl border lg:col-span-2 lg:grid-cols-3 lg:divide-x">
+      <div
+        :for={
+          {label, value} <- [{"Unique Views", 0}, {"Total Orders", 0}, {"Refunded Orders", 0}]
+        }
+        class="grid p-4 lg:px-6 lg:py-8"
+      >
+        <span class="text-3xl/8 font-semibold">{value}</span>
+        <span class="text-sm/6 text-zinc-500">{label}</span>
       </div>
-      <div class="grid justify-between gap-2">
-        <.link navigate={~p"/hosts/#{@host.handle}/events/#{event.public_id}"}>
-          <h3 class="text-lg/5 font-semibold">
-            {event.name} The Ultimate Cheese Festival
-          </h3>
-        </.link>
-        <div class="text-sm text-zinc-500">
-          <span class="">
-            {Calendar.strftime(event.starts_at, "%A, %d %b, %I:%m %p")}
-          </span>
-          &bull;
-          <span class="capitalize">
-            {event.visibility}
-          </span>
+    </div>
+  </div>
+
+  <div class="grid gap-4 p-2 lg:grid-cols-5 lg:gap-8">
+    <div class="lg:col-span-3 grid lg:grid-cols-2 gap-4">
+      <h2 class="p-2 text-lg font-medium col-span-full">Upcoming events</h2>
+      <.link
+        :for={event <- @host.upcoming_events}
+        navigate={~p"/hosts/#{@host.handle}/events/#{event.public_id}"}
+        class="border rounded-lg p-4 grid gap-4"
+      >
+        <div class="aspect-[3/2] w-24 shrink-0 overflow-hidden rounded-lg bg-zinc-200">
+          <img src={Gits.Bucket.get_image_url(nil)} alt="Event poster" class="size-full" />
         </div>
-      </div>
-    </div>
-  </div>
+        <h3 class="text-lg/5 font-semibold">
+          {event.name} The Ultimate Cheese Festival
+        </h3>
+        <div>
+          <div class="text-xs text-zinc-700 flex items-center gap-1">
+            <.icon name="i-lucide-calendar" />
+            <span>Starts: {Calendar.strftime(event.starts_at, "%a, %d %b at %I:%m %p")}</span>
+          </div>
+        </div>
 
-  <div class="lg:col-span-3">
-    <h2 class="p-2 text-lg font-medium">Activity</h2>
+        <div>
+          <div class="text-xs text-zinc-900 flex items-center gap-1">
+            <span class="text-zinc-500">
+              Last updated:
+            </span>
+            <span>
+              {Calendar.strftime(event.updated_at, "%a, %d %b")}
+            </span>
+          </div>
+        </div>
+      </.link>
+    </div>
+
+    <div class="lg:col-span-2">
+      <h2 class="p-2 text-lg font-medium">Activity</h2>
+    </div>
   </div>
 </div>
