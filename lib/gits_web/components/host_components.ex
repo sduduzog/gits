@@ -3,7 +3,7 @@ defmodule GitsWeb.HostComponents do
   use GitsWeb, :verified_routes
   alias Phoenix.LiveView.JS
 
-  alias GitsWeb.HostLive.{Dashboard, Events, Settings, ViewEvent}
+  alias GitsWeb.HostLive.{Dashboard, Events, Settings}
 
   import GitsWeb.CoreComponents
 

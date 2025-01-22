@@ -1,17 +1,9 @@
 <div class="grid gap-4">
-  <div class="flex">
-    <h3 class="grow text-lg/8 font-medium">
-      Webhooks
-    </h3>
-    <.button
-      size={:box}
-      variant={:ghost}
-      phx-click={JS.push("manage_webhook") |> show_modal("manage-webhook")}
-      phx-target={@myself}
-    >
-      <.icon name="i-lucide-plus" />
-      <span>Add webhook</span>
-    </.button>
+  <div class="flex flex-wrap">
+    <h2 class="text-base/7 font-semibold text-gray-900">Webhooks</h2>
+    <p class="text-sm text-gray-600">
+      <!-- This information will be displayed publicly so be careful what you share. -->
+    </p>
   </div>
 
   <div class="grid gap-4 lg:grid-cols-2">
@@ -63,6 +55,17 @@
     </div>
   </div>
 
+  <div class="flex gap-2">
+    <.button
+      size={:box}
+      phx-click={JS.push("manage_webhook") |> show_modal("manage-webhook")}
+      phx-target={@myself}
+    >
+      <.icon name="i-lucide-plus" />
+      <span>Webhook</span>
+    </.button>
+  </div>
+
   <.modal id="manage-webhook">
     <.form
       :let={f}
@@ -87,7 +90,7 @@
         <div class="flex flex-wrap gap-4">
           <label
             :for={key <- [:order_completed, :order_refunded]}
-            class="inline-flex items-center gap-x-1.5 truncate rounded-md px-2  py-1 text-xs font-medium text-zinc-400 ring-1 ring-inset ring-gray-200 has-[:checked]:text-gray-900"
+            class="inline-flex items-center gap-x-1.5 truncate rounded-md px-2  py-1 text-xs font-medium text-zinc-200 ring-1 ring-inset ring-gray-200 has-[:checked]:text-gray-900"
           >
             <input type="hidden" name={f[key].name} value="false" />
             <input

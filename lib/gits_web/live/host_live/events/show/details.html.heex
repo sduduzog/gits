@@ -1,5 +1,12 @@
 <div>
-  <.form :let={f} for={@form} class="grid gap-8 grid-cols-6">
+  <.form
+    :let={f}
+    for={@form}
+    class="grid grid-cols-6 gap-8"
+    phx-change="validate"
+    phx-submit="submit"
+    phx-target={@myself}
+  >
     <div class="col-span-full">
       <h2 class="text-base/7 font-semibold text-gray-900">Basic Information</h2>
       <p class="text-sm text-gray-600">
@@ -10,7 +17,40 @@
     <.input type="text" class="col-span-full" label="Name" field={f[:name]} />
     <.input type="textarea" class="col-span-full" label="Summary" field={f[:summary]} rows="8" />
 
-    <div class="flex gap-2">
+    <.input
+      field={f[:starts_at]}
+      label="Start Date"
+      type="datetime-local"
+      class="col-span-full lg:col-span-2"
+    />
+
+    <.input
+      field={f[:ends_at]}
+      label="End Date"
+      type="datetime-local"
+      class="col-span-full lg:col-span-2"
+    />
+
+    <.input
+      field={f[:category]}
+      label="Category"
+      type="select"
+      options={
+        Gits.Storefront.EventCategory.values()
+        |> Enum.map(&{Gits.Storefront.EventCategory.description(&1), &1})
+      }
+      class="col-span-full lg:col-span-2"
+    />
+
+    <.input
+      type="radio"
+      field={f[:visibility]}
+      options={[:private, :public]}
+      label="Visibility"
+      class="col-span-full"
+    />
+
+    <div class="col-span-full flex gap-2">
       <.button size={:box}>
         <.icon name="i-lucide-save" />
         <span>Save</span>
