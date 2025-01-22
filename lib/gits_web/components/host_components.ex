@@ -40,9 +40,9 @@ defmodule GitsWeb.HostComponents do
 
   def host_breadcrumb_label(assigns) do
     ~H"""
-    <div class="flex truncate items-center truncate rounded-lg border border-transparent p-2 text-sm/5 font-semibold">
+    <div class="items-center truncate rounded-lg border border-transparent p-2 text-sm/5 font-semibold">
       <span class="truncate ">
-        {@text}
+        {@text} Festival
       </span>
     </div>
     """
@@ -60,8 +60,8 @@ defmodule GitsWeb.HostComponents do
 
   def host_header(assigns) do
     ~H"""
-    <header class="sticky top-0 flex items-center justify-between gap-2 bg-white p-2 pr-4 shadow-sm lg:static lg:pl-0 lg:shadow-none">
-      <div class="flex grow truncate items-center gap-1 text-sm">
+    <header class="sticky top-0 grid grid-cols-[auto_auto_1fr] lg:grid-cols-[1fr_auto] items-center justify-between gap-2 bg-white p-2 pr-4 shadow-sm lg:static lg:pl-0 lg:shadow-none">
+      <div class="flex overflow-hidden items-center gap-1 text-sm">
         {render_slot(@inner_block)}
       </div>
       <div
@@ -139,7 +139,12 @@ defmodule GitsWeb.HostComponents do
         </div>
       </div>
 
-      <.button size={:box} variant={:ghost} phx-click={JS.show(to: "aside")} class="md:hidden">
+      <.button
+        size={:box}
+        variant={:ghost}
+        phx-click={JS.show(to: "aside")}
+        class="md:hidden shrink-0"
+      >
         <.icon name="i-lucide-menu" />
       </.button>
     </header>
