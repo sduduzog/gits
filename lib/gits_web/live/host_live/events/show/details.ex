@@ -35,7 +35,7 @@ defmodule GitsWeb.HostLive.Events.Show.Details do
     |> allow_upload(:poster,
       accept: ~w(.jpg .jpeg .png .webp),
       max_entries: 1,
-      max_file_size: 1_048_576,
+      max_file_size: 1_048_576 * 2,
       auto_upload: true,
       progress: &handle_progress/3
     )
@@ -50,7 +50,7 @@ defmodule GitsWeb.HostLive.Events.Show.Details do
 
   def handle_event("update", unsigned_params, socket) do
     Form.submit(socket.assigns.form,
-      params: unsigned_params["form"] |> IO.inspect(),
+      params: unsigned_params["form"],
       action_opts: [load: [poster: [:url]]]
     )
     |> case do
