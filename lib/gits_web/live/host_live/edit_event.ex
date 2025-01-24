@@ -23,10 +23,6 @@ defmodule GitsWeb.HostLive.EditEvent do
       {:ok, event} ->
         socket
         |> assign_event_update(event, user)
-        |> allow_upload(:poster,
-          accept: ~w(.jpg .jpeg .png .webp),
-          max_entries: 1
-        )
         |> noreply()
     end
   end
@@ -211,29 +207,6 @@ defmodule GitsWeb.HostLive.EditEvent do
     end
   end
 
-  def handle_event("media", _unsigned_params, socket) do
-    consume_uploaded_entries(socket, :poster, fn %{path: path}, _entry ->
-      Image.open!(path)
-      |> Image.thumbnail!("768x512", fit: :cover)
-      |> Image.stream!(
-        suffix: ".jpg",
-        buffer_size: 5_242_880,
-        quality: 100
-      )
-      |> Gits.Bucket.upload_image()
-      |> case do
-        {:ok, filename} ->
-          Form.submit(socket.assigns.form, params: %{"poster" => filename})
-      end
-    end)
-    |> case do
-      [event] ->
-        socket
-        |> assign_event_update(event, socket.assigns.current_user)
-        |> noreply()
-    end
-  end
-
   def handle_event("tickets", unsigned_params, socket) do
     socket.assigns.form
     |> Form.submit(params: unsigned_params["form"])
@@ -310,34 +283,8 @@ defmodule GitsWeb.HostLive.EditEvent do
             )
         end
 
-      :description ->
-        assign(socket, :form, Form.for_update(event, :description, actor: actor))
-        |> assign(
-          :on_next_path,
-          Routes.host_edit_event_path(
-            socket,
-            :media,
-            socket.assigns.host.handle,
-            event.public_id
-          )
-        )
-
-      :media ->
-        assign(socket, :form, Form.for_update(event, :media, actor: actor))
-        |> assign(:uploaded_files, [])
-        |> assign(:event_poster, event.poster)
-        |> assign(
-          :on_next_path,
-          Routes.host_edit_event_path(
-            socket,
-            :tickets,
-            socket.assigns.host.handle,
-            event.public_id
-          )
-        )
-
       :tickets ->
-        assign(socket, :form, Form.for_update(event, :media, actor: actor))
+        assign(socket, :form, Form.for_update(event, :details, actor: actor))
         |> assign(:event, event)
         |> assign(
           :on_next_path,

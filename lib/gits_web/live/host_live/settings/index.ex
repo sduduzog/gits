@@ -6,7 +6,7 @@ defmodule GitsWeb.HostLive.Settings.Index do
   def render(assigns) do
     ~H"""
     <div>
-      <.host_header current_user={@current_user} host={@host}>
+      <.host_header current_user={@current_user} handle={@host.handle} host_name={@host.name}>
         <.host_breadcrumb_label text="Settings" />
       </.host_header>
       <div :if={false} class="p-4 grid gap-8">

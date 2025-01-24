@@ -16,7 +16,7 @@
     </div>
 
     <.inputs_for :let={h} :if={@form.type == :create} field={f[:host]}>
-      <.input field={h[:id]} type="hidden" value={@host.id} />
+      <.input field={h[:id]} type="hidden" value={@host_id} />
     </.inputs_for>
 
     <.input type="text" class="col-span-full" label="Name" field={f[:name]} />
@@ -60,7 +60,7 @@
       hint="A private event is only visible to users with a URL to the event"
       type="radio"
       class="col-span-full"
-      options={if(@host.state == :verified, do: [:private, :public], else: [:private])}
+      options={if(@host_state == :verified, do: [:private, :public], else: [:private])}
     />
 
     <div class="col-span-full">
@@ -73,7 +73,7 @@
     <div class="col-span-full grid gap-4 lg:grid-cols-[theme(space.96)_1fr]">
       <label
         phx-drop-target={@uploads.poster.ref}
-        class="block aspect-[3/2] shrink-0 overflow-hidden rounded-lg border-2 bg-zinc-50"
+        class="block aspect-[3/2] shrink-0 overflow-hidden rounded-lg border bg-zinc-50"
       >
         <.live_file_input upload={@uploads.poster} class="sr-only" />
         <%= for entry <- @uploads.poster.entries do %>

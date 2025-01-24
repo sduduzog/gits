@@ -20,6 +20,7 @@ defmodule GitsWeb.HostLive.ViewEvent do
     :admissions,
     :total_revenue,
     :actual_revenue,
+    poster: [:url],
     ticket_types: [
       :active_tickets_count,
       tickets: Ash.Query.filter(Ticket, not is_nil(attendee)) |> Ash.Query.load(:attendee)

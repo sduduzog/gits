@@ -1,7 +1,7 @@
 <div class="mx-auto grid max-w-screen-xl items-start gap-4 gap-x-12 lg:grid-cols-[minmax(auto,48rem)_1fr] lg:gap-6 lg:pb-6">
   <div class="space-y-4 lg:row-span-3">
     <div class="aspect-[3/2] overflow-hidden bg-zinc-200 lg:rounded-2xl">
-      <img src={Gits.Bucket.get_image_url(@event.poster)} alt={@event.name} class="size-full" />
+      <img src={@event.poster.url} alt={@event.name} class="size-full" />
     </div>
   </div>
 

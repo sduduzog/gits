@@ -3,16 +3,23 @@
     id="list-events"
     module={__MODULE__.List}
     current_user={@current_user}
-    host={@host}
+    host_id={@host.id}
+    host_name={@host.name}
+    host_state={@host.state}
+    handle={@host.handle}
     events={@events}
   />
 <% else %>
   <.live_component
     id="show-event"
+    event_id={if(is_nil(@event), do: nil, else: @event.public_id)}
     module={__MODULE__.Show}
     current_user={@current_user}
-    host={@host}
-    event={@event}
+    host_id={@host.id}
+    host_name={@host.name}
+    host_state={@host.state}
+    handle={@host.handle}
     live_action={@live_action}
+    manage_ticket={nil}
   />
 <% end %>

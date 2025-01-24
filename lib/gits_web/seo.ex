@@ -50,10 +50,8 @@ defimpl SEO.OpenGraph.Build, for: Gits.Storefront.Event do
   end
 
   defp image(event, _) do
-    file = Gits.Bucket.get_image_url(event.poster)
-
     SEO.OpenGraph.Image.build(
-      url: file,
+      url: event.poster.url,
       alt: event.name
     )
   end
@@ -73,7 +71,7 @@ end
 
 defimpl SEO.Twitter.Build, for: Gits.Storefront.Event do
   def build(event, _conn) do
-    SEO.Twitter.build(description: event.summary, title: event.name)
+    SEO.Twitter.build(description: event.summary, title: event.name, image: event.poster.url)
   end
 end
 

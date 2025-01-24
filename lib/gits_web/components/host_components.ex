@@ -24,7 +24,7 @@ defmodule GitsWeb.HostComponents do
     ]
   end
 
-  def host_menu_items(user, _host) do
+  def host_menu_items(user, handle) do
     [
       [
         {user.email, nil, nil, false},
@@ -92,7 +92,7 @@ defmodule GitsWeb.HostComponents do
           id="menu-button"
         >
           <.icon name="i-lucide-building-2" />
-          <span class="hidden lg:inline-flex">{@host.name}</span>
+          <span class="hidden lg:inline-flex">{@host_name}</span>
           <.icon name="i-lucide-chevron-down" />
         </.button>
 
@@ -105,7 +105,7 @@ defmodule GitsWeb.HostComponents do
           tabindex="-1"
         >
           <div
-            :for={{items, outer_index} <- Enum.with_index(host_menu_items(@current_user, @host))}
+            :for={{items, outer_index} <- Enum.with_index(host_menu_items(@current_user, @handle))}
             class="py-1"
             role="none"
           >

@@ -1,12 +1,12 @@
 <div class="grid gap-4">
-  <.host_header current_user={@current_user} host={@host}>
+  <.host_header current_user={@current_user} handle={@handle} host_name={@host_name}>
     <.host_breadcrumb_label text="Events" />
   </.host_header>
   <div class="lg:p-2 p-4 grid gap-8">
     <div class="flex w-full items-center">
       <h2 class="text-4xl grow font-medium col-span-full">Events</h2>
 
-      <.button variant={:solid} href={~p"/hosts/#{@host.handle}/events/create"}>
+      <.button variant={:solid} href={~p"/hosts/#{@handle}/events/create"}>
         <.icon name="i-lucide-plus" />
         <span>New event</span>
       </.button>
@@ -17,7 +17,7 @@
     <div class="border rounded-lg overflow-x-auto">
       <.table id="events" rows={@events}>
         <:col :let={event} label="Name">
-          <.link navigate={~p"/hosts/#{@host.handle}/events/#{event.public_id}"}>
+          <.link navigate={~p"/hosts/#{@handle}/events/#{event.public_id}"}>
             {event.name}
           </.link>
         </:col>
@@ -47,7 +47,7 @@
             :if={event.state == :published}
             class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20"
           >
-            Badge
+            Published
           </span>
         </:col>
 

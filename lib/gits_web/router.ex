@@ -92,6 +92,7 @@ defmodule GitsWeb.Router do
       live "/hosts/:handle/events/create", HostLive.Events, :details
       live "/hosts/:handle/events/:public_id", HostLive.Events, :overview
       live "/hosts/:handle/events/:public_id/details", HostLive.Events, :details
+      live "/hosts/:handle/events/:public_id/tickets", HostLive.Events, :tickets
       live "/hosts/:handle/events/:public_id/settings", HostLive.Events, :settings
 
       live "/hosts/:handle/events/:public_id/scanner", HostLive.Scanner, :index

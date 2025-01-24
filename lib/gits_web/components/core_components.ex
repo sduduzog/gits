@@ -818,7 +818,20 @@ defmodule GitsWeb.CoreComponents do
           <.error :for={msg <- @errors}>{msg}</.error>
         <% end %>
       </div>
-      <div class="relative inline-flex w-full items-center gap-2 rounded-lg border border-zinc-200 px-3 py-2 text-sm outline-none focus:outline-none focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-zinc-600">
+      <div class={
+        [
+          "relative",
+          "p-3 flex gap-2",
+          "w-full text-sm rounded-lg",
+          # "relative inline-flex w-full items-center gap-2 rounded-lg border border-zinc-200 text-sm outline-none focus:outline-none focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-zinc-600"
+          "bg-transparent border border-zinc-400",
+          "text-zinc-900 dark:text-zinc-200",
+          "has-[:focus-visible]:outline-none",
+          "focus-visible:outline-none focus-visible:border-zinc-400 focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:dark:ring-zinc-700",
+          @errors == [] && "border-zinc-300 focus:ring-zinc-400",
+          @errors != [] && "border-rose-400 focus:border-rose-400"
+        ]
+      }>
         <input type="color" name={@name} value={@value} class="absolute inset-0 size-full opacity-0" />
         <span class="inline-flex size-5 rounded-full" style={"background-color: #{@value}"}></span>
         <span>{@value}</span>

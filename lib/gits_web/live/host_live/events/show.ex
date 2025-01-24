@@ -1,12 +1,32 @@
 defmodule GitsWeb.HostLive.Events.Show do
   import GitsWeb.HostComponents
+  require Ash.Query
+  alias Gits.Storefront.Event
   use GitsWeb, :live_component
 
   def update(assigns, socket) do
-    socket
+    if is_nil(assigns.event_id) do
+      socket
+      |> assign(:event, nil)
+    else
+      Event
+      |> Ash.Query.filter(host.id == ^assigns.host_id and public_id == ^assigns.event_id)
+      |> Ash.read_one(actor: assigns.current_user)
+      |> case do
+        {:ok, %Event{} = event} ->
+          socket
+          |> assign(:event, event)
+
+        _ ->
+          socket
+          |> assign(:event, nil)
+      end
+    end
     |> assign(:current_user, assigns.current_user)
-    |> assign(:host, assigns.host)
-    |> assign(:event, assigns.event)
+    |> assign(:handle, assigns.handle)
+    |> assign(:host_state, assigns.host_state)
+    |> assign(:host_name, assigns.host_name)
+    |> assign(:host_id, assigns.host_id)
     |> assign(:action, assigns.live_action)
     |> ok()
   end

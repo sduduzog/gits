@@ -10,8 +10,6 @@ defmodule GitsWeb.HostLive.Events.Show.Details do
     |> case do
       {:ok, %Event{} = event} ->
         socket
-        |> assign(:current_user, assigns.current_user)
-        |> assign(:host, assigns.host)
         |> assign(:event, event)
         |> assign(:submit_action, "update")
         |> assign(
@@ -21,8 +19,6 @@ defmodule GitsWeb.HostLive.Events.Show.Details do
 
       _ ->
         socket
-        |> assign(:current_user, assigns.current_user)
-        |> assign(:host, assigns.host)
         |> assign(:submit_action, "create")
         |> assign(
           :form,
@@ -39,6 +35,10 @@ defmodule GitsWeb.HostLive.Events.Show.Details do
       auto_upload: true,
       progress: &handle_progress/3
     )
+    |> assign(:current_user, assigns.current_user)
+    |> assign(:handle, assigns.handle)
+    |> assign(:host_state, assigns.host_state)
+    |> assign(:host_id, assigns.host_id)
     |> ok()
   end
 
@@ -55,6 +55,8 @@ defmodule GitsWeb.HostLive.Events.Show.Details do
     )
     |> case do
       {:ok, event} ->
+        send(self(), {:updated_event, event})
+
         socket
         |> assign(:event, event)
         |> assign(
@@ -79,7 +81,7 @@ defmodule GitsWeb.HostLive.Events.Show.Details do
       {:ok, event} ->
         socket
         |> push_patch(
-          to: ~p"/hosts/#{socket.assigns.host.handle}/events/#{event.public_id}/details",
+          to: ~p"/hosts/#{socket.assigns.handle}/events/#{event.public_id}/details",
           replace: true
         )
         |> noreply()

@@ -12,7 +12,6 @@ defmodule GitsWeb.HostLive.Events.Show.Dashboard do
         socket
         |> assign(:webhooks, webhooks)
         |> assign(:current_user, assigns.current_user)
-        |> assign(:host, assigns.host)
         |> assign(:event, assigns.event)
         |> assign(
           :form,

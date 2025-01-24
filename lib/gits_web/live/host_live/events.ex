@@ -44,4 +44,23 @@ defmodule GitsWeb.HostLive.Events do
     end
     |> noreply()
   end
+
+  def handle_info({:updated_event, event}, socket) do
+    socket |> assign(:event, event) |> noreply()
+  end
+
+  def handle_event("manage_ticket", _, socket) do
+    socket
+    |> push_patch(
+      to:
+        Routes.host_events_path(
+          socket,
+          :tickets,
+          socket.assigns.host.handle,
+          socket.assigns.event.public_id,
+          %{modal: :ticket}
+        )
+    )
+    |> noreply()
+  end
 end

@@ -1,5 +1,5 @@
 <div class="grid gap-4">
-  <.host_header current_user={@current_user} host={@host}>
+  <.host_header current_user={@current_user} handle={@host.handle} host_name={@host.name}>
     <.host_breadcrumb_label text="Home" />
   </.host_header>
   <div class="lg:p-2 p-4 grid gap-8">
@@ -35,7 +35,7 @@
         navigate={~p"/hosts/#{@host.handle}/events/#{event.public_id}"}
         class="border rounded-lg p-4 grid gap-4"
       >
-        <div class="aspect-[3/2] w-24 shrink-0 overflow-hidden rounded-lg bg-zinc-200">
+        <div :if={false} class="aspect-[3/2] w-24 shrink-0 overflow-hidden rounded-lg bg-zinc-200">
           <img src={Gits.Bucket.get_image_url(nil)} alt="Event poster" class="size-full" />
         </div>
         <h3 class="text-lg/5 font-semibold">

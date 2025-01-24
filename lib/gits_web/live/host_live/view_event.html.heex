@@ -1,4 +1,4 @@
-<.host_header current_user={@current_user} host={@host}>
+<.host_header current_user={@current_user} handle={@host.handle} host_name={@host.name}>
   <.host_breadcrumb_button text="Events" href={~p"/hosts/#{@host.handle}/events"} />
   <span class="text-xs font-semibold text-zinc-400">/</span>
   <.host_breadcrumb_label text={@event.name} />
@@ -6,7 +6,7 @@
 
 <div class="flex flex-wrap items-end gap-4 p-2">
   <div class="aspect-[3/2] h-20 overflow-hidden rounded-lg bg-zinc-200 lg:h-24">
-    <img src={Gits.Bucket.get_image_url(@event.poster)} alt="Event poster" class="size-full" />
+    <img src={@event.poster.url} alt="Event poster" class="size-full" />
   </div>
   <div class="grid grow items-start gap-2">
     <h1 class="inline-flex flex-wrap gap-1 text-lg/5 font-semibold">

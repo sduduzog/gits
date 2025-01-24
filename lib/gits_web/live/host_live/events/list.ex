@@ -5,9 +5,9 @@ defmodule GitsWeb.HostLive.Events.List do
   def update(assigns, socket) do
     socket
     |> assign(:current_user, assigns.current_user)
-    |> assign(:host, assigns.host)
+    |> assign(:handle, assigns.handle)
+    |> assign(:host_name, assigns.host_name)
     |> assign(:events, assigns.events)
-    |> assign(:form, %{})
     |> ok()
   end
 end

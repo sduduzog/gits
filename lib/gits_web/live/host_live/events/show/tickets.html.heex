@@ -1,0 +1,88 @@
+<div class="grid gap-4">
+  <div class="flex flex-wrap items-end gap-2">
+    <div class="grid grow">
+      <h2 class="text-base/7 font-semibold text-gray-900">Tickets</h2>
+      <p class="text-sm text-gray-600">
+        Setup ticket types for this event. Drag a ticket type by the handle-bar to reorder.
+      </p>
+    </div>
+
+    <.button size={:box} phx-click={JS.push("manage_ticket") |> show_modal("manage_ticket")}>
+      <.icon name="i-lucide-plus" />
+      <span>Create</span>
+    </.button>
+  </div>
+
+  <div class="" phx-hook="HostDraggableTicketContainer" id="tickets">
+    <div class="flex items-center gap-2 rounded-lg border p-2">
+      <div class="handle inline-flex cursor-grab rounded-md p-2 active:cursor-grabbing">
+        <.icon name="i-lucide-grip-vertical" />
+      </div>
+      <span class="text-base/4 font-semibold text-gray-900">Tickets</span>
+    </div>
+  </div>
+
+  <.modal id="manage_ticket">
+    <.form
+      :let={f}
+      for={@form}
+      class="grid gap-4 lg:grid-cols-2"
+      phx-target={@myself}
+      phx-change="validate"
+      phx-submit="submit"
+    >
+      <h3 class="text-xl font-medium">
+        {if(@form.action == :add_ticket_type, do: "Create ticket", else: "Edit ticket")}
+      </h3>
+
+      <.inputs_for :let={t} field={f[:type]}>
+        <div class="flex col-span-full">
+          <.input
+            type="color"
+            field={t[:color]}
+            label="Color"
+            value={t[:color].value || Gits.RandomColor.generate()}
+          />
+        </div>
+
+        <.input type="text" field={t[:name]} label="Name" class="" />
+        <.input type="number" field={t[:price]} label="Price" hint="0 or from 50 and above" />
+        <.input type="number" field={t[:quantity]} label="Quantity" />
+        <.input type="number" field={t[:limit_per_user]} label="Limit per user" />
+
+        <.input field={t[:sale_starts_at]} label="Sale starts" type="datetime-local" />
+
+        <.input field={t[:sale_ends_at]} label="Sale ends" type="datetime-local" />
+
+        <.input type="textarea" field={t[:description]} label="Description" class="col-span-full" />
+        <.input
+          type="checkbox"
+          field={t[:check_in_enabled]}
+          label="Enable Check-in"
+          hint="RSVP"
+          description="Ticket holders will be required to sign in. This also allows admitting attendees without scanning their ticket"
+          class="col-span-full"
+        />
+      </.inputs_for>
+
+      <div class="col-span-full flex justify-end gap-4">
+        <.button
+          :if={f[:id].value}
+          variant={:ghost}
+          type="button"
+          phx-value-id={f[:id].value}
+          phx-click={JS.push("delete_webhook") |> hide_modal("manage_ticket")}
+          phx-target={@myself}
+        >
+          <span class="text-sm font-semibold text-red-600">Delete</span>
+        </.button>
+
+        <div role="none" class="grow"></div>
+
+        <.button>
+          <span class="text-sm font-semibold">Save</span>
+        </.button>
+      </div>
+    </.form>
+  </.modal>
+</div>

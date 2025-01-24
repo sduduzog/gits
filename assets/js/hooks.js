@@ -1,3 +1,4 @@
+import Sortable from "sortablejs";
 function turnstileCallbackEvent(self, name, eventName) {
   return (payload) => {
     const events = self.el.dataset.events || "";
@@ -98,25 +99,9 @@ const CopyLinkButton = {
   },
 };
 
-const Dropdown = {
+const HostDraggableTicketContainer = {
   mounted() {
-    const dropdownButton = this.el.querySelector("button[data-dropdown]");
-    const dropdownOptions = this.el.querySelector("div[data-dropdown]");
-
-    this.cleanup = autoUpdate(dropdownButton, dropdownOptions, () => {
-      computePosition(this.el, dropdownOptions, {
-        placement: "bottom-end",
-        middleware: [flip(), offset(10), shift({ padding: 5 })],
-      }).then(({ x, y }) => {
-        Object.assign(dropdownOptions.style, {
-          left: `${x}px`,
-          top: `${y}px`,
-        });
-      });
-    });
-  },
-  destroyed() {
-    this.cleanup?.();
+    Sortable.create(this.el, { handle: ".handle" });
   },
 };
 
@@ -125,5 +110,5 @@ export const Hooks = {
   QrScannerCameraList,
   Turnstile: TurnstileHook,
   CopyLinkButton,
-  Dropdown,
+  HostDraggableTicketContainer,
 };
