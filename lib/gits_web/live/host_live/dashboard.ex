@@ -14,7 +14,7 @@ defmodule GitsWeb.HostLive.Dashboard do
       [
         hosts:
           Ash.Query.filter(Host, handle == ^handle)
-          |> Ash.Query.load([:total_events, :upcoming_events])
+          |> Ash.Query.load([:total_events, upcoming_events: [poster: [:url]]])
       ],
       actor: user
     )

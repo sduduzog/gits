@@ -13,16 +13,25 @@
     </.button>
   </div>
 
-  <div class="" phx-hook="HostDraggableTicketContainer" id="tickets">
-    <div class="flex items-center gap-2 rounded-lg border p-2">
+  <div class="grid gap-4" phx-hook="HostDraggableTicketContainer" id="tickets">
+    <div :for={ticket_type <- @ticket_types} class="flex items-center gap-2 rounded-lg border p-2">
       <div class="handle inline-flex cursor-grab rounded-md p-2 active:cursor-grabbing">
         <.icon name="i-lucide-grip-vertical" />
       </div>
-      <span class="text-base/4 font-semibold text-gray-900">Tickets</span>
+      <span class="grow text-base/4 font-semibold text-gray-900">{ticket_type.name}</span>
+      <.button
+        size={:box}
+        variant={:ghost}
+        phx-click={JS.push("manage_ticket") |> show_modal("manage_ticket")}
+        phx-value-id={ticket_type.id}
+        phx-target={@myself}
+      >
+        <.icon name="i-lucide-pen-square" />
+      </.button>
     </div>
   </div>
 
-  <.modal id="manage_ticket" show={true}>
+  <.modal id="manage_ticket">
     <.form
       :let={f}
       for={@form}
@@ -43,6 +52,8 @@
           value={f[:color].value || Gits.RandomColor.generate()}
         />
       </div>
+
+      <.inputs_for :if={@form.action == :create} field={f[:event]}></.inputs_for>
 
       <.input type="text" field={f[:name]} label="Name" class="" placeholder="e.g General" />
       <.input type="number" field={f[:price]} label="Price" hint="R0 or R50+" />

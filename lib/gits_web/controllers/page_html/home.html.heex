@@ -29,7 +29,7 @@
 
 <div :if={Enum.any?(@recent_events)} class="mx-auto grid max-w-screen-xl gap-4 py-10">
   <h2 class="px-4 font-semibold text-zinc-700">Recently viewed</h2>
-  <div class="flex items-start gap-4 overflow-auto whitespace-nowrap px-4 pb-2 lg:grid lg:grid-cols-4 lg:gap-8">
+  <div class="flex items-start gap-4 overflow-auto whitespace-nowrap px-4 pb-2 lg:grid lg:grid-cols-3 lg:gap-4">
     <div
       :for={event <- @recent_events}
       class="grid w-72 shrink-0 gap-2 overflow-hidden p-0.5 lg:w-auto"
@@ -38,11 +38,7 @@
         navigate={~p"/events/#{event.public_id}"}
         class="aspect-[3/2] w-full overflow-hidden rounded-xl bg-red-100 focus-visible:ring-2 focus-visible:ring-zinc-200 lg:rounded-2xl"
       >
-        <img
-          src={Gits.Bucket.get_image_url(event.poster)}
-          alt={event.name}
-          class="size-full scale-125 bg-zinc-50"
-        />
+        <img src={event.poster.url} alt={event.name} class="size-full scale-125 bg-zinc-50" />
       </.link>
       <h3 class="text-lg/5 font-semibold text-zinc-900">{event.name}</h3>
       <div class="space-y-1 truncate">

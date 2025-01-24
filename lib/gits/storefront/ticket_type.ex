@@ -22,7 +22,16 @@ defmodule Gits.Storefront.TicketType do
   end
 
   actions do
-    defaults [:read, :destroy, create: :*, update: :*]
+    defaults [:read, :destroy, update: :*]
+
+    create :create do
+      primary? true
+      accept :*
+
+      argument :event, :map
+
+      change manage_relationship(:event, type: :append)
+    end
 
     update :add_ticket do
       require_atomic? false
@@ -47,10 +56,12 @@ defmodule Gits.Storefront.TicketType do
     end
 
     policy action(:create) do
+      authorize_if actor_present()
       authorize_if accessing_from(Event, :ticket_types)
     end
 
     policy action(:update) do
+      authorize_if actor_present()
       authorize_if accessing_from(Order, :ticket_types)
       authorize_if accessing_from(Event, :ticket_types)
     end
@@ -121,8 +132,6 @@ defmodule Gits.Storefront.TicketType do
     calculate :on_sale?, :boolean, expr(sale_started? and not sale_ended?)
 
     calculate :sold_out, :boolean, expr(valid_tickets_count == quantity)
-
-    calculate :test, :integer, expr(count(tickets, query: [filter: expr(true)]))
 
     calculate :limit_reached,
               :boolean,

@@ -20,6 +20,7 @@ defmodule GitsWeb.HostLive.Events.Show.Tickets do
       {:ok, %Event{} = event} ->
         socket
         |> assign(:event, event)
+        |> assign(:ticket_types, event.ticket_types)
 
         # |> assign(
         #   :form,
@@ -29,8 +30,12 @@ defmodule GitsWeb.HostLive.Events.Show.Tickets do
         #   )
         #   |> Form.add_form([:type], validate?: false)
         # )
+        |> assign(
+          :form,
+          Form.for_create(TicketType, :create, actor: assigns.current_user, forms: [auto?: true])
+          |> Form.add_form([:event], type: :read, validate?: false, data: event)
+        )
     end
-    |> assign(:form, Form.for_create(TicketType, :create, actor: assigns.current_user))
     |> assign(:current_user, assigns.current_user)
     |> assign(:handle, assigns.handle)
     |> assign(:host_state, assigns.host_state)
@@ -50,42 +55,31 @@ defmodule GitsWeb.HostLive.Events.Show.Tickets do
   def handle_event("submit", unsigned_params, socket) do
     %{form: form} = socket.assigns
 
-    case form.action do
-      :add_ticket ->
-        Form.submit(form, params: unsigned_params["form"])
-        |> case do
-          {:ok, ticket_type} ->
-            socket
-            # |> assign(
-            #   :form,
-            #   Form.for_update(event, :edit_ticket_type, forms: [auto?: true], actor: user)
-            #   |> Form.add_form([:type], data: type, type: :update, validate?: false)
-            # )
+    Form.submit(form, params: unsigned_params["form"])
+    |> case do
+      {:ok, ticket_type} ->
+        socket
+        |> assign(:ticket_types, [ticket_type])
+        |> noreply()
 
-            |> noreply()
-
-          {:error, form} ->
-            socket
-            |> assign(:form, form)
-            |> noreply()
-        end
-
-      :update ->
-        Form.submit(form, params: unsigned_params["form"])
-        |> case do
-          {:ok, ticket_type} ->
-            socket
-            |> noreply()
-
-          {:error, form} ->
-            socket
-            |> assign(:form, form)
-            |> noreply()
-        end
+      {:error, form} ->
+        socket
+        |> assign(:form, form)
+        |> noreply()
     end
   end
 
-  def handle_event("manage_ticket", unsigned_params, socket) do
-    socket |> noreply()
+  def handle_event("manage_ticket", %{"id" => id}, socket) do
+    ticket_type = Enum.find(socket.assigns.ticket_types, &(&1.id == id))
+
+    socket
+    |> assign(
+      :form,
+      Form.for_update(ticket_type, :update,
+        actor: socket.assigns.current_user,
+        forms: [auto?: true]
+      )
+    )
+    |> noreply()
   end
 end
