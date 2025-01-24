@@ -70,24 +70,27 @@
       </p>
     </div>
 
-    <div class="col-span-full grid lg:grid-cols-[theme(space.96)_1fr] gap-4">
-      <section
+    <div class="col-span-full grid gap-4 lg:grid-cols-[theme(space.96)_1fr]">
+      <label
         phx-drop-target={@uploads.poster.ref}
-        class="aspect-[3/2] shrink-0 rounded-lg border-2 bg-zinc-50"
+        class="block aspect-[3/2] shrink-0 overflow-hidden rounded-lg border-2 bg-zinc-50"
       >
-        <.live_file_input upload={@uploads.poster} />
-
+        <.live_file_input upload={@uploads.poster} class="sr-only" />
         <%= for entry <- @uploads.poster.entries do %>
-          <.live_img_preview entry={entry} class="bg-red-200 w-40 aspect-[3/2]" />
+          <.live_img_preview entry={entry} class="size-full object-cover" alt="Poster" />
         <% end %>
 
         <.inputs_for :let={p} field={f[:poster]}>
-          <.input :if={false} field={p[:id]} type="hidden" />
           <%= if Enum.empty?(@uploads.poster.entries) do %>
-            <img :if={not is_nil(p.data)} src={p.data.url} alt="Poster" class="w-40" />
+            <img
+              :if={not is_nil(p.data)}
+              src={p.data.url}
+              alt="Poster"
+              class="size-full object-cover"
+            />
           <% end %>
         </.inputs_for>
-      </section>
+      </label>
       <div>
         <p class="text-sm text-gray-600">
           This will appear on GiTS event listings, and as preview when the event is shared on other platforms. Please note your image must be larger than or

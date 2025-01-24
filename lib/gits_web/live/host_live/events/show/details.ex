@@ -116,8 +116,7 @@ defmodule GitsWeb.HostLive.Events.Show.Details do
         else
           Form.add_form(socket.assigns.form, [:poster],
             type: :read,
-            data: image,
-            validate?: false
+            data: image
           )
         end
 
