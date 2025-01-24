@@ -24,6 +24,9 @@ defmodule GitsWeb.HostLive.Dashboard do
         |> assign(:host, host)
         |> assign(:page_title, "Dashboard")
         |> ok(:host)
+
+      _ ->
+        socket |> ok(:not_found)
     end
   end
 end

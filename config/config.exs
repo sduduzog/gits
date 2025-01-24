@@ -34,7 +34,8 @@ config :gits,
   ash_domains: [
     Gits.Accounts,
     Gits.Storefront,
-    Gits.Support
+    Gits.Support,
+    Gits.Bucket
   ],
   ecto_repos: [Gits.Repo]
 
@@ -68,26 +69,6 @@ config :gits, GitsWeb.Endpoint,
   live_view: [signing_salt: "mAny0gpU"]
 
 config :gits, Gits.Mailer, adapter: Swoosh.Adapters.Local
-
-# config :esbuild,
-#   version: "0.24.0",
-#   gits: [
-#     args:
-#       ~w(js/app.js --bundle --target=esnext --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
-#     cd: Path.expand("../assets", __DIR__),
-#     env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
-#   ]
-#
-# config :tailwind,
-#   version: "3.4.13",
-#   gits: [
-#     args: ~w(
-#       --config=tailwind.config.js
-#       --input=css/app.css
-#       --output=../priv/static/assets/app.css
-#     ),
-#     cd: Path.expand("../assets", __DIR__)
-#   ]
 
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",

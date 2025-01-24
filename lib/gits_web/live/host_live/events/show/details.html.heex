@@ -1,6 +1,7 @@
 <div>
   <.form
     :let={f}
+    id="event-details"
     for={@form}
     class="grid grid-cols-6 gap-8"
     phx-change="validate"
@@ -19,7 +20,14 @@
     </.inputs_for>
 
     <.input type="text" class="col-span-full" label="Name" field={f[:name]} />
-    <.input type="textarea" class="col-span-full" label="Summary" field={f[:summary]} rows="8" />
+    <.input
+      :if={false}
+      type="textarea"
+      class="col-span-full"
+      label="Summary"
+      field={f[:summary]}
+      rows="8"
+    />
 
     <.input
       field={f[:starts_at]}
@@ -62,7 +70,38 @@
       </p>
     </div>
 
-    <div></div>
+    <div class="col-span-full grid lg:grid-cols-[theme(space.96)_1fr] gap-4">
+      <section
+        phx-drop-target={@uploads.poster.ref}
+        class="aspect-[3/2] shrink-0 rounded-lg border-2 bg-zinc-50"
+      >
+        <.live_file_input upload={@uploads.poster} />
+
+        <%= for entry <- @uploads.poster.entries do %>
+          <.live_img_preview entry={entry} class="bg-red-200 w-40 aspect-[3/2]" />
+        <% end %>
+
+        <.inputs_for :let={p} field={f[:poster]}>
+          <.input :if={false} field={p[:id]} type="hidden" />
+          <%= if Enum.empty?(@uploads.poster.entries) do %>
+            <img :if={not is_nil(p.data)} src={p.data.url} alt="Poster" class="w-40" />
+          <% end %>
+        </.inputs_for>
+      </section>
+      <div>
+        <p class="text-sm text-gray-600">
+          This will appear on GiTS event listings, and as preview when the event is shared on other platforms. Please note your image must be larger than or
+          <strong>768x512 (3:2)</strong>
+          but not above <strong>2MB</strong>
+        </p>
+
+        <%= for entry <- @uploads.poster.entries do %>
+          <p :for={err <- upload_errors(@uploads.poster, entry)}>
+            <.error>{error_to_string(err)}</.error>
+          </p>
+        <% end %>
+      </div>
+    </div>
 
     <div class="col-span-full flex gap-2">
       <.button size={:box}>

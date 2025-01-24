@@ -1,5 +1,6 @@
 defmodule Gits.Storefront.Event do
   require Decimal
+  alias Gits.Bucket
   alias Gits.Accounts.{Host, Venue}
   alias Gits.Storefront.{EventCategory, Interaction, Order, Ticket, TicketType}
 
@@ -60,12 +61,23 @@ defmodule Gits.Storefront.Event do
       accept [:name, :starts_at, :ends_at, :visibility]
 
       argument :host, :map
+      argument :poster, :map
+
       change manage_relationship(:host, type: :append)
-      change set_attribute(:public_id, &Nanoid.generate/0)
+      change manage_relationship(:poster, type: :append)
     end
 
     update :details do
+      require_atomic? false
       accept :*
+
+      argument :poster, :map, allow_nil?: false
+
+      change manage_relationship(:poster,
+               on_lookup: :relate,
+               on_missing: :unrelate,
+               on_no_match: :error
+             )
     end
 
     update :location do
@@ -95,10 +107,6 @@ defmodule Gits.Storefront.Event do
 
     update :description do
       accept [:summary, :description]
-    end
-
-    update :media do
-      accept [:poster]
     end
 
     update :publish do
@@ -248,8 +256,6 @@ defmodule Gits.Storefront.Event do
     attribute :summary, :string, public?: true
     attribute :description, :string, public?: true
 
-    attribute :poster, :string, public?: true
-
     attribute :published_at, :utc_datetime, public?: true
     attribute :completed_at, :utc_datetime, public?: true
 
@@ -273,6 +279,10 @@ defmodule Gits.Storefront.Event do
 
     has_many :orders, Order
     has_many :interactions, Interaction
+
+    has_one :poster, Bucket.Image do
+      domain Bucket
+    end
   end
 
   calculations do
