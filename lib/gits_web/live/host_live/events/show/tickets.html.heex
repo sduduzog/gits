@@ -7,7 +7,7 @@
       </p>
     </div>
 
-    <.button size={:box} phx-click={JS.push("manage_ticket") |> show_modal("manage_ticket")}>
+    <.button size={:box} phx-click={show_modal("manage_ticket")}>
       <.icon name="i-lucide-plus" />
       <span>Create</span>
     </.button>
@@ -22,52 +22,50 @@
     </div>
   </div>
 
-  <.modal id="manage_ticket">
+  <.modal id="manage_ticket" show={true}>
     <.form
       :let={f}
       for={@form}
-      class="grid gap-4 lg:grid-cols-2"
+      class="grid gap-2 lg:gap-4 grid-cols-2"
       phx-target={@myself}
       phx-change="validate"
       phx-submit="submit"
     >
       <h3 class="text-xl font-medium">
-        {if(@form.action == :add_ticket_type, do: "Create ticket", else: "Edit ticket")}
+        {if(@form.action == :create, do: "Create ticket", else: "Edit ticket")}
       </h3>
 
-      <.inputs_for :let={t} field={f[:type]}>
-        <div class="flex col-span-full">
-          <.input
-            type="color"
-            field={t[:color]}
-            label="Color"
-            value={t[:color].value || Gits.RandomColor.generate()}
-          />
-        </div>
-
-        <.input type="text" field={t[:name]} label="Name" class="" />
-        <.input type="number" field={t[:price]} label="Price" hint="0 or from 50 and above" />
-        <.input type="number" field={t[:quantity]} label="Quantity" />
-        <.input type="number" field={t[:limit_per_user]} label="Limit per user" />
-
-        <.input field={t[:sale_starts_at]} label="Sale starts" type="datetime-local" />
-
-        <.input field={t[:sale_ends_at]} label="Sale ends" type="datetime-local" />
-
-        <.input type="textarea" field={t[:description]} label="Description" class="col-span-full" />
+      <div class="flex col-span-full">
         <.input
-          type="checkbox"
-          field={t[:check_in_enabled]}
-          label="Enable Check-in"
-          hint="RSVP"
-          description="Ticket holders will be required to sign in. This also allows admitting attendees without scanning their ticket"
-          class="col-span-full"
+          type="color"
+          field={f[:color]}
+          label="Color"
+          value={f[:color].value || Gits.RandomColor.generate()}
         />
-      </.inputs_for>
+      </div>
+
+      <.input type="text" field={f[:name]} label="Name" class="" placeholder="e.g General" />
+      <.input type="number" field={f[:price]} label="Price" hint="R0 or R50+" />
+      <.input type="number" field={f[:quantity]} label="Quantity" />
+      <.input type="number" field={f[:limit_per_user]} label="Limit per user" />
+
+      <.input field={f[:sale_starts_at]} label="Sale starts" type="datetime-local" />
+
+      <.input field={f[:sale_ends_at]} label="Sale ends" type="datetime-local" />
+
+      <.input type="textarea" field={f[:description]} label="Description" class="col-span-full" />
+      <.input
+        type="checkbox"
+        field={f[:check_in_enabled]}
+        label="Enable Check-in"
+        hint="RSVP"
+        description="Ticket holders will be required to sign in. This also allows admitting attendees without scanning their ticket"
+        class="col-span-full"
+      />
 
       <div class="col-span-full flex justify-end gap-4">
         <.button
-          :if={f[:id].value}
+          :if={f[:id].value && false}
           variant={:ghost}
           type="button"
           phx-value-id={f[:id].value}

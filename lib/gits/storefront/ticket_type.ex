@@ -100,7 +100,9 @@ defmodule Gits.Storefront.TicketType do
   end
 
   relationships do
-    belongs_to :event, Event
+    belongs_to :event, Event do
+      allow_nil? false
+    end
 
     has_many :tickets, Ticket
   end

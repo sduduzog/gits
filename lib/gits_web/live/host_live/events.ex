@@ -17,7 +17,7 @@ defmodule GitsWeb.HostLive.Events do
     end
   end
 
-  def handle_params(%{"public_id" => id, "handle" => handle}, _, socket) do
+  def handle_params(%{"public_id" => id, "handle" => handle} = unsigned_params, _, socket) do
     Event
     |> Ash.Query.filter(host.handle == ^handle and public_id == ^id)
     |> Ash.read_one(actor: socket.assigns.current_user)
@@ -40,27 +40,11 @@ defmodule GitsWeb.HostLive.Events do
       {:ok, events} ->
         socket
         |> assign(:events, events)
-        |> assign(:event, nil)
     end
     |> noreply()
   end
 
   def handle_info({:updated_event, event}, socket) do
     socket |> assign(:event, event) |> noreply()
-  end
-
-  def handle_event("manage_ticket", _, socket) do
-    socket
-    |> push_patch(
-      to:
-        Routes.host_events_path(
-          socket,
-          :tickets,
-          socket.assigns.host.handle,
-          socket.assigns.event.public_id,
-          %{modal: :ticket}
-        )
-    )
-    |> noreply()
   end
 end
