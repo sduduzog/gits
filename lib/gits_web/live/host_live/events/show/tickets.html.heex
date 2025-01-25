@@ -7,27 +7,58 @@
       </p>
     </div>
 
-    <.button size={:box} phx-click={show_modal("manage_ticket")}>
+    <.button
+      size={:box}
+      phx-click={JS.push("manage_ticket") |> show_modal("manage_ticket")}
+      phx-target={@myself}
+    >
       <.icon name="i-lucide-plus" />
       <span>Create</span>
     </.button>
   </div>
 
   <div class="grid gap-4" phx-hook="HostDraggableTicketContainer" id="tickets">
-    <div :for={ticket_type <- @ticket_types} class="flex items-center gap-2 rounded-lg border p-2">
+    <div
+      :for={ticket_type <- @ticket_types}
+      data-id={ticket_type.id}
+      class="flex flex-wrap bg-white items-center gap-4 rounded-lg border p-2"
+    >
       <div class="handle inline-flex cursor-grab rounded-md p-2 active:cursor-grabbing">
         <.icon name="i-lucide-grip-vertical" />
       </div>
-      <span class="grow text-base/4 font-semibold text-gray-900">{ticket_type.name}</span>
+      <span class="grow  text-base/4 font-semibold text-gray-900 lg:grow-0">
+        {ticket_type.name}
+      </span>
       <.button
         size={:box}
         variant={:ghost}
         phx-click={JS.push("manage_ticket") |> show_modal("manage_ticket")}
         phx-value-id={ticket_type.id}
         phx-target={@myself}
+        class="lg:order-last"
       >
         <.icon name="i-lucide-pen-square" />
       </.button>
+      <div class="flex w-full grow lg:mr-4 items-center justify-end gap-2 px-2 py-1 text-sm/4 text-zinc-500 lg:w-auto lg:p-0">
+        <span class="">
+          R{ticket_type.price}
+        </span>
+        <span class="text-zinc-200">&bull;</span>
+        <span class="flex items-center gap-1">
+          <.icon name="i-lucide-user" />{ticket_type.limit_per_user}
+        </span>
+        <span class="text-zinc-200">&bull;</span>
+        <span class="flex items-center gap-1">
+          <.icon name="i-lucide-users" /> {ticket_type.quantity}
+        </span>
+        <span class="text-zinc-200">&bull;</span>
+        <span class="flex items-center gap-1">
+          <.icon name="i-lucide-calendar" /> {Calendar.strftime(
+            ticket_type.sale_starts_at,
+            "%a, %d %b %H:%m"
+          )}
+        </span>
+      </div>
     </div>
   </div>
 
@@ -35,7 +66,7 @@
     <.form
       :let={f}
       for={@form}
-      class="grid gap-2 lg:gap-4 grid-cols-2"
+      class="grid grid-cols-2 gap-2 lg:gap-4"
       phx-target={@myself}
       phx-change="validate"
       phx-submit="submit"
@@ -44,16 +75,19 @@
         {if(@form.action == :create, do: "Create ticket", else: "Edit ticket")}
       </h3>
 
-      <div class="flex col-span-full">
-        <.input
-          type="color"
-          field={f[:color]}
-          label="Color"
-          value={f[:color].value || Gits.RandomColor.generate()}
-        />
+      <input type="text" class="sr-only" />
+
+      <div class="col-span-full flex">
+        <.input type="color" field={f[:color]} value={f[:color].value} label="Color" />
       </div>
 
       <.inputs_for :if={@form.action == :create} field={f[:event]}></.inputs_for>
+      <.input
+        :if={@form.action == :create}
+        field={f[:order_index]}
+        value={Enum.count(@ticket_types)}
+        type="hidden"
+      />
 
       <.input type="text" field={f[:name]} label="Name" class="" placeholder="e.g General" />
       <.input type="number" field={f[:price]} label="Price" hint="R0 or R50+" />
@@ -65,22 +99,14 @@
       <.input field={f[:sale_ends_at]} label="Sale ends" type="datetime-local" />
 
       <.input type="textarea" field={f[:description]} label="Description" class="col-span-full" />
-      <.input
-        type="checkbox"
-        field={f[:check_in_enabled]}
-        label="Enable Check-in"
-        hint="RSVP"
-        description="Ticket holders will be required to sign in. This also allows admitting attendees without scanning their ticket"
-        class="col-span-full"
-      />
 
       <div class="col-span-full flex justify-end gap-4">
         <.button
-          :if={f[:id].value && false}
+          :if={@form.action == :update}
           variant={:ghost}
           type="button"
           phx-value-id={f[:id].value}
-          phx-click={JS.push("delete_webhook") |> hide_modal("manage_ticket")}
+          phx-click={JS.push("delete_ticket") |> hide_modal("manage_ticket")}
           phx-target={@myself}
         >
           <span class="text-sm font-semibold text-red-600">Delete</span>

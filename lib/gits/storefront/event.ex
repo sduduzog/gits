@@ -71,13 +71,20 @@ defmodule Gits.Storefront.Event do
       require_atomic? false
       accept :*
 
-      argument :poster, :map, allow_nil?: false
+      argument :poster, :map
 
       change manage_relationship(:poster,
                on_lookup: :relate,
                on_missing: :unrelate,
                on_no_match: :error
              )
+    end
+
+    update :sort_ticket_types do
+      require_atomic? false
+
+      argument :ticket_types, {:array, :map}
+      change manage_relationship(:ticket_types, on_match: {:update, :order})
     end
 
     update :location do
@@ -200,6 +207,10 @@ defmodule Gits.Storefront.Event do
     end
 
     policy action(:archive_ticket_type) do
+      authorize_if expr(host.roles.user.id == ^actor(:id))
+    end
+
+    policy action(:sort_ticket_types) do
       authorize_if expr(host.roles.user.id == ^actor(:id))
     end
 

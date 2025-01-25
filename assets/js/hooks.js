@@ -101,7 +101,22 @@ const CopyLinkButton = {
 
 const HostDraggableTicketContainer = {
   mounted() {
-    Sortable.create(this.el, { handle: ".handle" });
+    function onSortHandler(data) {
+      this.pushEventTo("#tickets", "sort_ticket", data);
+    }
+
+    const sortHandler = onSortHandler.bind(this);
+
+    Sortable.create(this.el, {
+      handle: ".handle",
+      onSort: (evt) => {
+        sortHandler({
+          id: evt.item.dataset.id,
+          new_index: evt.newIndex,
+          old_index: evt.oldIndex,
+        });
+      },
+    });
   },
 };
 

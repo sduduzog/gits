@@ -70,7 +70,7 @@ defmodule GitsWeb.HostLive.Events.Show.Details do
 
       {:error, form} ->
         socket
-        |> assign(:form, form)
+        |> assign(:form, form |> IO.inspect())
         |> noreply()
     end
   end

@@ -36,9 +36,14 @@
     >
       <.link
         navigate={~p"/events/#{event.public_id}"}
-        class="aspect-[3/2] w-full overflow-hidden rounded-xl bg-red-100 focus-visible:ring-2 focus-visible:ring-zinc-200 lg:rounded-2xl"
+        class="aspect-[3/2] w-full overflow-hidden rounded-xl bg-zinc-200 focus-visible:ring-2 focus-visible:ring-zinc-200 lg:rounded-2xl"
       >
-        <img src={event.poster.url} alt={event.name} class="size-full scale-125 bg-zinc-50" />
+        <img
+          :if={event.poster}
+          src={event.poster.url}
+          alt={event.name}
+          class="size-full scale-125 bg-zinc-50"
+        />
       </.link>
       <h3 class="text-lg/5 font-semibold text-zinc-900">{event.name}</h3>
       <div class="space-y-1 truncate">

@@ -22,7 +22,13 @@ defmodule Gits.Storefront.TicketType do
   end
 
   actions do
-    defaults [:read, :destroy, update: :*]
+    defaults [:destroy, update: :*]
+
+    read :read do
+      primary? true
+
+      prepare build(sort: [order_index: :asc])
+    end
 
     create :create do
       primary? true
@@ -30,7 +36,14 @@ defmodule Gits.Storefront.TicketType do
 
       argument :event, :map
 
+      change set_new_attribute(:color, &Gits.RandomColor.generate/0)
       change manage_relationship(:event, type: :append)
+    end
+
+    update :order do
+      argument :index, :integer, allow_nil?: false
+
+      change set_new_attribute(:order_index, arg(:index))
     end
 
     update :add_ticket do
@@ -60,13 +73,14 @@ defmodule Gits.Storefront.TicketType do
       authorize_if accessing_from(Event, :ticket_types)
     end
 
-    policy action(:update) do
+    policy action([:update, :order]) do
       authorize_if actor_present()
       authorize_if accessing_from(Order, :ticket_types)
       authorize_if accessing_from(Event, :ticket_types)
     end
 
     policy action(:destroy) do
+      authorize_if actor_present()
       authorize_if accessing_from(Event, :ticket_types)
     end
 
@@ -104,7 +118,10 @@ defmodule Gits.Storefront.TicketType do
     attribute :limit_per_user, :integer, public?: true, allow_nil?: false, default: 10
 
     attribute :color, :string, public?: true
+
     attribute :rsvp_enabled, :boolean, public?: true, allow_nil?: false, default: false
+
+    attribute :order_index, :integer, public?: true, allow_nil?: false, default: 0
 
     create_timestamp :created_at
     update_timestamp :updated_at

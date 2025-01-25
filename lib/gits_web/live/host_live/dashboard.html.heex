@@ -36,7 +36,7 @@
         class="border rounded-lg p-4 grid gap-4"
       >
         <div class="aspect-[3/2] w-24 shrink-0 overflow-hidden rounded-lg bg-zinc-200">
-          <img src={event.poster.url} alt="Event poster" class="size-full" />
+          <img :if={event.poster} src={event.poster.url} alt="Event poster" class="size-full" />
         </div>
         <h3 class="text-lg/5 font-semibold">
           {event.name} The Ultimate Cheese Festival
