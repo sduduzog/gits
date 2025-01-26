@@ -109,7 +109,7 @@
     <div class="col-span-full lg:col-span-4 grid place-items-start gap-4">
       <.inputs_for :let={v} field={f[:venue]}>
         <div class="flex gap-4">
-          <div class="inline-flex size-12 items-center justify-center rounded-full bg-zinc-50 text-zinc-400">
+          <div class="inline-flex size-12 text-2xl items-center justify-center rounded-full bg-zinc-50 text-zinc-400">
             <.icon name="i-lucide-map" />
           </div>
           <div>
@@ -171,7 +171,7 @@
         <button
           :for={venue <- @venues}
           type="button"
-          class="flex w-full items-center gap-1 rounded-lg border p-1"
+          class="flex w-full items-center gap-1 rounded-lg p-1"
           phx-value-id={venue.id}
           phx-click={JS.push("choose_venue") |> hide_modal("choose_venue")}
           phx-target={@myself}
@@ -189,7 +189,7 @@
         <button
           :for={suggestion <- @suggestions}
           type="button"
-          class="flex w-full gap-1 rounded-lg border p-1"
+          class="flex w-full gap-1 rounded-lg p-1"
           phx-value-id={suggestion.id}
           phx-click={JS.push("create_venue") |> hide_modal("choose_venue")}
           phx-target={@myself}
