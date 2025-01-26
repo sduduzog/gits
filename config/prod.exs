@@ -6,10 +6,6 @@ config :swoosh, api_client: Swoosh.ApiClient.Req
 
 config :swoosh, local: false
 
-config :gits, :presigned_url_options,
-  virtual_host: true,
-  bucket_as_host: true
-
 config :gits, :workers,
   order_created_schedule_seconds: 1_200,
   order_created_snooze_seconds: 60

@@ -48,6 +48,10 @@ config :ash, :compatible_foreign_key_types, [
   {Ash.Type.Integer, Ash.Type.UUID}
 ]
 
+config :gits, :presigned_url_options,
+  virtual_host: true,
+  bucket_as_host: true
+
 config :gits, Oban,
   engine: Oban.Engines.Basic,
   queues: [default: 1],

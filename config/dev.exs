@@ -53,10 +53,6 @@ config :swoosh, :api_client, false
 
 config :ash, :pub_sub, debug?: true
 
-config :gits, :presigned_url_options,
-  virtual_host: false,
-  bucket_as_host: false
-
 config :gits, :workers,
   order_created_schedule_seconds: 60,
   order_created_snooze_seconds: 60
