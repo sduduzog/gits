@@ -74,20 +74,8 @@ defmodule GitsWeb.Router do
       live "/hosts/:handle/events/drafts", HostLive.ListEvents, :drafts
       live "/hosts/:handle/events/archived", HostLive.ListEvents, :archived
       live "/hosts/:handle/events", HostLive.Events, :index
-      live "/hosts/:handle/events/create-new", HostLive.EditEvent, :details
       live "/hosts/:handle/events/:public_id/dashboard", HostLive.ViewEvent, :overview
       live "/hosts/:handle/events/:public_id/attendees", HostLive.ViewEvent, :attendees
-      live "/hosts/:handle/events/:public_id/edit/details", HostLive.EditEvent, :details
-      live "/hosts/:handle/events/:public_id/edit/location", HostLive.EditEvent, :location
-      live "/hosts/:handle/events/:public_id/edit/live-stream", HostLive.EditEvent, :live_stream
-      live "/hosts/:handle/events/:public_id/edit/description", HostLive.EditEvent, :description
-      live "/hosts/:handle/events/:public_id/edit/media", HostLive.EditEvent, :media
-      live "/hosts/:handle/events/:public_id/edit/tickets", HostLive.EditEvent, :tickets
-      live "/hosts/:handle/events/:public_id/edit/tickets/add", HostLive.EditTicket, :add_ticket
-
-      live "/hosts/:handle/events/:public_id/edit/tickets/:ticket_id",
-           HostLive.EditTicket,
-           :edit_ticket
 
       live "/hosts/:handle/events/create", HostLive.Events, :details
       live "/hosts/:handle/events/:public_id", HostLive.Events, :overview
@@ -100,7 +88,6 @@ defmodule GitsWeb.Router do
 
       live "/hosts/:handle/orders", HostLive.Orders, :index
 
-      live "/hosts/:handle/venues/create-new", HostLive.EditVenue, :create
       live "/hosts/:handle/support", HostLive.SupportBoard, :index
 
       live "/hosts/:handle/settings", HostLive.Settings, :index

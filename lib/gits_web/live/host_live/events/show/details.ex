@@ -1,17 +1,20 @@
 defmodule GitsWeb.HostLive.Events.Show.Details do
   require Ash.Query
+  alias Gits.GooglePlaces
+  alias Gits.Accounts.Venue
   alias Gits.Storefront.Event
   alias Gits.Bucket.Image
   alias AshPhoenix.Form
   use GitsWeb, :live_component
 
   def update(assigns, socket) do
-    Ash.load(assigns.event, poster: [:url])
+    Ash.load(assigns.event, [:venue, poster: [:url]])
     |> case do
       {:ok, %Event{} = event} ->
         socket
         |> assign(:event, event)
         |> assign(:submit_action, "update")
+        |> assign(:venues, [])
         |> assign(
           :form,
           Form.for_update(event, :details, actor: assigns.current_user, forms: [auto?: true])
@@ -19,6 +22,7 @@ defmodule GitsWeb.HostLive.Events.Show.Details do
 
       _ ->
         socket
+        |> assign(:event, nil)
         |> assign(:submit_action, "create")
         |> assign(
           :form,
@@ -39,6 +43,19 @@ defmodule GitsWeb.HostLive.Events.Show.Details do
     |> assign(:handle, assigns.handle)
     |> assign(:host_state, assigns.host_state)
     |> assign(:host_id, assigns.host_id)
+    |> assign_new(:venues, fn _ ->
+      Ash.Query.limit(Venue, 5)
+      |> Ash.Query.load(:host)
+      |> Ash.read()
+      |> case do
+        {:ok, venues} ->
+          venues
+
+        _ ->
+          []
+      end
+    end)
+    |> assign_new(:suggestions, fn -> [] end)
     |> ok()
   end
 
@@ -70,7 +87,7 @@ defmodule GitsWeb.HostLive.Events.Show.Details do
 
       {:error, form} ->
         socket
-        |> assign(:form, form |> IO.inspect())
+        |> assign(:form, form)
         |> noreply()
     end
   end
@@ -91,6 +108,80 @@ defmodule GitsWeb.HostLive.Events.Show.Details do
         |> assign(:form, form)
         |> noreply()
     end
+  end
+
+  def handle_event("search_address", %{"address_search" => query}, socket) do
+    search_term = "%#{query}%"
+
+    venues =
+      Ash.Query.filter(
+        Venue,
+        fragment("? ilike ? or ? ilike ?", name, ^search_term, address, ^search_term)
+      )
+      |> Ash.Query.limit(5)
+      |> Ash.Query.load([:host])
+      |> Ash.read()
+      |> case do
+        {:ok, venues} ->
+          venues
+
+        _ ->
+          []
+      end
+
+    GooglePlaces.get_suggestions(query, :cache)
+    |> case do
+      {:ok, suggestions} ->
+        event = socket.assigns.event
+
+        venue_place_id =
+          if not is_nil(event) and not is_nil(event.venue),
+            do: event.venue.google_place_id,
+            else: nil
+
+        suggestions =
+          Enum.filter(suggestions, &(&1.id != venue_place_id))
+          |> Enum.filter(
+            &(Enum.empty?(venues) or
+                Enum.any?(venues, fn venue -> venue.google_place_id != &1.id end))
+          )
+
+        assign(socket, :venues, venues)
+        |> assign(:suggestions, suggestions)
+    end
+    |> noreply()
+  end
+
+  def handle_event("pre_choose_venue", _, socket) do
+    venue =
+      Form.get_form(socket.assigns.form, :venue)
+      |> Map.get(:data)
+
+    venues = if is_nil(venue), do: socket.assigns.venues, else: [venue]
+
+    socket
+    |> assign(:venues, venues)
+    |> noreply()
+  end
+
+  def handle_event("choose_venue", unsigned_params, socket) do
+    venue = Enum.find(socket.assigns.venues, &(&1.id == unsigned_params["id"]))
+
+    socket
+    |> update_form_with_venue(venue)
+    |> noreply()
+  end
+
+  def handle_event("create_venue", unsigned_params, socket) do
+    Ash.Changeset.for_create(Venue, :create, %{
+      google_place_id: unsigned_params["id"],
+      host: %{id: socket.assigns.host_id}
+    })
+    |> Ash.create(actor: socket.assigns.current_user)
+    |> case do
+      {:ok, venue} -> update_form_with_venue(socket, venue)
+    end
+    |> noreply()
   end
 
   defp handle_progress(:poster, entry, socket) do
@@ -133,4 +224,20 @@ defmodule GitsWeb.HostLive.Events.Show.Details do
   defp error_to_string(:too_large), do: "Too large"
   defp error_to_string(:too_many_files), do: "You have selected too many files"
   defp error_to_string(:not_accepted), do: "You have selected an unacceptable file type"
+
+  defp update_form_with_venue(socket, venue) do
+    form =
+      if Form.has_form?(socket.assigns.form, [:venue]) do
+        Form.update_form(socket.assigns.form, [:venue], fn form ->
+          Form.set_data(form, venue)
+        end)
+      else
+        Form.add_form(socket.assigns.form, [:venue],
+          type: :read,
+          data: venue
+        )
+      end
+
+    assign(socket, :form, form)
+  end
 end

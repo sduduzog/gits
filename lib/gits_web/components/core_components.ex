@@ -494,7 +494,7 @@ defmodule GitsWeb.CoreComponents do
             "border-zinc-200 bg-zinc-50 text-zinc-950 hover:bg-zinc-100"
 
           :outline ->
-            "text-zinc-400 border-zinc-400 hover:text-zinc-500 hover:border-zinc-500 active:text-zinc-600 active:border-zinc-600 disabled:text-zinc-100 disabled:border-zinc-100 dark:disabled:text-zinc-800 dark:disabled:border-zinc-800"
+            "text-zinc-400 border-zinc-200 hover:text-zinc-500 hover:border-zinc-500 active:text-zinc-600 active:border-zinc-600 disabled:text-zinc-100 disabled:border-zinc-100 dark:disabled:text-zinc-800 dark:disabled:border-zinc-800"
 
           :ghost ->
             "border-transparent bg-transparent text-zinc-400 hover:text-zinc-500"

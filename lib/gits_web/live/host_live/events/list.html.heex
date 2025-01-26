@@ -14,7 +14,7 @@
   </div>
 
   <div class="p-2">
-    <div class="border rounded-lg overflow-x-auto">
+    <div class="border rounded-lg overflow-x-auto overflow-y-hidden">
       <.table id="events" rows={@events}>
         <:col :let={event} label="Name">
           <.link navigate={~p"/hosts/#{@handle}/events/#{event.public_id}"}>

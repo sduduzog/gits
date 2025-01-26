@@ -8,7 +8,7 @@
     phx-submit={@submit_action}
     phx-target={@myself}
   >
-    <div class="col-span-full">
+    <div :if={false} class="col-span-full">
       <h2 class="text-base/7 font-semibold text-gray-900">Basic Information</h2>
       <p class="text-sm text-gray-600">
         <!-- This information will be displayed publicly so be careful what you share. -->
@@ -20,14 +20,8 @@
     </.inputs_for>
 
     <.input type="text" class="col-span-full" label="Name" field={f[:name]} />
-    <.input
-      :if={false}
-      type="textarea"
-      class="col-span-full"
-      label="Summary"
-      field={f[:summary]}
-      rows="8"
-    />
+
+    <.input type="textarea" class="col-span-full" label="Summary" field={f[:summary]} rows="8" />
 
     <.input
       field={f[:starts_at]}
@@ -66,14 +60,14 @@
     <div class="col-span-full">
       <h2 class="text-base/7 font-semibold text-gray-900">Listing image</h2>
       <p class="text-sm text-gray-600">
-        <!-- This information will be displayed publicly so be careful what you share. -->
+        This will appear on GiTS event listings, and as preview when the event is shared on other platforms.
       </p>
     </div>
 
     <div class="col-span-full grid gap-4 lg:grid-cols-[theme(space.96)_1fr]">
       <label
         phx-drop-target={@uploads.poster.ref}
-        class="block aspect-[3/2] shrink-0 overflow-hidden rounded-lg border bg-zinc-50"
+        class="block aspect-[3/2] shrink-0 overflow-hidden rounded-lg border-2 border-dashed border-zinc-200 bg-zinc-50"
       >
         <.live_file_input upload={@uploads.poster} class="sr-only" />
         <%= for entry <- @uploads.poster.entries do %>
@@ -93,9 +87,8 @@
       </label>
       <div>
         <p class="text-sm text-gray-600">
-          This will appear on GiTS event listings, and as preview when the event is shared on other platforms. Please note your image must be larger than or
-          <strong>768x512 (3:2)</strong>
-          but not above <strong>2MB</strong>
+          Please note your image must be larger than or <strong>768x512 (3:2)</strong>
+          and not above <strong>2MB</strong>
         </p>
 
         <%= for entry <- @uploads.poster.entries do %>
@@ -106,6 +99,54 @@
       </div>
     </div>
 
+    <div class="col-span-full">
+      <h2 class="text-base/7 font-semibold text-gray-900">Location</h2>
+      <p class="text-sm text-gray-600">
+        Where will the event be taking place
+      </p>
+    </div>
+
+    <div class="col-span-full lg:col-span-4 grid place-items-start gap-4">
+      <.inputs_for :let={v} field={f[:venue]}>
+        <div class="flex gap-4">
+          <div class="inline-flex size-12 items-center justify-center rounded-full bg-zinc-50 text-zinc-400">
+            <.icon name="i-lucide-map" />
+          </div>
+          <div>
+            <h2 class="text-base/7 font-semibold text-gray-900">{v[:name].value}</h2>
+            <span class="text-sm text-zinc-500">No extra info</span>
+          </div>
+        </div>
+        <div class="flex w-full">
+          <div class="grid grow text-sm/4">
+            <span class="text-zinc-500">{v[:address].value}</span>
+            <span class="text-zinc-500">{v[:province].value}</span>
+          </div>
+          <div>
+            <.button
+              type="button"
+              variant={:outline}
+              size={:box}
+              phx-click={JS.push("pre_choose_venue") |> show_modal("choose_venue")}
+              phx-target={@myself}
+            >
+              <.icon name="i-lucide-pen-line" />
+            </.button>
+          </div>
+        </div>
+      </.inputs_for>
+
+      <.button
+        :if={f[:venue].value == []}
+        type="button"
+        variant={:outline}
+        size={:box}
+        phx-click={show_modal("choose_venue")}
+      >
+        <span>Choose venue</span>
+      </.button>
+    </div>
+
     <div class="col-span-full flex gap-2">
       <.button size={:box}>
         <.icon name="i-lucide-save" />
@@ -113,4 +154,58 @@
       </.button>
     </div>
   </.form>
+  <.modal id="choose_venue" show={false}>
+    <.form
+      :let={f}
+      for={%{}}
+      class="grid gap-4"
+      phx-target={@myself}
+      phx-change="search_address"
+      phx-submit="search_address"
+    >
+      <h3 class="text-xl font-medium">
+        Choose venue
+      </h3>
+
+      <div class="space-y-4 overflow-hidden">
+        <button
+          :for={venue <- @venues}
+          type="button"
+          class="flex w-full items-center gap-1 rounded-lg border p-1"
+          phx-value-id={venue.id}
+          phx-click={JS.push("choose_venue") |> hide_modal("choose_venue")}
+          phx-target={@myself}
+        >
+          <div class="inline-flex w-full grow items-baseline gap-1 truncate text-sm/4">
+            <span class=" font-medium text-zinc-900">{venue.name},</span>
+            <span class="truncate text-xs text-zinc-500 lg:text-sm">{venue.address}</span>
+          </div>
+          <.icon
+            :if={@form.data && @form.data.venue.id == venue.id}
+            name="i-lucide-check"
+            class="shrink-0"
+          />
+        </button>
+        <button
+          :for={suggestion <- @suggestions}
+          type="button"
+          class="flex w-full gap-1 rounded-lg border p-1"
+          phx-value-id={suggestion.id}
+          phx-click={JS.push("create_venue") |> hide_modal("choose_venue")}
+          phx-target={@myself}
+        >
+          <div class="inline-flex w-full grow items-baseline gap-1 truncate text-sm/4">
+            <span class="truncate text-zinc-500">{suggestion.text}</span>
+          </div>
+        </button>
+      </div>
+
+      <.input
+        type="text"
+        field={f[:address_search]}
+        placeholder="e.g Mea Culpa"
+        label="Search for address or venue"
+      />
+    </.form>
+  </.modal>
 </div>

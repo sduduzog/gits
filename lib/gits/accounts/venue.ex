@@ -1,6 +1,7 @@
 defmodule Gits.Accounts.Venue do
+  alias Gits.GooglePlaces
   alias Gits.Accounts
-  alias Gits.Accounts.{Host, User}
+  alias Gits.Accounts.{Host}
   alias Gits.Storefront
   alias Gits.Storefront.Event
 
@@ -26,12 +27,37 @@ defmodule Gits.Accounts.Venue do
 
     create :create do
       primary? true
+      upsert? true
 
-      accept :*
+      accept [:google_place_id]
 
       argument :host, :map, allow_nil?: false
 
       change manage_relationship(:host, type: :append)
+
+      upsert_identity :place_id
+
+      change fn changeset, _ ->
+        google_place_id = Ash.Changeset.get_attribute(changeset, :google_place_id)
+        {:ok, details} = GooglePlaces.get_place_details(google_place_id, :cache)
+
+        %{
+          name: "Mea Culpa",
+          address: "35 11th Rd, Kew, Johannesburg",
+          place_uri: "https://maps.google.com/?cid=6362034033745938108",
+          surburb: "Kew",
+          city_or_town: "Johannesburg",
+          province: "Gauteng",
+          postal_code: "2090",
+          latitude: -26.121423699999998,
+          longitude: 28.087158199999998
+        }
+
+        Map.to_list(details)
+        |> Enum.reduce(changeset, fn {key, value}, acc ->
+          Ash.Changeset.change_new_attribute(acc, key, value)
+        end)
+      end
     end
   end
 

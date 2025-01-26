@@ -21,12 +21,18 @@
     <div
       :for={ticket_type <- @ticket_types}
       data-id={ticket_type.id}
-      class="flex flex-wrap bg-white items-center gap-4 rounded-lg border p-2"
+      class="flex flex-wrap bg-white items-center gap-2 rounded-lg border p-2"
     >
       <div class="handle inline-flex cursor-grab rounded-md p-2 active:cursor-grabbing">
         <.icon name="i-lucide-grip-vertical" />
       </div>
-      <span class="grow  text-base/4 font-semibold text-gray-900 lg:grow-0">
+
+      <span
+        style={"background-color: #{ticket_type.color}"}
+        class="w-1.5 h-6 rounded-xl inline-block"
+      >
+      </span>
+      <span class="grow text-base/4 font-semibold text-gray-900 lg:grow-0">
         {ticket_type.name}
       </span>
       <.button

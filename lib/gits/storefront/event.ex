@@ -62,9 +62,11 @@ defmodule Gits.Storefront.Event do
 
       argument :host, :map
       argument :poster, :map
+      argument :venue, :map
 
       change manage_relationship(:host, type: :append)
       change manage_relationship(:poster, type: :append)
+      change manage_relationship(:venue, type: :append)
     end
 
     update :details do
@@ -72,12 +74,15 @@ defmodule Gits.Storefront.Event do
       accept :*
 
       argument :poster, :map
+      argument :venue, :map
 
       change manage_relationship(:poster,
                on_lookup: :relate,
                on_missing: :unrelate,
                on_no_match: :error
              )
+
+      change manage_relationship(:venue, type: :append)
     end
 
     update :sort_ticket_types do
