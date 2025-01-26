@@ -75,13 +75,13 @@
       </.link>
 
       <.link
-        patch={Routes.host_events_path(@socket, :settings, @host.handle, @event.public_id)}
+        patch={Routes.host_events_path(@socket, :overview, @host.handle, @event.public_id)}
         replace={true}
         aria-selected={"#{:settings == @live_action}"}
         class="-mb-0.5 border-b-2 border-transparent py-2 text-sm font-medium text-zinc-400 aria-selected:border-zinc-500 aria-selected:text-zinc-800"
       >
         <span class="px-1">
-          Settings
+          Overview (new)
         </span>
       </.link>
     </div>
