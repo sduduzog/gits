@@ -1,4 +1,4 @@
-<div class="grid gap-4">
+<div class="grid gap-4 max-h-screen items-start overflow-auto">
   <.host_header current_user={@current_user} handle={@handle} host_name={@host_name}>
     <.host_breadcrumb_button text="Events" href={~p"/hosts/#{@handle}/events"} />
     <span class="text-xs font-semibold text-zinc-400">/</span>
@@ -56,8 +56,9 @@
       </.button>
     </div>
   </div>
-  <div class="grid max-w-screen-xl items-start gap-4 pb-8 lg:grid-cols-[theme(space.64)_1fr] lg:gap-8 lg:p-2">
-    <div class="flex gap-2 overflow-x-auto whitespace-nowrap px-2 pb-2 lg:grid lg:rounded-xl lg:bg-zinc-50/70 lg:py-2">
+
+  <div class="grid items-start gap-4 pb-8 lg:grid-cols-[theme(space.64)_1fr] lg:gap-4">
+    <div class="flex gap-2 overflow-x-auto whitespace-nowrap px-2 pb-2 lg:grid lg:rounded-xl lg:bg-zinc-50/70 lg:py-2 lg:sticky lg:top-4">
       <%= if not is_nil(@event) do %>
         <.link
           patch={~p"/hosts/#{@handle}/events/#{@event.public_id}/dashboard"}
@@ -81,7 +82,7 @@
           aria-selected={"#{@action == action}"}
           class="aria-selected:text-zinc-950"
         >
-          <span class="text-left w-full">
+          <span class="w-full text-left">
             {label}
           </span>
 
@@ -91,7 +92,7 @@
       <% else %>
         <.link
           patch={~p"/hosts/#{@handle}/events"}
-          class="rounded-lg p-2 text-sm flex items-center gap-2 font-medium text-zinc-400"
+          class="flex items-center gap-2 rounded-lg p-2 text-sm font-medium text-zinc-400"
         >
           <.icon name="lucide--chevron-left" />
           <span>Cancel</span>
@@ -99,44 +100,46 @@
       <% end %>
     </div>
 
-    <div class="px-2">
-      <.live_component
-        :if={@action == :dashboard}
-        id={@event.id}
-        module={__MODULE__.Dashboard}
-        current_user={@current_user}
-        event={@event}
-      />
+    <div class="w-full px-2">
+      <div class="max-w-screen-lg">
+        <.live_component
+          :if={@action == :dashboard}
+          id={@event.id}
+          module={__MODULE__.Dashboard}
+          current_user={@current_user}
+          event={@event}
+        />
 
-      <.live_component
-        :if={@action == :details}
-        id={if(not is_nil(@event), do: @event.id, else: "create-new")}
-        module={__MODULE__.Details}
-        current_user={@current_user}
-        host_id={@host_id}
-        host_state={@host_state}
-        handle={@handle}
-        event={@event}
-      />
+        <.live_component
+          :if={@action == :details}
+          id={if(not is_nil(@event), do: @event.id, else: "create-new")}
+          module={__MODULE__.Details}
+          current_user={@current_user}
+          host_id={@host_id}
+          host_state={@host_state}
+          handle={@handle}
+          event={@event}
+        />
 
-      <.live_component
-        :if={@action == :tickets}
-        id="tickets"
-        module={__MODULE__.Tickets}
-        current_user={@current_user}
-        host_id={@host_id}
-        host_state={@host_state}
-        handle={@handle}
-        event={@event}
-      />
+        <.live_component
+          :if={@action == :tickets}
+          id="tickets"
+          module={__MODULE__.Tickets}
+          current_user={@current_user}
+          host_id={@host_id}
+          host_state={@host_state}
+          handle={@handle}
+          event={@event}
+        />
 
-      <.live_component
-        :if={@action == :settings}
-        id={@event.id}
-        module={__MODULE__.Settings}
-        current_user={@current_user}
-        event={@event}
-      />
+        <.live_component
+          :if={@action == :settings}
+          id={@event.id}
+          module={__MODULE__.Settings}
+          current_user={@current_user}
+          event={@event}
+        />
+      </div>
     </div>
   </div>
 </div>

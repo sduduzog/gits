@@ -11,7 +11,7 @@ defmodule GitsWeb.CoreComponents do
     ~H"""
     <.link
       navigate="/"
-      class="inline-block max-w-16 h-5 shrink-0 items-center justify-center rounded-lg text-xl font-black italic"
+      class="inline-block h-5 max-w-16 shrink-0 items-center justify-center rounded-lg text-xl font-black italic"
     >
       <img
         phx-track-static
@@ -48,11 +48,11 @@ defmodule GitsWeb.CoreComponents do
       ])
 
     ~H"""
-    <header class="mx-auto justify-start flex max-w-screen-xl items-center gap-2 p-2 lg:gap-8">
+    <header class="mx-auto flex max-w-screen-xl items-center justify-start gap-2 p-2 lg:gap-8">
       <div class="items-center">
         <.logo />
       </div>
-      <div class="flex bg-red-200 grow items-center"></div>
+      <div class="flex grow items-center bg-red-200"></div>
 
       <.button :if={false} variant={:ghost} href={~p"/search"}>
         <.icon name="lucide--search" />
@@ -180,7 +180,7 @@ defmodule GitsWeb.CoreComponents do
             <.link
               :for={{child, href} <- children}
               navigate={href}
-              class="border-transparent z-10 inline-flex border-l pl-5 text-xs font-medium leading-4 dark:text-zinc-100 text-zinc-950 hover:border-zinc-500 dark:border-zinc-700 dark:hover:border-zinc-100"
+              class="z-10 inline-flex border-l border-transparent pl-5 text-xs font-medium leading-4 text-zinc-950 hover:border-zinc-500 dark:border-zinc-700 dark:text-zinc-100 dark:hover:border-zinc-100"
             >
               {child}
             </.link>
@@ -364,25 +364,35 @@ defmodule GitsWeb.CoreComponents do
       :if={msg = render_slot(@inner_block) || Phoenix.Flash.get(@flash, @kind)}
       id={@id}
       phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")}
-      role="alert"
       class={[
-        "fixed top-2 right-2 z-50 mr-2 w-80 rounded-lg p-3 ring-1 sm:w-96",
-        @kind == :info && "bg-white fill-green-500 text-green-800 ring-zinc-200",
-        @kind == :warn && "bg-white fill-orange-900 text-orange-500 ring-orange-500",
-        @kind == :error && "bg-rose-50 fill-rose-900 text-rose-900 shadow-md ring-rose-500"
+        "fixed top-2 right-2 z-50",
+        "bg-white rounded-lg border border-border bg-background p-4 shadow-lg shadow-black/5"
       ]}
+      role="alert"
       {@rest}
     >
-      <p :if={@title} class="flex items-center gap-1.5 text-sm font-semibold leading-6">
-        <.icon :if={@kind == :info} class="ri--information-line h-4 w-4" />
-        <.icon :if={@kind == :warn} class="ri--information-line h-4 w-4" />
-        <.icon :if={@kind == :error} class="ri--error-warning-line h-4 w-4" />
-        {@title}
-      </p>
-      <p class="mt-2 text-sm leading-5">{msg}</p>
-      <button type="button" class="group absolute right-1 top-1 p-2" aria-label={gettext("close")}>
-        <.icon class="h-5 ri--close-line w-5 opacity-40 group-hover:opacity-70" />
-      </button>
+      <div class="flex gap-2">
+        <div class="flex grow gap-3">
+          <.icon :if={@kind == :info} class="mt-0.5 text-emerald-500 ri--information-line" />
+          <.icon :if={@kind == :warn} class="mt-0.5 text-orange-500 ri--information-line" />
+          <.icon :if={@kind == :error} class="mt-0.5 text-rose-500 ri--error-warning-line" />
+
+          <div class="flex grow flex-col gap-3">
+            <div class="space-y-1">
+              <p class="text-sm font-medium">{@title}</p>
+              <p class="inline-flex flex-wrap text-sm text-zinc-500">
+                {msg}
+              </p>
+            </div>
+          </div>
+          <button
+            aria-label={gettext("close")}
+            class="focus-visible:outline-ring/70 [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 hover:text-accent-foreground group -my-1.5 -me-2 inline-flex size-8 shrink-0 items-center justify-center whitespace-nowrap rounded-lg p-0 text-sm font-medium outline-offset-2 transition-colors hover:bg-transparent focus-visible:outline focus-visible:outline-2 disabled:pointer-events-none disabled:opacity-50"
+          >
+            <.icon class="h-5 w-5 opacity-60 ri--close-line group-hover:opacity-70" />
+          </button>
+        </div>
+      </div>
     </div>
     """
   end
@@ -412,7 +422,7 @@ defmodule GitsWeb.CoreComponents do
         hidden
       >
         {gettext("Attempting to reconnect")}
-        <.icon class="ml-1 size-4 animate-spin ri--loader-4-line" />
+        <.icon class="ml-1 mt-0.5 animate-spin ri--loader-4-line" />
       </.flash>
 
       <.flash
@@ -424,7 +434,7 @@ defmodule GitsWeb.CoreComponents do
         hidden
       >
         {gettext("Hang in there while we get back on track")}
-        <.icon name="hero-arrow-path" class="ml-1 h-3 w-3 animate-spin" />
+        <.icon class="ml-1 mt-0.5 animate-spin ri--loader-4-line" />
       </.flash>
     </div>
     """

@@ -15,6 +15,110 @@
     </div>
   </div>
 
+  <div class="rounded-lg border border-border px-4 py-3">
+    <p class="text-sm">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="lucide lucide-triangle-alert -mt-0.5 me-3 inline-flex text-amber-500"
+        aria-hidden="true"
+      ><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>Some information is missing!
+    </p>
+  </div>
+
+  <div class="rounded-lg border border-border bg-background p-4 xshadow-lg shadow-black/5">
+    <div class="flex gap-2">
+      <div class="flex grow gap-3">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="lucide lucide-circle-check mt-0.5 shrink-0 text-emerald-500"
+          aria-hidden="true"
+        >
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="m9 12 2 2 4-4"></path>
+        </svg>
+        <div class="flex grow flex-col gap-3">
+          <div class="space-y-1">
+            <p class="text-sm font-medium">Your request was completed!</p>
+            <p class="text-sm text-zinc-500">
+              It demonstrates that the task or request has been processed.
+            </p>
+          </div>
+          <div class="flex gap-2">
+            <button class="inline-flex items-center justify-center whitespace-nowrap font-medium transition-colors outline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring/70 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 bg-primary text-primary-foreground shadow-sm shadow-black/5 hover:bg-primary/90 h-8 rounded-lg px-3 text-xs">
+              Learn more
+            </button>
+          </div>
+        </div>
+        <button
+          class="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium transition-colors outline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring/70 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 hover:text-accent-foreground group -my-1.5 -me-2 size-8 shrink-0 p-0 hover:bg-transparent"
+          aria-label="Close notification"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-x opacity-60 transition-opacity group-hover:opacity-100"
+            aria-hidden="true"
+          >
+            <path d="M18 6 6 18"></path>
+            <path d="m6 6 12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="rounded-lg border border-border px-4 py-3">
+    <div class="flex gap-3">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="lucide lucide-circle-alert mt-0.5 shrink-0 text-red-500 opacity-60"
+        aria-hidden="true"
+      >
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" x2="12" y1="8" y2="12"></line>
+        <line x1="12" x2="12.01" y1="16" y2="16"></line>
+      </svg>
+      <div class="grow space-y-1">
+        <p class="text-sm font-medium">Password does not meet requirements:</p>
+        <ul class="list-inside list-disc text-sm text-muted-foreground">
+          <li>Minimum 8 characters</li>
+          <li>Inlcude a special character</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
   <div class="rounded-md bg-blue-50 p-4">
     <div class="flex">
       <div class="shrink-0">
