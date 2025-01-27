@@ -1,7 +1,7 @@
 <.flash_group flash={@flash} />
 
 <div class="grid gap-4 h-dvh lg:grid-cols-[theme(space.64)_1fr]">
-  <aside class="absolute inset-0 z-10 hidden space-y-8 bg-white lg:static lg:block">
+  <aside class="absolute inset-0 z-10 lg:z-0 hidden space-y-8 bg-white lg:static lg:block">
     <div class="flex items-center px-4 py-2">
       <div class="grow lg:py-1">
         <div class="">
@@ -10,7 +10,7 @@
       </div>
 
       <.button phx-click={JS.hide(to: "aside")} size={:box} variant={:ghost} class="lg:hidden">
-        <.icon name="i-lucide-x" />
+        <.icon name="lucide--x" />
       </.button>
     </div>
     <div class="grid gap-2">
@@ -47,13 +47,13 @@
             class="inline-flex cursor-pointer p-3.5 hover:text-zinc-900 peer-checked/input:hidden peer-hover/link:text-zinc-900 lg:rounded-r-lg lg:p-2.5"
             for={"toggle-#{label}"}
           >
-            <.icon name="i-lucide-chevron-right" class="text-sm/4" />
+            <.icon name="lucide--chevron-right" class="text-sm/4" />
           </label>
           <label
             class="hidden cursor-pointer p-3.5 hover:text-zinc-900 peer-checked/input:inline-flex peer-hover/link:text-zinc-900 lg:rounded-r-lg lg:p-2.5"
             for={"toggle-#{label}"}
           >
-            <.icon name="i-lucide-chevron-down" class="text-sm/4" />
+            <.icon name="lucide--chevron-down" class="text-sm/4" />
           </label>
         <% end %>
         <div

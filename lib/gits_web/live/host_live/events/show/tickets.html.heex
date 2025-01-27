@@ -2,6 +2,7 @@
   <div class="flex flex-wrap items-end gap-2">
     <div class="grid grow">
       <h2 class="text-base/7 font-semibold text-gray-900">Tickets</h2>
+
       <p class="text-sm text-gray-600">
         Setup ticket types for this event. Drag a ticket type by the handle-bar to reorder.
       </p>
@@ -12,7 +13,7 @@
       phx-click={JS.push("manage_ticket") |> show_modal("manage_ticket")}
       phx-target={@myself}
     >
-      <.icon name="i-lucide-plus" />
+      <.icon name="lucide--plus" />
       <span>Create</span>
     </.button>
   </div>
@@ -24,7 +25,7 @@
       class="flex flex-wrap bg-white items-center gap-2 rounded-lg border p-2"
     >
       <div class="handle inline-flex cursor-grab rounded-md p-2 active:cursor-grabbing">
-        <.icon name="i-lucide-grip-vertical" />
+        <.icon name="lucide--grip-vertical" />
       </div>
 
       <span
@@ -43,7 +44,7 @@
         phx-target={@myself}
         class="lg:order-last"
       >
-        <.icon name="i-lucide-pen-square" />
+        <.icon name="lucide--pen-square" />
       </.button>
       <div class="flex w-full grow lg:mr-4 items-center justify-end gap-2 px-2 py-1 text-sm/4 text-zinc-500 lg:w-auto lg:p-0">
         <span class="">
@@ -51,15 +52,15 @@
         </span>
         <span class="text-zinc-200">&bull;</span>
         <span class="flex items-center gap-1">
-          <.icon name="i-lucide-user" />{ticket_type.limit_per_user}
+          <.icon name="lucide--user" />{ticket_type.limit_per_user}
         </span>
         <span class="text-zinc-200">&bull;</span>
         <span class="flex items-center gap-1">
-          <.icon name="i-lucide-users" /> {ticket_type.quantity}
+          <.icon name="lucide--users" /> {ticket_type.quantity}
         </span>
         <span class="text-zinc-200">&bull;</span>
         <span class="flex items-center gap-1">
-          <.icon name="i-lucide-calendar" /> {Calendar.strftime(
+          <.icon name="lucide--calendar" /> {Calendar.strftime(
             ticket_type.sale_starts_at,
             "%a, %d %b %H:%m"
           )}

@@ -8,6 +8,25 @@
     phx-submit={@submit_action}
     phx-target={@myself}
   >
+    <div class="col-span-full rounded-lg border border-amber-500/50 p-4">
+      <div class="flex">
+        <div class="shrink-0">
+          <.icon class="text-lg text-amber-400 ri--alert-fill" />
+        </div>
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-amber-700">
+            There are 2 issues with your event details
+          </h3>
+          <div class="mt-2 text-sm text-amber-600">
+            <ul role="list" class="list-disc space-y-1 pl-5">
+              <li>Your password must be at least 8 characters</li>
+              <li>Your password must include at least one pro wrestling finishing move</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="col-span-full">
       <h2 class="text-base/7 font-semibold text-gray-900">Basic Information</h2>
       <p class="text-sm text-gray-600">
@@ -106,10 +125,10 @@
       </p>
     </div>
 
-    <div class="col-span-full lg:col-span-4 grid place-items-start gap-4">
+    <div class="col-span-full grid place-items-start gap-4 lg:col-span-4">
       <.inputs_for :let={v} field={f[:venue]}>
         <div class="flex gap-4">
-          <div class="inline-flex size-12 text-2xl items-center justify-center rounded-full bg-zinc-50 text-zinc-400">
+          <div class="inline-flex size-12 items-center justify-center rounded-full bg-zinc-50 text-2xl text-zinc-400">
             <.icon name="i-lucide-map" />
           </div>
           <div>

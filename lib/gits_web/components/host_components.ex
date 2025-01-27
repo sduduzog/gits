@@ -9,11 +9,11 @@ defmodule GitsWeb.HostComponents do
 
   def host_navigation_items(host, view, live_action) do
     [
-      {"Home", "i-lucide-home", ~p"/hosts/#{host.handle}/dashboard",
+      {"Home", "ri--home-line", ~p"/hosts/#{host.handle}/dashboard",
        Enum.any?([Dashboard], &(&1 == view)), []},
-      {"Events", "i-lucide-calendar-range", ~p"/hosts/#{host.handle}/events",
+      {"Events", "ri--calendar-line", ~p"/hosts/#{host.handle}/events",
        Enum.any?([Events], &(&1 == view)), []},
-      {"Settings", "i-lucide-settings", ~p"/hosts/#{host.handle}/settings",
+      {"Settings", "ri--settings-3-line", ~p"/hosts/#{host.handle}/settings",
        Enum.any?([Settings], &(&1 == view)),
        [
          # {"General", "", false},
@@ -28,13 +28,13 @@ defmodule GitsWeb.HostComponents do
     [
       [
         {user.email, nil, nil, false},
-        {"Profile", "i-lucide-user", ~p"/settings/profile", false}
+        {"Profile", "lucide--user", ~p"/settings/profile", false}
       ],
       # [
       # {"Organization", nil, nil, false}
-      # {"Settings", "i-lucide-settings", ~p"/hosts/#{@host.handle}/settings", false}
+      # {"Settings", "lucide--settings", ~p"/hosts/#{@host.handle}/settings", false}
       # ],
-      [{"Sign out", "i-lucide-log-out", ~p"/sign-out", false}]
+      [{"Sign out", "lucide--log-out", ~p"/sign-out", false}]
     ]
   end
 
@@ -91,9 +91,9 @@ defmodule GitsWeb.HostComponents do
           }
           id="menu-button"
         >
-          <.icon name="i-lucide-building-2" />
+          <.icon name="ri--community-line" />
           <span class="hidden lg:inline-flex">{@host_name}</span>
-          <.icon name="i-lucide-chevron-down" />
+          <.icon name="ri--arrow-down-s-line" />
         </.button>
 
         <div
@@ -145,7 +145,7 @@ defmodule GitsWeb.HostComponents do
         phx-click={JS.show(to: "aside")}
         class="md:hidden shrink-0"
       >
-        <.icon name="i-lucide-menu" />
+        <.icon name="lucide--menu" />
       </.button>
     </header>
     """

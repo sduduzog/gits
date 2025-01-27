@@ -55,7 +55,7 @@ defmodule GitsWeb.CoreComponents do
       <div class="flex bg-red-200 grow items-center"></div>
 
       <.button :if={false} variant={:ghost} href={~p"/search"}>
-        <.icon name="i-lucide-search" />
+        <.icon name="lucide--search" />
         <span>Search</span>
       </.button>
 
@@ -90,7 +90,7 @@ defmodule GitsWeb.CoreComponents do
               aria-haspopup="true"
             >
               <span>Account</span>
-              <.icon name="i-lucide-chevron-down" />
+              <.icon name="lucide--chevron-down" />
             </.button>
           </div>
           <div
@@ -145,21 +145,21 @@ defmodule GitsWeb.CoreComponents do
     assigns =
       assigns
       |> assign(:nav_tree, [
-        {"i-lucide-tickets", "Events & Hosting",
+        {"lucide--tickets", "Events & Hosting",
          [{"Host with us", "/host-with-us"}, {"Pricing", "/pricing"}]},
-        # {"i-lucide-headset", "Support",
+        # {"lucide--headset", "Support",
         #  [
         #    # {"I need help", "/support/help"},
         #    {"FAQ", "/support/faq"},
         #    {"Contact", "/contact-us"}
         #  ]},
-        {"i-lucide-scale", "Legal",
+        {"lucide--scale", "Legal",
          [
            {"Privacy Policy", "/privacy"},
            {"Terms & Conditions", "/terms"},
            {"Refund Policy", "/refund-policy"}
          ]},
-        {"i-lucide-at-sign", "Social",
+        {"lucide--at-sign", "Social",
          [
            {"Instagram", "https://instagram.com/gits_za"},
            {"X (Formerly twitter)", "https://x.com/gits_za"}
@@ -278,7 +278,7 @@ defmodule GitsWeb.CoreComponents do
                   class="inline-flex flex-none items-center justify-center p-2 opacity-40 hover:opacity-60"
                   aria-label={gettext("close")}
                 >
-                  <.icon name="i-lucide-x" />
+                  <.icon name="lucide--x" />
                 </button>
               </div>
               <div id={"#{@id}-content"} class="p-2">
@@ -326,7 +326,7 @@ defmodule GitsWeb.CoreComponents do
                   class="-m-3 flex-none p-3 opacity-20 hover:opacity-40"
                   aria-label={gettext("close")}
                 >
-                  <.icon name="hero-x-mark-solid" class="h-5 w-5" />
+                  <.icon class="h-5 w-5 ri--close-line" />
                 </button>
               </div>
               <div id={"#{@id}-content"}>
@@ -1043,18 +1043,12 @@ defmodule GitsWeb.CoreComponents do
       <.icon name="hero-x-mark-solid" />
       <.icon name="hero-arrow-path" class="ml-1 w-3 h-3 animate-spin" />
   """
-  attr :name, :string, required: true
+  attr :name, :string, default: nil
   attr :class, :string, default: nil
-
-  def icon(%{name: "hero-" <> _} = assigns) do
-    ~H"""
-    <span class={[@name, @class]} />
-    """
-  end
 
   def icon(assigns) do
     ~H"""
-    <span class={[@name, @class]}></span>
+    <span class={["iconify", @name, @class]}></span>
     """
   end
 

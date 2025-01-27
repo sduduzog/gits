@@ -13,13 +13,23 @@
     <div :if={not is_nil(@event)} class="flex w-full flex-wrap items-end gap-2">
       <div class="grow space-y-1">
         <h2 class="col-span-full text-3xl font-medium">{@event.name}</h2>
-        <div class="flex gap-4">
+        <div class="flex flex-wrap gap-4">
+          <a
+            href={url(GitsWeb.Endpoint, ~p"/events/#{@event.public_id}")}
+            target="_blank"
+            class="flex items-center gap-2 text-sm text-zinc-500"
+          >
+            <.icon class="ri--link" />
+            {url(GitsWeb.Endpoint, ~p"/events/#{@event.public_id}")}
+          </a>
+
           <span class="flex items-center gap-2 text-sm text-zinc-500">
-            <.icon name="i-lucide-calendar-range" /> {Calendar.strftime(
+            <.icon class="ri--calendar-line" /> {Calendar.strftime(
               @event.starts_at,
               "%a, %d %b %Y, %I:%m %p"
             )}
           </span>
+
           <span
             :if={@event.state == :completed}
             class="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10"
@@ -41,7 +51,7 @@
         </div>
       </div>
       <.button :if={false} variant={:solid}>
-        <.icon name="i-lucide-rocket" />
+        <.icon name="lucide--rocket" />
         <span>Publish</span>
       </.button>
     </div>
@@ -58,11 +68,11 @@
 
         <.button
           :for={
-            {label, action} <- [
-              {"Overview", :overview},
-              {"Details", :details},
-              {"Tickets", :tickets}
-              # {"Settings", :settings}
+            {label, action, flag} <- [
+              {"Dashboard", :dashboard, nil},
+              {"Details", :details, :warn},
+              {"Tickets", :tickets, 0},
+              {"Settings", :settings, :warn}
             ]
           }
           variant={:ghost}
@@ -74,13 +84,16 @@
           <span class="text-left w-full">
             {label}
           </span>
+
+          <.icon :if={flag == :warn} class="text-amber-500 ri--alert-fill" />
+          <span :if={is_integer(flag)}>{flag}</span>
         </.button>
       <% else %>
         <.link
           patch={~p"/hosts/#{@handle}/events"}
           class="rounded-lg p-2 text-sm flex items-center gap-2 font-medium text-zinc-400"
         >
-          <.icon name="i-lucide-chevron-left" />
+          <.icon name="lucide--chevron-left" />
           <span>Cancel</span>
         </.link>
       <% end %>
@@ -88,7 +101,7 @@
 
     <div class="px-2">
       <.live_component
-        :if={@action == :overview}
+        :if={@action == :dashboard}
         id={@event.id}
         module={__MODULE__.Dashboard}
         current_user={@current_user}
