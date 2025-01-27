@@ -4,8 +4,8 @@ defmodule Gits.Storefront.Event.Fragments.Policies do
   alias Gits.Accounts.{Host, Venue}
   alias Gits.Storefront.{EventCategory, Interaction, Order, Ticket, TicketType}
 
-  alias __MODULE__.Checks.ActorCanCreateEvent
-  alias __MODULE__.Notifiers.{EventUpdated}
+  alias Gits.Storefront.Event.Checks.ActorCanCreateEvent
+  alias Gits.Storefront.Event.Notifiers.{EventUpdated}
 
   use Spark.Dsl.Fragment,
     of: Ash.Resource,
