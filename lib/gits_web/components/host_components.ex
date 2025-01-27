@@ -12,15 +12,15 @@ defmodule GitsWeb.HostComponents do
       {"Home", "ri--home-line", ~p"/hosts/#{host.handle}/dashboard",
        Enum.any?([Dashboard], &(&1 == view)), []},
       {"Events", "ri--calendar-line", ~p"/hosts/#{host.handle}/events",
-       Enum.any?([Events], &(&1 == view)), []},
-      {"Settings", "ri--settings-3-line", ~p"/hosts/#{host.handle}/settings",
-       Enum.any?([Settings], &(&1 == view)),
-       [
-         # {"General", "", false},
-         # {"Members", "", false},
-         # {"Billing", "", false},
-         {"API", ~p"/hosts/#{host.handle}/settings/api", live_action == :api}
-       ]}
+       Enum.any?([Events], &(&1 == view)), []}
+      # {"Settings", "ri--settings-3-line", ~p"/hosts/#{host.handle}/settings",
+      #  Enum.any?([Settings], &(&1 == view)),
+      #  [
+      #    {"General", "", false},
+      #    {"Members", "", false},
+      #    {"Billing", "", false},
+      #    {"API", ~p"/hosts/#{host.handle}/settings/api", live_action == :api}
+      #  ]}
     ]
   end
 

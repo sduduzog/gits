@@ -8,7 +8,7 @@
     phx-submit={@submit_action}
     phx-target={@myself}
   >
-    <div class="col-span-full rounded-lg border border-amber-500/50 p-4">
+    <div :if={not is_nil(@state)} class="col-span-full rounded-lg border border-amber-500/50 p-4">
       <div class="flex">
         <div class="shrink-0">
           <.icon class="text-lg text-amber-400 ri--alert-fill" />

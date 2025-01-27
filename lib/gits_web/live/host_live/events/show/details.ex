@@ -12,7 +12,7 @@ defmodule GitsWeb.HostLive.Events.Show.Details do
     |> case do
       {:ok, %Event{} = event} ->
         socket
-        |> assign(:event, event)
+        |> assign(:state, event.state)
         |> assign(:submit_action, "update")
         |> assign(:venues, [])
         |> assign(
@@ -22,8 +22,9 @@ defmodule GitsWeb.HostLive.Events.Show.Details do
 
       _ ->
         socket
-        |> assign(:event, nil)
+        # |> assign(:event, nil)
         |> assign(:submit_action, "create")
+        |> assign(:state, nil)
         |> assign(
           :form,
           Form.for_create(Event, :create, forms: [auto?: true], actor: assigns.current_user)

@@ -86,7 +86,7 @@
             {label}
           </span>
 
-          <.icon :if={flag == :warn} class="text-amber-500 ri--alert-fill" />
+          <.icon :if={flag == :warn} class="text-amber-500 ri--alert-fill shrink-0" />
           <span :if={is_integer(flag)}>{flag}</span>
         </.button>
       <% else %>
@@ -137,6 +137,7 @@
           id={@event.id}
           module={__MODULE__.Settings}
           current_user={@current_user}
+          handle={@handle}
           event={@event}
         />
       </div>

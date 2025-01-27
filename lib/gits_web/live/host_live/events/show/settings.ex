@@ -12,6 +12,7 @@ defmodule GitsWeb.HostLive.Events.Show.Settings do
         socket
         |> assign(:webhooks, webhooks)
         |> assign(:current_user, assigns.current_user)
+        |> assign(:handle, assigns.handle)
         |> assign(:event, assigns.event)
         |> assign(
           :form,
@@ -80,5 +81,14 @@ defmodule GitsWeb.HostLive.Events.Show.Settings do
         |> assign(:form, form)
         |> noreply()
     end
+  end
+
+  def handle_event("archive", _, socket) do
+    Ash.Changeset.for_destroy(socket.assigns.event, :destroy)
+    |> Ash.destroy(actor: socket.assigns.current_user)
+    |> case do
+      :ok -> socket |> redirect(to: ~p"/hosts/#{socket.assigns.handle}/events")
+    end
+    |> noreply()
   end
 end

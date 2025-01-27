@@ -5,19 +5,16 @@ defmodule GitsWeb.HostLive.Events.Show.Dashboard do
   use GitsWeb, :live_component
 
   def update(assigns, socket) do
-    Ash.Query.for_read(Webhook, :read)
-    |> Ash.read(actor: assigns.current_user)
+    Ash.load(assigns.event, [], actor: assigns.current_user)
     |> case do
-      {:ok, webhooks} ->
+      {:ok, event} ->
+        can_publish =
+          Ash.Changeset.for_update(event, :publish)
+          |> Ash.can?(assigns.current_user)
+
         socket
-        |> assign(:webhooks, webhooks)
-        |> assign(:current_user, assigns.current_user)
-        |> assign(:event, assigns.event)
-        |> assign(
-          :form,
-          Form.for_create(Webhook, :create, actor: assigns.current_user, forms: [auto?: true])
-          |> Form.add_form(:event, type: :read, validate?: false)
-        )
+        |> assign(:can_publish?, can_publish)
+        |> assign(:state, event.state)
         |> ok()
     end
   end

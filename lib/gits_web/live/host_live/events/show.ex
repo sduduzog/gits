@@ -16,10 +16,6 @@ defmodule GitsWeb.HostLive.Events.Show do
         {:ok, %Event{} = event} ->
           socket
           |> assign(:event, event)
-
-        _ ->
-          socket
-          |> assign(:event, nil)
       end
     end
     |> assign(:current_user, assigns.current_user)

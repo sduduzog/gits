@@ -506,6 +506,9 @@ defmodule GitsWeb.CoreComponents do
           :outline ->
             "text-zinc-400 border-zinc-200 hover:text-zinc-500 hover:border-zinc-500 active:text-zinc-600 active:border-zinc-600 disabled:text-zinc-100 disabled:border-zinc-100 dark:disabled:text-zinc-800 dark:disabled:border-zinc-800"
 
+          :danger ->
+            "text-rose-400 border-rose-200 hover:text-rose-500 hover:border-rose-500 active:text-rose-600 active:border-rose-600 disabled:text-rose-100 disabled:border-rose-100 dark:disabled:text-rose-800 dark:disabled:border-rose-800"
+
           :ghost ->
             "border-transparent bg-transparent text-zinc-400 hover:text-zinc-500"
 
@@ -898,51 +901,12 @@ defmodule GitsWeb.CoreComponents do
     """
   end
 
-  attr :field, Phoenix.HTML.FormField, required: true
-  attr :label, :string, required: false, default: nil
-  attr :class, :string, default: ""
-
-  slot :radio, required: true do
-    attr :value, :atom, required: true
-    attr :checked, :boolean
-  end
-
-  def radio_group(assigns) do
-    ~H"""
-    <fieldset class={["", @class]}>
-      <legend class="text-sm font-medium leading-6 text-zinc-600">{@label}</legend>
-      <!-- <p class="mt-1 text-sm leading-6 text-zinc-600">How do you prefer to receive notifications?</p> -->
-      <div class="mt-6 space-y-6 sm:flex sm:items-center sm:space-x-10 sm:space-y-0">
-        <div :for={{%{value: value} = rad, idx} <- Enum.with_index(@radio)} class="flex items-center">
-          <input
-            name={@field.name}
-            id={"#{@field.id}-#{idx}"}
-            value={value}
-            checked={value == @field.value}
-            type="radio"
-            class="h-4 w-4 border-zinc-300 text-zinc-600 focus:ring-zinc-600"
-          />
-          <label
-            for={"#{@field.id}-#{idx}"}
-            class="ml-3 block text-sm font-medium leading-6 text-zinc-900"
-          >
-            {render_slot(rad)}
-          </label>
-        </div>
-      </div>
-    </fieldset>
-    """
-  end
-
-  @doc """
-  Generates a generic error message.
-  """
   slot :inner_block, required: true
 
   def error(assigns) do
     ~H"""
-    <p class="flex gap-3 text-sm leading-6 text-rose-600 phx-no-feedback:hidden">
-      <.icon name="hero-exclamation-circle-mini" class="mt-0.5 h-5 w-5 flex-none" />
+    <p class="flex gap-2 text-sm leading-6 text-rose-600 phx-no-feedback:hidden">
+      <.icon class="mt-0.5 text-lg ri--error-warning-line flex-none" />
       {render_slot(@inner_block)}
     </p>
     """
