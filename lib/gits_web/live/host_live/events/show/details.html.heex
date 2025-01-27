@@ -129,7 +129,7 @@
       <.inputs_for :let={v} field={f[:venue]}>
         <div class="flex gap-4">
           <div class="inline-flex size-12 items-center justify-center rounded-full bg-zinc-50 text-2xl text-zinc-400">
-            <.icon name="i-lucide-map" />
+            <.icon name="lucide--map" />
           </div>
           <div>
             <h2 class="text-base/7 font-semibold text-gray-900">{v[:name].value}</h2>
@@ -149,7 +149,7 @@
               phx-click={JS.push("pre_choose_venue") |> show_modal("choose_venue")}
               phx-target={@myself}
             >
-              <.icon name="i-lucide-pen-line" />
+              <.icon name="lucide--pen-line" />
             </.button>
           </div>
         </div>
@@ -168,7 +168,7 @@
 
     <div class="col-span-full flex gap-2">
       <.button size={:box}>
-        <.icon name="i-lucide-save" />
+        <.icon name="lucide--save" />
         <span>Save</span>
       </.button>
     </div>
@@ -201,7 +201,7 @@
           </div>
           <.icon
             :if={@form.data && @form.data.venue.id == venue.id}
-            name="i-lucide-check"
+            name="lucide--check"
             class="shrink-0"
           />
         </button>

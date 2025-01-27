@@ -33,7 +33,7 @@
 
     <div class="grid lg:gap-8 gap-4">
       <div class="flex items-start gap-2">
-        <.icon name="i-lucide-calendar-days" class="size-5 text-sm text-zinc-500" />
+        <.icon name="lucide--calendar-days" class="size-5 text-sm text-zinc-500" />
         <div class="grid text-zinc-700 font-medium">
           <span class="">
             Starts {Calendar.strftime(@event.starts_at, " %H:%M, %A %d %b %Y")}
@@ -45,7 +45,7 @@
       </div>
 
       <div class="flex items-start gap-2">
-        <.icon name="i-lucide-map-pin" class="size-5 text-zinc-500" />
+        <.icon name="lucide--map-pin" class="size-5 text-zinc-500" />
         <div class="grid">
           <%= if @event.location_is_private or is_nil(@event.venue) do %>
             <span class="font-medium">Private Location</span>
@@ -60,7 +60,7 @@
       </div>
 
       <div class="flex items-start gap-2">
-        <.icon name="i-lucide-megaphone" class="size-5 text-zinc-500" />
+        <.icon name="lucide--megaphone" class="size-5 text-zinc-500" />
         <div class="flex gap-1.5">
           <span class="text-zinc-600">hosted by</span>
           <span class="font-medium">{@event.host.name}</span>
@@ -68,7 +68,7 @@
       </div>
 
       <div class="flex items-start gap-2">
-        <.icon name="i-lucide-hand-coins" class="size-5 text-zinc-500" />
+        <.icon name="lucide--hand-coins" class="size-5 text-zinc-500" />
         <div class="">
           <span class="text-zinc-500">
             You can <span class="font-medium text-zinc-800">get a refund</span> if:

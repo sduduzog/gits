@@ -13,12 +13,11 @@ defmodule GitsWeb.HostLive.Events do
       _ ->
         socket
         |> assign(:page_title, "Events")
-        |> put_flash(:info, "TEsting")
         |> ok(:host)
     end
   end
 
-  def handle_params(%{"public_id" => id, "handle" => handle} = unsigned_params, _, socket) do
+  def handle_params(%{"public_id" => id, "handle" => handle}, _, socket) do
     Event
     |> Ash.Query.filter(host.handle == ^handle and public_id == ^id)
     |> Ash.read_one(actor: socket.assigns.current_user)
