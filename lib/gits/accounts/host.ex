@@ -178,6 +178,8 @@ defmodule Gits.Accounts.Host do
   end
 
   calculations do
+    calculate :payment_method_ready, :boolean, expr(not is_nil(paystack_subaccount_code))
+
     calculate :paystack_subaccount, :map, fn records, _ ->
       Enum.map(records, fn record ->
         PaystackApi.fetch_subaccount(record.paystack_subaccount_code, :cache)

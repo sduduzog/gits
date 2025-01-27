@@ -1,7 +1,9 @@
-<.header user={@current_user} />
-<div class="grid grid-rows-[1fr_auto]">
-  <div class="lg:pt-8">
-    {@inner_content}
+<div class="overflow-auto h-full">
+  <.header user={@current_user} />
+  <div class="grid grid-rows-[1fr_auto]">
+    <div class="lg:pt-8">
+      {@inner_content}
+    </div>
   </div>
+  <.footer />
 </div>
-<.footer />
