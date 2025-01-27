@@ -367,21 +367,21 @@ defmodule GitsWeb.CoreComponents do
       role="alert"
       class={[
         "fixed top-2 right-2 z-50 mr-2 w-80 rounded-lg p-3 ring-1 sm:w-96",
-        @kind == :info && "bg-emerald-50 fill-cyan-900 text-emerald-800 ring-emerald-500",
-        @kind == :warn && "bg-orange-50 fill-orange-900 text-orange-500 ring-orange-500",
+        @kind == :info && "bg-white fill-green-500 text-green-800 ring-zinc-200",
+        @kind == :warn && "bg-white fill-orange-900 text-orange-500 ring-orange-500",
         @kind == :error && "bg-rose-50 fill-rose-900 text-rose-900 shadow-md ring-rose-500"
       ]}
       {@rest}
     >
       <p :if={@title} class="flex items-center gap-1.5 text-sm font-semibold leading-6">
-        <.icon :if={@kind == :info} name="hero-information-circle-mini" class="h-4 w-4" />
-        <.icon :if={@kind == :warn} name="hero-information-circle-mini" class="h-4 w-4" />
-        <.icon :if={@kind == :error} name="hero-exclamation-circle-mini" class="h-4 w-4" />
+        <.icon :if={@kind == :info} class="ri--information-line h-4 w-4" />
+        <.icon :if={@kind == :warn} class="ri--information-line h-4 w-4" />
+        <.icon :if={@kind == :error} class="ri--error-warning-line h-4 w-4" />
         {@title}
       </p>
       <p class="mt-2 text-sm leading-5">{msg}</p>
       <button type="button" class="group absolute right-1 top-1 p-2" aria-label={gettext("close")}>
-        <.icon name="hero-x-mark-solid" class="h-5 w-5 opacity-40 group-hover:opacity-70" />
+        <.icon class="h-5 ri--close-line w-5 opacity-40 group-hover:opacity-70" />
       </button>
     </div>
     """
@@ -412,7 +412,7 @@ defmodule GitsWeb.CoreComponents do
         hidden
       >
         {gettext("Attempting to reconnect")}
-        <.icon name="hero-arrow-path" class="ml-1 h-3 w-3 animate-spin" />
+        <.icon class="ml-1 size-4 animate-spin ri--loader-4-line" />
       </.flash>
 
       <.flash

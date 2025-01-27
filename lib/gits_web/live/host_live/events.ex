@@ -13,6 +13,7 @@ defmodule GitsWeb.HostLive.Events do
       _ ->
         socket
         |> assign(:page_title, "Events")
+        |> put_flash(:info, "TEsting")
         |> ok(:host)
     end
   end
