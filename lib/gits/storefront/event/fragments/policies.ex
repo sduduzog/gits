@@ -1,6 +1,5 @@
 defmodule Gits.Storefront.Event.Fragments.Policies do
   require Decimal
-  alias Gits.Bucket
   alias Gits.Accounts.{Host, Venue}
   alias Gits.Storefront.{EventCategory, Interaction, Order, Ticket, TicketType}
 
