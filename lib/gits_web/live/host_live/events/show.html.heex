@@ -72,8 +72,8 @@
             {label, action, flag} <- [
               {"Dashboard", :dashboard, nil},
               {"Details", :details, :warn},
-              {"Tickets", :tickets, 0},
-              {"Settings", :settings, :warn}
+              {"Tickets", :tickets, @tickets_flag},
+              {"Settings", :settings, nil}
             ]
           }
           variant={:ghost}

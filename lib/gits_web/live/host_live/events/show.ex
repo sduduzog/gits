@@ -11,11 +11,13 @@ defmodule GitsWeb.HostLive.Events.Show do
     else
       Event
       |> Ash.Query.filter(host.id == ^assigns.host_id and public_id == ^assigns.event_id)
+      |> Ash.Query.load([:total_ticket_types])
       |> Ash.read_one(actor: assigns.current_user)
       |> case do
         {:ok, %Event{} = event} ->
           socket
           |> assign(:event, event)
+          |> assign(:tickets_flag, event.total_ticket_types)
       end
     end
     |> assign(:current_user, assigns.current_user)
