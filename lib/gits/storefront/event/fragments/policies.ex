@@ -85,6 +85,10 @@ defmodule Gits.Storefront.Event.Fragments.Policies do
     end
 
     policy action(:publish) do
+      authorize_if expr(not poster_invalid?)
+    end
+
+    policy action(:publish) do
       authorize_if expr(not venue_invalid?)
     end
 

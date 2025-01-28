@@ -108,6 +108,7 @@ defmodule Gits.Storefront.Event do
 
     calculate :start_date_invalid?, :boolean, expr(utc_starts_at < fragment("now()"))
     calculate :end_date_invalid?, :boolean, expr(utc_ends_at < utc_starts_at)
+    calculate :poster_invalid?, :boolean, expr(is_nil(poster))
     calculate :venue_invalid?, :boolean, expr(is_nil(venue))
 
     calculate :ticket_prices_vary?, :boolean, expr(minimum_ticket_price != maximum_ticket_price)

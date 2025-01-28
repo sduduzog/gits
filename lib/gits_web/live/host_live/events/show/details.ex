@@ -7,12 +7,37 @@ defmodule GitsWeb.HostLive.Events.Show.Details do
   alias AshPhoenix.Form
   use GitsWeb, :live_component
 
+  @load_event [
+    :start_date_invalid?,
+    :end_date_invalid?,
+    :poster_invalid?,
+    :venue_invalid?,
+    :venue,
+    poster: :url
+  ]
+
   def update(assigns, socket) do
-    Ash.load(assigns.event, [:venue, poster: [:url]])
+    Ash.load(assigns.event, @load_event)
     |> case do
       {:ok, %Event{} = event} ->
         socket
         |> assign(:state, event.state)
+        |> assign(:venue, event.venue)
+        |> assign(:start_date_invalid?, event.start_date_invalid?)
+        |> assign(:end_date_invalid?, event.end_date_invalid?)
+        |> assign(:poster_invalid?, event.poster_invalid?)
+        |> assign(:venue_invalid?, event.venue_invalid?)
+        |> assign(
+          :issues_count,
+          [
+            event.start_date_invalid?,
+            event.end_date_invalid?,
+            event.poster_invalid?,
+            event.venue_invalid?
+          ]
+          |> Enum.filter(& &1)
+          |> Enum.count()
+        )
         |> assign(:submit_action, "update")
         |> assign(:venues, [])
         |> assign(
@@ -22,9 +47,8 @@ defmodule GitsWeb.HostLive.Events.Show.Details do
 
       _ ->
         socket
-        # |> assign(:event, nil)
-        |> assign(:submit_action, "create")
         |> assign(:state, nil)
+        |> assign(:submit_action, "create")
         |> assign(
           :form,
           Form.for_create(Event, :create, forms: [auto?: true], actor: assigns.current_user)
@@ -133,11 +157,11 @@ defmodule GitsWeb.HostLive.Events.Show.Details do
     GooglePlaces.get_suggestions(query, :cache)
     |> case do
       {:ok, suggestions} ->
-        event = socket.assigns.event
+        venue = socket.assigns.venue
 
         venue_place_id =
-          if not is_nil(event) and not is_nil(event.venue),
-            do: event.venue.google_place_id,
+          if not is_nil(venue) and not is_nil(venue),
+            do: venue.google_place_id,
             else: nil
 
         suggestions =

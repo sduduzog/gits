@@ -1,4 +1,4 @@
-<div class="block">
+<div class="">
   <.form
     :let={f}
     id="event-details"
@@ -15,12 +15,14 @@
         </div>
         <div class="ml-3">
           <h3 class="text-sm font-medium text-amber-700">
-            There are 2 issues with your event details
+            There are {@issues_count} issues with your event details
           </h3>
           <div class="mt-2 text-sm text-amber-600">
             <ul role="list" class="list-disc space-y-1 pl-5">
-              <li>Your password must be at least 8 characters</li>
-              <li>Your password must include at least one pro wrestling finishing move</li>
+              <li :if={@start_date_invalid?}>Start date invalid</li>
+              <li :if={@end_date_invalid?}>Start date invalid</li>
+              <li :if={@poster_invalid?}>Poster invalid</li>
+              <li :if={@venue_invalid?}>Venue invalid</li>
             </ul>
           </div>
         </div>

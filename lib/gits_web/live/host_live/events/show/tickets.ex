@@ -44,6 +44,8 @@ defmodule GitsWeb.HostLive.Events.Show.Tickets do
         Form.submit(form, params: unsigned_params["form"])
         |> case do
           {:ok, ticket_type} ->
+            send(self(), {:updated_event, socket.assigns.event})
+
             socket
             |> assign(:ticket_types, socket.assigns.ticket_types ++ [ticket_type])
             |> assign_update_form(ticket_type.id)

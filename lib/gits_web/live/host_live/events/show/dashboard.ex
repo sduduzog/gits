@@ -8,12 +8,15 @@ defmodule GitsWeb.HostLive.Events.Show.Dashboard do
     Ash.load(assigns.event, [], actor: assigns.current_user)
     |> case do
       {:ok, event} ->
-        can_publish =
+        can_publish? =
           Ash.Changeset.for_update(event, :publish)
           |> Ash.can?(assigns.current_user)
 
+        event_issues_pending? = not can_publish?
+
         socket
-        |> assign(:can_publish?, can_publish)
+        |> assign(:can_publish?, can_publish?)
+        |> assign(:event_issues_pending?, event_issues_pending?)
         |> assign(:state, event.state)
         |> ok()
     end
