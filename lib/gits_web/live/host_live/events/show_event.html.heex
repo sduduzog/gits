@@ -101,46 +101,7 @@
     </div>
 
     <div class="max-w-screen-lg px-2">
-      <.live_component
-        :if={@action == :dashboard}
-        id={@event.id}
-        module={__MODULE__.Dashboard}
-        current_user={@current_user}
-        event={@event}
-      />
-
-      <.live_component
-        :if={@action == :details}
-        id={if(not is_nil(@event), do: @event.id, else: "create-new")}
-        module={__MODULE__.Details}
-        current_user={@current_user}
-        host_id={@host_id}
-        host_state={@host_state}
-        handle={@handle}
-        event={@event}
-      />
-
-      <.live_component
-        :if={@action == :tickets}
-        id="tickets"
-        module={__MODULE__.Tickets}
-        current_user={@current_user}
-        host_id={@host_id}
-        host_state={@host_state}
-        handle={@handle}
-        event={@event}
-        paid_tickets_issue?={@paid_tickets_issue?}
-        ticket_types={@ticket_types}
-      />
-
-      <.live_component
-        :if={@action == :settings}
-        id={@event.id}
-        module={__MODULE__.Settings}
-        current_user={@current_user}
-        handle={@handle}
-        event={@event}
-      />
+      {render_slot(@inner_block)}
     </div>
   </div>
 </div>

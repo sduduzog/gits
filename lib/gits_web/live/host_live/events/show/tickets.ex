@@ -1,26 +1,19 @@
 defmodule GitsWeb.HostLive.Events.Show.Tickets do
-  alias Gits.Storefront.Event
   alias Gits.Storefront.TicketType
   alias AshPhoenix.Form
   use GitsWeb, :live_component
 
   def update(assigns, socket) do
-    Ash.load(assigns.event, :ticket_types)
-    |> case do
-      {:ok, %Event{} = event} ->
-        socket
-        |> assign(:event, event)
-        |> assign(:ticket_types, event.ticket_types)
-        |> assign(
-          :form,
-          Form.for_create(TicketType, :create, actor: assigns.current_user, forms: [auto?: true])
-          |> Form.add_form([:event], type: :read, validate?: false, data: event)
-        )
-    end
+    socket
+    |> assign(
+      :form,
+      Form.for_create(TicketType, :create, actor: assigns.current_user, forms: [auto?: true])
+      |> Form.add_form([:event], type: :read, validate?: false)
+    )
+    |> assign(:ticket_types, assigns.ticket_types)
     |> assign(:current_user, assigns.current_user)
-    |> assign(:handle, assigns.handle)
-    |> assign(:host_state, assigns.host_state)
-    |> assign(:host_id, assigns.host_id)
+    |> assign(:event_id, assigns.event_id)
+    |> assign(:paid_tickets_issue?, assigns.paid_tickets_issue?)
     |> ok()
   end
 
@@ -44,8 +37,6 @@ defmodule GitsWeb.HostLive.Events.Show.Tickets do
         Form.submit(form, params: unsigned_params["form"])
         |> case do
           {:ok, ticket_type} ->
-            send(self(), {:updated_event, socket.assigns.event})
-
             socket
             |> assign(:ticket_types, socket.assigns.ticket_types ++ [ticket_type])
             |> assign_update_form(ticket_type.id)
@@ -133,9 +124,15 @@ defmodule GitsWeb.HostLive.Events.Show.Tickets do
         actor: socket.assigns.current_user,
         forms: [auto?: true]
       )
-      |> Form.add_form([:event], type: :read, validate?: false, data: socket.assigns.event)
+      |> Form.add_form([:event], type: :read, validate?: false)
     )
     |> noreply()
+  end
+
+  def handle_event("refresh_event", _, socket) do
+    send(self(), {:updated_event, socket.assigns.event})
+    IO.puts("update something")
+    socket |> noreply()
   end
 
   defp assign_update_form(socket, id) do

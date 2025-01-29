@@ -365,7 +365,7 @@ defmodule GitsWeb.CoreComponents do
       id={@id}
       phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")}
       class={[
-        "fixed top-2 right-2 z-50",
+        "fixed top-2 right-4 z-50",
         "bg-white rounded-lg border border-border bg-background p-4 shadow-lg shadow-black/5"
       ]}
       role="alert"
@@ -437,37 +437,6 @@ defmodule GitsWeb.CoreComponents do
         <.icon class="ml-1 mt-0.5 animate-spin ri--loader-4-line" />
       </.flash>
     </div>
-    """
-  end
-
-  @doc """
-  Renders a simple form.
-
-  ## Examples
-
-      <.simple_form for={@form} phx-change="validate" phx-submit="save">
-        <.input field={@form[:email]} label="Email"/>
-        <.input field={@form[:username]} label="Username" />
-        <:actions>
-          <.button>Save</.button>
-        </:actions>
-      </.simple_form>
-  """
-  attr :for, :any, required: true, doc: "the datastructure for the form"
-  attr :as, :any, default: nil, doc: "the server side parameter to collect all input under"
-
-  attr :rest, :global,
-    include: ~w(autocomplete name rel action enctype method novalidate target multipart),
-    doc: "the arbitrary HTML attributes to apply to the form tag"
-
-  slot :inner_block, required: true
-  slot :actions, doc: "the slot for form actions, such as a submit button"
-
-  def simple_form(assigns) do
-    ~H"""
-    <.form :let={f} for={@for} as={@as} {@rest}>
-      {render_slot(@inner_block, f)}
-    </.form>
     """
   end
 

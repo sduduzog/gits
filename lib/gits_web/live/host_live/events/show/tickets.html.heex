@@ -18,7 +18,22 @@
     </.button>
   </div>
 
-  <div class="col-span-full rounded-lg border border-amber-500/50 p-4">
+  <div :if={@paid_tickets_issue?} class="border-border rounded-lg border px-4 py-3">
+    <div class="flex gap-3">
+      <.icon class="ri--alert-line text-sm mt-0.5 text-amber-500 shrink-0" />
+      <div class="flex grow items-start justify-between gap-3">
+        <p class="text-sm">Please setup payout details to accept payments for tickets.</p>
+        <a
+          href="#"
+          class="group inline-flex items-center gap-1 whitespace-nowrap text-sm font-medium"
+        >
+          Setup<.icon class="mt-0.5 ri--arrow-right-line" />
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div :if={false} class="col-span-full rounded-lg border border-amber-500/50 p-4">
     <div class="flex">
       <div class="shrink-0">
         <.icon class="text-lg text-amber-400 ri--alert-fill" />
@@ -36,114 +51,4 @@
       </div>
     </div>
   </div>
-
-  <div class="grid gap-4" phx-hook="HostDraggableTicketContainer" id="tickets">
-    <div
-      :for={ticket_type <- @ticket_types}
-      data-id={ticket_type.id}
-      class="flex flex-wrap bg-white items-center gap-2 rounded-lg border p-2"
-    >
-      <div class="handle inline-flex cursor-grab rounded-md p-2 active:cursor-grabbing">
-        <.icon name="lucide--grip-vertical" />
-      </div>
-
-      <span
-        style={"background-color: #{ticket_type.color}"}
-        class="w-1.5 h-6 rounded-xl inline-block"
-      >
-      </span>
-      <span class="grow text-base/4 font-semibold text-gray-900 lg:grow-0">
-        {ticket_type.name}
-      </span>
-      <.button
-        size={:box}
-        variant={:ghost}
-        phx-click={JS.push("manage_ticket") |> show_modal("manage_ticket")}
-        phx-value-id={ticket_type.id}
-        phx-target={@myself}
-        class="lg:order-last"
-      >
-        <.icon name="lucide--pen-square" />
-      </.button>
-      <div class="flex w-full grow lg:mr-4 items-center justify-end gap-2 px-2 py-1 text-sm/4 text-zinc-500 lg:w-auto lg:p-0">
-        <span class="">
-          R{ticket_type.price}
-        </span>
-        <span class="text-zinc-200">&bull;</span>
-        <span class="flex items-center gap-1">
-          <.icon name="lucide--user" />{ticket_type.limit_per_user}
-        </span>
-        <span class="text-zinc-200">&bull;</span>
-        <span class="flex items-center gap-1">
-          <.icon name="lucide--users" /> {ticket_type.quantity}
-        </span>
-        <span class="text-zinc-200">&bull;</span>
-        <span class="flex items-center gap-1">
-          <.icon name="lucide--calendar" /> {Calendar.strftime(
-            ticket_type.sale_starts_at,
-            "%a, %d %b %H:%m"
-          )}
-        </span>
-      </div>
-    </div>
-  </div>
-
-  <.modal id="manage_ticket">
-    <.form
-      :let={f}
-      for={@form}
-      class="grid grid-cols-2 gap-2 lg:gap-4"
-      phx-target={@myself}
-      phx-change="validate"
-      phx-submit="submit"
-    >
-      <h3 class="text-xl font-medium">
-        {if(@form.action == :create, do: "Create ticket", else: "Edit ticket")}
-      </h3>
-
-      <input type="text" class="sr-only" />
-
-      <div class="col-span-full flex">
-        <.input type="color" field={f[:color]} value={f[:color].value} label="Color" />
-      </div>
-
-      <.inputs_for :if={@form.action == :create} field={f[:event]}></.inputs_for>
-      <.input
-        :if={@form.action == :create}
-        field={f[:order_index]}
-        value={Enum.count(@ticket_types)}
-        type="hidden"
-      />
-
-      <.input type="text" field={f[:name]} label="Name" class="" placeholder="e.g General" />
-      <.input type="number" field={f[:price]} label="Price" hint="R0 or R50+" />
-      <.input type="number" field={f[:quantity]} label="Quantity" />
-      <.input type="number" field={f[:limit_per_user]} label="Limit per user" />
-
-      <.input field={f[:sale_starts_at]} label="Sale starts" type="datetime-local" />
-
-      <.input field={f[:sale_ends_at]} label="Sale ends" type="datetime-local" />
-
-      <.input type="textarea" field={f[:description]} label="Description" class="col-span-full" />
-
-      <div class="col-span-full flex justify-end gap-4">
-        <.button
-          :if={@form.action == :update}
-          variant={:ghost}
-          type="button"
-          phx-value-id={f[:id].value}
-          phx-click={JS.push("delete_ticket") |> hide_modal("manage_ticket")}
-          phx-target={@myself}
-        >
-          <span class="text-sm font-semibold text-red-600">Delete</span>
-        </.button>
-
-        <div role="none" class="grow"></div>
-
-        <.button>
-          <span class="text-sm font-semibold">Save</span>
-        </.button>
-      </div>
-    </.form>
-  </.modal>
 </div>

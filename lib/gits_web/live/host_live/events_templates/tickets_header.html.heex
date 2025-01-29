@@ -1,0 +1,14 @@
+<div class="flex flex-wrap items-end gap-2">
+  <div class="grid grow">
+    <h2 class="text-base/7 font-semibold text-gray-900">Tickets</h2>
+
+    <p class="text-sm text-gray-600">
+      Setup ticket types for this event. Drag a ticket type by the handle-bar to reorder.
+    </p>
+  </div>
+
+  <.button size={:box} phx-click={JS.push("manage_ticket") |> show_modal("manage_ticket")}>
+    <.icon name="lucide--plus" />
+    <span>Create</span>
+  </.button>
+</div>

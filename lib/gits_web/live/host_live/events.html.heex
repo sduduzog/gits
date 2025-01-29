@@ -11,6 +11,7 @@
   />
 <% else %>
   <.live_component
+    :if={Enum.any?([:details, :settings], &(&1 == @live_action))}
     id="show-event"
     event_id={if(is_nil(assigns[:event]), do: nil, else: @event.public_id)}
     module={__MODULE__.Show}
@@ -19,6 +20,46 @@
     host_name={@host.name}
     host_state={@host.state}
     handle={@host.handle}
+    payment_method_ready={@host.payment_method_ready?}
+    has_paid_tickets?={@event.has_paid_tickets?}
+    ticket_types={@event.ticket_types}
     live_action={@live_action}
   />
+  <.show_event
+    current_user={@current_user}
+    host_id={@host.id}
+    host_name={@host.name}
+    host_state={@host.state}
+    handle={@host.handle}
+    payment_method_ready={@host.payment_method_ready?}
+    has_paid_tickets?={@event.has_paid_tickets?}
+    ticket_types={@event.ticket_types}
+    live_action={@live_action}
+    action={@live_action}
+    event_has_issues?={false}
+    paid_tickets_issue?={false}
+    tickets_flag={0}
+    current_user={@current_user}
+    event={@event}
+  >
+    <.live_component
+      :if={@live_action == :dashboard}
+      id={@event.id}
+      module={GitsWeb.HostLive.Events.Show.Dashboard}
+      current_user={@current_user}
+      event={@event}
+    />
+
+    <div :if={@live_action == :tickets} class="grid gap-4">
+      <.tickets_header />
+      <.tickets_warn_payout_details />
+      <.tickets_list ticket_types={@ticket_types} />
+      <.tickets_modal_manage_ticket
+        form={@tickets_form}
+        order_index={Enum.count(@ticket_types)}
+        on_change="validate_tickets_form"
+        on_submit="submit_tickets_form"
+      />
+    </div>
+  </.show_event>
 <% end %>

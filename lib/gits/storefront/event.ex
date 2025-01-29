@@ -111,6 +111,10 @@ defmodule Gits.Storefront.Event do
     calculate :poster_invalid?, :boolean, expr(is_nil(poster))
     calculate :venue_invalid?, :boolean, expr(is_nil(venue))
 
+    calculate :has_paid_tickets?,
+              :boolean,
+              expr(count(ticket_types, query: [filter: expr(price > 0)]) > 0)
+
     calculate :ticket_prices_vary?, :boolean, expr(minimum_ticket_price != maximum_ticket_price)
   end
 
