@@ -2,7 +2,7 @@ defmodule Gits.Storefront.TicketType.Validations.PriceValid do
   alias Ash.Error.Changes.InvalidAttribute
   use Ash.Resource.Validation
 
-  def validate(changeset, opts, context) do
+  def validate(changeset, _opts, _context) do
     price = Ash.Changeset.get_attribute(changeset, :price)
 
     case price do
@@ -18,7 +18,7 @@ defmodule Gits.Storefront.TicketType.Validations.PriceValid do
     end
   end
 
-  def atomic(changeset, opts, context) do
+  def atomic(_changeset, _opts, context) do
     {:atomic, [:price], expr(^atomic_ref(:price) > 0 and ^atomic_ref(:price) < 50),
      expr(
        error(^InvalidAttribute, %{

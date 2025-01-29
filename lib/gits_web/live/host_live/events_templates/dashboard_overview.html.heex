@@ -1,5 +1,5 @@
 <div>
-  <div :if={@state == :published} class="grid grid-cols-2 gap-4 lg:grid-cols-3 lg:gap-6">
+  <div :if={@event_state == :published} class="grid grid-cols-2 gap-4 lg:grid-cols-3 lg:gap-6">
     <div
       :for={
         {label, value} <- [
@@ -15,7 +15,7 @@
     </div>
   </div>
 
-  <div :if={@event_issues_pending?} class="border-border bg-background rounded-lg border p-4">
+  <div :if={not @can_publish?} class="border-border bg-background rounded-lg border p-4">
     <div class="flex gap-2">
       <div class="flex grow gap-3">
         <.icon class="shrink-0 text-lg text-amber-500 ri--alert-line" />
@@ -66,7 +66,7 @@
             </p>
           </div>
           <div class="flex gap-2">
-            <.button variant={:accent} phx-target={@myself}>
+            <.button variant={:accent}>
               <.icon class="ri--rocket-fill rotate-45" />
               <span>Publish</span>
             </.button>
@@ -74,20 +74,5 @@
         </div>
       </div>
     </div>
-  </div>
-
-  <div :if={false} class="flex">
-    <h3 class="grow text-lg/8 font-medium">
-      Webhooks
-    </h3>
-    <.button
-      size={:box}
-      variant={:ghost}
-      phx-click={JS.push("manage_webhook") |> show_modal("manage-webhook")}
-      phx-target={@myself}
-    >
-      <.icon name="lucide--plus" />
-      <span>Add webhook</span>
-    </.button>
   </div>
 </div>

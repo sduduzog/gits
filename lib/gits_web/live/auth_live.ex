@@ -27,8 +27,8 @@ defmodule GitsWeb.AuthLive do
       <p class="mt-4 text-sm text-zinc-500">
         A magic link has been sent to {@request_sent}. Check your spam/junk folder, just in case.
       </p>
-      <div class="mt-4 flex size-10 items-center justify-center rounded-lg bg-zinc-100 text-zinc-500">
-        <.icon name="i-lucide-inbox" />
+      <div class="mt-4 flex size-10 items-center justify-center rounded-lg bg-zinc-50 text-zinc-500">
+        <.icon class="ri--mail-send-line" />
       </div>
     <% else %>
       <.form :let={f} for={@form} class="grid" phx-submit="submit" method="post">

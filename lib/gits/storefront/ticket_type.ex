@@ -1,7 +1,5 @@
 defmodule Gits.Storefront.TicketType do
-  alias Gits.Storefront.{Event, Order, Ticket}
-  alias Gits.Accounts
-  alias Gits.Accounts.User
+  alias Gits.Storefront.{Event, Ticket}
   alias __MODULE__.Validations.PriceValid
   alias __MODULE__.Fragments
 

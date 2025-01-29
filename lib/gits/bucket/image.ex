@@ -106,7 +106,7 @@ defmodule Gits.Bucket.Image do
           end
         end)
         |> case do
-          {:commit, url, _} -> url
+          {:commit, url} -> url
           {:ignore, url} -> url
           {:ok, url} -> url
         end

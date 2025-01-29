@@ -1,0 +1,17 @@
+<div :if={@issues_count > 0} class="col-span-full rounded-lg border border-amber-500/50 p-4">
+  <div class="flex">
+    <div class="shrink-0">
+      <.icon class="text-lg text-amber-400 ri--alert-fill" />
+    </div>
+    <div class="ml-3">
+      <h3 class="text-sm font-medium text-amber-700">
+        There are {@issues_count} issues with your event details
+      </h3>
+      <div class="mt-2 text-sm text-amber-600">
+        <ul role="list" class="list-disc space-y-1 pl-5">
+          {render_slot(@inner_block)}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

@@ -11,7 +11,7 @@
   />
 <% else %>
   <.live_component
-    :if={Enum.any?([:details, :settings], &(&1 == @live_action))}
+    :if={Enum.any?([:settings], &(&1 == @live_action))}
     id="show-event"
     event_id={if(is_nil(assigns[:event]), do: nil, else: @event.public_id)}
     module={__MODULE__.Show}
@@ -21,45 +21,12 @@
     host_state={@host.state}
     handle={@host.handle}
     payment_method_ready={@host.payment_method_ready?}
-    has_paid_tickets?={@event.has_paid_tickets?}
-    ticket_types={@event.ticket_types}
     live_action={@live_action}
   />
-  <.show_event
-    :if={false}
-    current_user={@current_user}
-    host_id={@host.id}
-    host_name={@host.name}
-    host_state={@host.state}
-    handle={@host.handle}
-    payment_method_ready?={@host.payment_method_ready?}
-    has_paid_tickets?={@event.has_paid_tickets?}
-    ticket_types={@event.ticket_types}
-    live_action={@live_action}
-    action={@live_action}
-    event_has_issues?={false}
-    paid_tickets_issue?={false}
-    tickets_flag={0}
-    current_user={@current_user}
-    event={@event}
-  >
-    <.live_component
-      :if={@live_action == :dashboard}
-      id={@event.id}
-      module={GitsWeb.HostLive.Events.Show.Dashboard}
-      current_user={@current_user}
-      event={@event}
-    />
 
-    <div :if={@live_action == :tickets} class="grid gap-4"></div>
-  </.show_event>
-
-  <div
-    :if={@live_action != :details}
-    class="grid lg:h-full grid-rows-[auto_auto_1fr] items-start gap-2 lg:overflow-auto lg:gap-6"
-  >
-    <.host_header current_user={@current_user} handle={@handle} host_name={@host_name}>
-      <.host_breadcrumb_button text="Events" href={~p"/hosts/#{@handle}/events"} />
+  <div class="grid lg:h-full grid-rows-[auto_auto_1fr] items-start gap-2 lg:overflow-auto lg:gap-6">
+    <.host_header current_user={@current_user} handle={@host.handle} host_name={@host.name}>
+      <.host_breadcrumb_button text="Events" href={~p"/hosts/#{@host.handle}/events"} />
       <span class="text-xs font-semibold text-zinc-400">/</span>
       <%= if is_nil(@event) do %>
         <.host_breadcrumb_label text="Create new" />
@@ -72,22 +39,44 @@
     <.event_content>
       <.event_sidebar
         event={@event}
-        handle={@handle}
-        event_has_issues?={@issues_count > 0}
-        paid_tickets_issue?={
-          not @host.payment_method_ready? and Enum.any?(@ticket_types, &Decimal.gt?(&1.price, 0))
-        }
+        handle={@host.handle}
+        event_has_issues?={@event_has_issues?}
+        paid_tickets_issue?={false}
         tickets_flag={Enum.count(@ticket_types)}
         action={@live_action}
       />
       <.event_main>
-        <.live_component
-          :if={@live_action == :dashboard}
-          id={@event.id}
-          module={GitsWeb.HostLive.Events.Show.Dashboard}
-          current_user={@current_user}
-          event={@event}
-        />
+        <%= if @live_action == :dashboard do %>
+          <.dashboard_overview
+            event_issues_pending?={false}
+            event_state={@event.state}
+            can_publish?={@can_publish?}
+            form={@details_form}
+            on_change="validate_details_form"
+            on_submit="submit_details_form"
+            host_state={@host.state}
+            uploads={@uploads}
+            host_id={@host.id}
+          />
+        <% end %>
+
+        <%= if @live_action == :details do %>
+          <.details_warn_invalid_event :if={@event.state == :draft} issues_count={@issues_count}>
+            <li :if={@start_date_invalid?}>Start date invalid</li>
+            <li :if={@end_date_invalid?}>End date invalid</li>
+            <li :if={@poster_invalid?}>Poster invalid</li>
+            <li :if={@venue_invalid?}>Venue invalid</li>
+          </.details_warn_invalid_event>
+          <.details_form
+            handle={@host.handle}
+            form={@details_form}
+            on_change="validate_details_form"
+            on_submit="submit_details_form"
+            host_state={@host.state}
+            uploads={@uploads}
+            host_id={@host.id}
+          />
+        <% end %>
 
         <%= if @live_action == :tickets do %>
           <.tickets_header />

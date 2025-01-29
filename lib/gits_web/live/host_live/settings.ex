@@ -73,8 +73,8 @@ defmodule GitsWeb.HostLive.Settings do
     |> noreply()
   end
 
-  def handle_event("upload", unsigned_params, socket) do
-    %{form: form} = socket.assigns
+  def handle_event("upload", _, socket) do
+    # %{form: form} = socket.assigns
 
     filename =
       consume_uploaded_entries(socket, :logo, fn %{path: path}, _entry ->

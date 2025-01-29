@@ -115,7 +115,7 @@
 
     <%= if @order_state == :processed do %>
       <div class="flex items-center gap-4">
-        <.form :let={f} phx-submit="reopen" for={@reopen_form}>
+        <.form phx-submit="reopen" for={@reopen_form}>
           <.button size={:none} class="p-2" variant={:outline}>
             <.icon name="i-lucide-chevron-left" />
           </.button>

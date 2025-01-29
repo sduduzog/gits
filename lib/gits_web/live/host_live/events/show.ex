@@ -17,7 +17,8 @@ defmodule GitsWeb.HostLive.Events.Show do
         :poster_invalid?,
         :venue_invalid?,
         :has_paid_tickets?,
-        :total_ticket_types
+        :total_ticket_types,
+        :ticket_types
       ])
       |> Ash.read_one(actor: assigns.current_user)
       |> case do
@@ -43,7 +44,6 @@ defmodule GitsWeb.HostLive.Events.Show do
       end
     end
     |> assign(:current_user, assigns.current_user)
-    |> assign(:ticket_types, assigns.ticket_types)
     |> assign(:handle, assigns.handle)
     |> assign(:host_state, assigns.host_state)
     |> assign(:host_name, assigns.host_name)

@@ -1,7 +1,5 @@
 defmodule GitsWeb.HostLive.Onboarding do
   require Ash.Query
-  alias Gits.Accounts.User
-  alias Gits.Accounts.Role
   alias Gits.Accounts.Host
   alias AshPhoenix.Form
 

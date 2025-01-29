@@ -15,7 +15,7 @@ defmodule GitsWeb.SettingsLive.Profile do
     |> ok()
   end
 
-  def handle_event("save-upload", unsigned_params, socket) do
+  def handle_event("save-upload", _, socket) do
     filename =
       consume_uploaded_entries(socket, :avatar, fn %{path: path}, _entry ->
         bucket_name = Application.get_env(:gits, :bucket_name)
