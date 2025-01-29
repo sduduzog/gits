@@ -73,8 +73,11 @@
       <.event_sidebar
         event={@event}
         handle={@handle}
-        event_has_issues?={true}
-        paid_tickets_issue?={true}
+        event_has_issues?={@issues_count > 0}
+        paid_tickets_issue?={
+          not @host.payment_method_ready? and Enum.any?(@ticket_types, &Decimal.gt?(&1.price, 0))
+        }
+        tickets_flag={Enum.count(@ticket_types)}
         action={@live_action}
       />
       <.event_main>
@@ -88,7 +91,7 @@
 
         <%= if @live_action == :tickets do %>
           <.tickets_header />
-          <.tickets_warn_payout_details />
+          <.tickets_warn_payout_details :if={not @host.payment_method_ready?} />
           <.tickets_list ticket_types={@ticket_types} />
           <.tickets_modal_manage_ticket
             form={@tickets_form}

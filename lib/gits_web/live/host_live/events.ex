@@ -35,6 +35,21 @@ defmodule GitsWeb.HostLive.Events do
         |> assign(:host_name, host.name)
         |> assign(:payment_method_ready?, host.payment_method_ready?)
         |> assign(:event, event)
+        |> assign(:start_date_invalid?, event.start_date_invalid?)
+        |> assign(:end_date_invalid?, event.end_date_invalid?)
+        |> assign(:poster_invalid?, event.poster_invalid?)
+        |> assign(:venue_invalid?, event.venue_invalid?)
+        |> assign(
+          :issues_count,
+          [
+            event.start_date_invalid?,
+            event.end_date_invalid?,
+            event.poster_invalid?,
+            event.venue_invalid?
+          ]
+          |> Enum.filter(& &1)
+          |> Enum.count()
+        )
         |> assign(:ticket_types, event.ticket_types)
         |> assign(
           :tickets_form,
