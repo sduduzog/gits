@@ -31,6 +31,9 @@ defmodule GitsWeb.HostLive.Events do
     |> case do
       {:ok, %Host{events: [event]} = host} ->
         socket
+        |> assign(:handle, host.handle)
+        |> assign(:host_name, host.name)
+        |> assign(:payment_method_ready?, host.payment_method_ready?)
         |> assign(:event, event)
         |> assign(:ticket_types, event.ticket_types)
         |> assign(
