@@ -1,14 +1,35 @@
 defmodule GitsWeb.HostLive.Settings do
+  require Ash.Query
+  alias Gits.Accounts.User
+  alias Gits.Accounts.Host
   alias AshPhoenix.Form
   alias Gits.PaystackApi
-  alias __MODULE__.{Api, Index}
+  alias __MODULE__.{Api, Billing, Index}
   use GitsWeb, :host_live_view
 
-  def mount(_params, _session, socket) do
-    socket
-    |> assign(:page_title, "Settings")
-    |> assign(:section, nil)
-    |> ok()
+  def mount(params, _session, socket) do
+    user = socket.assigns.current_user
+
+    Ash.load(
+      user,
+      [
+        hosts:
+          Ash.Query.filter(Host, handle == ^params["handle"])
+          |> Ash.Query.load([:total_events, upcoming_events: [poster: [:url]]])
+      ],
+      actor: user
+    )
+    |> case do
+      {:ok, %User{hosts: [%Host{} = host]}} ->
+        socket
+        |> GitsWeb.HostLive.assign_sidebar_items(__MODULE__, host)
+        |> assign(:page_title, "Settings")
+        |> assign(:host, host)
+        |> ok(:dashboard)
+
+      _ ->
+        socket |> ok(:not_found)
+    end
   end
 
   def handle_params(_, _, socket) do

@@ -1,12 +1,12 @@
 <%= if @live_action  == :index do %>
-  <.live_component
-    id="list-events"
-    module={__MODULE__.List}
+  <.host_header current_user={@current_user} handle={@host.handle} host_name={@host.name}>
+    <.host_breadcrumb_label text="Events" />
+  </.host_header>
+
+  <.list_events
     current_user={@current_user}
-    host_id={@host.id}
-    host_name={@host.name}
-    host_state={@host.state}
     handle={@host.handle}
+    host_name={@host.name}
     events={@events}
   />
 <% else %>
@@ -57,11 +57,20 @@
             host_state={@host.state}
             uploads={@uploads}
           />
+          <.details_modal_choose_venue
+            venues={@venues}
+            suggestions={@venue_suggestions}
+            venue={@venue}
+            form_data={@details_form.data}
+          />
         <% end %>
 
         <%= if @live_action == :tickets do %>
           <.tickets_header />
-          <.tickets_warn_payout_details :if={not @host.payment_method_ready?} />
+          <.tickets_warn_payout_details
+            :if={not @host.payment_method_ready?}
+            billing_settings_path={~p"/hosts/#{@host.handle}/settings/billing"}
+          />
           <.tickets_list ticket_types={@ticket_types} />
           <.tickets_modal_manage_ticket
             form={@tickets_form}

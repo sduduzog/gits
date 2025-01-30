@@ -28,7 +28,7 @@ defmodule Gits.Application do
       # Start to serve requests, typically the last entry
       GitsWeb.Endpoint,
       {AshAuthentication.Supervisor, otp_app: :gits},
-      {Cachex, [:cache, [hooks: [hook(module: Cachex.Limit.Evented, args: {5, []})]]]},
+      {Cachex, [:cache, [hooks: [hook(module: Cachex.Limit.Evented, args: {1000, []})]]]},
       {Oban, Application.fetch_env!(:gits, Oban)}
     ]
 

@@ -173,33 +173,6 @@
   </div>
 <% end %>
 
-<%= if @live_action == :billing do %>
-  <div class="p-2">
-    <h2 class="text-xl font-semibold">Payout Details</h2>
-    <p class="mt-1 text-sm leading-6 text-gray-600">
-      <!-- This displayed publicly. -->
-    </p>
-
-    <.form
-      :let={f}
-      for={@form}
-      class="grid gap-4 mt-8 grid-cols-2 max-w-screen-sm"
-      phx-change="validate"
-      phx-submit="submit"
-    >
-      <.input field={f[:paystack_business_name]} label="Business name" type="text" />
-      <.input field={f[:paystack_settlement_bank]} options={@banks} label="Bank" type="select" />
-      <.input field={f[:paystack_account_number]} label="Account number" type="number" />
-      <div class="flex col-span-full gap-6">
-        <.button disabled={not @form.changed? or not @form.valid?}><span>Save</span></.button>
-        <.button variant={:ghost} type="button" phx-click={JS.dispatch("gits:go_back")}>
-          <span>Back</span>
-        </.button>
-      </div>
-    </.form>
-  </div>
-<% end %>
-
 <.live_component
   :if={@live_action == :api}
   module={Api}
@@ -207,3 +180,4 @@
   current_user={@current_user}
   host={@host}
 />
+<.live_component module={Billing} id="billing" current_user={@current_user} host={@host} />

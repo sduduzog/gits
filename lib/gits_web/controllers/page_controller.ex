@@ -72,7 +72,7 @@ defmodule GitsWeb.PageController do
     |> case do
       {:ok, [%Host{handle: handle}]} ->
         conn
-        |> redirect(to: Routes.host_dashboard_path(conn, :overview, handle))
+        |> redirect(to: Routes.host_dashboard_path(conn, :home, handle))
 
       _ ->
         conn

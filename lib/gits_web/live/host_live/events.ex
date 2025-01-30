@@ -1,4 +1,6 @@
 defmodule GitsWeb.HostLive.Events do
+  alias Gits.Accounts.Venue
+  alias Gits.GooglePlaces
   alias Gits.Bucket.Image
   alias Gits.Storefront.TicketType
   alias AshPhoenix.Form
@@ -29,12 +31,17 @@ defmodule GitsWeb.HostLive.Events do
           auto_upload: true,
           progress: &handle_upload_progress/3
         )
-        |> ok(:host)
+        |> GitsWeb.HostLive.assign_sidebar_items(__MODULE__, host)
+        |> ok(:dashboard)
     end
   end
 
   def handle_params(%{"public_id" => public_id}, _, socket) do
-    socket = socket |> assign(:details_form, nil)
+    socket =
+      socket
+      |> assign(:details_form, nil)
+      |> assign(:venues, [])
+      |> assign(:venue_suggestions, [])
 
     socket =
       Ash.load(
@@ -47,7 +54,8 @@ defmodule GitsWeb.HostLive.Events do
               :end_date_invalid?,
               :poster_invalid?,
               :venue_invalid?,
-              :ticket_types
+              :ticket_types,
+              :venue
             ])
         ],
         actor: socket.assigns.current_user
@@ -68,6 +76,7 @@ defmodule GitsWeb.HostLive.Events do
           |> assign(:end_date_invalid?, event.end_date_invalid?)
           |> assign(:poster_invalid?, event.poster_invalid?)
           |> assign(:venue_invalid?, event.venue_invalid?)
+          |> assign(:venue, event.venue)
           |> assign(
             :issues_count,
             issues_count
@@ -123,6 +132,7 @@ defmodule GitsWeb.HostLive.Events do
                 :has_paid_tickets?,
                 :total_ticket_types,
                 :ticket_types,
+                :venue,
                 poster: :url
               ])
           ],
@@ -289,6 +299,80 @@ defmodule GitsWeb.HostLive.Events do
             |> noreply()
         end
     end
+  end
+
+  def handle_event("venue_search", %{"query" => query}, socket) do
+    search_term = "%#{query}%"
+
+    venues =
+      Ash.Query.filter(
+        Venue,
+        fragment("? ilike ? or ? ilike ?", name, ^search_term, address, ^search_term)
+      )
+      |> Ash.Query.limit(5)
+      |> Ash.Query.load([:host])
+      |> Ash.read()
+      |> case do
+        {:ok, venues} ->
+          venues
+
+        _ ->
+          []
+      end
+
+    GooglePlaces.get_suggestions(query, :cache)
+    |> case do
+      {:ok, suggestions} ->
+        venue = socket.assigns.venue
+
+        venue_place_id =
+          if not is_nil(venue) and not is_nil(venue),
+            do: venue.google_place_id,
+            else: nil
+
+        suggestions =
+          Enum.filter(suggestions, &(&1.id != venue_place_id))
+          |> Enum.filter(
+            &(Enum.empty?(venues) or
+                Enum.any?(venues, fn venue -> venue.google_place_id != &1.id end))
+          )
+
+        assign(socket, :venues, venues)
+        |> assign(:venue_suggestions, suggestions)
+    end
+    |> noreply()
+  end
+
+  def handle_event("pre_choose_venue", _, socket) do
+    venue =
+      Form.get_form(socket.assigns.details_form, :venue)
+      |> Map.get(:data)
+
+    venues = if is_nil(venue), do: socket.assigns.venues, else: [venue]
+
+    socket
+    |> assign(:venues, venues)
+    |> noreply()
+  end
+
+  def handle_event("choose_venue", unsigned_params, socket) do
+    venue = Enum.find(socket.assigns.venues, &(&1.id == unsigned_params["id"]))
+
+    socket
+    |> update_form_with_venue(venue)
+    |> noreply()
+  end
+
+  def handle_event("create_venue", unsigned_params, socket) do
+    Ash.Changeset.for_create(Venue, :create, %{
+      google_place_id: unsigned_params["id"],
+      host: %{id: socket.assigns.host_id}
+    })
+    |> Ash.create(actor: socket.assigns.current_user)
+    |> case do
+      {:ok, venue} -> update_form_with_venue(socket, venue)
+    end
+    |> noreply()
   end
 
   def handle_event("validate_tickets_form", unsigned_params, socket) do
@@ -470,6 +554,22 @@ defmodule GitsWeb.HostLive.Events do
       :ok -> socket |> redirect(to: ~p"/hosts/#{socket.assigns.host.handle}/events")
     end
     |> noreply()
+  end
+
+  defp update_form_with_venue(socket, venue) do
+    form =
+      if Form.has_form?(socket.assigns.details_form, [:venue]) do
+        Form.update_form(socket.assigns.details_form, [:venue], fn form ->
+          Form.set_data(form, venue)
+        end)
+      else
+        Form.add_form(socket.assigns.details_form, [:venue],
+          type: :read,
+          data: venue
+        )
+      end
+
+    assign(socket, :details_form, form)
   end
 
   def handle_info({:updated_event, event}, socket) do

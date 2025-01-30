@@ -68,7 +68,7 @@ defmodule GitsWeb.Router do
     live_session :user_required, on_mount: {GitsWeb.LiveUserAuth, :live_user_required} do
       live "/settings/profile", SettingsLive.Profile, :index
       live "/hosts/get-started", HostLive.Onboarding, :get_started
-      live "/hosts/:handle/dashboard", HostLive.Dashboard, :overview
+      live "/hosts/:handle/dashboard", HostLive.Dashboard, :home
       live "/hosts/:handle/events/published", HostLive.ListEvents, :published
       live "/hosts/:handle/events/completed", HostLive.ListEvents, :completed
       live "/hosts/:handle/events/drafts", HostLive.ListEvents, :drafts

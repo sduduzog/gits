@@ -1,11 +1,5 @@
 <.modal id="choose_venue">
-  <.form
-    :let={f}
-    for={%{}}
-    class="grid gap-4"
-    phx-change="search_address"
-    phx-submit="search_address"
-  >
+  <.form :let={f} for={%{}} class="grid gap-4" phx-change="venue_search" phx-submit="venue_search">
     <h3 class="text-xl font-medium">
       Choose venue
     </h3>
@@ -23,7 +17,7 @@
           <span class="truncate text-xs text-zinc-500 lg:text-sm">{venue.address}</span>
         </div>
         <.icon
-          :if={@form.data && @form.data.venue && @form.data.venue.id == venue.id}
+          :if={@form_data && @form_data.venue && @form_data.venue.id == venue.id}
           name="lucide--check"
           class="shrink-0"
         />
@@ -34,7 +28,6 @@
         class="flex w-full gap-1 rounded-lg p-1"
         phx-value-id={suggestion.id}
         phx-click={JS.push("create_venue") |> hide_modal("choose_venue")}
-        phx-target={@myself}
       >
         <div class="inline-flex w-full grow items-baseline gap-1 truncate text-sm/4">
           <span class="truncate text-zinc-500">{suggestion.text}</span>
@@ -44,7 +37,7 @@
 
     <.input
       type="text"
-      field={f[:address_search]}
+      field={f[:query]}
       placeholder="e.g Mea Culpa"
       label="Search for address or venue"
     />
