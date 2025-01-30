@@ -2,9 +2,9 @@
   <.host_header current_user={@current_user} handle={@host.handle} host_name={@host.name}>
     <.host_breadcrumb_label text="Home" />
   </.host_header>
-  <div class="lg:p-2 p-4 grid gap-8">
+  <div class="grid gap-8 p-4 lg:p-2">
     <div class="flex w-full">
-      <h2 class="text-4xl grow font-medium col-span-full">Hello, {@current_user.name}</h2>
+      <h2 class="col-span-full grow text-4xl font-medium">Hello, {@current_user.name}</h2>
     </div>
   </div>
 
@@ -28,33 +28,45 @@
   </div>
 
   <div class="grid gap-4 p-2 lg:grid-cols-5 lg:gap-8">
-    <div class="lg:col-span-3 grid lg:grid-cols-2 gap-4">
-      <h2 class="p-2 text-lg font-medium col-span-full">Upcoming events</h2>
+    <div class="grid gap-4 lg:col-span-3 lg:grid-cols-2">
+      <h2 class="col-span-full p-2 text-lg font-medium">Upcoming events</h2>
       <.link
         :for={event <- @host.upcoming_events}
         navigate={~p"/hosts/#{@host.handle}/events/#{event.public_id}"}
-        class="border rounded-lg p-4 grid gap-4"
+        class="grid gap-4 rounded-lg border p-4"
       >
-        <div class="aspect-[3/2] w-24 shrink-0 overflow-hidden rounded-lg bg-zinc-50">
-          <img
-            :if={event.poster}
-            src={event.poster.url}
-            alt="Event poster"
-            class="size-full object-cover"
-          />
+        <div class="flex items-start justify-between">
+          <div class="aspect-[3/2] w-24 shrink-0 overflow-hidden rounded-lg bg-zinc-50">
+            <img
+              :if={event.poster}
+              src={event.poster.url}
+              alt="Event poster"
+              class="size-full object-cover"
+            />
+          </div>
+          <span
+            :if={event.currently_happening?}
+            class="inline-flex items-center gap-x-1.5 rounded-md bg-brand-100 px-2 py-1 text-xs font-medium text-brand-700"
+          >
+            <svg class="size-1.5 animate-ping fill-brand-500" viewBox="0 0 6 6" aria-hidden="true">
+              <circle cx="3" cy="3" r="3" />
+            </svg>
+            Live
+          </span>
         </div>
         <h3 class="text-lg/5 font-semibold">
           {event.name} The Ultimate Cheese Festival
         </h3>
-        <div>
-          <div class="text-xs text-zinc-700 flex items-center gap-1">
-            <.icon name="i-lucide-calendar" />
+        <div class="flex gap-2">
+          <.icon class="text-lg text-zinc-400 ri--calendar-line" />
+          <div class="grid gap-1 text-sm text-zinc-700">
             <span>Starts: {Calendar.strftime(event.starts_at, "%a, %d %b at %I:%m %p")}</span>
+            <span>Ends: {Calendar.strftime(event.ends_at, "%a, %d %b at %I:%m %p")}</span>
           </div>
         </div>
 
         <div>
-          <div class="text-xs text-zinc-900 flex items-center gap-1">
+          <div class="flex items-center gap-1 text-xs text-zinc-900">
             <span class="text-zinc-500">
               Last updated:
             </span>

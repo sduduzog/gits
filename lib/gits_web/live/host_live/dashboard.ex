@@ -1,4 +1,5 @@
 defmodule GitsWeb.HostLive.Dashboard do
+  alias Gits.Storefront.Event
   alias Gits.Accounts.User
   alias Gits.Accounts.Host
   import GitsWeb.HostComponents
@@ -14,7 +15,12 @@ defmodule GitsWeb.HostLive.Dashboard do
       [
         hosts:
           Ash.Query.filter(Host, handle == ^handle)
-          |> Ash.Query.load([:total_events, upcoming_events: [poster: [:url]]])
+          |> Ash.Query.load([
+            :total_events,
+            upcoming_events:
+              Ash.Query.sort(Event, [:starts_at, :ends_at])
+              |> Ash.Query.load([:currently_happening?, poster: [:url]])
+          ])
       ],
       actor: user
     )

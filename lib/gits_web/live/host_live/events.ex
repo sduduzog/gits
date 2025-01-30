@@ -430,7 +430,7 @@ defmodule GitsWeb.HostLive.Events do
   def handle_event("create_venue", unsigned_params, socket) do
     Ash.Changeset.for_create(Venue, :create, %{
       google_place_id: unsigned_params["id"],
-      host: %{id: socket.assigns.host_id}
+      host: %{id: socket.assigns.host.id}
     })
     |> Ash.create(actor: socket.assigns.current_user)
     |> case do

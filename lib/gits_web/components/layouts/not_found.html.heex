@@ -5,13 +5,10 @@
     Sorry, we couldn't find the page you're looking for.
   </p>
   <div class="flex gap-2 items-center">
-    <button
-      phx-click={JS.navigate("/")}
-      class="h-9 gap-1 hover:bg-zinc-100 border rounded-lg inline-flex items-center text-zinc-950 px-4 text-sm"
-    >
-      <.icon name="i-lucide-arrow-left" />
-      <span class="font-semibold">Go to home</span>
-    </button>
+    <.button variant={:outline} href="/">
+      <.icon class="ri--home-2-line" />
+      <span>Go to home</span>
+    </.button>
   </div>
 </div>
 <.footer />

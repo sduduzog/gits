@@ -75,7 +75,7 @@ defmodule GitsWeb.Router do
       live "/hosts/:handle/events/:public_id", HostLive.Events, :dashboard
       live "/hosts/:handle/events/:public_id/details", HostLive.Events, :details
       live "/hosts/:handle/events/:public_id/tickets", HostLive.Events, :tickets
-      live "/hosts/:handle/events/:public_id/attendance", HostLive.Events, :attendance
+      live "/hosts/:handle/events/:public_id/admissions", HostLive.Events, :admissions
       live "/hosts/:handle/events/:public_id/settings", HostLive.Events, :settings
 
       live "/hosts/:handle/events/:public_id/scanner", HostLive.Scanner, :index

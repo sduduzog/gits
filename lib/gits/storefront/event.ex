@@ -113,6 +113,10 @@ defmodule Gits.Storefront.Event do
     calculate :poster_invalid?, :boolean, expr(is_nil(poster))
     calculate :venue_invalid?, :boolean, expr(is_nil(venue))
 
+    calculate :currently_happening?,
+              :boolean,
+              expr(utc_starts_at < fragment("now()") and fragment("now()") < utc_ends_at)
+
     calculate :has_paid_tickets?,
               :boolean,
               expr(count(ticket_types, query: [filter: expr(price > 0)]) > 0)

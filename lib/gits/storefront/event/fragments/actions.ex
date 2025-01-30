@@ -4,7 +4,13 @@ defmodule Gits.Storefront.Event.Fragments.Actions do
     extensions: [AshStateMachine]
 
   actions do
-    defaults [:read, :destroy, update: :*]
+    defaults [:destroy, update: :*]
+
+    read :read do
+      primary? true
+
+      prepare build(sort: [state: :desc, starts_at: :asc])
+    end
 
     read :get_by_public_id_for_listing do
       get_by [:public_id]
