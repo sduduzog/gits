@@ -32,6 +32,20 @@ defmodule GitsWeb.HostLive.Events do
           progress: &handle_upload_progress/3
         )
         |> GitsWeb.HostLive.assign_sidebar_items(__MODULE__, host)
+        |> assign_new(:venues, fn _ ->
+          Ash.Query.limit(Venue, 5)
+          |> Ash.Query.load(:host)
+          |> Ash.read()
+          |> case do
+            {:ok, venues} ->
+              venues
+
+            _ ->
+              []
+          end
+        end)
+        |> assign_new(:venue_suggestions, fn -> [] end)
+        |> assign_new(:venue, fn -> nil end)
         |> ok(:dashboard)
     end
   end
@@ -40,8 +54,6 @@ defmodule GitsWeb.HostLive.Events do
     socket =
       socket
       |> assign(:details_form, nil)
-      |> assign(:venues, [])
-      |> assign(:venue_suggestions, [])
 
     socket =
       Ash.load(
@@ -70,8 +82,9 @@ defmodule GitsWeb.HostLive.Events do
               event.venue_invalid?
             ]
             |> Enum.filter(& &1)
+            |> IO.inspect()
 
-          event_has_issues? = Enum.count(issues_count) > 0
+          event_has_issues? = event.state == :draft and Enum.count(issues_count) > 0
 
           socket
           |> assign(:start_date_invalid?, event.start_date_invalid?)
@@ -87,6 +100,7 @@ defmodule GitsWeb.HostLive.Events do
           )
           |> assign(:event_has_issues?, event_has_issues?)
           |> assign(:ticket_types, event.ticket_types)
+          |> assign(:event, event)
           |> assign(:page_title, "Events / #{event.name}")
       end
 
@@ -184,6 +198,9 @@ defmodule GitsWeb.HostLive.Events do
               |> Form.add_form([:event], type: :read, validate?: false, data: event)
             )
         end
+
+      :attendance ->
+        socket
 
       :settings ->
         Ash.load(
@@ -299,7 +316,7 @@ defmodule GitsWeb.HostLive.Events do
               ]
               |> Enum.filter(& &1)
 
-            event_has_issues? = Enum.count(issues_count) > 0
+            event_has_issues? = event.state == :draft and Enum.count(issues_count) > 0
 
             socket
             |> assign(:event, event)
@@ -329,6 +346,22 @@ defmodule GitsWeb.HostLive.Events do
             |> assign(:details_form, form)
             |> noreply()
         end
+    end
+  end
+
+  def handle_event("publish_event", _, socket) do
+    Ash.Changeset.for_update(socket.assigns.event, :publish, %{})
+    |> Ash.update(actor: socket.assigns.current_user, load: [])
+    |> case do
+      {:ok, event} ->
+        can_publish? =
+          Ash.Changeset.for_update(event, :publish)
+          |> Ash.can?(socket.assigns.current_user)
+
+        socket
+        |> assign(:event, event)
+        |> assign(:can_publish?, can_publish?)
+        |> noreply()
     end
   end
 

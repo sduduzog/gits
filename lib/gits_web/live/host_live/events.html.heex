@@ -35,11 +35,7 @@
       />
       <.event_main>
         <%= if @live_action == :dashboard do %>
-          <.dashboard_overview
-            event_state={@event.state}
-            can_publish?={@can_publish?}
-            form={@details_form}
-          />
+          <.dashboard_overview event_state={@event.state} can_publish?={@can_publish?} />
         <% end %>
 
         <%= if @live_action == :details do %>
@@ -83,6 +79,14 @@
         <% end %>
         <%= if @live_action == :settings do %>
           <.settings_content webhooks={@event.webhooks} />
+          <.button
+            :if={@event.state == :published}
+            variant={:subtle}
+            href={Routes.host_scanner_path(@socket, :index, @host_handle, @event.public_id)}
+          >
+            <.icon name="i-lucide-scan-qr-code" />
+            <span>Scan</span>
+          </.button>
         <% end %>
       </.event_main>
     </.event_content>

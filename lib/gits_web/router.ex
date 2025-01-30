@@ -69,18 +69,13 @@ defmodule GitsWeb.Router do
       live "/settings/profile", SettingsLive.Profile, :index
       live "/hosts/get-started", HostLive.Onboarding, :get_started
       live "/hosts/:handle/dashboard", HostLive.Dashboard, :home
-      live "/hosts/:handle/events/published", HostLive.ListEvents, :published
-      live "/hosts/:handle/events/completed", HostLive.ListEvents, :completed
-      live "/hosts/:handle/events/drafts", HostLive.ListEvents, :drafts
-      live "/hosts/:handle/events/archived", HostLive.ListEvents, :archived
       live "/hosts/:handle/events", HostLive.Events, :index
-      live "/hosts/:handle/events/:public_id/dashboard", HostLive.ViewEvent, :overview
-      live "/hosts/:handle/events/:public_id/attendees", HostLive.ViewEvent, :attendees
 
       live "/hosts/:handle/events/create", HostLive.Events, :details
       live "/hosts/:handle/events/:public_id", HostLive.Events, :dashboard
       live "/hosts/:handle/events/:public_id/details", HostLive.Events, :details
       live "/hosts/:handle/events/:public_id/tickets", HostLive.Events, :tickets
+      live "/hosts/:handle/events/:public_id/attendance", HostLive.Events, :attendance
       live "/hosts/:handle/events/:public_id/settings", HostLive.Events, :settings
 
       live "/hosts/:handle/events/:public_id/scanner", HostLive.Scanner, :index

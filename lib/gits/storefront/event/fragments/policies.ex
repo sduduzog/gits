@@ -92,6 +92,10 @@ defmodule Gits.Storefront.Event.Fragments.Policies do
       authorize_if expr(not venue_invalid?)
     end
 
+    policy action(:publish) do
+      authorize_if AshStateMachine.Checks.ValidNextState
+    end
+
     policy action(:create_order) do
       authorize_if always()
     end

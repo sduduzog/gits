@@ -15,7 +15,10 @@
     </div>
   </div>
 
-  <div :if={not @can_publish?} class="border-border bg-background rounded-lg border p-4">
+  <div
+    :if={@event_state == :draft and not @can_publish?}
+    class="border-border bg-background rounded-lg border p-4"
+  >
     <div class="flex gap-2">
       <div class="flex grow gap-3">
         <.icon class="shrink-0 text-lg text-amber-500 ri--alert-line" />
@@ -66,7 +69,7 @@
             </p>
           </div>
           <div class="flex gap-2">
-            <.button variant={:accent}>
+            <.button variant={:accent} phx-click={show_modal("publish_event")}>
               <.icon class="ri--rocket-fill rotate-45" />
               <span>Publish</span>
             </.button>
@@ -75,4 +78,44 @@
       </div>
     </div>
   </div>
+  <.modal id="publish_event">
+    <div :if={not @can_publish?} class="grid gap-4">
+      <div class="bg-emerald-50 rounded-full inline-flex p-4 place-self-start">
+        <.icon class="ri--rocket-line animate-pulse rotate-45 text-3xl text-emerald-600" />
+      </div>
+
+      <h3 class="text-xl font-medium">
+        Event published successfully!
+      </h3>
+
+      <p :if={false} class="text-sm text-gray-600">
+        Continue to publish this event?
+      </p>
+
+      <div :if={false} class="flex justify-end gap-4">
+        <div role="none" class="grow"></div>
+        <.button variant={:accent} phx-click="publish_event">
+          <.icon class="ri--rocket-fill rotate-45" />
+          <span class="text-sm font-semibold">Publish</span>
+        </.button>
+      </div>
+    </div>
+    <div :if={@can_publish?} class="grid gap-4">
+      <h3 class="text-xl font-medium">
+        Publish this event?
+      </h3>
+
+      <p class="text-sm text-gray-600">
+        Continue to publish this event?
+      </p>
+
+      <div class="flex justify-end gap-4">
+        <div role="none" class="grow"></div>
+        <.button variant={:accent} phx-click="publish_event">
+          <.icon class="ri--rocket-fill rotate-45" />
+          <span class="text-sm font-semibold">Publish</span>
+        </.button>
+      </div>
+    </div>
+  </.modal>
 </div>

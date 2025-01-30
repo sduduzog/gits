@@ -1,18 +1,12 @@
 <div class="lg:top-4 flex gap-2 overflow-x-auto whitespace-nowrap px-2 pb-2 lg:sticky lg:grid lg:rounded-xl lg:bg-zinc-50/70 lg:py-2">
   <%= if not is_nil(@event) do %>
-    <.link
-      patch={~p"/hosts/#{@handle}/events/#{@event.public_id}/dashboard"}
-      class="p-2 text-sm font-medium capitalize text-zinc-400 aria-selected:text-zinc-950"
-    >
-      Overview (old)
-    </.link>
-
     <.button
       :for={
         {label, action, flag} <- [
           {"Dashboard", :dashboard, nil},
           {"Details", :details, if(@event_has_issues?, do: :warn, else: nil)},
           {"Tickets", :tickets, if(@paid_tickets_issue?, do: :warn, else: @tickets_flag)},
+          {"Attendance", :attendance, nil},
           {"Settings", :settings, nil}
         ]
       }
