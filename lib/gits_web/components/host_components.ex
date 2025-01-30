@@ -15,9 +15,9 @@ defmodule GitsWeb.HostComponents do
        Enum.any?([Events], &(&1 == view)), []},
       {"Settings", "ri--settings-3-line", false, Enum.any?([Settings], &(&1 == view)),
        [
-         {"General", "", false},
-         {"Members", "", false},
-         {"Billing", "", false},
+         # {"General", "", false},
+         # {"Members", "", false},
+         # {"Billing", "", false},
          {"API", ~p"/hosts/#{host.handle}/settings/api", live_action == :api}
        ]}
     ]

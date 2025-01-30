@@ -54,53 +54,73 @@
   <.input
     field={f[:visibility]}
     label="Visibility"
-    hint="A private event is only visible to users with a URL to the event"
+    hint="A private event is only visible to users with a URL to the event. A public event is discoverable in listing and in search results"
     type="radio"
     class="col-span-full"
-    options={if(@host_state == :verified, do: [:private, :public], else: [:private])}
+    options={[:private, :public]}
   />
 
   <div class="col-span-full">
-    <h2 class="text-base/7 font-semibold text-gray-900">Listing image</h2>
+    <h2 class="text-base/7 font-semibold text-gray-900 flex gap-4">
+      Listing image
+    </h2>
     <p class="text-sm text-gray-600">
       This will appear on GiTS event listings, and as preview when the event is shared on other platforms.
     </p>
   </div>
 
-  <div class="col-span-full grid gap-4 lg:grid-cols-[theme(space.96)_1fr]">
-    <label
-      phx-drop-target={@uploads.poster.ref}
-      class="block aspect-[3/2] shrink-0 overflow-hidden rounded-lg border-2 border-dashed border-zinc-200 bg-zinc-50"
-    >
-      <.live_file_input upload={@uploads.poster} class="sr-only" />
-      <%= for entry <- @uploads.poster.entries do %>
-        <.live_img_preview entry={entry} class="size-full object-cover" alt="Poster" />
-      <% end %>
+  <.inputs_for :let={p} field={f[:poster]}>
+    <div class="col-span-full w-full grid gap-4 lg:grid-cols-[theme(space.80)_1fr]">
+      <div class="block col-span-full lg:col-span-1 aspect-[3/2] shrink-0 overflow-hidden rounded-lg border bg-zinc-50">
+        <% entry = List.first(@uploads.poster.entries) %>
 
-      <.inputs_for :let={p} field={f[:poster]}>
-        <%= if Enum.empty?(@uploads.poster.entries) do %>
-          <img
-            :if={not is_nil(p.data)}
-            src={p.data.url}
-            alt="Poster"
-            class="size-full object-cover"
-          />
+        <.live_img_preview :if={entry} entry={entry} class="size-full object-cover opacity-60" />
+
+        <img
+          :if={not is_nil(p.data)}
+          src={p.data.url}
+          alt="Poster"
+          class={[
+            "size-full object-cover",
+            if(p[:id].value != p.data.id, do: "opacity-60", else: "")
+          ]}
+        />
+      </div>
+      <div class="space-y-2">
+        <.live_file_input
+          upload={@uploads.poster}
+          class="block w-auto text-sm text-zinc-400 file:border file:border-zinc-200 file:text-zinc-400 file:font-medium file:border-solid file:px-2 file:py-1.5 file:rounded-lg file:bg-white"
+        />
+
+        <div>
+          <p class="text-sm text-zinc-600">
+            Please upload an image with the following specifications:
+          </p>
+
+          <div class="text-sm text-zinc-500">
+            <ul role="list" class="list-disc space-y-1 pl-5">
+              <li><strong>Aspect Ratio</strong>: 3:2</li>
+              <li><strong>Aspect Ratio</strong>: Maximum 2 MB</li>
+              <li><strong>Minimum Dimensions</strong>: 768 x 512 pixels</li>
+            </ul>
+          </div>
+
+          <span
+            :if={p[:id].value != p.data.id}
+            class="inline-flex mt-1 items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20"
+          >
+            Unsaved
+          </span>
+        </div>
+
+        <%= for entry <- @uploads.poster.entries do %>
+          <p :for={err <- upload_errors(@uploads.poster, entry)}>
+            <.error>{error_to_string(err)}</.error>
+          </p>
         <% end %>
-      </.inputs_for>
-    </label>
-    <div>
-      <p class="text-sm text-gray-600">
-        Please note your image must be larger than or <strong>768x512 (3:2)</strong>
-        and not above <strong>2MB</strong>
-      </p>
-
-      <%= for entry <- @uploads.poster.entries do %>
-        <p :for={err <- upload_errors(@uploads.poster, entry)}>
-          <.error>{error_to_string(err)}</.error>
-        </p>
-      <% end %>
+      </div>
     </div>
-  </div>
+  </.inputs_for>
 
   <div class="col-span-full">
     <h2 class="text-base/7 font-semibold text-gray-900">Location</h2>

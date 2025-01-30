@@ -494,7 +494,7 @@ defmodule GitsWeb.HostLive.Events do
     if entry.done? do
       [image] =
         consume_uploaded_entries(socket, :poster, fn %{path: path}, _entry ->
-          Ash.Changeset.for_create(Image, :poster, %{path: path},
+          Ash.Changeset.for_create(Image, :poster, %{path: path, host: socket.assigns.host},
             actor: socket.assigns.current_user
           )
           |> Ash.create(load: [:url])

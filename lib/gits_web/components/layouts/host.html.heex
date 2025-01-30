@@ -1,7 +1,7 @@
 <.flash_group flash={@flash} />
 
 <div class="grid h-dvh w-full gap-4 overflow-hidden lg:grid-cols-[theme(space.64)_1fr]">
-  <aside class="hiddenx absolute inset-0 z-20 w-full shrink-0 space-y-8 bg-white lg:static lg:z-0 lg:block lg:max-w-64">
+  <aside class="absolute inset-0 z-20 hidden w-full shrink-0 space-y-8 bg-white lg:static lg:z-0 lg:block lg:max-w-64">
     <div class="flex items-center px-4 py-2">
       <div class="grow lg:py-1">
         <div class="">
@@ -12,63 +12,6 @@
       <.button phx-click={JS.hide(to: "aside")} size={:box} variant={:ghost} class="lg:hidden">
         <.icon name="lucide--x" />
       </.button>
-    </div>
-    <div :if={false} class="grid gap-2">
-      <div
-        :for={
-          {label, icon, href, current, children} <-
-            GitsWeb.HostComponents.host_navigation_items(@host, @socket.view, @live_action)
-        }
-        class="flex flex-wrap gap-y-2"
-      >
-        <.link
-          navigate={href}
-          aria-selected={"#{current}"}
-          class={[
-            "peer flex text-zinc-400 grow font-medium gap-3 peer/link rounded-l-lg px-2 py-3 hover:text-zinc-900 lg:py-2 ml-0.5 aria-selected:text-zinc-900",
-            if(children == [], do: "lg:rounded-r-lg", else: "")
-          ]}
-        >
-          <.icon name={icon} />
-          <span>{label}</span>
-        </.link>
-
-        <span class="order-first w-1 rounded-r-lg peer-hover/link:bg-zinc-100 peer-aria-selected/link:bg-zinc-600">
-        </span>
-
-        <%= if children != [] do %>
-          <input
-            type="checkbox"
-            checked={current}
-            class="peer/input sr-only"
-            id={"toggle-#{label}"}
-          />
-          <label
-            class="inline-flex cursor-pointer p-3.5 hover:text-zinc-900 peer-checked/input:hidden peer-hover/link:text-zinc-900 lg:rounded-r-lg lg:p-2.5"
-            for={"toggle-#{label}"}
-          >
-            <.icon name="lucide--chevron-right" class="text-sm/4" />
-          </label>
-          <label
-            class="hidden cursor-pointer p-3.5 hover:text-zinc-900 peer-checked/input:inline-flex peer-hover/link:text-zinc-900 lg:rounded-r-lg lg:p-2.5"
-            for={"toggle-#{label}"}
-          >
-            <.icon name="lucide--chevron-down" class="text-sm/4" />
-          </label>
-        <% end %>
-        <div
-          :for={{label, href, current} <- children}
-          class="hidden w-full pl-4 peer-checked/input:grid"
-        >
-          <.link
-            navigate={href}
-            aria-selected={"#{current}"}
-            class="inline-flex w-full rounded-l-lg px-2 py-3 pl-7 font-medium text-zinc-400 hover:text-zinc-900 aria-selected:text-zinc-900 lg:rounded-r-lg lg:py-2"
-          >
-            <span class="pl-0.5">{label}</span>
-          </.link>
-        </div>
-      </div>
     </div>
     <div class="grid p-2 text-sm font-medium text-zinc-400">
       <%= for {label, icon, href, current, children} <- GitsWeb.HostComponents.host_navigation_items(@host, @socket.view, @live_action) do %>
@@ -81,11 +24,20 @@
             <.icon class={"#{icon} shrink-0"} /> <span>{label}</span>
           </.link>
         <% else %>
-          <div class="flex items-center gap-2 rounded-lg p-2 hover:bg-zinc-50/50">
+          <input
+            type="checkbox"
+            checked={current}
+            class="peer/input sr-only"
+            id={"toggle-#{label}"}
+          />
+          <label
+            for={"toggle-#{label}"}
+            class="group flex items-center gap-2 rounded-lg p-2 hover:bg-zinc-50/50"
+          >
             <.icon class={icon} /> <span class="grow">{label}</span>
-            <.icon class="shrink-0 ri--arrow-right-s-line" />
-          </div>
-          <div class="ml-4 grid px-1.5 border-l">
+            <.icon class="shrink-0 transition-transform ri--arrow-right-s-line peer-checked/input:group-[]:rotate-90" />
+          </label>
+          <div class="ml-4 hidden border-l px-1.5 transition-all peer-checked/input:grid">
             <.link
               :for={{label, href, current} <- children}
               patch={href}

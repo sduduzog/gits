@@ -20,6 +20,7 @@ defmodule Gits.Bucket.Image do
 
     create :poster do
       argument :path, :string, allow_nil?: false
+      argument :host, :map
 
       change fn changeset, _ ->
         Ash.Changeset.before_action(changeset, fn changeset ->
@@ -47,6 +48,8 @@ defmodule Gits.Bucket.Image do
           end
         end)
       end
+
+      change manage_relationship(:host, type: :append)
     end
   end
 
