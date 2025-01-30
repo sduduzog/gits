@@ -27,7 +27,9 @@
         event={@event}
         handle={@host.handle}
         event_has_issues?={@event_has_issues?}
-        paid_tickets_issue?={false}
+        paid_tickets_issue?={
+          not @host.payment_method_ready? and Enum.any?(@ticket_types, &Decimal.gt?(&1.price, 0))
+        }
         tickets_flag={Enum.count(@ticket_types)}
         action={@live_action}
       />

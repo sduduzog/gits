@@ -107,9 +107,28 @@ const HostDraggableTicketContainer = {
   },
 };
 
+const AutoClearFlash = {
+  mounted() {
+    const ignoredIDs = ["client-error", "server-error"];
+    if (ignoredIDs.includes(this.el.id)) return;
+
+    const hideElementAfter = 5000; // ms
+    const clearFlashAfter = hideElementAfter + 500; // ms
+
+    setTimeout(() => {
+      this.el.style.opacity = 0;
+    }, hideElementAfter);
+
+    setTimeout(() => {
+      this.pushEvent("lv:clear-flash");
+    }, clearFlashAfter);
+  },
+};
+
 export const Hooks = {
   QrScanner,
   QrScannerCameraList,
   Turnstile: TurnstileHook,
   HostDraggableTicketContainer,
+  AutoClearFlash,
 };

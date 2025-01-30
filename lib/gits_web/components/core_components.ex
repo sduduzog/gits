@@ -364,8 +364,9 @@ defmodule GitsWeb.CoreComponents do
       :if={msg = render_slot(@inner_block) || Phoenix.Flash.get(@flash, @kind)}
       id={@id}
       phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")}
+      phx-hook="AutoClearFlash"
       class={[
-        "fixed top-2 right-4 z-50",
+        "fixed top-2 right-4 z-50 w-full max-w-96",
         "bg-white rounded-lg border border-border bg-background p-4 shadow-lg shadow-black/5"
       ]}
       role="alert"

@@ -62,12 +62,14 @@ defmodule GitsWeb.HostLive.Events do
       )
       |> case do
         {:ok, %{events: [event]}} ->
-          issues_count = [
-            event.start_date_invalid?,
-            event.end_date_invalid?,
-            event.poster_invalid?,
-            event.venue_invalid?
-          ]
+          issues_count =
+            [
+              event.start_date_invalid?,
+              event.end_date_invalid?,
+              event.poster_invalid?,
+              event.venue_invalid?
+            ]
+            |> Enum.filter(& &1)
 
           event_has_issues? = Enum.count(issues_count) > 0
 
@@ -276,14 +278,43 @@ defmodule GitsWeb.HostLive.Events do
       :update ->
         Form.submit(socket.assigns.details_form,
           params: unsigned_params["form"],
-          action_opts: [load: [poster: [:url]]]
+          action_opts: [
+            load: [
+              :start_date_invalid?,
+              :end_date_invalid?,
+              :poster_invalid?,
+              :venue_invalid?,
+              poster: [:url]
+            ]
+          ]
         )
         |> case do
           {:ok, event} ->
-            send(self(), {:updated_event, event})
+            issues_count =
+              [
+                event.start_date_invalid?,
+                event.end_date_invalid?,
+                event.poster_invalid?,
+                event.venue_invalid?
+              ]
+              |> Enum.filter(& &1)
+
+            event_has_issues? = Enum.count(issues_count) > 0
 
             socket
             |> assign(:event, event)
+            |> assign(:start_date_invalid?, event.start_date_invalid?)
+            |> assign(:end_date_invalid?, event.end_date_invalid?)
+            |> assign(:poster_invalid?, event.poster_invalid?)
+            |> assign(:venue_invalid?, event.venue_invalid?)
+            |> assign(:venue, event.venue)
+            |> assign(
+              :issues_count,
+              issues_count
+              |> Enum.filter(& &1)
+              |> Enum.count()
+            )
+            |> assign(:event_has_issues?, event_has_issues?)
             |> assign(
               :details_form,
               Form.for_update(event, :details,
