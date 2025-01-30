@@ -53,6 +53,10 @@ defmodule Gits.Accounts.Host do
       change set_attribute(:handle, &Nanoid.generate/0)
     end
 
+    update :details do
+      accept [:name]
+    end
+
     update :verify do
       change transition_state(:verified)
       change atomic_update(:verified_at, expr(fragment("now()")))
@@ -135,6 +139,10 @@ defmodule Gits.Accounts.Host do
 
     policy action(:verify) do
       authorize_if actor_present()
+    end
+
+    policy action(:details) do
+      authorize_if expr(roles.type in [:owner] and roles.user.id == ^actor(:id))
     end
   end
 

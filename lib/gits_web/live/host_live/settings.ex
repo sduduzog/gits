@@ -4,7 +4,10 @@ defmodule GitsWeb.HostLive.Settings do
   alias Gits.Accounts.Host
   alias AshPhoenix.Form
   alias Gits.PaystackApi
-  alias __MODULE__.{Api, Billing, Index}
+  alias __MODULE__.{Api, Billing, General, Index}
+
+  import GitsWeb.HostComponents
+
   use GitsWeb, :host_live_view
 
   def mount(params, _session, socket) do

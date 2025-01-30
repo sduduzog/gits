@@ -17,7 +17,7 @@
       <%= for {label, icon, href, current, children, flag} <- @sidebar_items do %>
         <%= if children == [] do %>
           <.link
-            patch={href}
+            navigate={href}
             aria-selected={"#{current}"}
             class="flex items-center gap-2 rounded-lg p-2 hover:bg-zinc-50/50 aria-selected:text-zinc-800"
           >
@@ -44,12 +44,12 @@
             <.icon class={icon} /> <span class="grow">{label}</span>
             <.icon class="shrink-0 transition-transform ri--arrow-right-s-line peer-checked/input:group-[]:rotate-90" />
           </label>
-          <div class="ml-4 hidden border-l pl-1.5 transition-all peer-checked/input:grid">
+          <div class="ml-4 hidden border-l pl-1.5 transition-all border-zinc-200 peer-checked/input:grid">
             <.link
               :for={{label, href, current, flag} <- children}
-              patch={href}
+              navigate={href}
               aria-selected={"#{current}"}
-              class="rounded-lg p-2 hover:bg-zinc-50/50 aria-selected:text-zinc-800 flex"
+              class="flex rounded-lg p-2 hover:bg-zinc-50/50 aria-selected:text-zinc-800"
             >
               <span class="grow">{label}</span>
               <span

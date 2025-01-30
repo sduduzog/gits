@@ -1,0 +1,13 @@
+<.flash_group flash={@flash} />
+<div class="grid items-start max-w-screen-xl mx-auto grid-rows-[auto_1fr] gap-8 bg-white px-2 pt-12 pb-20">
+  <header class="flex items-center w-full divide-x">
+    <div class="flex pr-2">
+      <.button size={:none} phx-click="close" variant={:outline} class="lg:p-2 p-3">
+        <.icon class="ri--close-large-line" />
+      </.button>
+    </div>
+  </header>
+  <main class="bg-white lg:gap-8 gap-6 w-full grid max-w-screen-sm">
+    {@inner_content}
+  </main>
+</div>

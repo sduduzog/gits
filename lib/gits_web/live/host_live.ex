@@ -14,6 +14,8 @@ defmodule GitsWeb.HostLive do
        module == Events, [], nil},
       {"Settings", "ri--settings-3-line", false, module == Settings,
        [
+         {"General", Routes.host_settings_path(socket, :general, host.handle), action == :general,
+          nil},
          {"Billing & Payouts", Routes.host_settings_path(socket, :billing, host.handle),
           action == :billing, nil}
        ], nil}

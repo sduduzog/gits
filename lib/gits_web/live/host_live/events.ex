@@ -10,9 +10,7 @@ defmodule GitsWeb.HostLive.Events do
   use GitsWeb, :live_view
   import GitsWeb.HostComponents
 
-  embed_templates "events/layout*"
   embed_templates "events_templates/*"
-  embed_templates "events/show_event*"
 
   def mount(params, _, socket) do
     Ash.Query.filter(Host, handle == ^params["handle"])

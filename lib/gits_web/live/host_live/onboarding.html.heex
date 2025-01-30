@@ -1,39 +1,9 @@
-<div class="w-full max-w-screen-sm">
-  <h1 class="text-2xl font-semibold">Create a host account</h1>
+<div class="">
+  <h2 class="col-span-full grow text-4xl font-medium">Become a host. Create your account</h2>
   <p class="mt-4 text-zinc-500">
     A host account will make it easy to manage events, venues and everything else to make you a successful host
   </p>
   <.form :let={f} id="host-form" for={@form} phx-submit="save" phx-change="validate">
-    <div class="mt-8 grid grid-cols-[auto_1fr] items-center gap-1 gap-x-4">
-      <span class="col-span-full w-full text-sm font-medium">Upload your logo</span>
-      <div class="size-24 overflow-hidden rounded-xl bg-zinc-200">
-        <%= if Enum.any?(@uploads.logo.entries) do %>
-          <.live_img_preview
-            entry={@uploads.logo.entries |> List.first()}
-            class="h-full w-full object-cover opacity-50"
-          />
-        <% else %>
-          <img src="/images/placeholder.png" alt="" class="h-full w-full object-cover" />
-        <% end %>
-      </div>
-      <div class="inline-grid gap-4">
-        <label class="inline-flex">
-          <span class="sr-only">Choose logo</span>
-
-          <.live_file_input
-            upload={@uploads.logo}
-            class="w-full text-sm font-medium file:mr-4 file:h-9 file:rounded-lg file:border file:border-solid file:border-zinc-300 file:bg-white file:px-4 file:py-2 hover:file:bg-zinc-50"
-          />
-        </label>
-        <span class="text-sm text-zinc-500">
-          .png, .jpeg, .gif files up to 2MB. Recommended size is 256x256
-        </span>
-      </div>
-      <p :for={err <- upload_errors(@uploads.logo)} class="alert alert-danger">
-        {error_to_string(err)}
-      </p>
-    </div>
-
     <.input field={f[:name]} label="Host name" class="col-span-full mt-8" />
 
     <.inputs_for :let={o} field={f[:owner]}>

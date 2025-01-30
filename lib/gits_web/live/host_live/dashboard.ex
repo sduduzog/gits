@@ -28,7 +28,7 @@ defmodule GitsWeb.HostLive.Dashboard do
       {:ok, %User{hosts: [%Host{} = host]}} ->
         socket
         |> GitsWeb.HostLive.assign_sidebar_items(__MODULE__, host)
-        |> assign(:page_title, "Dashboard")
+        |> assign(:page_title, "Home")
         |> assign(:host, host)
         |> ok(:dashboard)
 

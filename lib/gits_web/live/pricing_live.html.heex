@@ -55,7 +55,7 @@
             }
             class="flex items-start gap-x-3"
           >
-            <.icon name="i-lucide-check" class="mt-0.5 shrink-0 text-lg text-brand-600" />
+            <.icon class="mt-0.5 shrink-0 text-lg text-brand-600 ri--check-line" />
             <span>
               {i}
             </span>
@@ -97,7 +97,7 @@
             }
             class="flex items-start gap-x-3"
           >
-            <.icon name="i-lucide-check" class="mt-0.5 text-lg text-brand-600" />
+            <.icon class="mt-0.5 text-lg text-brand-600 ri--check-line" />
             <span>
               {i}
             </span>
@@ -138,13 +138,51 @@
             }
             class="flex items-start gap-x-3"
           >
-            <.icon name="i-lucide-check" class="mt-0.5 text-lg text-brand-600" />
+            <.icon class="mt-0.5 text-lg text-brand-600 ri--check-line" />
             <span>
               {i}
             </span>
           </li>
         </ul>
       </div>
+    </div>
+  </div>
+</div>
+
+<div class="mx-auto max-w-screen-xl grid space-y-40 p-8">
+  {live_render(@socket, GitsWeb.DemoPricingCalculator, id: "demo_calculator")}
+
+  <dl class="grid max-w-2xl grid-cols-1 gap-8 text-base leading-7 sm:grid-cols-2 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+    <div>
+      <dt class="text-gray-900x font-semibold text-brand-800">Exceptional customer service</dt>
+      <dd class="mt-1 text-gray-600">
+        We’ll handle ticketing, fan queries, and refunds so you can concentrate on making your event incredible.
+      </dd>
+    </div>
+
+    <div>
+      <dt class="text-gray-900x font-semibold text-brand-800">Complete event control</dt>
+      <dd class="mt-1 text-gray-600">
+        From hosting a club night to putting on a gig, it’s easy to manage events with our cutting edge tools.
+      </dd>
+    </div>
+
+    <div>
+      <dt class="text-gray-900x font-semibold text-brand-800">Built for fans</dt>
+      <dd class="mt-1 text-gray-600">
+        From personalised recommendations to refunds, GiTS has the smoothest ticketing experience on the market.
+      </dd>
+    </div>
+  </dl>
+
+  <div class="grid w-full gap-y-6 lg:flex lg:items-center lg:justify-between">
+    <h2 class="w-full text-3xl font-bold tracking-tight text-brand-950 sm:text-4xl">
+      Ready to dive in?<br /><span class="text-brand-600">Start your journey with us today.</span>
+    </h2>
+    <div class="flex items-center gap-x-6 lg:shrink-0">
+      <.button variant={:accent} size={:md} href={~p"/hosts/get-started"}>
+        <span>Get Started</span>
+      </.button>
     </div>
   </div>
 </div>
