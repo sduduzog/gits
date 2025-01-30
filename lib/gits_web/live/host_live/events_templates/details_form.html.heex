@@ -17,7 +17,14 @@
 
   <.input type="text" class="col-span-full" label="Name" field={f[:name]} />
 
-  <.input type="textarea" class="col-span-full" label="Summary" field={f[:summary]} rows="8" />
+  <.input
+    :if={false}
+    type="textarea"
+    class="col-span-full"
+    label="Summary"
+    field={f[:summary]}
+    rows="8"
+  />
 
   <.input
     field={f[:starts_at]}

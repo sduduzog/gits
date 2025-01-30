@@ -1,9 +1,9 @@
-defmodule Gits.Accounts.WebhookEvent do
-  alias Gits.Accounts
-  alias Gits.Accounts.{Webhook}
+defmodule Gits.Storefront.WebhookEvent do
+  alias Gits.Storefront
+  alias Gits.Storefront.{Webhook}
 
   use Ash.Resource,
-    domain: Accounts,
+    domain: Storefront,
     data_layer: AshPostgres.DataLayer,
     authorizers: Ash.Policy.Authorizer,
     extensions: [AshArchival.Resource]

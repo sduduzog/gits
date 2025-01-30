@@ -2,7 +2,7 @@ defmodule Gits.Storefront.Event do
   require Decimal
   alias Gits.Bucket
   alias Gits.Accounts.{Host, Venue}
-  alias Gits.Storefront.{EventCategory, Interaction, Order, Ticket, TicketType}
+  alias Gits.Storefront.{EventCategory, Interaction, Order, Ticket, TicketType, Webhook}
 
   alias __MODULE__.Notifiers.{EventUpdated}
   alias __MODULE__.Fragments
@@ -89,6 +89,8 @@ defmodule Gits.Storefront.Event do
 
     has_many :orders, Order
     has_many :interactions, Interaction
+
+    has_many :webhooks, Webhook
 
     has_one :poster, Bucket.Image do
       domain Bucket

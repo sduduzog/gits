@@ -33,102 +33,6 @@ defmodule GitsWeb.HostLive.Events do
     end
   end
 
-  # def mount(%{"public_id" => public_id, "handle" => handle}, _session, socket) do
-  #   Ash.Query.filter(Host, handle == ^handle)
-  #   |> Ash.Query.load([
-  #     :payment_method_ready?,
-  #     events:
-  #       Ash.Query.filter(Event, public_id == ^public_id)
-  #       |> Ash.Query.load([
-  #         :start_date_invalid?,
-  #         :end_date_invalid?,
-  #         :poster_invalid?,
-  #         :venue_invalid?,
-  #         :has_paid_tickets?,
-  #         :total_ticket_types,
-  #         :ticket_types
-  #       ])
-  #   ])
-  #   |> Ash.read_one(actor: socket.assigns.current_user)
-  #   |> case do
-  #     {:ok, %Host{events: [event]} = host} ->
-  #       IO.inspect(event)
-  #
-  #       socket
-  #       |> assign(:host_name, host.name)
-  #       |> assign(:payment_method_ready?, host.payment_method_ready?)
-  #       |> assign(:event, event)
-  #       |> assign(:start_date_invalid?, event.start_date_invalid?)
-  #       |> assign(:end_date_invalid?, event.end_date_invalid?)
-  #       |> assign(:poster_invalid?, event.poster_invalid?)
-  #       |> assign(:venue_invalid?, event.venue_invalid?)
-  #       |> assign(
-  #         :issues_count,
-  #         [
-  #           event.start_date_invalid?,
-  #           event.end_date_invalid?,
-  #           event.poster_invalid?,
-  #           event.venue_invalid?
-  #         ]
-  #         |> Enum.filter(& &1)
-  #         |> Enum.count()
-  #       )
-  #       |> assign(:ticket_types, event.ticket_types)
-  #       |> assign(
-  #         :tickets_form,
-  #         Form.for_create(TicketType, :create,
-  #           actor: socket.assigns.current_user,
-  #           forms: [auto?: true]
-  #         )
-  #         |> Form.add_form([:event], type: :read, validate?: false, data: event)
-  #       )
-  #       |> assign(:host, host)
-  #       |> ok(:host)
-  #   end
-  # end
-  #
-  # def mount(%{"handle" => handle}, _session, socket) do
-  #   socket =
-  #     case socket.assigns.live_action do
-  #       :details ->
-  #         socket
-  #         |> assign(:details_submit_action, "do_stuff")
-  #         |> assign(
-  #           :details_form,
-  #           Form.for_create(Event, :create,
-  #             forms: [auto?: true],
-  #             actor: socket.assigns.current_user
-  #           )
-  #           |> Form.add_form([:host], type: :read, validate?: false)
-  #         )
-  #         |> assign(:uploaded_files, [])
-  #         |> assign(:poster, nil)
-  #         |> allow_upload(:poster,
-  #           accept: ~w(.jpg .jpeg .png .webp),
-  #           max_entries: 1,
-  #           max_file_size: 1_048_576 * 2,
-  #           auto_upload: true,
-  #           progress: &handle_upload_progress/3
-  #         )
-  #     end
-  #
-  #   Ash.Query.filter(Host, handle == ^handle)
-  #   |> Ash.Query.load(
-  #     events:
-  #       Ash.Query.sort(Event, state: :desc, starts_at: :asc)
-  #       |> Ash.Query.load([:name])
-  #   )
-  #   |> Ash.read_one(actor: socket.assigns.current_user)
-  #   |> case do
-  #     {:ok, %Host{events: events} = host} ->
-  #       socket
-  #       |> assign(:handle, host.handle)
-  #       |> assign(:events, events)
-  #       |> assign(:page_title, "Events")
-  #       |> ok(:host)
-  #   end
-  # end
-
   def handle_params(%{"public_id" => public_id}, _, socket) do
     socket = socket |> assign(:details_form, nil)
 
@@ -205,7 +109,6 @@ defmodule GitsWeb.HostLive.Events do
             |> assign(:can_publish?, can_publish?)
         end
 
-      # not @host.payment_method_ready? and Enum.any?(@ticket_types, &Decimal.gt?(&1.price, 0))
       :details ->
         Ash.load(
           socket.assigns.host,
@@ -219,7 +122,8 @@ defmodule GitsWeb.HostLive.Events do
                 :venue_invalid?,
                 :has_paid_tickets?,
                 :total_ticket_types,
-                :ticket_types
+                :ticket_types,
+                poster: :url
               ])
           ],
           actor: socket.assigns.current_user
@@ -268,6 +172,29 @@ defmodule GitsWeb.HostLive.Events do
               |> Form.add_form([:event], type: :read, validate?: false, data: event)
             )
         end
+
+      :settings ->
+        Ash.load(
+          socket.assigns.host,
+          [
+            events:
+              Ash.Query.filter(Event, public_id == ^public_id) |> Ash.Query.load([:webhooks])
+          ],
+          actor: socket.assigns.current_user
+        )
+        |> case do
+          {:ok, %{events: [event]}} ->
+            socket
+            |> assign(:event, event)
+            |> assign(
+              :tickets_form,
+              Form.for_create(TicketType, :create,
+                actor: socket.assigns.current_user,
+                forms: [auto?: true]
+              )
+              |> Form.add_form([:event], type: :read, validate?: false, data: event)
+            )
+        end
     end
     |> noreply()
   end
@@ -277,6 +204,8 @@ defmodule GitsWeb.HostLive.Events do
       socket
       |> assign(:details_submit_action, "create")
       |> assign(:events, [])
+      |> assign(:event_has_issues?, false)
+      |> assign(:ticket_types, [])
       |> assign(:page_title, "Events")
 
     case socket.assigns.live_action do
@@ -470,6 +399,75 @@ defmodule GitsWeb.HostLive.Events do
             &if(&1.id == id, do: [], else: [&1])
           )
         )
+    end
+    |> noreply()
+  end
+
+  def handle_event("delete_webhook", %{"id" => id}, socket) do
+    webhook =
+      socket.assigns.webhooks
+      |> Enum.find(&(&1.id == id))
+
+    Ash.Changeset.for_destroy(webhook, :destroy)
+    |> Ash.destroy(actor: socket.assigns.current_user)
+    |> case do
+      :ok ->
+        socket
+        |> assign(:webhooks, Enum.filter(socket.assigns.webhooks, &(&1.id != webhook.id)))
+        |> noreply()
+    end
+  end
+
+  def handle_event("manage_webhook", %{"id" => id}, socket) do
+    webhook =
+      socket.assigns.webhooks
+      |> Enum.find(&(&1.id == id))
+
+    socket
+    |> assign(
+      :form,
+      Form.for_update(webhook, :update, actor: socket.assigns.current_user)
+    )
+    |> noreply()
+  end
+
+  def handle_event("manage_webhook", _, socket) do
+    socket
+    |> assign(
+      :form,
+      Form.for_create(Webhook, :create, actor: socket.assigns.current_user, forms: [auto?: true])
+      |> Form.add_form(:event, type: :read, validate?: false)
+    )
+    |> noreply()
+  end
+
+  def handle_event("validate_webhook", unsigned_params, socket) do
+    socket
+    |> assign(:form, Form.validate(socket.assigns.form, unsigned_params["form"]))
+    |> noreply()
+  end
+
+  def handle_event("submit_webhook", unsigned_params, socket) do
+    Form.submit(socket.assigns.form, params: unsigned_params["form"])
+    |> case do
+      {:ok, webhook} ->
+        socket
+        |> assign(:webhooks, [webhook] ++ socket.assigns.webhooks)
+        |> assign(:form, Form.for_update(webhook, :update, actor: socket.assigns.current_user))
+        |> noreply()
+
+      {:error, form} ->
+        socket
+        |> assign(:form, form)
+        |> noreply()
+    end
+  end
+
+  def handle_event("archive_event", _, socket) do
+    Ash.Changeset.for_destroy(socket.assigns.event, :destroy)
+    |> Ash.destroy(actor: socket.assigns.current_user)
+    |> case do
+      :ok -> socket |> redirect(to: ~p"/hosts/#{socket.assigns.host.handle}/events")
     end
     |> noreply()
   end

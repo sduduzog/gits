@@ -1,11 +1,9 @@
-defmodule Gits.Accounts.Webhook do
-  alias Gits.Accounts
-  alias Gits.Accounts.{Host, WebhookEvent}
+defmodule Gits.Storefront.Webhook do
   alias Gits.Storefront
-  alias Gits.Storefront.{Event}
+  alias Gits.Storefront.{Event, WebhookEvent}
 
   use Ash.Resource,
-    domain: Accounts,
+    domain: Storefront,
     data_layer: AshPostgres.DataLayer,
     authorizers: Ash.Policy.Authorizer,
     extensions: [AshArchival.Resource, AshPaperTrail.Resource]
@@ -67,8 +65,6 @@ defmodule Gits.Accounts.Webhook do
   end
 
   relationships do
-    belongs_to :host, Host
-
     belongs_to :event, Event do
       domain Storefront
     end

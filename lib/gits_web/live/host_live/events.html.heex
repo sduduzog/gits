@@ -11,7 +11,7 @@
   />
 <% else %>
   <.live_component
-    :if={Enum.any?([:settings], &(&1 == @live_action))}
+    :if={Enum.any?([], &(&1 == @live_action))}
     id="show-event"
     event_id={if(is_nil(assigns[:event]), do: nil, else: @event.public_id)}
     module={__MODULE__.Show}
@@ -61,7 +61,10 @@
         <% end %>
 
         <%= if @live_action == :details do %>
-          <.details_warn_invalid_event :if={@event.state == :draft} issues_count={@issues_count}>
+          <.details_warn_invalid_event
+            :if={not is_nil(@event) and @event.state == :draft and false}
+            issues_count={@issues_count}
+          >
             <li :if={@start_date_invalid?}>Start date invalid</li>
             <li :if={@end_date_invalid?}>End date invalid</li>
             <li :if={@poster_invalid?}>Poster invalid</li>
@@ -88,6 +91,9 @@
             on_change="validate_tickets_form"
             on_submit="submit_tickets_form"
           />
+        <% end %>
+        <%= if @live_action == :settings do %>
+          <.settings_content webhooks={@event.webhooks} />
         <% end %>
       </.event_main>
     </.event_content>

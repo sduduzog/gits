@@ -7,7 +7,9 @@ defmodule Gits.Storefront do
     Order,
     OrderFeesSplit,
     Ticket,
-    TicketType
+    TicketType,
+    Webhook,
+    WebhookEvent
   }
 
   resources do
@@ -21,5 +23,8 @@ defmodule Gits.Storefront do
     resource Ticket.Version
     resource TicketType
     resource TicketType.Version
+    resource Webhook
+    resource Webhook.Version
+    resource WebhookEvent
   end
 end
