@@ -454,7 +454,7 @@ defmodule GitsWeb.CoreComponents do
       assigns
       |> Map.get(:rest)
       |> Map.keys()
-      |> Enum.any?(&Enum.member?([:href], &1))
+      |> Enum.any?(&Enum.member?([:href, :navigate, :patch], &1))
 
     size_classes =
       case assigns.size do
