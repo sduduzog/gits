@@ -22,7 +22,7 @@ defmodule GitsWeb.PageController do
         poster: [:url]
       ])
       |> Ash.Query.sort([{Ash.Sort.expr_sort(interactions.created_at), :desc}])
-      |> Ash.Query.limit(4)
+      |> Ash.Query.limit(3)
       |> Ash.read()
       |> case do
         {:ok, events} -> events
