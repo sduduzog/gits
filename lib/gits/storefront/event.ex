@@ -117,6 +117,8 @@ defmodule Gits.Storefront.Event do
               :boolean,
               expr(utc_starts_at < fragment("now()") and fragment("now()") < utc_ends_at)
 
+    calculate :has_tickets?, :boolean, expr(exists(ticket_types, true))
+
     calculate :has_paid_tickets?,
               :boolean,
               expr(count(ticket_types, query: [filter: expr(price > 0)]) > 0)

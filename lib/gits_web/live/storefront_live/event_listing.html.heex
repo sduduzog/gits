@@ -1,11 +1,11 @@
-<div class="mx-auto grid max-w-screen-xl items-start gap-4 gap-x-12 lg:grid-cols-[minmax(auto,48rem)_1fr] lg:gap-6 lg:pb-6">
+<div class="mx-auto lg:px-2 grid max-w-screen-xl items-start gap-4 gap-x-12 lg:grid-cols-[minmax(auto,48rem)_1fr] lg:gap-6 lg:pb-6">
   <div class="space-y-4 lg:row-span-3">
     <div class="aspect-[3/2] overflow-hidden bg-zinc-50 lg:rounded-2xl">
       <img :if={@event.poster} src={@event.poster.url} alt={@event.name} class="size-full" />
     </div>
   </div>
 
-  <div class="space-y-6 px-2">
+  <div class="space-y-4 px-2">
     <h1 class="text-2xl font-bold lg:text-3xl">{@event.name}</h1>
     <div class="flex flex-wrap gap-2">
       <span
@@ -31,15 +31,16 @@
       </span>
     </div>
 
-    <div class="grid gap-4">
+    <div class="grid gap-3">
       <div class="flex items-start gap-3">
         <.icon class="shrink-0 text-lg text-zinc-500 ri--calendar-line" />
-        <div class="grid text-sm text-zinc-700">
+        <div class="flex gap-2 text-sm text-zinc-700">
           <span class="">
-            Starts {Calendar.strftime(@event.starts_at, " %H:%M, %A %d %b %Y")}
+            {Calendar.strftime(@event.starts_at, "%a, %d %b, %I:%m %p")}
           </span>
+          &dash;
           <span class="">
-            Ends {Calendar.strftime(@event.ends_at, "%H:%M, %d %b %Y")}
+            {Calendar.strftime(@event.ends_at, "%a, %d %b, %I:%m %p")}
           </span>
         </div>
       </div>
@@ -94,7 +95,7 @@
     </.inputs_for>
     <Gits.Turnstile.widget events={[:success]} appearance="interaction-only" />
 
-    <.button variant={:accent} disabled={not @verified?}>
+    <.button variant={:solid} disabled={not @verified? or not @event.has_tickets?}>
       <span>Get tickets</span>
     </.button>
   </.form>

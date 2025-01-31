@@ -97,7 +97,7 @@ defmodule Gits.Storefront.Event.Fragments.Policies do
     end
 
     policy action(:create_order) do
-      authorize_if always()
+      authorize_if expr(has_tickets?)
     end
 
     policy action(:destroy) do
