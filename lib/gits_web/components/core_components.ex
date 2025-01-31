@@ -444,84 +444,75 @@ defmodule GitsWeb.CoreComponents do
   attr :type, :string, default: nil
   attr :class, :string, default: nil
   attr :size, :atom, default: nil
-  attr :href, :string, default: nil
   attr :variant, :atom, default: nil
-  attr :rest, :global, include: ~w(disabled form name value)
+  attr :rest, :global, include: ~w(disabled form name value href navigate patch)
 
   slot :inner_block, required: true
 
   def button(assigns) do
+    link? =
+      assigns
+      |> Map.get(:rest)
+      |> Map.keys()
+      |> Enum.any?(&Enum.member?([:href], &1))
+
+    size_classes =
+      case assigns.size do
+        :lg -> "py-4 px-8 text-base/6"
+        :md -> "py-3 px-6 text-sm/4"
+        :sm -> "py-2 px-4 text-sm/4"
+        :box -> "p-2 text-sm/4"
+        :none -> "text-sm/4"
+        _ -> "py-3 px-4 text-sm/4"
+      end
+
+    variant_classes =
+      case assigns.variant do
+        :accent ->
+          "border-transparent text-white active:text-white bg-brand-500 hover:bg-brand-600 active:bg-brand-700  phx-submit-loading:bg-brand-100 phx-submit-loading:text-brand-400 disabled:bg-brand-100 disabled:text-brand-400"
+
+        :surface ->
+          "border-zinc-200 bg-zinc-50 text-zinc-950 hover:bg-zinc-100"
+
+        :outline ->
+          "text-zinc-400 border-zinc-200 hover:text-zinc-500 hover:border-zinc-500 active:text-zinc-600 active:border-zinc-600 disabled:text-zinc-100 disabled:border-zinc-100 dark:disabled:text-zinc-800 dark:disabled:border-zinc-800"
+
+        :danger ->
+          "text-rose-400 border-rose-200 hover:text-rose-500 hover:border-rose-500 active:text-rose-600 active:border-rose-600 disabled:text-rose-100 disabled:border-rose-100 dark:disabled:text-rose-800 dark:disabled:border-rose-800"
+
+        :ghost ->
+          "border-transparent bg-transparent text-zinc-400 hover:text-zinc-500"
+
+        :solid ->
+          "border-transparent bg-zinc-500 text-white active:text-white bg-black hover:bg-zinc-600 active:bg-zinc-700  phx-submit-loading:bg-zinc-100 phx-submit-loading:text-zinc-400 disabled:bg-zinc-100 disabled:text-zinc-400 dark:phx-loading:text-zinc-700 dark:phx-loading:bg-zinc-950 dark:disabled:text-zinc-700 dark:disabled:bg-zinc-950"
+
+        _ ->
+          "border-transparent bg-zinc-50 text-zinc-500 hover:bg-zinc-100 disabled:bg-zinc-50 hover:dark:text-zinc-400 dark:bg-zinc-950 hover:dark:bg-zinc-900 active:dark:text-zinc-300 active:dark:bg-zinc-800 disabled:text-zinc-200 disabled:bg-transparent"
+      end
+
     assigns =
-      assign(
-        assigns,
-        :size_class,
-        case assigns.size do
-          :lg -> "py-4 px-8 text-base/6"
-          :md -> "py-3 px-6 text-sm/4"
-          :sm -> "py-2 px-4 text-sm/4"
-          :box -> "p-2 text-sm/4"
-          :none -> "text-sm/4"
-          _ -> "py-3 px-4 text-sm/4"
-        end
-      )
+      assigns
+      |> assign(:link?, link?)
       |> assign(
-        :variant_class,
-        case assigns.variant do
-          :accent ->
-            "border-transparent text-white active:text-white bg-brand-500 hover:bg-brand-600 active:bg-brand-700  phx-submit-loading:bg-brand-100 phx-submit-loading:text-brand-400 disabled:bg-brand-100 disabled:text-brand-400"
-
-          :surface ->
-            "border-zinc-200 bg-zinc-50 text-zinc-950 hover:bg-zinc-100"
-
-          :outline ->
-            "text-zinc-400 border-zinc-200 hover:text-zinc-500 hover:border-zinc-500 active:text-zinc-600 active:border-zinc-600 disabled:text-zinc-100 disabled:border-zinc-100 dark:disabled:text-zinc-800 dark:disabled:border-zinc-800"
-
-          :danger ->
-            "text-rose-400 border-rose-200 hover:text-rose-500 hover:border-rose-500 active:text-rose-600 active:border-rose-600 disabled:text-rose-100 disabled:border-rose-100 dark:disabled:text-rose-800 dark:disabled:border-rose-800"
-
-          :ghost ->
-            "border-transparent bg-transparent text-zinc-400 hover:text-zinc-500"
-
-          :solid ->
-            "border-transparent bg-zinc-500 text-white active:text-white bg-black hover:bg-zinc-600 active:bg-zinc-700  phx-submit-loading:bg-zinc-100 phx-submit-loading:text-zinc-400 disabled:bg-zinc-100 disabled:text-zinc-400 dark:phx-loading:text-zinc-700 dark:phx-loading:bg-zinc-950 dark:disabled:text-zinc-700 dark:disabled:bg-zinc-950"
-
-          _ ->
-            "border-transparent bg-zinc-50 text-zinc-500 hover:bg-zinc-100 disabled:bg-zinc-50 hover:dark:text-zinc-400 dark:bg-zinc-950 hover:dark:bg-zinc-900 active:dark:text-zinc-300 active:dark:bg-zinc-800 disabled:text-zinc-200 disabled:bg-transparent"
-        end
+        :base_class,
+        [
+          size_classes,
+          variant_classes,
+          "font-medium  border inline-flex gap-2",
+          "rounded-lg items-center justify-center",
+          "outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-200 dark:focus-visible:ring-zinc-700"
+        ]
       )
 
     ~H"""
-    <%= if is_nil(@href) do %>
-      <button
-        type={@type}
-        class={[
-          "font-medium  border inline-flex gap-2",
-          "rounded-lg items-center justify-center",
-          "outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-200 dark:focus-visible:ring-zinc-700",
-          @size_class,
-          @variant_class,
-          @class
-        ]}
-        {@rest}
-      >
-        {render_slot(@inner_block)}
-      </button>
-    <% else %>
-      <.link
-        navigate={@href}
-        type={@type}
-        class={[
-          "font-medium border inline-flex gap-2",
-          "rounded-lg items-center justify-center",
-          "outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-200 dark:focus-visible:ring-zinc-700",
-          @size_class,
-          @variant_class,
-          @class
-        ]}
-        {@rest}
-      >
+    <%= if @link? do %>
+      <.link type={@type} class={[@base_class, @class]} {@rest}>
         {render_slot(@inner_block)}
       </.link>
+    <% else %>
+      <button type={@type} class={[@base_class, @class]} {@rest}>
+        {render_slot(@inner_block)}
+      </button>
     <% end %>
     """
   end

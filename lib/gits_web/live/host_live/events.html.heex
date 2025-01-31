@@ -77,6 +77,11 @@
             on_submit="submit_tickets_form"
           />
         <% end %>
+        <%= if @live_action == :admissions do %>
+          <.admissions_header event_state={@event.state} can_publish?={@can_publish?} />
+          <.admissions_overview event_state={@event.state} can_publish?={@can_publish?} />
+        <% end %>
+
         <%= if @live_action == :settings do %>
           <.settings_content webhooks={@event.webhooks} />
           <.button

@@ -4,8 +4,8 @@ defmodule GitsWeb.HostLive.Settings.General do
 
   def update(assigns, socket) do
     socket
+    |> assign(:inner_block, assigns.inner_block)
     |> assign(:current_user, assigns.current_user)
-    |> assign(:header, assigns.header)
     |> assign(
       :form,
       Form.for_update(assigns.host, :details, actor: assigns.current_user)

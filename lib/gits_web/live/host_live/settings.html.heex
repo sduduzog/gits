@@ -107,13 +107,11 @@
   current_user={@current_user}
   host={@host}
 >
-  <:header>
-    <.host_header current_user={@current_user} handle={@host.handle} host_name={@host.name}>
-      <.host_breadcrumb_button text="Settings" href={~p"/hosts/#{@host.handle}/settings"} />
-      <span class="text-xs font-semibold text-zinc-400">/</span>
-      <.host_breadcrumb_label text="General" />
-    </.host_header>
-  </:header>
+  <.host_header current_user={@current_user} handle={@host.handle} host_name={@host.name}>
+    <.host_breadcrumb_button text="Settings" href={~p"/hosts/#{@host.handle}/settings"} />
+    <span class="text-xs font-semibold text-zinc-400">/</span>
+    <.host_breadcrumb_label text="General" />
+  </.host_header>
 </.live_component>
 
 <.live_component
@@ -123,13 +121,11 @@
   current_user={@current_user}
   host={@host}
 >
-  <:header>
-    <.host_header current_user={@current_user} handle={@host.handle} host_name={@host.name}>
-      <.host_breadcrumb_button text="Settings" href={~p"/hosts/#{@host.handle}/settings"} />
-      <span class="text-xs font-semibold text-zinc-400">/</span>
-      <.host_breadcrumb_label text="General" />
-    </.host_header>
-  </:header>
+  <.host_header current_user={@current_user} handle={@host.handle} host_name={@host.name}>
+    <.host_breadcrumb_button text="Settings" href={~p"/hosts/#{@host.handle}/settings"} />
+    <span class="text-xs font-semibold text-zinc-400">/</span>
+    <.host_breadcrumb_label text="General" />
+  </.host_header>
 </.live_component>
 
 <.live_component
@@ -138,4 +134,10 @@
   id="billing"
   current_user={@current_user}
   host={@host}
-/>
+>
+  <.host_header current_user={@current_user} handle={@host.handle} host_name={@host.name}>
+    <.host_breadcrumb_button text="Settings" href={~p"/hosts/#{@host.handle}/settings"} />
+    <span class="text-xs font-semibold text-zinc-400">/</span>
+    <.host_breadcrumb_label text="Billing & Payouts" />
+  </.host_header>
+</.live_component>

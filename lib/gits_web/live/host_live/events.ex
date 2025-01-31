@@ -84,7 +84,12 @@ defmodule GitsWeb.HostLive.Events do
 
           event_has_issues? = event.state == :draft and Enum.count(issues_count) > 0
 
+          can_publish? =
+            Ash.Changeset.for_update(event, :publish)
+            |> Ash.can?(socket.assigns.current_user)
+
           socket
+          |> assign(:can_publish?, can_publish?)
           |> assign(:start_date_invalid?, event.start_date_invalid?)
           |> assign(:end_date_invalid?, event.end_date_invalid?)
           |> assign(:poster_invalid?, event.poster_invalid?)
@@ -197,7 +202,7 @@ defmodule GitsWeb.HostLive.Events do
             )
         end
 
-      :attendance ->
+      :admissions ->
         socket
 
       :settings ->

@@ -1,7 +1,6 @@
 defmodule GitsWeb.HostLive.Settings.Billing do
   alias AshPhoenix.Form
   alias Gits.PaystackApi
-  import GitsWeb.HostComponents
   use GitsWeb, :live_component
 
   def update(assigns, socket) do
@@ -18,6 +17,7 @@ defmodule GitsWeb.HostLive.Settings.Billing do
     |> case do
       {:ok, host} ->
         socket
+        |> assign(:inner_block, assigns.inner_block)
         |> assign(:current_user, assigns.current_user)
         |> assign(:host, assigns.host)
         |> assign(

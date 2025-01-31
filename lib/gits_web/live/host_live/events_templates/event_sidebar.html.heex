@@ -12,7 +12,7 @@
       }
       variant={:ghost}
       size={:box}
-      href={Routes.host_events_path(GitsWeb.Endpoint, action, @handle, @event.public_id)}
+      patch={Routes.host_events_path(GitsWeb.Endpoint, action, @handle, @event.public_id)}
       aria-selected={"#{@action == action}"}
       class="aria-selected:text-zinc-950"
     >
