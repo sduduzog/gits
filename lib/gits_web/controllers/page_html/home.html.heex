@@ -48,12 +48,12 @@
       <h3 class="text-lg/5 font-semibold text-zinc-900">{event.name}</h3>
       <div class="space-y-1 truncate">
         <div class="flex items-center justify-between gap-2 font-medium text-zinc-950">
-          <span class="shrink-0 text-sm/5">
+          <span class="inline-flex shrink-0 items-center text-sm/5 gap-2">
             <.icon name="lucide--calendar-range" class="text-zinc-400" />
             {Calendar.strftime(event.starts_at, "%a, %d %b, %I:%m %p")}
           </span>
         </div>
-        <span class="inline-flex items-center gap-1 truncate text-sm/5">
+        <span class="inline-flex items-center gap-2 truncate text-sm/5">
           <.icon name="lucide--map-pin" class="text-zinc-400" />
           {if(event.location_is_private, do: "Private", else: event.venue.name)}
         </span>
