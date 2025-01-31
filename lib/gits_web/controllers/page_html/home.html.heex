@@ -1,4 +1,4 @@
-<div class="mx-auto grid max-w-screen-xl gap-8 p-4 py-20">
+<div :if={false} class="mx-auto grid max-w-screen-xl gap-8 p-4 py-20">
   <div>
     <div class="relative inline-flex rounded-3xl border border-zinc-300 p-8 dark:border-zinc-500">
       <div class="absolute -top-4 left-36 h-12 w-40 animate-bounce rounded-xl border border-zinc-300 bg-zinc-300/20 dark:border-zinc-500 dark:bg-zinc-400/20">
@@ -29,14 +29,11 @@
 
 <div :if={Enum.any?(@recent_events)} class="mx-auto grid max-w-screen-xl gap-4 py-10">
   <h2 class="px-4 font-semibold text-zinc-700">Recently viewed</h2>
-  <div class="flex items-start gap-4 overflow-auto whitespace-nowrap px-4 pb-2 lg:grid lg:grid-cols-3 lg:gap-4">
-    <div
-      :for={event <- @recent_events}
-      class="grid w-72 shrink-0 gap-2 overflow-hidden p-0.5 lg:w-auto"
-    >
+  <div class="flex items-start gap-4 overflow-auto whitespace-nowrap px-2 py-4 lg:grid lg:grid-cols-3 lg:gap-4">
+    <div :for={event <- @recent_events} class="grid w-full max-w-[22rem] shrink-0 gap-2">
       <.link
         navigate={~p"/events/#{event.public_id}"}
-        class="aspect-[3/2] w-full overflow-hidden rounded-xl bg-zinc-50 focus-visible:ring-2 focus-visible:ring-zinc-200 lg:rounded-2xl"
+        class="inline-flex aspect-[3/2] w-full overflow-hidden rounded-xl bg-zinc-50 focus-visible:ring-2 focus-visible:ring-zinc-200 lg:rounded-2xl"
       >
         <img
           :if={event.poster}
@@ -45,7 +42,7 @@
           class="size-full scale-125"
         />
       </.link>
-      <div class="space-y-2 px-2">
+      <div class="w-full space-y-2 px-2 max-w-[22rem] overflow-hidden">
         <h3 class="text-xl/5 font-semibold text-zinc-900">{event.name}</h3>
         <div class="flex flex-wrap gap-2">
           <span class="inline-flex items-center gap-x-1.5 rounded-md px-2 py-1 text-xs font-medium text-gray-900 ring-1 ring-inset ring-gray-200">
@@ -61,10 +58,10 @@
           </span>
         </div>
 
-        <div class="grid gap-2">
+        <div class="grid w-full gap-2">
           <div class="flex items-start gap-3">
             <.icon class="shrink-0 text-lg text-zinc-500 ri--calendar-line" />
-            <div class="flex gap-2 text-sm text-zinc-700">
+            <div class="flex flex-wrap gap-2 text-sm text-zinc-700">
               <span class="">
                 {Calendar.strftime(event.starts_at, "%a, %d %b, %I:%m %p")}
               </span>
@@ -75,17 +72,17 @@
             </div>
           </div>
 
-          <div class="flex items-start gap-3">
+          <div class="grid grid-cols-[auto_1fr] w-full items-start gap-3 overflow-hidden">
             <.icon name="ri--map-pin-line" class="shrink-0 text-lg text-zinc-500" />
-            <div class="grid text-sm">
+            <div class="text-sm">
               <%= if event.location_is_private or is_nil(event.venue) do %>
                 <span class="font-medium">Private Location</span>
                 <span class="text-zinc-600">
                   Details will be shared with ticket holders
                 </span>
               <% else %>
-                <span class="font-medium">{event.venue.name}</span>
-                <span class="text-zinc-600">{event.venue.address}</span>
+                <div class="font-medium">{event.venue.name}</div>
+                <div class="text-zinc-600">{event.venue.address}</div>
               <% end %>
             </div>
           </div>
