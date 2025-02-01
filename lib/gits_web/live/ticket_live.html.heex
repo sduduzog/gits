@@ -1,6 +1,6 @@
 <div class="mx-auto flex max-w-screen-xl items-center justify-between p-2 pb-8">
   <.button variant={:ghost} phx-click={JS.navigate(~p"/my/tickets")}>
-    <.icon name="i-lucide-chevron-left" />
+    <.icon name="lucide--chevron-left" />
     <span>Tickets</span>
   </.button>
 </div>
@@ -19,7 +19,7 @@
           phx-click={JS.patch(~p"/t/#{@ticket.id}/rsvp") |> show_modal("rsvp")}
           size={:sm}
         >
-          <.icon name="i-lucide-calendar-check" />
+          <.icon name="lucide--calendar-check" />
           <span>RSVP Now</span>
         </.button>
       </GitsWeb.EventComponents.ticket_card>
@@ -34,7 +34,7 @@
           <div class="flex w-full flex-none gap-x-4">
             <dt class="flex-none">
               <span class="sr-only">Start date</span>
-              <.icon name="i-lucide-calendar-range" class="mt-0.5 text-zinc-400" />
+              <.icon name="lucide--calendar-range" class="mt-0.5 text-zinc-400" />
             </dt>
             <dd class="text-sm/6 text-gray-500">
               <time datetime={@ticket.ticket_type.event.starts_at}>
@@ -48,7 +48,7 @@
           <div class="flex w-full flex-none gap-x-4">
             <dt class="flex-none">
               <span class="sr-only">Location</span>
-              <.icon name="i-lucide-map-pin" class="mt-0.5 text-zinc-400" />
+              <.icon name="lucide--map-pin" class="mt-0.5 text-zinc-400" />
             </dt>
             <dd class="text-sm/6 text-gray-500">
               {if(@ticket.ticket_type.event.location_is_private,
@@ -103,7 +103,7 @@
           </div>
         <% else %>
           <div class="flex size-6 shrink-0 items-center justify-center rounded-full border border-zinc-300">
-            <.icon :if={done} name="i-lucide-check" />
+            <.icon :if={done} name="lucide--check" />
             <span :if={not done} class="text-zinc-700 text-sm">{idx}</span>
           </div>
         <% end %>

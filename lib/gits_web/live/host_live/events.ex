@@ -1,4 +1,5 @@
 defmodule GitsWeb.HostLive.Events do
+  alias Gits.Storefront.Ticket
   alias Gits.Accounts.Venue
   alias Gits.GooglePlaces
   alias Gits.Bucket.Image
@@ -203,7 +204,28 @@ defmodule GitsWeb.HostLive.Events do
         end
 
       :admissions ->
-        socket
+        Ash.load(
+          socket.assigns.host,
+          [
+            events:
+              Ash.Query.filter(Event, public_id == ^public_id)
+              |> Ash.Query.load(
+                tickets:
+                  Ash.Query.filter(
+                    Ticket,
+                    state == :admitted or
+                      not is_nil(rsvp_confirmed_at)
+                  )
+                  |> Ash.Query.load([:ticket_type])
+              )
+          ],
+          actor: socket.assigns.current_user
+        )
+        |> case do
+          {:ok, %{events: [event]}} ->
+            socket
+            |> assign(:event, event)
+        end
 
       :settings ->
         Ash.load(

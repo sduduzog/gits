@@ -104,7 +104,7 @@ defmodule GitsWeb.HostLive.Scanner do
   end
 
   defp assign_results(socket, %{"text" => text}, actor) do
-    String.slice(text, -9, 9)
+    String.slice(text, -13, 13)
     |> case do
       "/t/" <> code ->
         assign(socket, :show_modal, true)

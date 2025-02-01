@@ -85,7 +85,11 @@
               Routes.host_scanner_path(@socket, :index, @host_handle, @event.public_id)
             }
           />
-          <.admissions_overview event_state={@event.state} can_publish?={@can_publish?} />
+          <.admissions_overview
+            event={@event}
+            event_state={@event.state}
+            can_publish?={@can_publish?}
+          />
         <% end %>
 
         <%= if @live_action == :settings do %>
