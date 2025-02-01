@@ -11,7 +11,7 @@ defmodule GitsWeb.CoreComponents do
     ~H"""
     <.link
       navigate="/"
-      class="inline-block max-w-16 h-5 shrink-0 items-center justify-center rounded-lg text-xl font-black italic"
+      class="inline-block h-5 max-w-16 shrink-0 items-center justify-center rounded-lg text-xl font-black italic"
     >
       <img
         phx-track-static
@@ -48,14 +48,14 @@ defmodule GitsWeb.CoreComponents do
       ])
 
     ~H"""
-    <header class="mx-auto justify-start flex max-w-screen-xl items-center gap-2 p-2 lg:gap-8">
+    <header class="mx-auto flex max-w-screen-xl items-center justify-start gap-2 p-2 lg:gap-8">
       <div class="items-center">
         <.logo />
       </div>
-      <div class="flex bg-red-200 grow items-center"></div>
+      <div class="flex grow items-center bg-red-200"></div>
 
       <.button :if={false} variant={:ghost} href={~p"/search"}>
-        <.icon name="i-lucide-search" />
+        <.icon name="lucide--search" />
         <span>Search</span>
       </.button>
 
@@ -90,7 +90,7 @@ defmodule GitsWeb.CoreComponents do
               aria-haspopup="true"
             >
               <span>Account</span>
-              <.icon name="i-lucide-chevron-down" />
+              <.icon name="lucide--chevron-down" />
             </.button>
           </div>
           <div
@@ -145,20 +145,21 @@ defmodule GitsWeb.CoreComponents do
     assigns =
       assigns
       |> assign(:nav_tree, [
-        {"i-lucide-tickets", "Events & Hosting", [{"Host with us", "/host-with-us"}]},
-        # {"i-lucide-headset", "Support",
+        {"lucide--tickets", "Events & Hosting",
+         [{"Host with us", "/host-with-us"}, {"Pricing", "/pricing"}]},
+        # {"lucide--headset", "Support",
         #  [
         #    # {"I need help", "/support/help"},
         #    {"FAQ", "/support/faq"},
         #    {"Contact", "/contact-us"}
         #  ]},
-        {"i-lucide-scale", "Legal",
+        {"lucide--scale", "Legal",
          [
            {"Privacy Policy", "/privacy"},
            {"Terms & Conditions", "/terms"},
            {"Refund Policy", "/refund-policy"}
          ]},
-        {"i-lucide-at-sign", "Social",
+        {"lucide--at-sign", "Social",
          [
            {"Instagram", "https://instagram.com/gits_za"},
            {"X (Formerly twitter)", "https://x.com/gits_za"}
@@ -179,7 +180,7 @@ defmodule GitsWeb.CoreComponents do
             <.link
               :for={{child, href} <- children}
               navigate={href}
-              class="border-transparent z-10 inline-flex border-l pl-5 text-xs font-medium leading-4 dark:text-zinc-100 text-zinc-950 hover:border-zinc-500 dark:border-zinc-700 dark:hover:border-zinc-100"
+              class="z-10 inline-flex border-l border-transparent pl-5 text-xs font-medium leading-4 text-zinc-950 hover:border-zinc-500 dark:border-zinc-700 dark:text-zinc-100 dark:hover:border-zinc-100"
             >
               {child}
             </.link>
@@ -277,7 +278,7 @@ defmodule GitsWeb.CoreComponents do
                   class="inline-flex flex-none items-center justify-center p-2 opacity-40 hover:opacity-60"
                   aria-label={gettext("close")}
                 >
-                  <.icon name="i-lucide-x" />
+                  <.icon name="lucide--x" />
                 </button>
               </div>
               <div id={"#{@id}-content"} class="p-2">
@@ -325,7 +326,7 @@ defmodule GitsWeb.CoreComponents do
                   class="-m-3 flex-none p-3 opacity-20 hover:opacity-40"
                   aria-label={gettext("close")}
                 >
-                  <.icon name="hero-x-mark-solid" class="h-5 w-5" />
+                  <.icon class="h-5 w-5 ri--close-line" />
                 </button>
               </div>
               <div id={"#{@id}-content"}>
@@ -363,25 +364,36 @@ defmodule GitsWeb.CoreComponents do
       :if={msg = render_slot(@inner_block) || Phoenix.Flash.get(@flash, @kind)}
       id={@id}
       phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")}
-      role="alert"
+      phx-hook="AutoClearFlash"
       class={[
-        "fixed top-2 right-2 z-50 mr-2 w-80 rounded-lg p-3 ring-1 sm:w-96",
-        @kind == :info && "bg-emerald-50 fill-cyan-900 text-emerald-800 ring-emerald-500",
-        @kind == :warn && "bg-orange-50 fill-orange-900 text-orange-500 ring-orange-500",
-        @kind == :error && "bg-rose-50 fill-rose-900 text-rose-900 shadow-md ring-rose-500"
+        "fixed top-2 right-4 z-50 w-full max-w-96",
+        "bg-white rounded-lg border border-border bg-background p-4 shadow-lg shadow-black/5"
       ]}
+      role="alert"
       {@rest}
     >
-      <p :if={@title} class="flex items-center gap-1.5 text-sm font-semibold leading-6">
-        <.icon :if={@kind == :info} name="hero-information-circle-mini" class="h-4 w-4" />
-        <.icon :if={@kind == :warn} name="hero-information-circle-mini" class="h-4 w-4" />
-        <.icon :if={@kind == :error} name="hero-exclamation-circle-mini" class="h-4 w-4" />
-        {@title}
-      </p>
-      <p class="mt-2 text-sm leading-5">{msg}</p>
-      <button type="button" class="group absolute right-1 top-1 p-2" aria-label={gettext("close")}>
-        <.icon name="hero-x-mark-solid" class="h-5 w-5 opacity-40 group-hover:opacity-70" />
-      </button>
+      <div class="flex gap-2">
+        <div class="flex grow gap-3">
+          <.icon :if={@kind == :info} class="mt-0.5 text-emerald-500 ri--information-line" />
+          <.icon :if={@kind == :warn} class="mt-0.5 text-orange-500 ri--information-line" />
+          <.icon :if={@kind == :error} class="mt-0.5 text-rose-500 ri--error-warning-line" />
+
+          <div class="flex grow flex-col gap-3">
+            <div class="space-y-1">
+              <p class="text-sm font-medium">{@title}</p>
+              <p class="inline-flex flex-wrap text-sm text-zinc-500">
+                {msg}
+              </p>
+            </div>
+          </div>
+          <button
+            aria-label={gettext("close")}
+            class="focus-visible:outline-ring/70 [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 hover:text-accent-foreground group -my-1.5 -me-2 inline-flex size-8 shrink-0 items-center justify-center whitespace-nowrap rounded-lg p-0 text-sm font-medium outline-offset-2 transition-colors hover:bg-transparent focus-visible:outline focus-visible:outline-2 disabled:pointer-events-none disabled:opacity-50"
+          >
+            <.icon class="h-5 w-5 opacity-60 ri--close-line group-hover:opacity-70" />
+          </button>
+        </div>
+      </div>
     </div>
     """
   end
@@ -411,7 +423,7 @@ defmodule GitsWeb.CoreComponents do
         hidden
       >
         {gettext("Attempting to reconnect")}
-        <.icon name="hero-arrow-path" class="ml-1 h-3 w-3 animate-spin" />
+        <.icon class="ml-1 mt-0.5 animate-spin ri--loader-4-line" />
       </.flash>
 
       <.flash
@@ -423,121 +435,84 @@ defmodule GitsWeb.CoreComponents do
         hidden
       >
         {gettext("Hang in there while we get back on track")}
-        <.icon name="hero-arrow-path" class="ml-1 h-3 w-3 animate-spin" />
+        <.icon class="ml-1 mt-0.5 animate-spin ri--loader-4-line" />
       </.flash>
     </div>
-    """
-  end
-
-  @doc """
-  Renders a simple form.
-
-  ## Examples
-
-      <.simple_form for={@form} phx-change="validate" phx-submit="save">
-        <.input field={@form[:email]} label="Email"/>
-        <.input field={@form[:username]} label="Username" />
-        <:actions>
-          <.button>Save</.button>
-        </:actions>
-      </.simple_form>
-  """
-  attr :for, :any, required: true, doc: "the datastructure for the form"
-  attr :as, :any, default: nil, doc: "the server side parameter to collect all input under"
-
-  attr :rest, :global,
-    include: ~w(autocomplete name rel action enctype method novalidate target multipart),
-    doc: "the arbitrary HTML attributes to apply to the form tag"
-
-  slot :inner_block, required: true
-  slot :actions, doc: "the slot for form actions, such as a submit button"
-
-  def simple_form(assigns) do
-    ~H"""
-    <.form :let={f} for={@for} as={@as} {@rest}>
-      {render_slot(@inner_block, f)}
-    </.form>
     """
   end
 
   attr :type, :string, default: nil
   attr :class, :string, default: nil
   attr :size, :atom, default: nil
-  attr :href, :string, default: nil
   attr :variant, :atom, default: nil
-  attr :rest, :global, include: ~w(disabled form name value)
+  attr :rest, :global, include: ~w(disabled form name value href navigate patch)
 
   slot :inner_block, required: true
 
   def button(assigns) do
+    link? =
+      assigns
+      |> Map.get(:rest)
+      |> Map.keys()
+      |> Enum.any?(&Enum.member?([:href, :navigate, :patch], &1))
+
+    size_classes =
+      case assigns.size do
+        :lg -> "py-4 px-8 text-base/6"
+        :md -> "py-3 px-6 text-sm/4"
+        :sm -> "py-2 px-4 text-sm/4"
+        :box -> "p-2 text-sm/4"
+        :none -> "text-sm/4"
+        _ -> "py-3 px-4 text-sm/4"
+      end
+
+    variant_classes =
+      case assigns.variant do
+        :accent ->
+          "border-transparent text-white active:text-white bg-brand-500 hover:bg-brand-600 active:bg-brand-700  phx-submit-loading:bg-brand-100 phx-submit-loading:text-brand-400 disabled:bg-brand-100 disabled:text-brand-400"
+
+        :surface ->
+          "border-zinc-200 bg-zinc-50 text-zinc-950 hover:bg-zinc-100"
+
+        :outline ->
+          "text-zinc-400 border-zinc-200 hover:text-zinc-500 hover:border-zinc-500 active:text-zinc-600 active:border-zinc-600 disabled:text-zinc-100 disabled:border-zinc-100 dark:disabled:text-zinc-800 dark:disabled:border-zinc-800"
+
+        :danger ->
+          "text-rose-400 border-rose-200 hover:text-rose-500 hover:border-rose-500 active:text-rose-600 active:border-rose-600 disabled:text-rose-100 disabled:border-rose-100 dark:disabled:text-rose-800 dark:disabled:border-rose-800"
+
+        :ghost ->
+          "border-transparent bg-transparent text-zinc-400 hover:text-zinc-500"
+
+        :solid ->
+          "border-transparent bg-zinc-500 text-white active:text-white bg-black hover:bg-zinc-600 active:bg-zinc-700  phx-submit-loading:bg-zinc-100 phx-submit-loading:text-zinc-400 disabled:bg-zinc-100 disabled:text-zinc-400 dark:phx-loading:text-zinc-700 dark:phx-loading:bg-zinc-950 dark:disabled:text-zinc-700 dark:disabled:bg-zinc-950"
+
+        _ ->
+          "border-transparent bg-zinc-50 text-zinc-500 hover:bg-zinc-100 disabled:bg-zinc-50 hover:dark:text-zinc-400 dark:bg-zinc-950 hover:dark:bg-zinc-900 active:dark:text-zinc-300 active:dark:bg-zinc-800 disabled:text-zinc-200 disabled:bg-transparent"
+      end
+
     assigns =
-      assign(
-        assigns,
-        :size_class,
-        case assigns.size do
-          :lg -> "py-4 px-8 text-base/6"
-          :md -> "py-3 px-6 text-sm/4"
-          :sm -> "py-2 px-4 text-sm/4"
-          :box -> "p-3 text-sm/4"
-          :none -> "text-sm/4"
-          _ -> "py-3 px-4 text-sm/4"
-        end
-      )
+      assigns
+      |> assign(:link?, link?)
       |> assign(
-        :variant_class,
-        case assigns.variant do
-          :accent ->
-            "border-transparent text-white active:text-white bg-brand-500 hover:bg-brand-600 active:bg-brand-700  phx-submit-loading:bg-brand-100 phx-submit-loading:text-brand-400 disabled:bg-brand-100 disabled:text-brand-400"
-
-          :surface ->
-            "border-zinc-200 bg-zinc-50 text-zinc-950 hover:bg-zinc-100"
-
-          :outline ->
-            "text-zinc-400 border-zinc-400 hover:text-zinc-500 hover:border-zinc-500 active:text-zinc-600 active:border-zinc-600 disabled:text-zinc-100 disabled:border-zinc-100 dark:disabled:text-zinc-800 dark:disabled:border-zinc-800"
-
-          :ghost ->
-            "border-transparent bg-transparent text-zinc-400 hover:text-zinc-500"
-
-          :solid ->
-            "border-transparent bg-zinc-500 text-white active:text-white bg-black hover:bg-zinc-600 active:bg-zinc-700  phx-submit-loading:bg-zinc-100 phx-submit-loading:text-zinc-400 disabled:bg-zinc-100 disabled:text-zinc-400 dark:phx-loading:text-zinc-700 dark:phx-loading:bg-zinc-950 dark:disabled:text-zinc-700 dark:disabled:bg-zinc-950"
-
-          _ ->
-            "border-transparent bg-zinc-50 text-zinc-500 hover:bg-zinc-100 disabled:bg-zinc-50 hover:dark:text-zinc-400 dark:bg-zinc-950 hover:dark:bg-zinc-900 active:dark:text-zinc-300 active:dark:bg-zinc-800 disabled:text-zinc-200 disabled:bg-transparent"
-        end
+        :base_class,
+        [
+          size_classes,
+          variant_classes,
+          "font-medium  border inline-flex gap-2",
+          "rounded-lg items-center justify-center",
+          "outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-200 dark:focus-visible:ring-zinc-700"
+        ]
       )
 
     ~H"""
-    <%= if is_nil(@href) do %>
-      <button
-        type={@type}
-        class={[
-          "font-medium  border inline-flex gap-2",
-          "rounded-lg items-center justify-center",
-          "outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-200 dark:focus-visible:ring-zinc-700",
-          @size_class,
-          @variant_class,
-          @class
-        ]}
-        {@rest}
-      >
-        {render_slot(@inner_block)}
-      </button>
-    <% else %>
-      <.link
-        navigate={@href}
-        type={@type}
-        class={[
-          "font-medium border inline-flex gap-2",
-          "rounded-lg items-center justify-center",
-          "outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-200 dark:focus-visible:ring-zinc-700",
-          @size_class,
-          @variant_class,
-          @class
-        ]}
-        {@rest}
-      >
+    <%= if @link? do %>
+      <.link type={@type} class={[@base_class, @class]} {@rest}>
         {render_slot(@inner_block)}
       </.link>
+    <% else %>
+      <button type={@type} class={[@base_class, @class]} {@rest}>
+        {render_slot(@inner_block)}
+      </button>
     <% end %>
     """
   end
@@ -639,7 +614,32 @@ defmodule GitsWeb.CoreComponents do
 
   def input(%{type: "radio"} = assigns) do
     ~H"""
-    <fieldset class={["max-w-3xl space-y-1 text-sm", @class]}>
+    <fieldset class={@class}>
+      <legend class="text-sm/6 font-semibold text-gray-900">{@label}</legend>
+      <%= if @errors == [] do %>
+        <p :if={@hint} class="mt-1 text-sm/6 text-gray-600">{@hint}</p>
+      <% else %>
+        <.error :for={msg <- @errors}>{msg}</.error>
+      <% end %>
+
+      <div class="mt-4 space-y-4 sm:flex sm:items-center sm:space-x-10 sm:space-y-0">
+        <div :for={{item, index} <- Enum.with_index(@options, 1)} class="flex items-center">
+          <input
+            id={item}
+            name={@name}
+            checked={(is_nil(@value) and index == 1) or @value == item}
+            type="radio"
+            value={item}
+            class="relative size-4 appearance-none rounded-full border border-gray-300 bg-white text-zinc-950 before:absolute before:inset-1 before:rounded-full before:bg-white checked:border-zinc-600 checked:bg-zinc-600 focus:ring-zinc-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400 forced-colors:appearance-auto forced-colors:before:hidden [&:not(:checked)]:before:hidden"
+          />
+          <label for={item} class="ml-3 block text-sm/6 font-medium capitalize text-gray-900">
+            {item}
+          </label>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset :if={false} class={["max-w-3xl space-y-1 text-sm", @class]}>
       <legend class="inline-flex w-full items-center justify-between text-sm font-medium">
         <span class="block text-sm/6 font-medium text-zinc-700">{@label}</span>
         <%= if @errors == [] do %>
@@ -792,7 +792,20 @@ defmodule GitsWeb.CoreComponents do
           <.error :for={msg <- @errors}>{msg}</.error>
         <% end %>
       </div>
-      <div class="relative inline-flex w-full items-center gap-2 rounded-lg border border-zinc-200 px-3 py-2 text-sm outline-none focus:outline-none focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-zinc-600">
+      <div class={
+        [
+          "relative",
+          "p-3 flex gap-2",
+          "w-full text-sm rounded-lg",
+          # "relative inline-flex w-full items-center gap-2 rounded-lg border border-zinc-200 text-sm outline-none focus:outline-none focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-zinc-600"
+          "bg-transparent border border-zinc-400",
+          "text-zinc-900 dark:text-zinc-200",
+          "has-[:focus-visible]:outline-none",
+          "focus-visible:outline-none focus-visible:border-zinc-400 focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:dark:ring-zinc-700",
+          @errors == [] && "border-zinc-300 focus:ring-zinc-400",
+          @errors != [] && "border-rose-400 focus:border-rose-400"
+        ]
+      }>
         <input type="color" name={@name} value={@value} class="absolute inset-0 size-full opacity-0" />
         <span class="inline-flex size-5 rounded-full" style={"background-color: #{@value}"}></span>
         <span>{@value}</span>
@@ -849,51 +862,12 @@ defmodule GitsWeb.CoreComponents do
     """
   end
 
-  attr :field, Phoenix.HTML.FormField, required: true
-  attr :label, :string, required: false, default: nil
-  attr :class, :string, default: ""
-
-  slot :radio, required: true do
-    attr :value, :atom, required: true
-    attr :checked, :boolean
-  end
-
-  def radio_group(assigns) do
-    ~H"""
-    <fieldset class={["", @class]}>
-      <legend class="text-sm font-medium leading-6 text-zinc-600">{@label}</legend>
-      <!-- <p class="mt-1 text-sm leading-6 text-zinc-600">How do you prefer to receive notifications?</p> -->
-      <div class="mt-6 space-y-6 sm:flex sm:items-center sm:space-x-10 sm:space-y-0">
-        <div :for={{%{value: value} = rad, idx} <- Enum.with_index(@radio)} class="flex items-center">
-          <input
-            name={@field.name}
-            id={"#{@field.id}-#{idx}"}
-            value={value}
-            checked={value == @field.value}
-            type="radio"
-            class="h-4 w-4 border-zinc-300 text-zinc-600 focus:ring-zinc-600"
-          />
-          <label
-            for={"#{@field.id}-#{idx}"}
-            class="ml-3 block text-sm font-medium leading-6 text-zinc-900"
-          >
-            {render_slot(rad)}
-          </label>
-        </div>
-      </div>
-    </fieldset>
-    """
-  end
-
-  @doc """
-  Generates a generic error message.
-  """
   slot :inner_block, required: true
 
   def error(assigns) do
     ~H"""
-    <p class="flex gap-3 text-sm leading-6 text-rose-600 phx-no-feedback:hidden">
-      <.icon name="hero-exclamation-circle-mini" class="mt-0.5 h-5 w-5 flex-none" />
+    <p class="flex gap-2 text-sm leading-6 text-rose-600 phx-no-feedback:hidden">
+      <.icon class="mt-0.5 text-lg ri--error-warning-line flex-none" />
       {render_slot(@inner_block)}
     </p>
     """
@@ -1004,18 +978,12 @@ defmodule GitsWeb.CoreComponents do
       <.icon name="hero-x-mark-solid" />
       <.icon name="hero-arrow-path" class="ml-1 w-3 h-3 animate-spin" />
   """
-  attr :name, :string, required: true
+  attr :name, :string, default: nil
   attr :class, :string, default: nil
-
-  def icon(%{name: "hero-" <> _} = assigns) do
-    ~H"""
-    <span class={[@name, @class]} />
-    """
-  end
 
   def icon(assigns) do
     ~H"""
-    <span class={[@name, @class]}></span>
+    <span class={["iconify", @name, @class]}></span>
     """
   end
 

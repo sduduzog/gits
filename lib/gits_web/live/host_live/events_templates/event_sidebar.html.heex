@@ -1,0 +1,35 @@
+<div class="lg:top-4 flex gap-2 overflow-x-auto whitespace-nowrap px-2 pb-2 lg:sticky lg:grid lg:rounded-xl lg:bg-zinc-50/70 lg:py-2">
+  <%= if not is_nil(@event) do %>
+    <.button
+      :for={
+        {label, action, flag} <- [
+          {"Dashboard", :dashboard, nil},
+          {"Details", :details, if(@event_has_issues?, do: :warn, else: nil)},
+          {"Tickets", :tickets, if(@paid_tickets_issue?, do: :warn, else: @tickets_flag)},
+          {"Admissions", :admissions, nil},
+          {"Settings", :settings, nil}
+        ]
+      }
+      variant={:ghost}
+      size={:box}
+      patch={Routes.host_events_path(GitsWeb.Endpoint, action, @handle, @event.public_id)}
+      aria-selected={"#{@action == action}"}
+      class="aria-selected:text-zinc-950"
+    >
+      <span class="w-full text-left">
+        {label}
+      </span>
+
+      <.icon :if={flag == :warn} class="shrink-0 text-amber-500 ri--alert-fill" />
+      <span :if={is_integer(flag)}>{flag}</span>
+    </.button>
+  <% else %>
+    <.link
+      patch={~p"/hosts/#{@handle}/events"}
+      class="flex items-center gap-2 rounded-lg p-2 text-sm font-medium text-zinc-400"
+    >
+      <.icon name="lucide--chevron-left" />
+      <span>Cancel</span>
+    </.link>
+  <% end %>
+</div>

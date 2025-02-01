@@ -1,0 +1,45 @@
+<.modal id="choose_venue">
+  <.form :let={f} for={%{}} class="grid gap-4" phx-change="venue_search" phx-submit="venue_search">
+    <h3 class="text-xl font-medium">
+      Choose venue
+    </h3>
+
+    <div class="space-y-4 overflow-hidden">
+      <button
+        :for={venue <- @venues}
+        type="button"
+        class="flex w-full items-center gap-1 rounded-lg p-1"
+        phx-value-id={venue.id}
+        phx-click={JS.push("choose_venue") |> hide_modal("choose_venue")}
+      >
+        <div class="inline-flex w-full grow items-baseline gap-1 truncate text-sm/4">
+          <span class=" font-medium text-zinc-900">{venue.name},</span>
+          <span class="truncate text-xs text-zinc-500 lg:text-sm">{venue.address}</span>
+        </div>
+        <.icon
+          :if={@form_data && @form_data.venue && @form_data.venue.id == venue.id}
+          name="lucide--check"
+          class="shrink-0"
+        />
+      </button>
+      <button
+        :for={suggestion <- @suggestions}
+        type="button"
+        class="flex w-full gap-1 rounded-lg p-1"
+        phx-value-id={suggestion.id}
+        phx-click={JS.push("create_venue") |> hide_modal("choose_venue")}
+      >
+        <div class="inline-flex w-full grow items-baseline gap-1 truncate text-sm/4">
+          <span class="truncate text-zinc-500">{suggestion.text}</span>
+        </div>
+      </button>
+    </div>
+
+    <.input
+      type="text"
+      field={f[:query]}
+      placeholder="e.g Mea Culpa"
+      label="Search for address or venue"
+    />
+  </.form>
+</.modal>

@@ -10,10 +10,27 @@ defmodule GitsWeb.StorefrontLive.EventListing do
     remote_ip = get_connect_info(socket, :peer_data).address
 
     Ash.Query.filter(Event, public_id == ^params["public_id"])
-    |> Ash.Query.load([:host, :venue, :minimum_ticket_price, :ticket_prices_vary?])
+    |> Ash.Query.load([
+      :host,
+      :venue,
+      :has_tickets?,
+      :minimum_ticket_price,
+      :ticket_prices_vary?,
+      poster: [:url]
+    ])
     |> Ash.read_one(actor: socket.assigns.current_user)
     |> case do
       {:ok, %Event{} = event} ->
+        if connected?(socket) do
+          Ash.Changeset.for_create(Interaction, :create, %{
+            type: :view,
+            viewer_id: session["viewer_id"],
+            event: event,
+            user: socket.assigns.current_user
+          })
+          |> Ash.create(actor: socket.assigns.current_user)
+        end
+
         socket
         |> assign(:verified?, not is_nil(socket.assigns.current_user))
         |> assign(:viewer_id, session["viewer_id"])
@@ -52,16 +69,6 @@ defmodule GitsWeb.StorefrontLive.EventListing do
   end
 
   def handle_event("turnstile:success", _, socket) do
-    if connected?(socket) do
-      Ash.Changeset.for_create(Interaction, :create, %{
-        type: :view,
-        viewer_id: socket.assigns.viewer_id,
-        event: socket.assigns.event,
-        user: socket.assigns.current_user
-      })
-      |> Ash.create(actor: socket.assigns.current_user)
-    end
-
     socket
     |> assign(:verified?, true)
     |> noreply()

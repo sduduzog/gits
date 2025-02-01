@@ -1,0 +1,11 @@
+<div class="flex flex-wrap items-end gap-2">
+  <div class="grid grow">
+    <h2 class="text-base/7 font-semibold text-gray-900">Admissions</h2>
+    <p :if={false} class="text-sm text-gray-600"></p>
+  </div>
+
+  <.button size={:sm} variant={:solid} patch={@scanner_path}>
+    <.icon name="ri--qr-scan-2-line" />
+    <span>Scan</span>
+  </.button>
+</div>

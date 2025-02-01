@@ -1,16 +1,18 @@
 defmodule Gits.Storefront.Event do
   require Decimal
+  alias Gits.Bucket
   alias Gits.Accounts.{Host, Venue}
-  alias Gits.Storefront.{EventCategory, Interaction, Order, Ticket, TicketType}
+  alias Gits.Storefront.{EventCategory, Interaction, Order, Ticket, TicketType, Webhook}
 
-  alias __MODULE__.Checks.ActorCanCreateEvent
   alias __MODULE__.Notifiers.{EventUpdated}
+  alias __MODULE__.Fragments
 
   use Ash.Resource,
     domain: Gits.Storefront,
+    fragments: [Fragments.Actions, Fragments.Policies],
     data_layer: AshPostgres.DataLayer,
     authorizers: Ash.Policy.Authorizer,
-    extensions: [AshArchival.Resource, AshStateMachine, AshPaperTrail.Resource],
+    extensions: [AshArchival.Resource, AshPaperTrail.Resource],
     notifiers: [EventUpdated]
 
   postgres do
@@ -43,186 +45,6 @@ defmodule Gits.Storefront.Event do
     define :get_by_public_id_for_listing, args: [:public_id]
   end
 
-  actions do
-    defaults [:read, :destroy, update: :*]
-
-    read :get_by_public_id_for_listing do
-      get_by [:public_id]
-      prepare build(load: [:name])
-    end
-
-    read :archived do
-      filter expr(not is_nil(archived_at))
-    end
-
-    create :create do
-      primary? true
-      accept [:name, :starts_at, :ends_at, :visibility]
-
-      argument :host, :map
-      change manage_relationship(:host, type: :append)
-      change set_attribute(:public_id, &Nanoid.generate/0)
-    end
-
-    update :details do
-      accept :*
-    end
-
-    update :location do
-      accept [:location_notes, :location_is_private]
-    end
-
-    update :create_venue do
-      require_atomic? false
-
-      argument :venue, :map, allow_nil?: false
-      change manage_relationship(:venue, type: :create)
-    end
-
-    update :use_venue do
-      require_atomic? false
-
-      argument :venue, :uuid, allow_nil?: false
-      change manage_relationship(:venue, type: :append)
-    end
-
-    update :remove_venue do
-      require_atomic? false
-
-      argument :venue, :uuid, allow_nil?: false
-      change manage_relationship(:venue, type: :remove)
-    end
-
-    update :description do
-      accept [:summary, :description]
-    end
-
-    update :media do
-      accept [:poster]
-    end
-
-    update :publish do
-      change atomic_update(:published_at, expr(fragment("now()")))
-      change transition_state(:published)
-    end
-
-    update :add_ticket_type do
-      require_atomic? false
-      argument :type, :map, allow_nil?: false
-      change manage_relationship(:type, :ticket_types, type: :create)
-    end
-
-    update :edit_ticket_type do
-      require_atomic? false
-      argument :type, :map, allow_nil?: false
-      change manage_relationship(:type, :ticket_types, on_match: :update)
-    end
-
-    update :archive_ticket_type do
-      require_atomic? false
-      argument :type, :map, allow_nil?: false
-      change manage_relationship(:type, :ticket_types, on_match: :destroy)
-    end
-
-    update :create_order do
-      require_atomic? false
-
-      argument :order, :map, allow_nil?: false
-      change manage_relationship(:order, :orders, type: :create)
-    end
-
-    update :complete do
-      change atomic_update(:completed_at, expr(fragment("now()")))
-      change transition_state(:completed)
-    end
-  end
-
-  policies do
-    policy action(:read) do
-      authorize_if expr(not is_nil(published_at))
-      authorize_if expr(host.roles.user.id == ^actor(:id))
-    end
-
-    policy action(:archived) do
-      authorize_if expr(host.roles.user.id == ^actor(:id))
-    end
-
-    policy action(:create) do
-      authorize_if ActorCanCreateEvent
-    end
-
-    policy action(:details) do
-      authorize_if expr(host.roles.user.id == ^actor(:id))
-    end
-
-    policy action(:create_venue) do
-      authorize_if actor_present()
-    end
-
-    policy action(:use_venue) do
-      authorize_if actor_present()
-    end
-
-    policy action(:remove_venue) do
-      authorize_if actor_present()
-    end
-
-    policy action(:location) do
-      authorize_if actor_present()
-    end
-
-    policy action(:description) do
-      authorize_if actor_present()
-    end
-
-    policy action(:media) do
-      authorize_if actor_present()
-    end
-
-    policy action(:add_ticket_type) do
-      authorize_if expr(host.roles.user.id == ^actor(:id))
-    end
-
-    policy action(:edit_ticket_type) do
-      authorize_if expr(host.roles.user.id == ^actor(:id))
-    end
-
-    policy action(:archive_ticket_type) do
-      authorize_if expr(host.roles.user.id == ^actor(:id))
-    end
-
-    policy action(:publish) do
-      authorize_if expr(exists(host.roles, user.id == ^actor(:id)))
-    end
-
-    policy action(:publish) do
-      authorize_if expr(not start_date_invalid?)
-    end
-
-    policy action(:publish) do
-      authorize_if expr(not end_date_invalid?)
-    end
-
-    policy action(:publish) do
-      authorize_if expr(not venue_invalid?)
-    end
-
-    policy action(:create_order) do
-      authorize_if always()
-    end
-
-    policy action(:destroy) do
-      authorize_if always()
-    end
-
-    policy action(:complete) do
-      authorize_if actor_attribute_equals(
-                     :worker,
-                     to_string(EventUpdated) |> String.replace("Elixir.", "")
-                   )
-    end
-  end
-
   attributes do
     uuid_primary_key :id
 
@@ -243,8 +65,6 @@ defmodule Gits.Storefront.Event do
 
     attribute :summary, :string, public?: true
     attribute :description, :string, public?: true
-
-    attribute :poster, :string, public?: true
 
     attribute :published_at, :utc_datetime, public?: true
     attribute :completed_at, :utc_datetime, public?: true
@@ -269,6 +89,12 @@ defmodule Gits.Storefront.Event do
 
     has_many :orders, Order
     has_many :interactions, Interaction
+
+    has_many :webhooks, Webhook
+
+    has_one :poster, Bucket.Image do
+      domain Bucket
+    end
   end
 
   calculations do
@@ -284,12 +110,25 @@ defmodule Gits.Storefront.Event do
 
     calculate :start_date_invalid?, :boolean, expr(utc_starts_at < fragment("now()"))
     calculate :end_date_invalid?, :boolean, expr(utc_ends_at < utc_starts_at)
+    calculate :poster_invalid?, :boolean, expr(is_nil(poster))
     calculate :venue_invalid?, :boolean, expr(is_nil(venue))
+
+    calculate :currently_happening?,
+              :boolean,
+              expr(utc_starts_at < fragment("now()") and fragment("now()") < utc_ends_at)
+
+    calculate :has_tickets?, :boolean, expr(exists(ticket_types, true))
+
+    calculate :has_paid_tickets?,
+              :boolean,
+              expr(count(ticket_types, query: [filter: expr(price > 0)]) > 0)
 
     calculate :ticket_prices_vary?, :boolean, expr(minimum_ticket_price != maximum_ticket_price)
   end
 
   aggregates do
+    count :total_ticket_types, :ticket_types
+
     count :unique_views, :interactions do
       field :viewer_id
       uniq? true

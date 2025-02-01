@@ -1,0 +1,33 @@
+<div class="grid gap-4">
+  {render_slot(@inner_block)}
+  <div class="lg:p-2 p-4 grid gap-8">
+    <div class="flex w-full">
+      <h2 class="text-4xl grow font-medium col-span-full">General</h2>
+    </div>
+  </div>
+
+  <.form
+    :let={f}
+    for={@form}
+    class="grid gap-4 max-w-screen-md lg:px-2 px-4"
+    phx-change="validate"
+    phx-submit="submit"
+    phx-target={@myself}
+  >
+    <div class="col-span-full">
+      <h2 class="text-base/7 font-semibold text-gray-900 flex gap-4">
+        Host Details
+      </h2>
+      <p class="text-sm text-gray-600">
+        <!-- This will appear on GiTS event listings, and as preview when the event is shared on other platforms. -->
+      </p>
+    </div>
+
+    <.input field={f[:name]} label="Name" />
+    <div class="flex col-span-full gap-6">
+      <.button variant={:solid} disabled={not @form.changed? or not @form.valid?}>
+        <span>Save</span>
+      </.button>
+    </div>
+  </.form>
+</div>

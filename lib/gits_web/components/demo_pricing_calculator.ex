@@ -86,17 +86,22 @@ defmodule GitsWeb.DemoPricingCalculator do
       </form>
       <div class="flex justify-end gap-2 text-zinc-700">
         <span>No setup costs</span>
-        <.icon name="hero-check-circle" class="size-5" />
+        <.icon class="size-5 ri--checkbox-circle-line" />
       </div>
 
       <div class="flex justify-end gap-2 text-zinc-700">
         <span>Simple fee structure</span>
-        <.icon name="hero-check-circle" class="size-5" />
+        <.icon class="size-5 ri--checkbox-circle-line" />
+      </div>
+
+      <div class="flex justify-end gap-2 text-zinc-700">
+        <span>Secure and convenient access control</span>
+        <.icon class="size-5 ri--checkbox-circle-line" />
       </div>
 
       <div class="flex justify-end gap-2 text-zinc-700">
         <span>Comprehensive sales analytics</span>
-        <.icon name="hero-check-circle" class="size-5" />
+        <.icon class="size-5 ri--checkbox-circle-line" />
       </div>
     </div>
     """

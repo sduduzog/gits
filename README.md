@@ -1,1 +1,1 @@
-# Gits
+# GiTS

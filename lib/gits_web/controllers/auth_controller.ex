@@ -30,6 +30,7 @@ defmodule GitsWeb.AuthController do
       end
     )
     |> put_layout(false)
+    |> assign(:page_title, "Sign in")
     |> render(:sign_in)
   end
 

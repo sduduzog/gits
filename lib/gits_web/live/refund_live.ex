@@ -13,12 +13,18 @@ defmodule GitsWeb.RefundLive do
         socket
         |> assign(:order, order)
         |> assign(:form, Form.for_update(order, :refund))
-        |> ok(:host_panel)
+        |> ok(:wizard)
     end
   end
 
   def mount(_params, _, socket) do
     ok(socket, :not_found)
+  end
+
+  def handle_event("close", _, socket) do
+    socket
+    |> redirect(to: ~p"/my/orders")
+    |> noreply()
   end
 
   def handle_event("refund_requested", _, socket) do

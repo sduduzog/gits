@@ -1,7 +1,5 @@
 defmodule GitsWeb.HostLive.Onboarding do
   require Ash.Query
-  alias Gits.Accounts.User
-  alias Gits.Accounts.Role
   alias Gits.Accounts.Host
   alias AshPhoenix.Form
 
@@ -26,11 +24,11 @@ defmodule GitsWeb.HostLive.Onboarding do
         |> assign(:page_title, "Create a host account")
         |> assign(:uploaded_files, [])
         |> allow_upload(:logo, accept: ~w(.jpg .jpeg .png .webp), max_entries: 1)
-        |> ok(:host_panel)
+        |> ok(:wizard)
     end
   end
 
-  def handle_params(_unsigned_params, _uri, socket) do
+  def handle_params(_, _, socket) do
     %{current_user: user} = socket.assigns
 
     Host
@@ -64,40 +62,10 @@ defmodule GitsWeb.HostLive.Onboarding do
   end
 
   def handle_event("save", unsigned_params, socket) do
-    %{form: form} = socket.assigns
-
-    filename =
-      consume_uploaded_entries(socket, :logo, fn %{path: path}, _entry ->
-        bucket_name = Application.get_env(:gits, :bucket_name)
-
-        filename = Nanoid.generate(24) <> ".jpg"
-
-        Image.open!(path)
-        |> Image.thumbnail!("256x256", fit: :cover)
-        |> Image.stream!(suffix: ".jpg", buffer_size: 5_242_880, quality: 100)
-        |> ExAws.S3.upload(
-          bucket_name,
-          filename,
-          content_type: "image/jpeg",
-          cache_control: "public,max-age=3600"
-        )
-        |> ExAws.request()
-
-        {:ok, filename}
-      end)
-      |> case do
-        [filename] ->
-          filename
-
-        [] ->
-          nil
-      end
-
-    form
-    |> Form.submit(params: Map.merge(unsigned_params["form"], %{"logo" => filename}))
+    Form.submit(socket.assigns.form, params: unsigned_params["form"])
     |> case do
       {:ok, host} ->
-        socket |> push_navigate(to: ~p"/hosts/#{host.handle}/events/create-new")
+        socket |> push_navigate(to: ~p"/hosts/#{host.handle}/events/create")
 
       {:error, form} ->
         socket |> assign(:form, form)
@@ -110,8 +78,4 @@ defmodule GitsWeb.HostLive.Onboarding do
 
     socket |> noreply()
   end
-
-  defp error_to_string(:too_large), do: "Too large"
-  defp error_to_string(:not_accepted), do: "You have selected an unacceptable file type"
-  defp error_to_string(:too_many_files), do: "You have selected too many files"
 end

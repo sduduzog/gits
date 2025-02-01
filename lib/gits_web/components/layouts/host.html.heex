@@ -1,35 +1,7 @@
 <.flash_group flash={@flash} />
 
-<% navigation = [
-  {"Home", "i-lucide-home", ~p"/hosts/#{@host.handle}/dashboard",
-   Enum.any?([Dashboard], &(&1 == @socket.view)), []},
-  {"Events", "i-lucide-calendar-range", ~p"/hosts/#{@host.handle}/events",
-   Enum.any?([ListEvents, ViewEvent], &(&1 == @socket.view)),
-   [
-     {"All", ~p"/hosts/#{@host.handle}/events", @live_action == :all},
-     {"Published", ~p"/hosts/#{@host.handle}/events/published", @live_action == :published},
-     {"Completed", ~p"/hosts/#{@host.handle}/events/completed", @live_action == :completed},
-     {"Drafts", ~p"/hosts/#{@host.handle}/events/drafts", @live_action == :drafts},
-     {"Archived", ~p"/hosts/#{@host.handle}/events/archived", @live_action == :archived}
-   ]},
-  {"Settings", "i-lucide-settings", ~p"/hosts/#{@host.handle}/settings",
-   Enum.any?([Settings], &(&1 == @socket.view)), []}
-] %>
-
-<% menus = [
-  [
-    {@current_user.email, nil, nil, false},
-    {"Profile", "i-lucide-user", ~p"/settings/profile", false}
-  ],
-  # [
-  # {"Organization", nil, nil, false}
-  # {"Settings", "i-lucide-settings", ~p"/hosts/#{@host.handle}/settings", false}
-  # ],
-  [{"Sign out", "i-lucide-log-out", ~p"/sign-out", false}]
-] %>
-
-<div class="grid h-dvh lg:grid-cols-[theme(space.64)_1fr]">
-  <aside class="absolute inset-0 z-10 hidden space-y-8 bg-white lg:static lg:block">
+<div class="grid h-dvh w-full gap-4 overflow-hidden lg:grid-cols-[theme(space.64)_1fr]">
+  <aside class="absolute inset-0 z-20 hidden w-full shrink-0 space-y-8 bg-white lg:static lg:z-0 lg:block lg:max-w-64">
     <div class="flex items-center px-4 py-2">
       <div class="grow lg:py-1">
         <div class="">
@@ -38,30 +10,27 @@
       </div>
 
       <.button phx-click={JS.hide(to: "aside")} size={:box} variant={:ghost} class="lg:hidden">
-        <.icon name="i-lucide-x" />
+        <.icon name="lucide--x" />
       </.button>
     </div>
-    <div class="grid gap-2">
-      <div
-        :for={{label, icon, href, current, children} <- navigation}
-        class="flex flex-wrap gap-y-2"
-      >
-        <.link
-          navigate={href}
-          aria-selected={"#{current}"}
-          class={[
-            "peer flex text-zinc-400 grow font-medium gap-3 peer/link rounded-l-lg px-2 py-3 hover:text-zinc-900 lg:py-2 ml-0.5 aria-selected:text-zinc-900",
-            if(children == [], do: "lg:rounded-r-lg", else: "")
-          ]}
-        >
-          <.icon name={icon} />
-          <span>{label}</span>
-        </.link>
-
-        <span class="order-first w-1 rounded-r-lg peer-hover/link:bg-zinc-100 peer-aria-selected/link:bg-zinc-600">
-        </span>
-
-        <%= if children != [] do %>
+    <div class="grid gap-1 p-2 text-sm font-medium text-zinc-400">
+      <%= for {label, icon, href, current, children, flag} <- GitsWeb.HostComponents.host_navigation_items(@host, @socket.view, @live_action) do %>
+        <%= if children == [] do %>
+          <.link
+            patch={href}
+            aria-selected={"#{current}"}
+            class="flex items-center gap-2 rounded-lg p-2 hover:bg-zinc-50/50 aria-selected:text-zinc-800"
+          >
+            <.icon class={"#{icon} shrink-0"} />
+            <span class="grow">{label}</span>
+            <span
+              :if={flag}
+              class="inline-flex h-5 min-w-5 items-center justify-center overflow-hidden rounded border-zinc-800 bg-zinc-50 text-xs text-zinc-600 ring-1 ring-zinc-100"
+            >
+              {flag}
+            </span>
+          </.link>
+        <% else %>
           <input
             type="checkbox"
             checked={current}
@@ -69,141 +38,33 @@
             id={"toggle-#{label}"}
           />
           <label
-            class="inline-flex cursor-pointer p-3.5 hover:text-zinc-900 peer-checked/input:hidden peer-hover/link:text-zinc-900 lg:rounded-r-lg lg:p-2.5"
             for={"toggle-#{label}"}
+            class="group flex items-center gap-2 rounded-lg p-2 hover:bg-zinc-50/50"
           >
-            <.icon name="i-lucide-chevron-right" class="text-sm/4" />
+            <.icon class={icon} /> <span class="grow">{label}</span>
+            <.icon class="shrink-0 transition-transform ri--arrow-right-s-line peer-checked/input:group-[]:rotate-90" />
           </label>
-          <label
-            class="hidden cursor-pointer p-3.5 hover:text-zinc-900 peer-checked/input:inline-flex peer-hover/link:text-zinc-900 lg:rounded-r-lg lg:p-2.5"
-            for={"toggle-#{label}"}
-          >
-            <.icon name="i-lucide-chevron-down" class="text-sm/4" />
-          </label>
+          <div class="ml-4 hidden border-l pl-1.5 transition-all peer-checked/input:grid">
+            <.link
+              :for={{label, href, current, flag} <- children}
+              patch={href}
+              aria-selected={"#{current}"}
+              class="rounded-lg p-2 hover:bg-zinc-50/50 aria-selected:text-zinc-800 flex"
+            >
+              <span class="grow">{label}</span>
+              <span
+                :if={flag}
+                class="inline-flex h-5 min-w-5 items-center justify-center overflow-hidden rounded border-zinc-800 bg-zinc-50 text-xs text-zinc-600 ring-1 ring-zinc-100"
+              >
+                {flag}
+              </span>
+            </.link>
+          </div>
         <% end %>
-        <div
-          :for={{label, href, current} <- children}
-          class="hidden w-full pl-4 peer-checked/input:grid"
-        >
-          <.link
-            navigate={href}
-            aria-selected={"#{current}"}
-            class="inline-flex w-full rounded-l-lg px-2 py-3 pl-7 font-medium text-zinc-400 hover:text-zinc-900 aria-selected:text-zinc-900 lg:rounded-r-lg lg:py-2"
-          >
-            <span class="pl-0.5">{label}</span>
-          </.link>
-        </div>
-      </div>
+      <% end %>
     </div>
   </aside>
-  <div class="overflow-auto">
-    <header class="sticky top-0 flex items-center gap-2 bg-white p-2 pr-4 shadow-sm lg:static lg:pl-0 lg:shadow-none">
-      <div class="flex grow items-center">
-        <.button :if={false} size={:box} variant={:ghost}>
-          <.icon name="i-lucide-home" />
-        </.button>
-        <.icon :if={false} name="i-lucide-chevron-right" class="text-zinc-600" />
-        <.button :if={false} size={:box} variant={:ghost}>
-          <span>Events</span>
-        </.button>
-        <.icon :if={false} name="i-lucide-chevron-right" class="text-zinc-600" />
-        <.button :if={false} size={:box} variant={:ghost} disabled>
-          <span>Events</span>
-        </.button>
-      </div>
-
-      <div
-        phx-click-away={
-          JS.hide(
-            to: "div#header-menu[role=menu]",
-            transition:
-              {"transition ease-in duration-75", "transform opacity-100 scale-100",
-               "transform opacity-0 scale-95"}
-          )
-        }
-        class="relative"
-      >
-        <.button
-          size={:box}
-          variant={:ghost}
-          phx-click={
-            JS.toggle(
-              to: "div#header-menu[role=menu]",
-              in:
-                {"transition ease-out duration-100", "transform opacity-0 scale-95",
-                 "transform opacity-100 scale-100"},
-              out:
-                {"transition ease-in duration-75", "transform opacity-100 scale-100",
-                 "transform opacity-0 scale-95"}
-            )
-          }
-          id="menu-button"
-        >
-          <.icon name="i-lucide-building-2" />
-          <span class="hidden lg:inline-flex">{@host.name}</span>
-          <.icon name="i-lucide-chevron-down" />
-        </.button>
-
-        <div
-          id="header-menu"
-          class="absolute right-0 top-full z-20 hidden w-56 origin-top-right divide-y divide-zinc-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none"
-          role="menu"
-          aria-orientation="vertical"
-          aria-labelledby="menu-button"
-          tabindex="-1"
-        >
-          <div :for={{items, outer_index} <- Enum.with_index(menus)} class="py-1" role="none">
-            <%= for {{name, icon,href, badge}, index} <- Enum.with_index(items) do %>
-              <%= if href do %>
-                <.link
-                  navigate={href}
-                  class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 active:bg-zinc-100 active:text-zinc-900 active:outline-none"
-                  role="menuitem"
-                  tabindex="-1"
-                  id={"menu-item-#{outer_index}-#{index}"}
-                >
-                  <.icon :if={icon} name={icon} />
-                  <span>{name}</span>
-                  <span
-                    :if={badge}
-                    class="inline-flex items-center gap-x-1.5 rounded-md bg-white px-2 py-1 text-xs font-medium text-gray-900 ring-1 ring-inset ring-gray-200"
-                  >
-                    {badge}
-                  </span>
-                </.link>
-              <% else %>
-                <div class="px-4 py-1" role="none">
-                  <p class="truncate text-sm text-zinc-400" role="none">
-                    {name}
-                  </p>
-                </div>
-              <% end %>
-            <% end %>
-          </div>
-        </div>
-      </div>
-
-      <.button size={:box} variant={:ghost} phx-click={JS.show(to: "aside")} class="md:hidden">
-        <.icon name="i-lucide-menu" />
-      </.button>
-    </header>
-    <div class="lg:px-4">
-      {@inner_content}
-    </div>
+  <div class="w-full overflow-auto">
+    {@inner_content}
   </div>
 </div>
-<!-- Brevo Conversations {literal} -->
-<script>
-  (function(d, w, c) {
-      w.BrevoConversationsID = '677fe0ffc2a878d34e090918';
-      w[c] = w[c] || function() {
-          (w[c].q = w[c].q || []).push(arguments);
-      };
-      var s = d.createElement('script');
-      s.async = true;
-      s.src = 'https://conversations-widget.brevo.com/brevo-conversations.js';
-      if (d.head) d.head.appendChild(s);
-  })(document, window, 'BrevoConversations');
-</script>
-<!-- /Brevo Conversations {/literal} -->
-

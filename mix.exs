@@ -32,6 +32,7 @@ defmodule Gits.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:oban_web, "~> 2.0"},
       {:assent, "== 0.2.10"},
       {:premailex, "~> 0.3"},
       {:nanoid, "~> 2.0"},
@@ -52,14 +53,7 @@ defmodule Gits.MixProject do
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:floki, ">= 0.30.0"},
       {:phoenix_live_dashboard, "~> 0.8.3"},
-      {:heroicons,
-       github: "tailwindlabs/heroicons",
-       tag: "v2.1.5",
-       sparse: "optimized",
-       app: false,
-       compile: false,
-       depth: 1},
-      {:swoosh, "~> 1.16"},
+            {:swoosh, "~> 1.16"},
       {:gen_smtp, "~> 1.2"},
       {:finch, "~> 0.18"},
       {:telemetry_metrics, "~> 0.6"},
@@ -78,7 +72,7 @@ defmodule Gits.MixProject do
       {:timex, "~> 3.7"},
       {:dotenvy, "~> 0.8.0"},
       {:req, "~> 0.4.0"},
-      {:cachex, "~> 3.6"},
+      {:cachex, "~> 4.0"},
       {:image, "~> 0.44"},
       {:ex_aws, "~> 2.5"},
       {:ex_aws_s3, "~> 2.4"},
@@ -89,7 +83,7 @@ defmodule Gits.MixProject do
       {:mock, "~> 0.3.8", only: :test},
       {:power_assert, "~> 0.3.0", only: :test},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
-      {:igniter, "~> 0.4"},
+      {:igniter, "~> 0.5"},
       {:dialyxir, "~> 1.1", only: [:dev], runtime: false}
     ]
   end

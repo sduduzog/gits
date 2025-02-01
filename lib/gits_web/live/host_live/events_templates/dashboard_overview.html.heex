@@ -1,0 +1,121 @@
+<div>
+  <div :if={@event_state == :published} class="grid grid-cols-2 gap-4 lg:grid-cols-3 lg:gap-6">
+    <div
+      :for={
+        {label, value} <- [
+          {"Total revenue", "R0.00"},
+          {"Tickets sold", "0"},
+          {"Unique views", "0"}
+        ]
+      }
+      class="grid gap-2"
+    >
+      <span class="text-sm">{label}</span>
+      <span class="text-3xl font-medium">{value}</span>
+    </div>
+  </div>
+
+  <div
+    :if={@event_state == :draft and not @can_publish?}
+    class="border-border bg-background rounded-lg border p-4"
+  >
+    <div class="flex gap-2">
+      <div class="flex grow gap-3">
+        <.icon class="shrink-0 text-lg text-amber-500 ri--alert-line" />
+        <div class="flex grow flex-col gap-3">
+          <div class="space-y-1">
+            <p class="text-sm font-medium">There are outstanding issues with this event!</p>
+            <p class="text-muted-foreground text-sm">
+              Please resolve current issues with the event and you should be able to publish the event
+            </p>
+          </div>
+          <div :if={false}>
+            <button class="focus-visible:outline-ring/70 [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 inline-flex h-8 items-center justify-center whitespace-nowrap rounded-lg px-3 text-xs font-medium shadow-sm shadow-black/5 outline-offset-2 transition-colors focus-visible:outline focus-visible:outline-2 disabled:pointer-events-none disabled:opacity-50">
+              Learn more
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    :if={@can_publish?}
+    class="border-border bg-background xshadow-lg rounded-lg border p-4 shadow-black/5"
+  >
+    <div class="flex gap-2">
+      <div class="flex grow gap-3">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="lucide lucide-circle-check mt-0.5 shrink-0 text-emerald-500"
+          aria-hidden="true"
+        >
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="m9 12 2 2 4-4"></path>
+        </svg>
+        <div class="flex grow flex-col gap-3">
+          <div class="space-y-1">
+            <p class="text-sm font-medium">This event is ready to be published!</p>
+            <p class="text-sm text-zinc-500">
+              Publishing the event will make it available to everyone. You will still be able to make changes to the event details and tickets after publishing.
+            </p>
+          </div>
+          <div class="flex gap-2">
+            <.button variant={:accent} phx-click={show_modal("publish_event")}>
+              <.icon class="ri--rocket-fill rotate-45" />
+              <span>Publish</span>
+            </.button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <.modal id="publish_event">
+    <div :if={not @can_publish?} class="grid gap-4">
+      <div class="bg-emerald-50 rounded-full inline-flex p-4 place-self-start">
+        <.icon class="ri--rocket-line animate-pulse rotate-45 text-3xl text-emerald-600" />
+      </div>
+
+      <h3 class="text-xl font-medium">
+        Event published successfully!
+      </h3>
+
+      <p :if={false} class="text-sm text-gray-600">
+        Continue to publish this event?
+      </p>
+
+      <div :if={false} class="flex justify-end gap-4">
+        <div role="none" class="grow"></div>
+        <.button variant={:accent} phx-click="publish_event">
+          <.icon class="ri--rocket-fill rotate-45" />
+          <span class="text-sm font-semibold">Publish</span>
+        </.button>
+      </div>
+    </div>
+    <div :if={@can_publish?} class="grid gap-4">
+      <h3 class="text-xl font-medium">
+        Publish this event?
+      </h3>
+
+      <p class="text-sm text-gray-600">
+        Continue to publish this event?
+      </p>
+
+      <div class="flex justify-end gap-4">
+        <div role="none" class="grow"></div>
+        <.button variant={:accent} phx-click="publish_event">
+          <.icon class="ri--rocket-fill rotate-45" />
+          <span class="text-sm font-semibold">Publish</span>
+        </.button>
+      </div>
+    </div>
+  </.modal>
+</div>

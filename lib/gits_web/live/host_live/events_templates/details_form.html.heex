@@ -1,0 +1,177 @@
+<.form
+  :let={f}
+  id="event-details"
+  for={@form}
+  class="grid grid-cols-6 gap-8"
+  phx-change={@on_change}
+  phx-submit={@on_submit}
+>
+  <div class="col-span-full">
+    <h2 class="text-base/7 font-semibold text-gray-900">Basic Information</h2>
+    <p class="text-sm text-gray-600">
+      Information about your event.
+    </p>
+  </div>
+
+  <.inputs_for :if={@form.type == :create} field={f[:host]}></.inputs_for>
+
+  <.input type="text" class="col-span-full" label="Name" field={f[:name]} />
+
+  <.input
+    :if={false}
+    type="textarea"
+    class="col-span-full"
+    label="Summary"
+    field={f[:summary]}
+    rows="8"
+  />
+
+  <.input
+    field={f[:starts_at]}
+    label="Start Date"
+    type="datetime-local"
+    class="col-span-full lg:col-span-2"
+  />
+
+  <.input
+    field={f[:ends_at]}
+    label="End Date"
+    type="datetime-local"
+    class="col-span-full lg:col-span-2"
+  />
+
+  <.input
+    field={f[:category]}
+    label="Category"
+    type="select"
+    options={
+      Gits.Storefront.EventCategory.values()
+      |> Enum.map(&{Gits.Storefront.EventCategory.description(&1), &1})
+    }
+    class="col-span-full lg:col-span-2"
+  />
+
+  <.input
+    field={f[:visibility]}
+    label="Visibility"
+    hint="A private event is only visible to users with a URL to the event. A public event is discoverable in listing and in search results"
+    type="radio"
+    class="col-span-full"
+    options={[:private, :public]}
+  />
+
+  <div class="col-span-full">
+    <h2 class="text-base/7 font-semibold text-gray-900 flex gap-4">
+      Listing image
+    </h2>
+    <p class="text-sm text-gray-600">
+      This will appear on GiTS event listings, and as preview when the event is shared on other platforms.
+    </p>
+  </div>
+
+  <div class="col-span-full w-full grid gap-4 lg:grid-cols-[theme(space.80)_1fr]">
+    <div class="block relative col-span-full lg:col-span-1 aspect-[3/2] shrink-0 overflow-hidden rounded-lg border bg-zinc-50">
+      <.inputs_for :let={p} field={f[:poster]}>
+        <% entry = List.first(@uploads.poster.entries) %>
+
+        <.live_img_preview :if={entry} entry={entry} class="size-full object-cover opacity-60" />
+
+        <img
+          :if={not is_nil(p.data)}
+          src={p.data.url}
+          alt="Poster"
+          class={[
+            "size-full object-cover",
+            if(p[:id].value != p.data.id, do: "opacity-60", else: "")
+          ]}
+        />
+        <span
+          :if={p[:id].value != p.data.id}
+          class="inline-flex mt-1 absolute top-2 right-2 items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20"
+        >
+          Unsaved
+        </span>
+      </.inputs_for>
+    </div>
+    <div class="space-y-2">
+      <.live_file_input
+        upload={@uploads.poster}
+        class="block w-auto text-sm text-zinc-400 file:border file:border-zinc-200 file:text-zinc-400 file:font-medium file:border-solid file:px-2 file:py-1.5 file:rounded-lg file:bg-white"
+      />
+
+      <div>
+        <p class="text-sm text-zinc-600">
+          Please upload an image with the following specifications:
+        </p>
+
+        <div class="text-sm text-zinc-500">
+          <ul role="list" class="list-disc space-y-1 pl-5">
+            <li><strong>Aspect Ratio</strong>: 3:2</li>
+            <li><strong>Aspect Ratio</strong>: Maximum 2 MB</li>
+            <li><strong>Minimum Dimensions</strong>: 768 x 512 pixels</li>
+          </ul>
+        </div>
+      </div>
+
+      <%= for entry <- @uploads.poster.entries do %>
+        <p :for={err <- upload_errors(@uploads.poster, entry)}>
+          <.error>{error_to_string(err)}</.error>
+        </p>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="col-span-full">
+    <h2 class="text-base/7 font-semibold text-gray-900">Location</h2>
+    <p class="text-sm text-gray-600">
+      Where will the event be taking place
+    </p>
+  </div>
+
+  <div class="col-span-full grid place-items-start gap-4 lg:col-span-4">
+    <.inputs_for :let={v} field={f[:venue]}>
+      <div class="flex gap-4">
+        <div class="inline-flex size-12 items-center justify-center rounded-full bg-zinc-50 text-2xl text-zinc-400">
+          <.icon name="lucide--map" />
+        </div>
+        <div>
+          <h2 class="text-base/7 font-semibold text-gray-900">{v[:name].value}</h2>
+          <span class="text-sm text-zinc-500">No extra info</span>
+        </div>
+      </div>
+      <div class="flex w-full">
+        <div class="grid grow text-sm/4">
+          <span class="text-zinc-500">{v[:address].value}</span>
+          <span class="text-zinc-500">{v[:province].value}</span>
+        </div>
+        <div>
+          <.button
+            type="button"
+            variant={:outline}
+            size={:box}
+            phx-click={JS.push("pre_choose_venue") |> show_modal("choose_venue")}
+          >
+            <.icon name="lucide--pen-line" />
+          </.button>
+        </div>
+      </div>
+    </.inputs_for>
+
+    <.button
+      :if={f[:venue].value == []}
+      type="button"
+      variant={:outline}
+      size={:box}
+      phx-click={show_modal("choose_venue")}
+    >
+      <span>Choose venue</span>
+    </.button>
+  </div>
+
+  <div class="col-span-full flex gap-2">
+    <.button variant={:solid}>
+      <.icon name="ri--save-line" />
+      <span>Save</span>
+    </.button>
+  </div>
+</.form>

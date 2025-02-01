@@ -1,0 +1,49 @@
+<div class="grid gap-4" phx-hook="HostDraggableTicketContainer" id="tickets">
+  <div
+    :for={ticket_type <- @ticket_types}
+    data-id={ticket_type.id}
+    class="flex flex-wrap items-center gap-2 rounded-lg border bg-white p-2"
+  >
+    <div class="handle inline-flex cursor-grab rounded-md p-2 active:cursor-grabbing">
+      <.icon name="lucide--grip-vertical" />
+    </div>
+
+    <span
+      style={"background-color: #{ticket_type.color}"}
+      class="inline-block h-6 w-1.5 rounded-xl"
+    >
+    </span>
+    <span class="grow text-base/4 font-semibold text-gray-900 lg:grow-0">
+      {ticket_type.name}
+    </span>
+    <.button
+      size={:box}
+      variant={:ghost}
+      phx-click={JS.push("manage_ticket") |> show_modal("manage_ticket")}
+      phx-value-id={ticket_type.id}
+      class="lg:order-last"
+    >
+      <.icon name="lucide--pen-square" />
+    </.button>
+    <div class="flex w-full grow items-center justify-end gap-2 px-2 py-1 text-sm/4 text-zinc-500 lg:mr-4 lg:w-auto lg:p-0">
+      <span class="">
+        R{ticket_type.price}
+      </span>
+      <span class="text-zinc-200">&bull;</span>
+      <span class="flex items-center gap-1">
+        <.icon name="lucide--user" />{ticket_type.limit_per_user}
+      </span>
+      <span class="text-zinc-200">&bull;</span>
+      <span class="flex items-center gap-1">
+        <.icon name="lucide--users" /> {ticket_type.quantity}
+      </span>
+      <span class="text-zinc-200">&bull;</span>
+      <span class="flex items-center gap-1">
+        <.icon name="lucide--calendar" /> {Calendar.strftime(
+          ticket_type.sale_starts_at,
+          "%a, %d %b %H:%m"
+        )}
+      </span>
+    </div>
+  </div>
+</div>

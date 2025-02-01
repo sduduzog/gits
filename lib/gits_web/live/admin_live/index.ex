@@ -10,9 +10,25 @@ defmodule GitsWeb.AdminLive.Index do
     Ash.load(socket.assigns.current_user, [:admin])
     |> case do
       {:ok, %User{admin: %Admin{}} = user} ->
+        navigation = [
+          # {"Home", "ri--home-line", ~p"/hosts/#{host.handle}/dashboard",
+          #  Enum.any?([Dashboard], &(&1 == view)), [], nil},
+          # {"Events", "ri--calendar-line", ~p"/hosts/#{host.handle}/events",
+          #  Enum.any?([Events], &(&1 == view)), [], nil},
+          # {"Team", "ri--team-line", false, Enum.any?([Settings], &(&1 == view)), [], nil},
+          # {"Settings", "ri--settings-3-line", false, Enum.any?([Settings], &(&1 == view)),
+          #  [
+          #    # {"General", "", false},
+          #    # {"Members", "", false},
+          #    # {"Billing", "", false},
+          #    {"API", ~p"/hosts/#{host.handle}/settings/api", live_action == :api, nil}
+          #  ], nil}
+        ]
+
         socket
+        |> assign(:sidebar_items, navigation)
         |> assign(:current_user, user)
-        |> ok(false)
+        |> ok(:dashboard)
 
       _ ->
         socket |> ok(:not_found)

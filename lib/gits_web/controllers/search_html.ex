@@ -20,7 +20,6 @@ defmodule GitsWeb.SearchHTML do
         <div class="aspect-[3/2] w-24 shrink-0 overflow-hidden rounded-lg">
           <img
             loading="eager"
-            src={Gits.Bucket.get_feature_image_path(event.account_id, event.id)}
             alt=""
             class="size-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-110"
           />
@@ -29,7 +28,7 @@ defmodule GitsWeb.SearchHTML do
           <div class="inline-flex items-center gap-1">
             <span class="max-w-40 truncate text-xs font-medium">
               <%= if not is_nil(event.address) do %>
-                <%= event.address.display_name %>
+                {event.address.display_name}
               <% else %>
                 n/a
               <% end %>
@@ -38,10 +37,10 @@ defmodule GitsWeb.SearchHTML do
               &bull;
             </span>
             <span class="shrink-0 text-xs font-medium">
-              <%= event.starts_at |> Timex.format!("%a, %e %b, %I:%M%p", :strftime) %>
+              {event.starts_at |> Timex.format!("%a, %e %b, %I:%M%p", :strftime)}
             </span>
           </div>
-          <span class="truncate text-lg font-medium"><%= event.name %></span>
+          <span class="truncate text-lg font-medium">{event.name}</span>
           <span
             :if={not is_nil(event.minimum_ticket_price)}
             class="whitespace-nowrap text-xs font-medium text-zinc-500 dark:text-zinc-400"

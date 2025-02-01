@@ -11,6 +11,7 @@
         end
       }
     >
+      <:col :let={order} label="Amount">R{order.amount}</:col>
       <:col :let={order} label="Order #">#{order.no}</:col>
       <:col :let={order} label="Date">{order.date}</:col>
       <:col :let={order} optional label="Event">{order.event}</:col>
@@ -31,7 +32,6 @@
           Completed
         </span>
       </:col>
-      <:col :let={order} optional label="Amount">{order.amount}</:col>
     </.table>
   </div>
 </div>

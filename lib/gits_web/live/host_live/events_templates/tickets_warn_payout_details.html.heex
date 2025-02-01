@@ -1,0 +1,14 @@
+<div class="border-border rounded-lg border px-4 py-3">
+  <div class="flex gap-3">
+    <.icon class="ri--alert-line text-sm mt-0.5 text-amber-500 shrink-0" />
+    <div class="flex grow items-start justify-between gap-3">
+      <p class="text-sm">Please setup payout details to accept payments for tickets.</p>
+      <.link
+        patch={@billing_settings_path}
+        class="group inline-flex items-center gap-1 whitespace-nowrap text-sm font-medium"
+      >
+        Setup<.icon class="mt-0.5 ri--arrow-right-line" />
+      </.link>
+    </div>
+  </div>
+</div>

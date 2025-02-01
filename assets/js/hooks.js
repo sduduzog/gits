@@ -1,3 +1,4 @@
+import Sortable from "sortablejs";
 function turnstileCallbackEvent(self, name, eventName) {
   return (payload) => {
     const events = self.el.dataset.events || "";
@@ -85,38 +86,42 @@ const QrScanner = {
   },
 };
 
-const CopyLinkButton = {
+const HostDraggableTicketContainer = {
   mounted() {
-    const textElement = this.el.querySelector("span:not(.hero-link-mini)");
-    this.el.addEventListener("click", async () => {
-      await navigator.clipboard.writeText(this.el.dataset.uri);
-      textElement.innerText = "Link copied";
-      setTimeout(() => {
-        textElement.innerText = "Copy link";
-      }, 1500);
+    function onSortHandler(data) {
+      this.pushEventTo("#tickets", "sort_ticket", data);
+    }
+
+    const sortHandler = onSortHandler.bind(this);
+
+    Sortable.create(this.el, {
+      handle: ".handle",
+      onSort: (evt) => {
+        sortHandler({
+          id: evt.item.dataset.id,
+          new_index: evt.newIndex,
+          old_index: evt.oldIndex,
+        });
+      },
     });
   },
 };
 
-const Dropdown = {
+const AutoClearFlash = {
   mounted() {
-    const dropdownButton = this.el.querySelector("button[data-dropdown]");
-    const dropdownOptions = this.el.querySelector("div[data-dropdown]");
+    const ignoredIDs = ["client-error", "server-error"];
+    if (ignoredIDs.includes(this.el.id)) return;
 
-    this.cleanup = autoUpdate(dropdownButton, dropdownOptions, () => {
-      computePosition(this.el, dropdownOptions, {
-        placement: "bottom-end",
-        middleware: [flip(), offset(10), shift({ padding: 5 })],
-      }).then(({ x, y }) => {
-        Object.assign(dropdownOptions.style, {
-          left: `${x}px`,
-          top: `${y}px`,
-        });
-      });
-    });
-  },
-  destroyed() {
-    this.cleanup?.();
+    const hideElementAfter = 5000; // ms
+    const clearFlashAfter = hideElementAfter + 500; // ms
+
+    setTimeout(() => {
+      this.el.style.opacity = 0;
+    }, hideElementAfter);
+
+    setTimeout(() => {
+      this.pushEvent("lv:clear-flash");
+    }, clearFlashAfter);
   },
 };
 
@@ -124,6 +129,6 @@ export const Hooks = {
   QrScanner,
   QrScannerCameraList,
   Turnstile: TurnstileHook,
-  CopyLinkButton,
-  Dropdown,
+  HostDraggableTicketContainer,
+  AutoClearFlash,
 };

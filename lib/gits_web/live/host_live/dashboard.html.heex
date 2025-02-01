@@ -1,10 +1,85 @@
-<h1 class="p-2 text-xl font-medium">Hello {@current_user.name}</h1>
-<div class="grid grid-cols-2 gap-4 p-2 md:grid-cols-3 lg:grid-cols-4 lg:gap-8">
-  <div
-    :for={{label, metric} <- [{"Total Events", @host.total_events |> IO.inspect()}]}
-    class="grid gap-2 rounded-xl border px-4 py-6"
-  >
-    <span class="text-sm font-medium text-zinc-700">{label}</span>
-    <span class="text-4xl font-semibold">{metric}</span>
+<div class="grid gap-4">
+  <.host_header current_user={@current_user} handle={@host.handle} host_name={@host.name}>
+    <.host_breadcrumb_label text="Home" />
+  </.host_header>
+  <div class="grid gap-8 p-4 lg:p-2">
+    <div class="flex w-full">
+      <h2 class="col-span-full grow text-4xl font-medium">Hello, {@current_user.name}</h2>
+    </div>
+  </div>
+
+  <div class="grid max-w-screen-2xl gap-8 p-2 lg:grid-cols-3">
+    <div class="grid rounded-xl border p-4 lg:px-6 lg:py-8">
+      <span class="text-3xl/8 font-semibold">R0</span>
+      <span class="text-sm/6 text-zinc-500">Total Income</span>
+    </div>
+
+    <div class="grid grid-cols-2 items-center rounded-xl border lg:col-span-2 lg:grid-cols-3 lg:divide-x">
+      <div
+        :for={
+          {label, value} <- [{"Unique Views", 0}, {"Total Orders", 0}, {"Refunded Orders", 0}]
+        }
+        class="grid p-4 lg:px-6 lg:py-8"
+      >
+        <span class="text-3xl/8 font-semibold">{value}</span>
+        <span class="text-sm/6 text-zinc-500">{label}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid gap-4 p-2 lg:grid-cols-5 lg:gap-8">
+    <div class="grid gap-4 lg:col-span-3 lg:grid-cols-2">
+      <h2 class="col-span-full p-2 text-lg font-medium">Upcoming events</h2>
+      <.link
+        :for={event <- @host.upcoming_events}
+        navigate={~p"/hosts/#{@host.handle}/events/#{event.public_id}"}
+        class="grid gap-4 rounded-lg border p-4"
+      >
+        <div class="flex items-start justify-between">
+          <div class="aspect-[3/2] w-24 shrink-0 overflow-hidden rounded-lg bg-zinc-50">
+            <img
+              :if={event.poster}
+              src={event.poster.url}
+              alt="Event poster"
+              class="size-full object-cover"
+            />
+          </div>
+          <span
+            :if={event.currently_happening?}
+            class="inline-flex items-center gap-x-1.5 rounded-md bg-brand-100 px-2 py-1 text-xs font-medium text-brand-700"
+          >
+            <svg class="size-1.5 animate-ping fill-brand-500" viewBox="0 0 6 6" aria-hidden="true">
+              <circle cx="3" cy="3" r="3" />
+            </svg>
+            Live
+          </span>
+        </div>
+        <h3 class="text-lg/5 font-semibold">
+          {event.name} The Ultimate Cheese Festival
+        </h3>
+        <div class="flex gap-2">
+          <.icon class="text-lg text-zinc-400 ri--calendar-line" />
+          <div class="grid gap-1 text-sm text-zinc-700">
+            <span>Starts: {Calendar.strftime(event.starts_at, "%a, %d %b at %I:%m %p")}</span>
+            <span>Ends: {Calendar.strftime(event.ends_at, "%a, %d %b at %I:%m %p")}</span>
+          </div>
+        </div>
+
+        <div>
+          <div class="flex items-center gap-1 text-xs text-zinc-900">
+            <span class="text-zinc-500">
+              Last updated:
+            </span>
+            <span>
+              {Calendar.strftime(event.updated_at, "%a, %d %b")}
+            </span>
+          </div>
+        </div>
+      </.link>
+    </div>
+
+    <div class="lg:col-span-2">
+      <h2 class="p-2 text-lg font-medium">Activity</h2>
+    </div>
   </div>
 </div>

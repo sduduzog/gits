@@ -2,6 +2,7 @@ defmodule Gits.Application do
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications
   @moduledoc false
+  import Cachex.Spec
 
   use Application
 
@@ -27,7 +28,7 @@ defmodule Gits.Application do
       # Start to serve requests, typically the last entry
       GitsWeb.Endpoint,
       {AshAuthentication.Supervisor, otp_app: :gits},
-      {Cachex, name: :cache, limit: 100},
+      {Cachex, [:cache, [hooks: [hook(module: Cachex.Limit.Evented, args: {1000, []})]]]},
       {Oban, Application.fetch_env!(:gits, Oban)}
     ]
 

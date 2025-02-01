@@ -1,16 +1,16 @@
-<div class="mx-auto grid max-w-screen-xl items-start gap-4 gap-x-12 lg:grid-cols-[minmax(auto,48rem)_1fr] lg:gap-6 lg:pb-6">
+<div class="mx-auto lg:px-2 grid max-w-screen-xl items-start gap-4 gap-x-12 lg:grid-cols-[minmax(auto,48rem)_1fr] lg:gap-6 lg:pb-6">
   <div class="space-y-4 lg:row-span-3">
-    <div class="aspect-[3/2] overflow-hidden bg-zinc-200 lg:rounded-2xl">
-      <img src={Gits.Bucket.get_image_url(@event.poster)} alt={@event.name} class="size-full" />
+    <div class="aspect-[3/2] overflow-hidden bg-zinc-50 lg:rounded-2xl">
+      <img :if={@event.poster} src={@event.poster.url} alt={@event.name} class="size-full" />
     </div>
   </div>
 
-  <div class="space-y-6 px-2">
-    <h1 class="lg:text-3xl text-2xl font-bold">{@event.name}</h1>
+  <div class="space-y-4 px-2">
+    <h1 class="text-2xl font-bold lg:text-3xl">{@event.name}</h1>
     <div class="flex flex-wrap gap-2">
       <span
         :if={@event.state == :draft}
-        class="inline-flex items-center gap-x-1.5 rounded-md px-2 py-1 text-xs font-medium text-yellow-800 bg-yellow-50 ring-1 ring-inset ring-yellow-600/20"
+        class="inline-flex items-center gap-x-1.5 rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20"
       >
         <svg class="h-1.5 w-1.5 fill-yellow-800" viewBox="0 0 6 6" aria-hidden="true">
           <circle cx="3" cy="3" r="3" />
@@ -31,22 +31,23 @@
       </span>
     </div>
 
-    <div class="grid lg:gap-8 gap-4">
-      <div class="flex items-start gap-2">
-        <.icon name="i-lucide-calendar-days" class="size-5 text-sm text-zinc-500" />
-        <div class="grid text-zinc-700 font-medium">
+    <div class="grid gap-3">
+      <div class="flex items-start gap-3">
+        <.icon class="shrink-0 text-lg text-zinc-500 ri--calendar-line" />
+        <div class="flex gap-2 text-sm text-zinc-700">
           <span class="">
-            Starts {Calendar.strftime(@event.starts_at, " %H:%M, %A %d %b %Y")}
+            {Calendar.strftime(@event.starts_at, "%a, %d %b, %I:%m %p")}
           </span>
+          &dash;
           <span class="">
-            Ends {Calendar.strftime(@event.ends_at, "%H:%M, %d %b %Y")}
+            {Calendar.strftime(@event.ends_at, "%a, %d %b, %I:%m %p")}
           </span>
         </div>
       </div>
 
-      <div class="flex items-start gap-2">
-        <.icon name="i-lucide-map-pin" class="size-5 text-zinc-500" />
-        <div class="grid">
+      <div class="flex items-start gap-3">
+        <.icon name="ri--map-pin-line" class="shrink-0 text-lg text-zinc-500" />
+        <div class="grid text-sm">
           <%= if @event.location_is_private or is_nil(@event.venue) do %>
             <span class="font-medium">Private Location</span>
             <span class="text-zinc-600">
@@ -59,23 +60,23 @@
         </div>
       </div>
 
-      <div class="flex items-start gap-2">
-        <.icon name="i-lucide-megaphone" class="size-5 text-zinc-500" />
-        <div class="flex gap-1.5">
+      <div class="flex items-start gap-3">
+        <.icon name="ri--megaphone-line" class="shrink-0 text-lg text-zinc-500" />
+        <div class="flex gap-1.5 text-sm">
           <span class="text-zinc-600">hosted by</span>
           <span class="font-medium">{@event.host.name}</span>
         </div>
       </div>
 
-      <div class="flex items-start gap-2">
-        <.icon name="i-lucide-hand-coins" class="size-5 text-zinc-500" />
-        <div class="">
+      <div class="flex items-start gap-3">
+        <.icon name="ri--hand-coin-line" class="shrink-0 text-lg text-zinc-500" />
+        <div class="space-y-1 text-sm">
           <span class="text-zinc-500">
             You can <span class="font-medium text-zinc-800">get a refund</span> if:
           </span>
-          <ul class="list-disctext-zinc-500">
-            <li class="ml-6">it's within 24 hours of buying tickets</li>
-            <li class="ml-6">this event is rescheduled or cancelled</li>
+          <ul class="list-disc pl-5 text-zinc-500">
+            <li class="">it's within 24 hours of buying tickets</li>
+            <li class="">this event is rescheduled or cancelled</li>
           </ul>
         </div>
       </div>
@@ -94,7 +95,7 @@
     </.inputs_for>
     <Gits.Turnstile.widget events={[:success]} appearance="interaction-only" />
 
-    <.button variant={:accent} disabled={not @verified?}>
+    <.button variant={:solid} disabled={not @verified? or not @event.has_tickets?}>
       <span>Get tickets</span>
     </.button>
   </.form>

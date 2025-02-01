@@ -3,7 +3,7 @@
     <%= if @order_state == :anonymous do %>
       <div class="flex items-center gap-4">
         <.button size={:none} class="p-2" onclick="history.back()" variant={:outline}>
-          <.icon name="i-lucide-chevron-left" />
+          <.icon name="lucide--chevron-left" />
         </.button>
         <h3 class="text-lg font-semibold lg:col-span-full">Who are the tickets for?</h3>
       </div>
@@ -27,7 +27,7 @@
     <%= if @order_state == :open do %>
       <div class="flex items-center gap-4">
         <.button size={:none} class="p-2" onclick="history.back()" variant={:outline}>
-          <.icon name="i-lucide-chevron-left" />
+          <.icon name="lucide--chevron-left" />
         </.button>
         <h3 class="text-lg font-semibold lg:col-span-full">Get Tickets</h3>
       </div>
@@ -61,7 +61,7 @@
                   variant={:subtle}
                   class="lg:p-2.5 p-3"
                 >
-                  <.icon name="i-lucide-minus" />
+                  <.icon name="lucide--minus" />
                 </.button>
               </.form>
 
@@ -90,7 +90,7 @@
                   variant={:subtle}
                   class="lg:p-2.5 p-3"
                 >
-                  <.icon name="i-lucide-plus" />
+                  <.icon name="lucide--plus" />
                 </.button>
               </.form>
             </div>
@@ -115,9 +115,9 @@
 
     <%= if @order_state == :processed do %>
       <div class="flex items-center gap-4">
-        <.form :let={f} phx-submit="reopen" for={@reopen_form}>
+        <.form phx-submit="reopen" for={@reopen_form}>
           <.button size={:none} class="p-2" variant={:outline}>
-            <.icon name="i-lucide-chevron-left" />
+            <.icon name="lucide--chevron-left" />
           </.button>
         </.form>
 
@@ -131,7 +131,7 @@
     <%= if @order_state == :cancelled do %>
       <div class="flex items-center gap-4">
         <.button size={:none} class="p-2" onclick="history.back()" variant={:outline}>
-          <.icon name="i-lucide-chevron-left" />
+          <.icon name="lucide--chevron-left" />
         </.button>
 
         <h3 class="text-lg font-semibold lg:col-span-full">Order Cancelled</h3>
@@ -153,7 +153,7 @@
     <%= if @order_state == :refunded do %>
       <div class="flex items-center gap-4">
         <.button size={:none} class="p-2" onclick="history.back()" variant={:outline}>
-          <.icon name="i-lucide-chevron-left" />
+          <.icon name="lucide--chevron-left" />
         </.button>
 
         <h3 class="text-lg font-semibold lg:col-span-full">Order Refunded</h3>
@@ -167,7 +167,7 @@
     <%= if @order_state == :completed do %>
       <div class="flex items-center gap-4">
         <.button size={:none} class="p-2" onclick="history.back()" variant={:outline}>
-          <.icon name="i-lucide-chevron-left" />
+          <.icon name="lucide--chevron-left" />
         </.button>
 
         <h3 class="text-lg font-semibold lg:col-span-full">Order Complete</h3>
@@ -181,7 +181,7 @@
     <%= if @order_state == :confirmed do %>
       <div class="flex items-center gap-4">
         <.button size={:none} class="p-2" onclick="history.back()" variant={:outline}>
-          <.icon name="i-lucide-chevron-left" />
+          <.icon name="lucide--chevron-left" />
         </.button>
 
         <h3 class="text-lg font-semibold lg:col-span-full">Order Confirmed</h3>

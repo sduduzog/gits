@@ -67,7 +67,7 @@
 
         <div class="flex gap-2 h-10">
           <div class="flex grow items-center gap-3">
-            <.icon name="i-lucide-circle-check" class=" text-green-500" />
+            <.icon name="lucide--circle-check" class=" text-green-500" />
             <div class="flex grow items-center gap-6">
               <p class="grow text-sm">Ticket validated</p>
               <.button
@@ -75,7 +75,7 @@
                 phx-click="admit"
                 size={:sm}
               >
-                <.icon name="i-lucide-user-round-check" />
+                <.icon name="lucide--user-round-check" />
                 <span>Admit</span>
               </.button>
             </div>
@@ -84,13 +84,13 @@
       <% else %>
         <div class="flex gap-2 h-10">
           <div :if={@ticket.loading == [:ticket]} class="flex grow items-center gap-3">
-            <.icon name="i-lucide-loader-circle" class="animate-spin text-zinc-600" />
+            <.icon name="lucide--loader-circle" class="animate-spin text-zinc-600" />
             <div class="flex grow items-center gap-6">
               <p class="text-sm">Loading...</p>
             </div>
           </div>
           <div :if={@ticket.failed} class="flex grow items-center gap-3">
-            <.icon name="i-lucide-circle-x" class="text-red-500" />
+            <.icon name="lucide--circle-x" class="text-red-500" />
             <div class="flex grow items-center gap-6">
               <p class="text-sm">{error_to_string(@ticket.failed)}</p>
             </div>

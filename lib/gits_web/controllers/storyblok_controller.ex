@@ -80,7 +80,6 @@ defmodule GitsWeb.StoryblokController do
       end
     end)
     |> case do
-      {_, response, _} -> response
       {_, response} -> response
     end
   end

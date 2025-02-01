@@ -4,25 +4,29 @@ defmodule GitsWeb.SEO do
   use SEO,
     site: &__MODULE__.site_config/1,
     open_graph: &__MODULE__.og_config/1,
-    twitter:
-      SEO.Twitter.build(
-        site: "@gits_za",
-        creator: "@sduduzo_g",
-        card: :summary_large_image
-      )
+    twitter: &__MODULE__.twitter_build/1
 
   def site_config(conn) do
     SEO.Site.build(
       default_title: "GiTS - Ticketing & events",
       title_suffix: " - GiTS",
-      description: "Easy events, affortable tickets",
+      description: "Unlock Unforgettable Experiences",
       manifest_url: url(conn, ~p"/site.webmanifest")
+    )
+  end
+
+  def twitter_build(conn) do
+    SEO.Twitter.build(
+      site: "@gits_za",
+      creator: "@sduduzo_g",
+      card: :summary_large_image,
+      image: static_url(conn, "/images/gits_site_cover.png")
     )
   end
 
   def og_config(conn) do
     SEO.OpenGraph.build(
-      description: "Easy events, affordable tickets",
+      description: "Unlock Unforgettable Experiences",
       site_name: "GiTS",
       image: static_url(conn, "/images/gits_site_cover.png")
     )
@@ -46,10 +50,8 @@ defimpl SEO.OpenGraph.Build, for: Gits.Storefront.Event do
   end
 
   defp image(event, _) do
-    file = Gits.Bucket.get_image_url(event.poster)
-
     SEO.OpenGraph.Image.build(
-      url: file,
+      url: if(event.poster, do: event.poster.url, else: nil),
       alt: event.name
     )
   end
@@ -69,7 +71,11 @@ end
 
 defimpl SEO.Twitter.Build, for: Gits.Storefront.Event do
   def build(event, _conn) do
-    SEO.Twitter.build(description: event.summary, title: event.name)
+    SEO.Twitter.build(
+      description: event.summary,
+      title: event.name,
+      image: if(event.poster, do: event.poster.url, else: nil)
+    )
   end
 end
 

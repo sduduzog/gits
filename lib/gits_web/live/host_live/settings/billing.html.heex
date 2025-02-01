@@ -1,0 +1,35 @@
+<div class="grid gap-4">
+  {render_slot(@inner_block)}
+  <div class="lg:p-2 p-4 grid gap-8">
+    <div class="flex w-full">
+      <h2 class="text-4xl grow font-medium col-span-full">Billing & Payouts</h2>
+    </div>
+  </div>
+
+  <div class="col-span-full lg:px-2 px-4">
+    <h2 class="text-base/7 font-semibold text-gray-900 flex gap-4">
+      Payout Details
+    </h2>
+    <p class="text-sm text-gray-600">
+      <!-- This will appear on GiTS event listings, and as preview when the event is shared on other platforms. -->
+    </p>
+  </div>
+
+  <.form
+    :let={f}
+    for={@form}
+    class="grid gap-4 grid-cols-2 max-w-screen-md lg:px-2 px-4"
+    phx-change="validate"
+    phx-submit="submit"
+    phx-target={@myself}
+  >
+    <.input field={f[:paystack_business_name]} label="Business name" type="text" />
+    <.input field={f[:paystack_settlement_bank]} options={@banks} label="Bank" type="select" />
+    <.input field={f[:paystack_account_number]} label="Account number" type="number" />
+    <div class="flex col-span-full gap-6">
+      <.button size={:sm} disabled={not @form.changed? or not @form.valid?}>
+        <span>Save</span>
+      </.button>
+    </div>
+  </.form>
+</div>

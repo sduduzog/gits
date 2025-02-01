@@ -1,0 +1,56 @@
+<.modal id="manage_ticket">
+  <.form
+    :let={f}
+    for={@form}
+    class="grid grid-cols-2 gap-2 lg:gap-4"
+    phx-change={@on_change}
+    phx-submit={@on_submit}
+  >
+    <h3 class="text-xl font-medium">
+      {if(@form.action == :create, do: "Create ticket", else: "Edit ticket")}
+    </h3>
+
+    <input type="text" class="sr-only" />
+
+    <div class="col-span-full flex">
+      <.input type="color" field={f[:color]} value={f[:color].value} label="Color" />
+    </div>
+
+    <.inputs_for :if={@form.action == :create} field={f[:event]}></.inputs_for>
+    <.input
+      :if={@form.action == :create}
+      field={f[:order_index]}
+      value={@order_index}
+      type="hidden"
+    />
+
+    <.input type="text" field={f[:name]} label="Name" class="" placeholder="e.g General" />
+    <.input type="number" field={f[:price]} label="Price" hint="R0 or R50+" />
+    <.input type="number" field={f[:quantity]} label="Quantity" />
+    <.input type="number" field={f[:limit_per_user]} label="Limit per user" />
+
+    <.input field={f[:sale_starts_at]} label="Sale starts" type="datetime-local" />
+
+    <.input field={f[:sale_ends_at]} label="Sale ends" type="datetime-local" />
+
+    <.input type="textarea" field={f[:description]} label="Description" class="col-span-full" />
+
+    <div class="col-span-full flex justify-end gap-4">
+      <.button
+        :if={@form.action == :update}
+        variant={:ghost}
+        type="button"
+        phx-value-id={f[:id].value}
+        phx-click={JS.push("delete_ticket") |> hide_modal("manage_ticket")}
+      >
+        <span class="text-sm font-semibold text-red-600">Delete</span>
+      </.button>
+
+      <div role="none" class="grow"></div>
+
+      <.button>
+        <span class="text-sm font-semibold">Save</span>
+      </.button>
+    </div>
+  </.form>
+</.modal>

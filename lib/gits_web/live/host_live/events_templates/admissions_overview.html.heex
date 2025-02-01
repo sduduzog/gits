@@ -1,0 +1,37 @@
+<ul role="list" class="divide-y divide-gray-100 overflow-hidden bg-white">
+  <li
+    :for={ticket <- @event.tickets}
+    class="relative flex justify-between gap-x-6 hover:bg-gray-50 rounded-lg p-2"
+  >
+    <div class="flex min-w-0 gap-x-4">
+      <div class="size-12 flex-none rounded-full bg-gray-50 overflow-hidden">
+        <img alt="" />
+      </div>
+
+      <div class="min-w-0 flex-auto">
+        <p class="text-sm/6 font-semibold text-gray-900">
+          <a href="#">
+            <span class="absolute inset-x-0 -top-px bottom-0"></span> Guest
+          </a>
+        </p>
+        <p class="mt-1 flex text-xs/5 text-gray-500">
+          {ticket.public_id}
+          <a
+            :if={false}
+            href="mailto:leslie.alexander@example.com"
+            class="relative truncate hover:underline"
+          >
+          </a>
+        </p>
+      </div>
+    </div>
+    <div class="flex shrink-0 items-center gap-x-4">
+      <div class="flex flex-col items-end">
+        <p class="text-sm/6 text-gray-900">{ticket.ticket_type.name}</p>
+        <p :if={false} class="mt-1 text-xs/5 text-gray-500">
+          Last seen <time datetime="2023-01-23T13:23Z">3h ago</time>
+        </p>
+      </div>
+    </div>
+  </li>
+</ul>

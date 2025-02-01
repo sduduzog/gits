@@ -1,13 +1,12 @@
 defmodule Gits.Storefront.TicketType do
-  alias Gits.Storefront.{Event, Order, Ticket}
-  alias Gits.Accounts
-  alias Gits.Accounts.User
+  alias Gits.Storefront.{Event, Ticket}
   alias __MODULE__.Validations.PriceValid
+  alias __MODULE__.Fragments
 
   use Ash.Resource,
     domain: Gits.Storefront,
+    fragments: [Fragments.Policies],
     data_layer: AshPostgres.DataLayer,
-    authorizers: Ash.Policy.Authorizer,
     extensions: [AshArchival.Resource, AshPaperTrail.Resource]
 
   postgres do
@@ -22,7 +21,29 @@ defmodule Gits.Storefront.TicketType do
   end
 
   actions do
-    defaults [:read, :destroy, create: :*, update: :*]
+    defaults [:destroy, update: :*]
+
+    read :read do
+      primary? true
+
+      prepare build(sort: [order_index: :asc])
+    end
+
+    create :create do
+      primary? true
+      accept :*
+
+      argument :event, :map
+
+      change set_new_attribute(:color, &Gits.RandomColor.generate/0)
+      change manage_relationship(:event, type: :append)
+    end
+
+    update :order do
+      argument :index, :integer, allow_nil?: false
+
+      change set_new_attribute(:order_index, arg(:index))
+    end
 
     update :add_ticket do
       require_atomic? false
@@ -36,43 +57,6 @@ defmodule Gits.Storefront.TicketType do
       argument :ticket, :map, allow_nil?: false
 
       change manage_relationship(:ticket, :tickets, on_match: :destroy)
-    end
-  end
-
-  policies do
-    policy action(:read) do
-      authorize_if accessing_from(Event, :ticket_types)
-      authorize_if accessing_from(Order, :ticket_types)
-      authorize_if accessing_from(Ticket, :ticket_type)
-    end
-
-    policy action(:create) do
-      authorize_if accessing_from(Event, :ticket_types)
-    end
-
-    policy action(:update) do
-      authorize_if accessing_from(Order, :ticket_types)
-      authorize_if accessing_from(Event, :ticket_types)
-    end
-
-    policy action(:destroy) do
-      authorize_if accessing_from(Event, :ticket_types)
-    end
-
-    policy action(:add_ticket) do
-      authorize_if accessing_from(Order, :ticket_types)
-    end
-
-    policy action(:add_ticket) do
-      authorize_if expr(on_sale?)
-    end
-
-    policy action(:add_ticket) do
-      authorize_if expr(valid_tickets_count < quantity)
-    end
-
-    policy action(:remove_ticket) do
-      authorize_if accessing_from(Order, :ticket_types)
     end
   end
 
@@ -93,14 +77,19 @@ defmodule Gits.Storefront.TicketType do
     attribute :limit_per_user, :integer, public?: true, allow_nil?: false, default: 10
 
     attribute :color, :string, public?: true
+
     attribute :rsvp_enabled, :boolean, public?: true, allow_nil?: false, default: false
+
+    attribute :order_index, :integer, public?: true, allow_nil?: false, default: 0
 
     create_timestamp :created_at
     update_timestamp :updated_at
   end
 
   relationships do
-    belongs_to :event, Event
+    belongs_to :event, Event do
+      allow_nil? false
+    end
 
     has_many :tickets, Ticket
   end
@@ -119,8 +108,6 @@ defmodule Gits.Storefront.TicketType do
     calculate :on_sale?, :boolean, expr(sale_started? and not sale_ended?)
 
     calculate :sold_out, :boolean, expr(valid_tickets_count == quantity)
-
-    calculate :test, :integer, expr(count(tickets, query: [filter: expr(true)]))
 
     calculate :limit_reached,
               :boolean,

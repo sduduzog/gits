@@ -1,0 +1,101 @@
+<%= if @live_action  == :index do %>
+  <.host_header current_user={@current_user} handle={@host.handle} host_name={@host.name}>
+    <.host_breadcrumb_label text="Events" />
+  </.host_header>
+
+  <.list_events
+    current_user={@current_user}
+    handle={@host.handle}
+    host_name={@host.name}
+    events={@events}
+  />
+<% else %>
+  <div class="grid lg:h-full grid-rows-[auto_auto_1fr] items-start gap-2 lg:overflow-auto lg:gap-6">
+    <.host_header current_user={@current_user} handle={@host.handle} host_name={@host.name}>
+      <.host_breadcrumb_button text="Events" href={~p"/hosts/#{@host.handle}/events"} />
+      <span class="text-xs font-semibold text-zinc-400">/</span>
+      <%= if is_nil(@event) do %>
+        <.host_breadcrumb_label text="Create new" />
+      <% else %>
+        <.host_breadcrumb_label text={@event.name} />
+      <% end %>
+    </.host_header>
+
+    <.event_summary event={@event} />
+    <.event_content>
+      <.event_sidebar
+        event={@event}
+        handle={@host.handle}
+        event_has_issues?={@event_has_issues?}
+        paid_tickets_issue?={
+          not @host.payment_method_ready? and Enum.any?(@ticket_types, &Decimal.gt?(&1.price, 0))
+        }
+        tickets_flag={Enum.count(@ticket_types)}
+        action={@live_action}
+      />
+      <.event_main>
+        <%= if @live_action == :dashboard do %>
+          <.dashboard_overview event_state={@event.state} can_publish?={@can_publish?} />
+        <% end %>
+
+        <%= if @live_action == :details do %>
+          <.details_warn_invalid_event
+            :if={not is_nil(@event) and @event.state == :draft}
+            issues_count={@issues_count}
+          >
+            <li :if={@start_date_invalid?}>Start date invalid</li>
+            <li :if={@end_date_invalid?}>End date invalid</li>
+            <li :if={@poster_invalid?}>Poster invalid</li>
+            <li :if={@venue_invalid?}>Venue invalid</li>
+          </.details_warn_invalid_event>
+          <.details_form
+            form={@details_form}
+            on_change="validate_details_form"
+            on_submit="submit_details_form"
+            host_state={@host.state}
+            uploads={@uploads}
+          />
+          <.details_modal_choose_venue
+            venues={@venues}
+            suggestions={@venue_suggestions}
+            venue={@venue}
+            form_data={@details_form.data}
+          />
+        <% end %>
+
+        <%= if @live_action == :tickets do %>
+          <.tickets_header />
+          <.tickets_warn_payout_details
+            :if={not @host.payment_method_ready?}
+            billing_settings_path={~p"/hosts/#{@host.handle}/settings/billing"}
+          />
+          <.tickets_list ticket_types={@ticket_types} />
+          <.tickets_modal_manage_ticket
+            form={@tickets_form}
+            order_index={Enum.count(@ticket_types)}
+            on_change="validate_tickets_form"
+            on_submit="submit_tickets_form"
+          />
+        <% end %>
+        <%= if @live_action == :admissions do %>
+          <.admissions_header
+            event_state={@event.state}
+            can_publish?={@can_publish?}
+            scanner_path={
+              Routes.host_scanner_path(@socket, :index, @host_handle, @event.public_id)
+            }
+          />
+          <.admissions_overview
+            event={@event}
+            event_state={@event.state}
+            can_publish?={@can_publish?}
+          />
+        <% end %>
+
+        <%= if @live_action == :settings do %>
+          <.settings_content webhooks={@event.webhooks} />
+        <% end %>
+      </.event_main>
+    </.event_content>
+  </div>
+<% end %>
