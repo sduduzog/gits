@@ -1,5 +1,5 @@
 <div class="grid gap-4">
-  <div class="lg:p-2 p-4 grid gap-8">
+  <div class="grid gap-8 p-4 lg:p-2">
     <div class="flex w-full items-center">
       <!-- <h2 class="text-4xl grow font-medium col-span-full">Events</h2> -->
 
@@ -10,24 +10,44 @@
     </div>
   </div>
 
-  <div class="p-2">
-    <div class="border rounded-lg overflow-x-auto overflow-y-hidden">
-      <.table id="events" rows={@events}>
-        <:col :let={event} label="Name">
-          <.link navigate={~p"/hosts/#{@handle}/events/#{event.public_id}"}>
-            {event.name}
+  <ul class="max-w-screen-xl px-2">
+    <li :for={event <- @events}>
+      <hr role="presentation" class="w-full border-t border-zinc-950/10 dark:border-white/10" />
+      <div class="flex items-center justify-between">
+        <div class="flex gap-2 py-4 lg:gap-6">
+          <.link
+            aria-hidden="true"
+            class="aspect-[3/2] w-28 shrink-0 overflow-hidden rounded-lg bg-zinc-50"
+            patch={~p"/hosts/#{@handle}/events/#{event.public_id}"}
+          >
+            <img
+              :if={event.poster}
+              class=""
+              src={event.poster.url}
+              alt={"Poster for #{event.name}"}
+            />
           </.link>
-        </:col>
-
-        <:col :let={event} optional label="Start">
-          {Calendar.strftime(event.starts_at, "%d %b %Y, at %I:%M %p")}
-        </:col>
-
-        <:col :let={event} optional label="End">
-          {Calendar.strftime(event.ends_at, "%d %b %Y, at %I:%M %p")}
-        </:col>
-
-        <:col :let={event} label="Status">
+          <div class="lg:space-y-1">
+            <div class="text-base/6 font-semibold">
+              <.link patch={~p"/hosts/#{@handle}/events/#{event.public_id}"}>
+                {event.name}
+              </.link>
+            </div>
+            <div class="line-clamp-2 text-xs/5 text-zinc-500">
+              {Calendar.strftime(event.starts_at, "%a, %d %b, %I:%m %p")}
+              <span aria-hidden="true">·</span>
+              <%= if event.location_is_private or is_nil(event.venue) do %>
+                Private Location
+              <% else %>
+                {event.venue.name}, {event.venue.address}
+              <% end %>
+            </div>
+            <div :if={false} class="text-xs/6 text-zinc-600">
+              350<!-- -->/<!-- -->500<!-- --> tickets sold
+            </div>
+          </div>
+        </div>
+        <div class="hidden items-center gap-4 lg:flex">
           <span
             :if={event.state == :completed}
             class="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10"
@@ -46,14 +66,8 @@
           >
             Published
           </span>
-        </:col>
-
-        <:action :let={job} :if={false}>
-          <.button disabled={job.state == :completed} variant={:outline} size={:sm}>
-            <span>Reset</span>
-          </.button>
-        </:action>
-      </.table>
-    </div>
-  </div>
+        </div>
+      </div>
+    </li>
+  </ul>
 </div>

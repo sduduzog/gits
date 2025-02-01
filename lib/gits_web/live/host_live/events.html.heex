@@ -78,20 +78,18 @@
           />
         <% end %>
         <%= if @live_action == :admissions do %>
-          <.admissions_header event_state={@event.state} can_publish?={@can_publish?} />
+          <.admissions_header
+            event_state={@event.state}
+            can_publish?={@can_publish?}
+            scanner_path={
+              Routes.host_scanner_path(@socket, :index, @host_handle, @event.public_id)
+            }
+          />
           <.admissions_overview event_state={@event.state} can_publish?={@can_publish?} />
         <% end %>
 
         <%= if @live_action == :settings do %>
           <.settings_content webhooks={@event.webhooks} />
-          <.button
-            :if={@event.state == :published}
-            variant={:subtle}
-            href={Routes.host_scanner_path(@socket, :index, @host_handle, @event.public_id)}
-          >
-            <.icon name="i-lucide-scan-qr-code" />
-            <span>Scan</span>
-          </.button>
         <% end %>
       </.event_main>
     </.event_content>

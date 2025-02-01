@@ -241,9 +241,10 @@ defmodule GitsWeb.HostLive.Events do
       |> assign(:page_title, "Events")
 
     case socket.assigns.live_action do
-      # not @host.payment_method_ready? and Enum.any?(@ticket_types, &Decimal.gt?(&1.price, 0))
       :index ->
-        Ash.load(socket.assigns.host, [:events], actor: socket.assigns.current_user)
+        Ash.load(socket.assigns.host, [events: [:venue, poster: :url]],
+          actor: socket.assigns.current_user
+        )
         |> case do
           {:ok, %{events: events}} ->
             socket
@@ -255,8 +256,6 @@ defmodule GitsWeb.HostLive.Events do
         |> assign(:handle, unsigned_params["handle"])
         |> assign(:host_name, socket.assigns.host.name)
         |> assign(:events, [])
-        |> assign(:issues_count, 0)
-        |> assign(:ticket_types, [])
         |> assign(
           :details_form,
           Form.for_create(Event, :create,

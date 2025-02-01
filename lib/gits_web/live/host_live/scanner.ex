@@ -9,7 +9,7 @@ defmodule GitsWeb.HostLive.Scanner do
     |> assign(:host_handle, params["handle"])
     |> assign(:public_id, params["public_id"])
     |> assign(:test, false)
-    |> ok(:host_panel)
+    |> ok(:wizard)
   end
 
   def handle_params(%{"camera" => camera} = unsigned_params, _uri, socket) do
@@ -21,6 +21,21 @@ defmodule GitsWeb.HostLive.Scanner do
 
   def handle_params(_unsigned_params, _uri, socket) do
     socket |> noreply()
+  end
+
+  def handle_event("close", _, socket) do
+    socket
+    |> push_navigate(
+      to:
+        Routes.host_events_path(
+          socket,
+          :admissions,
+          socket.assigns.host_handle,
+          socket.assigns.public_id
+        ),
+      replace: true
+    )
+    |> noreply()
   end
 
   def handle_event("camera_choice", %{"id" => id}, socket) do
