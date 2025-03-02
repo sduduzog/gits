@@ -2,7 +2,7 @@ import plugin from "tailwindcss/plugin";
 import { readdirSync, readFileSync } from "node:fs";
 import { join, basename } from "node:path";
 
-import { addIconSelectors } from "@iconify/tailwind";
+import { addIconSelectors, addDynamicIconSelectors } from "@iconify/tailwind";
 
 const content = [
   "./js/**/*.js",
@@ -14,6 +14,7 @@ const theme = {
   extend: {
     fontFamily: {
       poppins: ["Poppins", "sans-serif"],
+      "open-sans": ["Open Sans Variable", "sans-serif"],
     },
     colors: {
       zinc: {
@@ -49,12 +50,8 @@ const theme = {
 
 const plugins = [
   require("@tailwindcss/forms"),
-  addIconSelectors({ prefixes: ["lucide", "ri"], scale: 1.125 }),
-  // Allows prefixing tailwind classes with LiveView classes to add rules
-  // only when LiveView classes are applied, for example:
-  //
-  //     <div class="phx-click-loading:animate-ping">
-  //
+  addDynamicIconSelectors({ scale: 1.25 }),
+
   plugin(({ addVariant }) =>
     addVariant("phx-no-feedback", [".phx-no-feedback&", ".phx-no-feedback &"]),
   ),
@@ -76,50 +73,6 @@ const plugins = [
       ".phx-change-loading &",
     ]),
   ),
-
-  // plugin(({ matchComponents, theme }) => {
-  //   const iconsDir = join(__dirname, "../deps/heroicons/optimized");
-  //   const values = {};
-  //   const icons = [
-  //     ["", "/24/outline"],
-  //     ["-solid", "/24/solid"],
-  //     ["-mini", "/20/solid"],
-  //     ["-micro", "/16/solid"],
-  //   ];
-  //   for (const [suffix, dir] of icons) {
-  //     for (const file of readdirSync(join(iconsDir, dir))) {
-  //       const name = basename(file, ".svg") + suffix;
-  //       values[name] = { name, fullPath: join(iconsDir, dir, file) };
-  //     }
-  //   }
-  //   matchComponents(
-  //     {
-  //       hero: ({ name, fullPath }) => {
-  //         const content = readFileSync(fullPath)
-  //           .toString()
-  //           .replace(/\r?\n|\r/g, "");
-  //         let size = theme("spacing.6");
-  //         if (name.endsWith("-mini")) {
-  //           size = theme("spacing.5");
-  //         } else if (name.endsWith("-micro")) {
-  //           size = theme("spacing.4");
-  //         }
-  //         return {
-  //           [`--hero-${name}`]: `url('data:image/svg+xml;utf8,${content}')`,
-  //           "-webkit-mask": `var(--hero-${name})`,
-  //           mask: `var(--hero-${name})`,
-  //           "mask-repeat": "no-repeat",
-  //           "background-color": "currentColor",
-  //           "vertical-align": "middle",
-  //           display: "inline-block",
-  //           width: size,
-  //           height: size,
-  //         };
-  //       },
-  //     },
-  //     { values },
-  //   );
-  // }),
 ];
 
 export default {

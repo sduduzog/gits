@@ -1,4 +1,4 @@
-defmodule GitsWeb.LiveUserAuth do
+defmodule GitsWeb.LiveUserAuthOld do
   require Ash.Query
   alias Gits.Accounts.Host
   import Phoenix.Component

@@ -32,6 +32,7 @@ defmodule Gits.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:ash_authentication_phoenix, "~> 2.0"},
       {:oban_web, "~> 2.0"},
       {:assent, "== 0.2.10"},
       {:premailex, "~> 0.3"},
@@ -53,7 +54,7 @@ defmodule Gits.MixProject do
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:floki, ">= 0.30.0"},
       {:phoenix_live_dashboard, "~> 0.8.3"},
-            {:swoosh, "~> 1.16"},
+      {:swoosh, "~> 1.16"},
       {:gen_smtp, "~> 1.2"},
       {:finch, "~> 0.18"},
       {:telemetry_metrics, "~> 0.6"},

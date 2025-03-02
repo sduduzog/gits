@@ -1,0 +1,62 @@
+<div class="mx-auto max-w-screen-xl p-2 font-open-sans antialiased">
+  <h1 class="text-3xl font-medium">Settings</h1>
+  <div class="divide-y divide-zinc-50 lg:divide-y-0">
+    <div class="grid gap-4 py-6">
+      <h2 class="text-2xl font-medium"></h2>
+      <div class="grid gap-2 lg:grid-cols-3 lg:gap-10">
+        <div class="flex gap-4 py-3 lg:grid lg:rounded-xl lg:border lg:p-6 opacity-30">
+          <.icon class="icon-[fluent--person-24-regular]" />
+          <span class="grow">Personal Info</span>
+          <.icon class="icon-[fluent--chevron-right-24-regular] lg:hidden" />
+        </div>
+        <div class="flex gap-4 py-3 lg:grid lg:rounded-xl lg:border lg:p-6 opacity-30">
+          <.icon class="icon-[fluent--alert-24-regular]" />
+          <span class="grow">Notifications</span>
+          <.icon class="icon-[fluent--chevron-right-24-regular] lg:hidden" />
+        </div>
+        <div class="flex gap-4 py-3 lg:grid lg:rounded-xl lg:border lg:p-6 opacity-30">
+          <.icon class="icon-[fluent--shield-lock-24-regular]" />
+          <span class="grow">Login & Security</span>
+          <.icon class="icon-[fluent--chevron-right-24-regular] lg:hidden" />
+        </div>
+      </div>
+    </div>
+
+    <div class="grid gap-4 py-6">
+      <h2 class="text-2xl font-medium">Hosting</h2>
+      <div class="grid gap-2 lg:grid-cols-3 lg:gap-10">
+        <.link
+          navigate={~p"/host-with-us"}
+          class="flex gap-4 py-3 lg:grid lg:rounded-xl lg:border lg:p-6"
+        >
+          <.icon class="icon-[fluent--calendar-data-bar-24-regular]" />
+          <span class="grow">Host an event</span>
+          <.icon class="icon-[fluent--chevron-right-24-regular] lg:hidden" />
+        </.link>
+      </div>
+    </div>
+
+    <div class="grid gap-4 py-6">
+      <h2 class="text-2xl font-medium">Support</h2>
+      <div class="grid gap-2 lg:grid-cols-3 lg:gap-10">
+        <div class="flex gap-4 py-3 lg:grid lg:rounded-xl lg:border lg:p-6 opacity-30">
+          <.icon class="icon-[fluent--megaphone-24-regular]" />
+          <span class="grow">Help Center</span>
+          <.icon class="icon-[fluent--chevron-right-24-regular] lg:hidden" />
+        </div>
+      </div>
+    </div>
+
+    <div class="grid gap-4 py-6">
+      <div class="grid gap-2 lg:grid-cols-3 lg:gap-10">
+        <.link
+          navigate={~p"/sign-out"}
+          class="flex gap-4 py-3 lg:grid lg:rounded-xl lg:border lg:p-6"
+        >
+          <.icon class="icon-[fluent--sign-out-24-regular]" />
+          <span class="grow">Log out</span>
+        </.link>
+      </div>
+    </div>
+  </div>
+</div>

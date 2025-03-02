@@ -42,7 +42,7 @@ defmodule GitsWeb.CoreComponents do
         [
           {"Orders", ~p"/my/orders", false},
           {"Tickets", ~p"/my/tickets", tickets},
-          {"Settings", ~p"/settings/profile", false}
+          {"Settings", ~p"/settings", false}
         ],
         [{"Sign out", ~p"/sign-out", false}]
       ])
@@ -55,7 +55,7 @@ defmodule GitsWeb.CoreComponents do
       <div class="flex grow items-center bg-red-200"></div>
 
       <.button :if={false} variant={:ghost} href={~p"/search"}>
-        <.icon name="lucide--search" />
+        <.icon class="icon-[lucide--search]" />
         <span>Search</span>
       </.button>
 
@@ -90,7 +90,7 @@ defmodule GitsWeb.CoreComponents do
               aria-haspopup="true"
             >
               <span>Account</span>
-              <.icon name="lucide--chevron-down" />
+              <.icon class="icon-[lucide--chevron-down]" />
             </.button>
           </div>
           <div
@@ -978,12 +978,11 @@ defmodule GitsWeb.CoreComponents do
       <.icon name="hero-x-mark-solid" />
       <.icon name="hero-arrow-path" class="ml-1 w-3 h-3 animate-spin" />
   """
-  attr :name, :string, default: nil
   attr :class, :string, default: nil
 
   def icon(assigns) do
     ~H"""
-    <span class={["iconify", @name, @class]}></span>
+    <span class={["", @class]}></span>
     """
   end
 
