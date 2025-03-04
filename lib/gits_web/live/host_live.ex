@@ -8,11 +8,11 @@ defmodule GitsWeb.HostLive do
     action = socket.assigns.live_action
 
     Phoenix.Component.assign(socket, :sidebar_items, [
-      {"Home", "ri--home-line", Routes.host_dashboard_path(socket, :home, host.handle),
+      {"Home", "icon-[ri--home-line]", Routes.host_dashboard_path(socket, :home, host.handle),
        module == Dashboard, [], nil},
-      {"Events", "ri--calendar-line", Routes.host_events_path(socket, :index, host.handle),
+      {"Events", "icon-[ri--calendar-line]", Routes.host_events_path(socket, :index, host.handle),
        module == Events, [], nil},
-      {"Settings", "ri--settings-3-line", false, module == Settings,
+      {"Settings", "icon-[ri--settings-3-line]", false, module == Settings,
        [
          {"General", Routes.host_settings_path(socket, :general, host.handle), action == :general,
           nil},

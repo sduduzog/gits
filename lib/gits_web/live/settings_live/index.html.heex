@@ -4,11 +4,14 @@
     <div class="grid gap-4 py-6">
       <h2 class="text-2xl font-medium"></h2>
       <div class="grid gap-2 lg:grid-cols-3 lg:gap-10">
-        <div class="flex gap-4 py-3 lg:grid lg:rounded-xl lg:border lg:p-6 opacity-30">
+        <.link
+          navigate={~p"/settings/profile"}
+          class="flex gap-4 py-3 lg:grid lg:rounded-xl lg:border lg:p-6"
+        >
           <.icon class="icon-[fluent--person-24-regular]" />
-          <span class="grow">Personal Info</span>
+          <span class="grow">Profile & Personal Info</span>
           <.icon class="icon-[fluent--chevron-right-24-regular] lg:hidden" />
-        </div>
+        </.link>
         <div class="flex gap-4 py-3 lg:grid lg:rounded-xl lg:border lg:p-6 opacity-30">
           <.icon class="icon-[fluent--alert-24-regular]" />
           <span class="grow">Notifications</span>

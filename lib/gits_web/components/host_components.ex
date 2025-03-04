@@ -28,7 +28,7 @@ defmodule GitsWeb.HostComponents do
     [
       [
         {user.email, nil, nil, false},
-        {"Profile", "lucide--user", ~p"/settings/profile", false}
+        {"Profile", "lucide--user", ~p"/settings", false}
       ],
       # [
       # {"Organization", nil, nil, false}
