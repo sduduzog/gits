@@ -1,5 +1,4 @@
 defmodule GitsWeb.SettingsLive.Profile do
-  alias Gits.Bucket.Image
   alias AshPhoenix.Form
   alias Gits.Accounts.User
   use GitsWeb, :live_view
@@ -32,6 +31,7 @@ defmodule GitsWeb.SettingsLive.Profile do
 
   def handle_event("validate", unsigned_params, socket) do
     socket
+    |> assign(:form, Form.validate(socket.assigns.form, unsigned_params["form"]))
     |> noreply()
   end
 
