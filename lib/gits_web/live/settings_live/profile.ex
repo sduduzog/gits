@@ -55,7 +55,7 @@ defmodule GitsWeb.SettingsLive.Profile do
       [image] =
         consume_uploaded_entries(socket, :avatar, fn %{path: path}, _entry ->
           Ash.Changeset.for_update(socket.assigns.current_user, :avatar, %{avatar: %{path: path}})
-          |> Ash.update(actor: socket.assigns.current_user)
+          |> Ash.update(actor: socket.assigns.current_user, load: [avatar: :url])
           |> case do
             {:ok, user} -> {:ok, user.avatar}
           end
