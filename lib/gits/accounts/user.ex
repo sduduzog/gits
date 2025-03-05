@@ -1,5 +1,6 @@
 defmodule Gits.Accounts.User do
   alias Gits.Secrets
+  alias Gits.Bucket
   alias Gits.Accounts.{Host, Role, Token}
   alias Gits.Support.{Admin}
   alias Gits.Storefront.{Order}
@@ -103,6 +104,18 @@ defmodule Gits.Accounts.User do
         Ash.Changeset.change_attributes(changeset, Map.take(user_info, ["name", "email"]))
       end
     end
+
+    update :avatar do
+      require_atomic? false
+      argument :avatar, :map
+
+      change manage_relationship(:avatar,
+               on_lookup: :ignore,
+               on_no_match: {:create, :avatar},
+               on_match: :update,
+               on_missing: :destroy
+             )
+    end
   end
 
   policies do
@@ -114,7 +127,7 @@ defmodule Gits.Accounts.User do
       authorize_if always()
     end
 
-    policy action(:update) do
+    policy action([:update, :avatar]) do
       authorize_if expr(id == ^actor(:id))
     end
   end
@@ -125,7 +138,6 @@ defmodule Gits.Accounts.User do
     attribute :email, :ci_string, allow_nil?: false, public?: true
     attribute :username, :string, allow_nil?: false, public?: true, default: &Nanoid.generate/0
     attribute :name, :string, public?: true
-    attribute :avatar, :string, public?: true
 
     create_timestamp :created_at
     update_timestamp :updated_at
@@ -133,11 +145,12 @@ defmodule Gits.Accounts.User do
 
   relationships do
     has_one :admin, Admin
-    has_many :roles, Role
 
-    many_to_many :hosts, Host do
-      through Role
+    has_one :avatar, Bucket.Image do
+      domain Bucket
     end
+
+    has_many :roles, Role
 
     has_many :orders, Order do
       no_attributes? true
@@ -149,6 +162,10 @@ defmodule Gits.Accounts.User do
       no_attributes? true
       domain Gits.Storefront
       filter expr(email == parent(email) and state == :completed)
+    end
+
+    many_to_many :hosts, Host do
+      through Role
     end
   end
 

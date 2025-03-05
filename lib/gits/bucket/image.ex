@@ -51,26 +51,63 @@ defmodule Gits.Bucket.Image do
 
       change manage_relationship(:host, type: :append)
     end
+
+    create :avatar do
+      argument :path, :string, allow_nil?: false
+
+      change fn changeset, _ ->
+        Ash.Changeset.before_action(changeset, fn changeset ->
+          path = Ash.Changeset.get_argument(changeset, :path)
+          bucket_name = Application.get_env(:gits, :bucket_name)
+          filename = "avatars/" <> Nanoid.generate(24) <> ".webp"
+
+          Image.open!(path)
+          |> Image.thumbnail!("256x256", fit: :cover)
+          |> Image.stream!(
+            suffix: ".webp",
+            buffer_size: 5_242_880,
+            quality: 100
+          )
+          |> ExAws.S3.upload(
+            bucket_name,
+            filename,
+            content_type: @content_type,
+            cache_control: @cache_control
+          )
+          |> ExAws.request()
+          |> case do
+            {:ok, _} ->
+              Ash.Changeset.force_change_new_attribute(changeset, :name, filename)
+          end
+        end)
+      end
+    end
   end
 
   policies do
-    policy action(:read) do
+    policy action([:read, :create]) do
       authorize_if accessing_from(Storefront.Event, :poster)
+      authorize_if accessing_from(Accounts.User, :avatar)
     end
 
-    policy action(:poster) do
+    policy action([:poster, :avatar]) do
       authorize_if always()
     end
 
     policy action(:update) do
       authorize_if accessing_from(Storefront.Event, :poster)
     end
+
+    policy action(:destroy) do
+      forbid_unless accessing_from(Accounts.User, :avatar)
+      authorize_if expr(user.id == ^actor(:id))
+    end
   end
 
   attributes do
     uuid_primary_key :id
 
-    attribute :name, :string
+    attribute :name, :string, public?: true, allow_nil?: false
 
     create_timestamp :created_at
     update_timestamp :updated_at
@@ -102,7 +139,8 @@ defmodule Gits.Bucket.Image do
                {:ok, signed_url} <-
                  ExAws.Config.new(:s3)
                  |> ExAws.S3.presigned_url(:get, bucket_name, key, presigned_url_options) do
-            {:commit, signed_url, expire: :timer.seconds(3600)}
+            {:ignore, signed_url}
+            # {:commit, signed_url, expire: :timer.seconds(3600)}
           else
             _ ->
               {:ignore, "/images/placeholder.png"}

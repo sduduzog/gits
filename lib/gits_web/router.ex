@@ -1,9 +1,10 @@
 defmodule GitsWeb.Router do
   use GitsWeb, :router
 
+  use AshAuthentication.Phoenix.Router
+
   import Phoenix.LiveDashboard.Router
   import Oban.Web.Router
-  import GitsWeb.AuthPlug
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -39,9 +40,9 @@ defmodule GitsWeb.Router do
 
   scope "/", GitsWeb do
     pipe_through :browser
+
     get "/", PageController, :home
     get "/events", PageController, :events
-    get "/settings", PageController, :settings
     get "/organizers", PageController, :organizers
     get "/host-with-us", PageController, :host
     get "/faqs", PageController, :faqs
@@ -56,7 +57,7 @@ defmodule GitsWeb.Router do
 
     get "/bucket/*keys", PageController, :bucket
 
-    live_session :user_optional, on_mount: {GitsWeb.LiveUserAuth, :live_user_optional} do
+    live_session :user_optional, on_mount: {GitsWeb.LiveUserAuthOld, :live_user_optional} do
       live "/search", SearchLive, :index
       live "/tickets/:public_id", TicketLive, :show
       live "/t/:public_id", TicketLive, :show
@@ -65,7 +66,7 @@ defmodule GitsWeb.Router do
       live "/pricing", PricingLive, :index
     end
 
-    live_session :user_required, on_mount: {GitsWeb.LiveUserAuth, :live_user_required} do
+    live_session :user_required, on_mount: {GitsWeb.LiveUserAuthOld, :live_user_required} do
       live "/settings/profile", SettingsLive.Profile, :index
       live "/hosts/get-started", HostLive.Onboarding, :get_started
       live "/hosts/:handle/dashboard", HostLive.Dashboard, :home
@@ -90,13 +91,17 @@ defmodule GitsWeb.Router do
       live "/hosts/:handle/settings/billing", HostLive.Settings, :billing
       live "/hosts/:handle/settings/api", HostLive.Settings, :api
     end
+
+    ash_authentication_live_session :authenticated_routes do
+      live "/settings", SettingsLive.Index
+    end
   end
 
   scope "/events/:public_id", GitsWeb do
     pipe_through :browser
 
     live_session :events_authentication_optional,
-      on_mount: {GitsWeb.LiveUserAuth, :live_user_optional} do
+      on_mount: {GitsWeb.LiveUserAuthOld, :live_user_optional} do
       live "/", StorefrontLive.EventListing, :index
       live "/order/:order_id", StorefrontLive.EventOrder, :index
     end
@@ -111,7 +116,7 @@ defmodule GitsWeb.Router do
     pipe_through :browser
 
     live_session :my_authentication_required,
-      on_mount: {GitsWeb.LiveUserAuth, :my_live} do
+      on_mount: {GitsWeb.LiveUserAuthOld, :my_live} do
       live "/tickets", MyLive.Tickets, :index
       live "/tickets/:public_id", MyLive.Tickets, :show
       live "/orders", MyLive.Orders, :index
@@ -124,7 +129,7 @@ defmodule GitsWeb.Router do
   scope "/admin", GitsWeb do
     pipe_through [:browser, :admin]
 
-    live_session :admin_required, on_mount: {GitsWeb.LiveUserAuth, :live_user_required} do
+    live_session :admin_required, on_mount: {GitsWeb.LiveUserAuthOld, :live_user_required} do
       live "/", AdminLive.Index, :dashboard
       live "/jobs", AdminLive.Index, :jobs
       live "/hosts", AdminLive.Index, :hosts

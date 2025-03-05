@@ -1,64 +1,51 @@
-<.layout socket={@socket} live_action={@live_action}>
-  <form id="avatar" phx-submit="save-upload" phx-change="validate-upload">
-    <div class="flex flex-wrap items-center gap-4">
-      <div class="size-28 overflow-hidden rounded-full bg-zinc-200">
-        <%= if Enum.any?(@uploads.avatar.entries) do %>
-          <.live_img_preview
-            entry={@uploads.avatar.entries |> List.first()}
-            class="h-full w-full object-cover opacity-50"
-          />
-        <% else %>
-          <img
-            src={Gits.Bucket.get_image_url(@current_user.avatar)}
-            alt={@current_user.name}
-            class="h-full w-full object-cover"
-          />
+<div class="mx-auto max-w-screen-md p-2 font-open-sans antialiased">
+  <.link navigate={~p"/settings"} class="inline-flex gap-2">
+    <.icon class="icon-[fluent--chevron-left-24-regular]" />
+    <span class="font-semibold">Back to settings</span>
+  </.link>
+  <h1 class="mt-4 text-3xl font-medium">Profile & Personal Info</h1>
+  <.form
+    :let={f}
+    for={@form}
+    class="pt-4 lg:grid lg:pt-8"
+    phx-change="validate"
+    phx-submit="submit"
+  >
+    <div class="flex items-start gap-4 py-4">
+      <div class="grid grow gap-2">
+        <h3 class="font-semibold">Profile photo</h3>
+        <span class="inline-block text-zinc-500">Recommended 256 x 256</span>
+        <%= for entry <- @uploads.avatar.entries do %>
+          <p :for={err <- upload_errors(@uploads.avatar, entry)}>
+            <.error>{error_to_string(err)}</.error>
+          </p>
         <% end %>
+
+        <div class="flex gap-4 pt-4">
+          <label class="rounded-lg border px-3 py-2 text-sm font-semibold">
+            <.live_file_input upload={@uploads.avatar} class="sr-only" />
+            <span>Change</span>
+          </label>
+          <button :if={false} class="rounded-lg border px-3 py-2 text-sm font-semibold">
+            <span>Remove</span>
+          </button>
+        </div>
       </div>
-
-      <.live_file_input
-        upload={@uploads.avatar}
-        class="grow text-sm/4 file:rounded-lg file:border-0 file:bg-zinc-50 file:px-4 file:py-3 file:text-sm/4 file:font-medium hover:file:bg-zinc-100"
-      />
-
-      <.button :if={Enum.any?(@uploads.avatar.entries)} variant={:subtle}>
-        <span>Upload</span>
-      </.button>
-
-      <p :for={err <- upload_errors(@uploads.avatar)} class="alert alert-danger">
-        {error_to_string(err)}
-      </p>
+      <div class="size-28 overflow-hidden rounded-2xl bg-zinc-50">
+        <img :if={@avatar} src={@avatar.url} alt="" class="size-full" />
+      </div>
     </div>
-  </form>
-  <div class="grid gap-1">
-    <span class="text-3xl font-semibold">
-      {@current_user.email}
-    </span>
-  </div>
-  <.form :let={f} for={@form} phx-change="validate" phx-submit="submit" class="space-y-4">
-    <div class="flex items-center gap-4">
-      <h2 class="grow text-xl font-semibold">Personal details</h2>
-      <.button variant={:subtle} disabled={not @form.changed? or not @form.valid?}>
+
+    <div class="py-4">
+      <.input field={f[:name]} type="text" label="Name" />
+    </div>
+    <div class="flex">
+      <button
+        disabled={not @form.changed? or not @form.valid?}
+        class="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-semibold text-white disabled:bg-zinc-400"
+      >
         <span>Save</span>
-      </.button>
-    </div>
-    <div>
-      <.input label="Name" type="text" field={f[:name]} />
+      </button>
     </div>
   </.form>
-</.layout>
-<!-- Brevo Conversations {literal} -->
-<script>
-  (function(d, w, c) {
-      w.BrevoConversationsID = '677fe0ffc2a878d34e090918';
-      w[c] = w[c] || function() {
-          (w[c].q = w[c].q || []).push(arguments);
-      };
-      var s = d.createElement('script');
-      s.async = true;
-      s.src = 'https://conversations-widget.brevo.com/brevo-conversations.js';
-      if (d.head) d.head.appendChild(s);
-  })(document, window, 'BrevoConversations');
-</script>
-<!-- /Brevo Conversations {/literal} -->
-
+</div>
