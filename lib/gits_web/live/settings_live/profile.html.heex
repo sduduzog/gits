@@ -1,5 +1,5 @@
 <div class="mx-auto max-w-screen-md p-2 font-open-sans antialiased">
-  <.link navigate={~p"/settings"} class="inline-flex gap-2">
+  <.link navigate={~p"/settings"} class="inline-flex gap-2 text-red-violet-400">
     <.icon class="icon-[fluent--chevron-left-24-regular]" />
     <span class="font-semibold">Back to settings</span>
   </.link>
@@ -22,7 +22,7 @@
         <% end %>
 
         <div class="flex gap-4 pt-4">
-          <label class="rounded-lg border px-3 py-2 text-sm font-semibold">
+          <label class="rounded-lg border px-3 py-2 text-sm font-semibold text-red-violet-400">
             <.live_file_input upload={@uploads.avatar} class="sr-only" />
             <span>Change</span>
           </label>
@@ -42,7 +42,7 @@
     <div class="flex">
       <button
         disabled={not @form.changed? or not @form.valid?}
-        class="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-semibold text-white disabled:bg-zinc-400"
+        class="rounded-lg bg-red-violet-400 px-4 py-2 text-sm font-semibold text-white disabled:bg-red-violet-200"
       >
         <span>Save</span>
       </button>

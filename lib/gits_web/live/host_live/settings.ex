@@ -4,7 +4,7 @@ defmodule GitsWeb.HostLive.Settings do
   alias Gits.Accounts.Host
   alias AshPhoenix.Form
   alias Gits.PaystackApi
-  alias __MODULE__.{Api, Billing, General, Index}
+  alias __MODULE__.{Api, Billing, General}
 
   import GitsWeb.HostComponents
 

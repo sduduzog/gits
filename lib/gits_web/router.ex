@@ -94,6 +94,7 @@ defmodule GitsWeb.Router do
 
     ash_authentication_live_session :authenticated_routes do
       live "/settings", SettingsLive.Index
+      live "/hosts/:handle/team/members", HostLive.Team, :members
     end
   end
 

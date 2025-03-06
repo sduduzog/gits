@@ -13,55 +13,16 @@
         <.icon class="icon-[lucide--x]" />
       </.button>
     </div>
-    <div class="grid gap-1 p-2 text-sm font-medium text-zinc-400">
-      <%= for {label, icon, href, current, children, flag} <- @sidebar_items do %>
-        <%= if children == [] do %>
-          <.link
-            navigate={href}
-            aria-selected={"#{current}"}
-            class="flex items-center gap-2 rounded-lg p-2 hover:bg-zinc-50/50 aria-selected:text-zinc-800"
-          >
-            <.icon class={"#{icon} shrink-0"} />
-            <span class="grow">{label}</span>
-            <span
-              :if={flag}
-              class="inline-flex h-5 min-w-5 items-center justify-center overflow-hidden rounded border-zinc-800 bg-zinc-50 text-xs text-zinc-600 ring-1 ring-zinc-100"
-            >
-              {flag}
-            </span>
-          </.link>
-        <% else %>
-          <input
-            type="checkbox"
-            checked={current}
-            class="peer/input sr-only"
-            id={"toggle-#{label}"}
-          />
-          <label
-            for={"toggle-#{label}"}
-            class="group flex items-center gap-2 rounded-lg p-2 hover:bg-zinc-50/50"
-          >
-            <.icon class={icon} /> <span class="grow">{label}</span>
-            <.icon class="shrink-0 transition-transform ri--arrow-right-s-line peer-checked/input:group-[]:rotate-90" />
-          </label>
-          <div class="ml-4 hidden border-l pl-1.5 transition-all border-zinc-200 peer-checked/input:grid">
-            <.link
-              :for={{label, href, current, flag} <- children}
-              navigate={href}
-              aria-selected={"#{current}"}
-              class="flex rounded-lg p-2 hover:bg-zinc-50/50 aria-selected:text-zinc-800"
-            >
-              <span class="grow">{label}</span>
-              <span
-                :if={flag}
-                class="inline-flex h-5 min-w-5 items-center justify-center overflow-hidden rounded border-zinc-800 bg-zinc-50 text-xs text-zinc-600 ring-1 ring-zinc-100"
-              >
-                {flag}
-              </span>
-            </.link>
-          </div>
-        <% end %>
-      <% end %>
+    <div class="grid group gap-1 p-2 text-sm font-medium text-zinc-400 font-open-sans">
+      <.sidebar_item
+        :for={{label, icon, href, current, children, flag} <- @sidebar_items}
+        label={label}
+        href={href}
+        icon={icon}
+        flag={flag}
+        children={children}
+        current={current}
+      />
     </div>
   </aside>
   <div class="w-full overflow-auto">
