@@ -5,6 +5,8 @@ defmodule GitsWeb.HostLive.Team do
   import GitsWeb.HostComponents
   use GitsWeb, :live_view
 
+  on_mount {GitsWeb.LiveUserAuth, :live_user_required}
+
   def mount(%{"handle" => handle}, _, socket) do
     user = socket.assigns.current_user
 

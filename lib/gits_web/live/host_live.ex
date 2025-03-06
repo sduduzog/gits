@@ -15,11 +15,12 @@ defmodule GitsWeb.HostLive do
        module == Events, [], nil},
       # {"Admissions", "icon-[ri--settings-3-line]", false, module == Settings, [], nil},
       # {"Engagements", "icon-[ri--settings-3-line]", false, module == Settings, [], nil},
-      {"Team", "icon-[ri--settings-3-line]", false, IO.inspect(module == Team),
+      {"Team", "icon-[ri--settings-3-line]", false, module == Team,
        [
-         {"Members", ~p"/hosts/#{host.handle}/team/members", action == :members, nil}
+         {"Members", ~p"/hosts/#{host.handle}/team/members", action == :members, nil},
+         {"Invites", ~p"/hosts/#{host.handle}/team/invites", action == :invites, nil}
        ], nil},
-      {"Settings", "icon-[ri--settings-3-line]", false, IO.inspect(module == Settings),
+      {"Settings", "icon-[ri--settings-3-line]", false, module == Settings,
        [
          {"General", Routes.host_settings_path(socket, :general, host.handle), action == :general,
           nil},
