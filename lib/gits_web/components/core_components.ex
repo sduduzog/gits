@@ -867,7 +867,7 @@ defmodule GitsWeb.CoreComponents do
   def error(assigns) do
     ~H"""
     <p class="flex gap-2 text-sm leading-6 text-rose-600 phx-no-feedback:hidden">
-      <.icon class="mt-0.5 text-lg ri--error-warning-line flex-none" />
+      <.icon class="mt-0.5 text-base icon-[ri--error-warning-line] flex-none" />
       {render_slot(@inner_block)}
     </p>
     """

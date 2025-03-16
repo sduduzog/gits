@@ -1,6 +1,6 @@
 <.flash_group flash={@flash} />
 
-<div class="grid h-dvh w-full gap-4 overflow-hidden lg:grid-cols-[theme(space.64)_1fr]">
+<div class="grid h-dvh w-full gap-4 overflow-hidden lg:grid-cols-[theme(space.64)_1fr] max-w-screen-2xl mx-auto">
   <aside class="absolute inset-0 z-20 hidden w-full shrink-0 space-y-8 bg-white lg:static lg:z-0 lg:block lg:max-w-64">
     <div class="flex items-center px-4 py-2">
       <div class="grow lg:py-1">
@@ -25,7 +25,7 @@
       />
     </div>
   </aside>
-  <div class="w-full overflow-auto max-w-screen-2xl">
+  <div class="w-full overflow-auto max-w-screen-xl mx-auto">
     {@inner_content}
   </div>
 </div>

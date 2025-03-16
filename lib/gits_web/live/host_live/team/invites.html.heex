@@ -1,1 +1,107 @@
-<div>invites</div>
+<div class="p-4 lg:p-2 space-y-8">
+  <.form
+    :let={f}
+    for={@send_invite_form}
+    class="grid gap-4"
+    phx-change="validate_send_invite"
+    phx-submit="submit_send_invite"
+  >
+    <div>
+      <h2 class="mt-2 text-base font-semibold text-gray-900">Add team members</h2>
+      <p class="mt-1 text-sm text-gray-500">
+        The Owner or Administrator of this organizaiton, you can manage team member permissions.
+      </p>
+    </div>
+    <div class="flex items-end flex-wrap gap-4">
+      <.input field={f[:email]} type="text" class="grow" label="Email address" />
+      <.input
+        field={f[:role_type]}
+        label="Role"
+        type="select"
+        options={
+          Gits.Accounts.RoleType.values()
+          |> Enum.filter(&(&1 != :owner))
+          |> Enum.map(&{to_string(&1) |> String.replace("_", " ") |> String.capitalize(), &1})
+        }
+        class="min-w-40"
+      />
+      <div>
+        <button class="rounded-lg border border-transparent bg-red-violet-400 px-4 py-3 text-sm font-semibold text-white">
+          <span>Send invite</span>
+        </button>
+      </div>
+    </div>
+  </.form>
+  <ul role="list" class="divide-y divide-gray-100">
+    <li :for={invite <- @invites} class="flex items-center justify-between gap-x-6 py-5">
+      <div class="min-w-0">
+        <div class="flex items-start gap-x-3">
+          <p class="text-sm/6 font-semibold text-gray-900">{invite.email}</p>
+          <p class="mt-0.5 whitespace-nowrap rounded-md bg-gray-50 px-1.5 py-0.5 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
+            {to_string(invite.type) |> String.replace("_", " ") |> String.capitalize()}
+          </p>
+        </div>
+        <div class="mt-1 flex items-center gap-x-2 text-xs/5 text-gray-500">
+          <p class="whitespace-nowrap">
+            Sent
+            <time datetime={invite.created_at}>
+              {Calendar.strftime(invite.created_at, "%B %d")}
+            </time>
+          </p>
+          <svg :if={false} viewBox="0 0 2 2" class="size-0.5 fill-current">
+            <circle cx="1" cy="1" r="1" />
+          </svg>
+          <p :if={false} class="truncate">Created by Leonard Krasner</p>
+        </div>
+      </div>
+      <div class="flex flex-none items-center gap-x-4">
+        <div
+          id={"invite-options-#{invite.id}"}
+          phx-click-away={JS.hide(to: "#invite-options-#{invite.id} > div[role=menu]")}
+          class="relative flex-none"
+        >
+          <button
+            phx-click={JS.toggle(to: "#invite-options-#{invite.id} > div[role=menu]")}
+            type="button"
+            class="-m-2.5 block p-2.5 text-gray-500 hover:text-gray-900"
+            id={"options-menu-#{invite.id}-button"}
+            aria-expanded="false"
+            aria-haspopup="true"
+          >
+            <span class="sr-only">Open options</span>
+            <svg
+              class="size-5"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              aria-hidden="true"
+              data-slot="icon"
+            >
+              <path d="M10 3a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM10 8.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM11.5 15.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z" />
+            </svg>
+          </button>
+          <div
+            class="absolute hidden right-0 z-10 mt-2 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none"
+            role="menu"
+            aria-orientation="vertical"
+            aria-labelledby={"options-menu-#{invite.id}-button"}
+            tabindex="-1"
+          >
+            <button
+              phx-click={
+                JS.push("delete_invite")
+                |> JS.hide(to: "#invite-options-#{invite.id} > div[role=menu]")
+              }
+              phx-value-id={invite.id}
+              class="block px-3 py-1 text-sm/6 text-gray-900 active:bg-gray-50 active:outline-none w-full text-left"
+              role="menuitem"
+              tabindex="-1"
+              id={"options-menu-#{invite.id}-item-0"}
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </li>
+  </ul>
+</div>

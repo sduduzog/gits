@@ -1,9 +1,10 @@
 defmodule Gits.Accounts.Host do
+  alias Gits.Accounts.RoleType
   alias Gits.Storefront
   alias Gits.Storefront.{Event, Order}
   alias Gits.PaystackApi
   alias Gits.Accounts
-  alias Gits.Accounts.{Role, User}
+  alias Gits.Accounts.{Role, RoleType, HostInvite, User}
 
   use Ash.Resource,
     domain: Accounts,
@@ -66,6 +67,21 @@ defmodule Gits.Accounts.Host do
     end
 
     update :restore do
+    end
+
+    update :invite_member do
+      require_atomic? false
+      argument :email, :ci_string, allow_nil?: false
+      argument :role_type, RoleType, allow_nil?: false
+
+      change fn changeset, _ ->
+        email = Ash.Changeset.get_argument(changeset, :email)
+        role_type = Ash.Changeset.get_argument(changeset, :role_type)
+
+        Ash.Changeset.manage_relationship(changeset, :invites, [%{email: email, type: role_type}],
+          type: :create
+        )
+      end
     end
 
     update :add_event do
@@ -144,6 +160,18 @@ defmodule Gits.Accounts.Host do
     policy action(:details) do
       authorize_if expr(roles.type in [:owner] and roles.user.id == ^actor(:id))
     end
+
+    policy action(:invite_member) do
+      authorize_if expr(roles.type in [:owner])
+    end
+
+    policy action(:invite_member) do
+      authorize_unless expr(exists(invites, email == ^arg(:email)))
+    end
+
+    policy action(:invite_member) do
+      authorize_unless expr(exists(roles, user.email == ^arg(:email)))
+    end
   end
 
   attributes do
@@ -168,6 +196,8 @@ defmodule Gits.Accounts.Host do
 
   relationships do
     belongs_to :owner, User, allow_nil?: false
+
+    has_many :invites, HostInvite
 
     has_many :roles, Role, public?: true
 

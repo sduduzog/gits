@@ -1,9 +1,11 @@
 defmodule Gits.Accounts do
   use Ash.Domain, extensions: [AshPaperTrail.Domain]
-  alias __MODULE__.{Host, Role, Token, User, UserIdentity, Venue}
+  alias __MODULE__.{Host, HostInvite, Role, Token, User, UserIdentity, Venue}
 
   resources do
     resource Host
+    resource HostInvite
+    resource HostInvite.Version
     resource Host.Version
     resource Role
     resource Token

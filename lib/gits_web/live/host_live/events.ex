@@ -81,7 +81,6 @@ defmodule GitsWeb.HostLive.Events do
               event.venue_invalid?
             ]
             |> Enum.filter(& &1)
-            |> IO.inspect()
 
           event_has_issues? = event.state == :draft and Enum.count(issues_count) > 0
 

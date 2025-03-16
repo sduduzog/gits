@@ -1,4 +1,4 @@
-<div class="grid gap-4 max-w-screen-xl">
+<div class="grid gap-4 max-w-screen-xl mx-auto">
   <%= if @live_action == :members do %>
     <.host_header>
       <.host_breadcrumb_button text="Team" href="#" />
@@ -16,6 +16,11 @@
       <.host_breadcrumb_label text="Invites" />
     </.host_header>
 
-    <.live_component id="invites" module={__MODULE__.Invites} />
+    <.live_component
+      id="invites"
+      module={__MODULE__.Invites}
+      invites={@invites}
+      send_invite_form={@send_invite_form}
+    />
   <% end %>
 </div>
