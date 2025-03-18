@@ -14,7 +14,7 @@ defmodule GitsWeb.EmailHTML do
         <title>MyApp Email</title>
       </head>
 
-      <body><%= @inner_content %></body>
+      <body>{@inner_content}</body>
     </html>
     """
   end

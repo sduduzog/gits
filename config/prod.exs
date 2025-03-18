@@ -21,3 +21,9 @@ config :sentry,
       capture_errors: true
     ]
   ]
+
+config :gits, NodeJS,
+  emails: [
+    path: "/app/js",
+    pool_size: 1
+  ]

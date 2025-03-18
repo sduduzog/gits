@@ -38,7 +38,7 @@ defmodule GitsWeb.DashboardComponents do
     ~H"""
     <.link
       aria-selected={"#{@current}"}
-      class="rounded-lg pl-4 aria-selected:text-zinc-950 aria-selected:font-semibold hover:text-zinc-800"
+      class="grid rounded-lg pl-4 aria-selected:text-zinc-950 aria-selected:font-semibold hover:text-zinc-800"
       navigate={@href}
     >
       <div class="border-l border-zinc-100 p-2 pl-6">{@label}</div>

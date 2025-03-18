@@ -32,9 +32,11 @@ COPY priv priv
 COPY lib lib
 
 
-COPY assets assets assets
+COPY assets assets
 
-RUN cd /app/assets && npm install
+RUN cd /app/assets && npm ci
+
+RUN cd /app/priv/js && npm ci
 
 RUN mix assets.deploy
 
@@ -48,8 +50,10 @@ RUN mix release
 FROM ${RUNNER_IMAGE}
 
 RUN apt-get update -y && \
-  apt-get install -y libstdc++6 openssl libncurses5 locales ca-certificates \
+  apt-get install -y curl libstdc++6 openssl libncurses5 locales ca-certificates \
   && apt-get clean && rm -f /var/lib/apt/lists/*_*
+
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt-get install -y nodejs
 
 RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
 
@@ -63,6 +67,7 @@ RUN chown nobody /app
 ENV MIX_ENV="prod"
 
 COPY --from=builder --chown=nobody:root /app/_build/${MIX_ENV}/rel/gits ./
+COPY --from=builder --chown=nobody:root /app/priv/js /app/js
 
 USER nobody
 

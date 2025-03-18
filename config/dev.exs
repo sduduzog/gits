@@ -33,8 +33,7 @@ config :gits, GitsWeb.Endpoint,
     patterns: [
       ~r"priv/static/(?!uploads/).*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"priv/pages/*/*.(md)$",
-      ~r"priv/faqs/*/*.(md)$",
+      ~r"priv/js/*/.*(html)$",
       ~r"lib/gits_web/(controllers|live|components)/.*(ex|heex)$"
     ]
   ]
@@ -62,3 +61,9 @@ config :gits, Gits.Mailer,
   domain: "localhost"
 
 config :gits, :paystack, callback_url_base: "http://localhost:4000"
+
+config :gits, NodeJS,
+  emails: [
+    path: Path.expand("../priv/js", __DIR__),
+    pool_size: 1
+  ]

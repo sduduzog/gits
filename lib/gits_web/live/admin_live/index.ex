@@ -90,6 +90,17 @@ defmodule GitsWeb.AdminLive.Index do
             |> noreply()
         end
 
+      :emails ->
+        Ash.Query.for_read(User, :read)
+        |> Ash.read(actor: user)
+        |> case do
+          {:ok, users} ->
+            socket
+            |> assign(:users, users)
+            |> assign(:emails, [:magic_link])
+            |> noreply()
+        end
+
       _ ->
         socket |> noreply()
     end
@@ -125,5 +136,12 @@ defmodule GitsWeb.AdminLive.Index do
         |> assign(:jobs, jobs)
         |> noreply()
     end
+  end
+
+  def handle_event("send_test_email", unsigned_params, socket) do
+    Gits.Mailer.deliver_magic_link("foo@bar.com", Phoenix.Token.sign(socket, "foo", "bar"))
+    |> IO.inspect()
+
+    socket |> noreply()
   end
 end

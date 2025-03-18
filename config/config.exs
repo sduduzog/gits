@@ -73,6 +73,7 @@ config :gits, GitsWeb.Endpoint,
   live_view: [signing_salt: "mAny0gpU"]
 
 config :gits, Gits.Mailer, adapter: Swoosh.Adapters.Local
+config :gits, Gits.Worker.SendEmail, adapter: Swoosh.Adapters.Local
 
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",

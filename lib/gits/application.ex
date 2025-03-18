@@ -29,7 +29,8 @@ defmodule Gits.Application do
       GitsWeb.Endpoint,
       {AshAuthentication.Supervisor, otp_app: :gits},
       {Cachex, [:cache, [hooks: [hook(module: Cachex.Limit.Evented, args: {1000, []})]]]},
-      {Oban, Application.fetch_env!(:gits, Oban)}
+      {Oban, Application.fetch_env!(:gits, Oban)},
+      {NodeJS.Supervisor, Application.fetch_env!(:gits, NodeJS)[:emails]}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

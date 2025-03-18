@@ -95,5 +95,9 @@ if config_env() == :prod do
     adapter: Swoosh.Adapters.SMTP2GO,
     api_key: env!("SMTP2GO_API_KEY", :string)
 
+  config :gits, Gits.Worker.SendEmail,
+    adapter: Swoosh.Adapters.SMTP2GO,
+    api_key: env!("SMTP2GO_API_KEY", :string)
+
   config :gits, :paystack, callback_url_base: "https://#{host}"
 end

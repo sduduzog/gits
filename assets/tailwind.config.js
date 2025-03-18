@@ -1,8 +1,23 @@
 import plugin from "tailwindcss/plugin";
-import { readdirSync, readFileSync } from "node:fs";
-import { join, basename } from "node:path";
 
-import { addIconSelectors, addDynamicIconSelectors } from "@iconify/tailwind";
+import { addDynamicIconSelectors } from "@iconify/tailwind";
+
+const colors = {
+  "waikawa-gray": {
+    base: "#5D6A96",
+    50: "#F7F8FA",
+    100: "#CED2E0",
+    200: "#A6ADC5",
+    300: "#7D88AB",
+    400: "#58658F",
+    500: "#4D587D",
+    600: "#424B6B",
+    700: "#373F59",
+    800: "#2C3247",
+    900: "#212535",
+    950: "#151823",
+  },
+};
 
 const content = [
   "./js/**/*.js",
@@ -17,6 +32,7 @@ const theme = {
       "open-sans": ["Open Sans Variable", "sans-serif"],
     },
     colors: {
+      primary: colors["waikawa-gray"],
       zinc: {
         50: "#f4f5f7",
         100: "#e4e5e9",

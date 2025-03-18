@@ -6,7 +6,8 @@
         {:jobs},
         {:hosts},
         {:users},
-        {:events}
+        {:events},
+        {:emails}
         # {:support}
       ]
     }
@@ -110,6 +111,19 @@
         |> DateTime.shift_zone!("Africa/Johannesburg")
         |> Calendar.strftime("%a, %d %b %Y %H:%M:%S")}
       </:col>
+    </.table>
+  </div>
+</div>
+
+<div :if={@live_action == :emails} class="p-2">
+  <div class="overflow-auto rounded-lg border sm:overflow-hidden">
+    <.table id="jobs" rows={@emails}>
+      <:col :let={email} label="User">{email}</:col>
+      <:action :let={email}>
+        <.button phx-click="send_test_email" phx-value-name={email} variant={:outline} size={:sm}>
+          <span>Send</span>
+        </.button>
+      </:action>
     </.table>
   </div>
 </div>

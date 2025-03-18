@@ -32,6 +32,7 @@ defmodule Gits.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:nodejs, "~> 3.0"},
       {:ash_authentication_phoenix, "~> 2.0"},
       {:oban_web, "~> 2.0"},
       {:assent, "== 0.2.10"},

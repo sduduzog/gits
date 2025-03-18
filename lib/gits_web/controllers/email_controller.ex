@@ -6,14 +6,6 @@ defmodule GitsWeb.EmailController do
     conn
     |> put_root_layout(false)
     |> put_layout(false)
-    |> assign(:order_id, 1)
-    |> assign(:event_name, "Glitter bomb")
-    |> assign(:tickets_summary, [
-      {"General", Decimal.new("30"), 3},
-      {"VIP", Decimal.new("100"), 2}
-    ])
-    |> assign(:total, Decimal.new("30"))
-    |> assign(:token, "foo")
-    |> render(:magic_link)
+    |> render(:test)
   end
 end

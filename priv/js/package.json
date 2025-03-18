@@ -1,0 +1,11 @@
+{
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "maizzle serve"
+  },
+  "dependencies": {
+    "@maizzle/framework": "latest",
+    "tailwindcss-preset-email": "latest"
+  }
+}

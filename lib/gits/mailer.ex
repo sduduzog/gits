@@ -1,5 +1,7 @@
 defmodule Gits.Mailer do
   use Swoosh.Mailer, otp_app: :gits
+  use GitsWeb, :verified_routes
+  use Oban.Worker
   import Swoosh.Email
 
   def magic_link(token, to) do
@@ -49,5 +51,69 @@ defmodule Gits.Mailer do
     host = Application.get_env(:gits, :host)
 
     from(email, {"GiTS", "#{username}@#{host}"})
+  end
+
+  def deliver_magic_link(to, token) do
+    meta = %{subject: "Sign in to GiTS", to: to, sender: :auth}
+
+    %{template: :magic_link, url: url(~p"/auth/user/magic_link?token=#{token}")}
+    |> __MODULE__.new(meta: meta)
+    |> Oban.insert()
+  end
+
+  def deliver_host_invite(to, host_id, host_name, invite_id) do
+    host = Application.get_env(:gits, :host)
+
+    %{host_name: host_name, invite_url: url(~p"/hosts/#{host_id}/join/#{invite_id}")}
+    |> queue(%{
+      to: to,
+      sender_name: "GiTS Team",
+      sender_email: "hey@#{host}",
+      subject: "Invitation to join #{host_name}",
+      template: :host_invite
+    })
+  end
+
+  defp queue(args, meta) do
+    __MODULE__.new(args, meta: meta) |> Oban.insert()
+  end
+
+  def render_template(:magic_link, url) do
+    render_template(
+      :magic_link,
+      "Sign in to GiTS",
+      nil,
+      %{url: url}
+    )
+  end
+
+  def render_template("host_invite", host_name, invite_url) do
+    render_template(
+      :host_invite,
+      "Invitation to join #{host_name}",
+      nil,
+      %{host_name: host_name, invite_url: invite_url}
+    )
+  end
+
+  defp render_template(template_name, title, preheader, data) do
+    NodeJS.call(
+      {"email.mjs", :render_template},
+      [template_name, url(~p"/"), title, preheader, data],
+      esm: true,
+      binary: true
+    )
+  end
+
+  @impl Oban.Worker
+  def perform(%Oban.Job{args: %{"template" => "magic_link", "url" => url}, meta: meta}) do
+    with {:ok, body} <- render_template(:magic_link, url) do
+      new()
+      |> to(meta["to"])
+      |> sender(meta["sender"])
+      |> subject(meta["subject"])
+      |> html_body(body)
+      |> deliver()
+    end
   end
 end

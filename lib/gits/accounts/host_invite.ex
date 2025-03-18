@@ -35,6 +35,23 @@ defmodule Gits.Accounts.HostInvite do
     create :create do
       primary? true
       accept [:email, :type]
+
+      change fn changeset, %{actor: actor} ->
+        Ash.Changeset.after_action(changeset, fn changeset, result ->
+          Ash.load(result, [:host], actor: actor)
+          |> case do
+            {:ok, invite} ->
+              Gits.Worker.SendEmail.host_invite(
+                invite.email,
+                invite.host.id,
+                invite.host.name,
+                invite.id
+              )
+
+              {:ok, result}
+          end
+        end)
+      end
     end
 
     update :accept do
