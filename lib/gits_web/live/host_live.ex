@@ -15,7 +15,7 @@ defmodule GitsWeb.HostLive do
        module == Events, [], nil},
       # {"Admissions", "icon-[ri--settings-3-line]", false, module == Settings, [], nil},
       # {"Engagements", "icon-[ri--settings-3-line]", false, module == Settings, [], nil},
-      {"Team", "icon-[ri--settings-3-line]", false, module == Team,
+      {"Team", "icon-[ri--group-3-line]", false, module == Team,
        [
          {"Members", ~p"/hosts/#{host.handle}/team/members", action == :members, nil},
          {"Invites", ~p"/hosts/#{host.handle}/team/invites", action == :invites, nil}
@@ -28,5 +28,9 @@ defmodule GitsWeb.HostLive do
           action == :billing, nil}
        ], nil}
     ])
+  end
+
+  def assign_guest_sidebar_items(socket, _module, _host) do
+    Phoenix.Component.assign(socket, :sidebar_items, [])
   end
 end

@@ -96,6 +96,7 @@ defmodule GitsWeb.Router do
       live "/settings", SettingsLive.Index
       live "/hosts/:handle/team/members", HostLive.Team, :members
       live "/hosts/:handle/team/invites", HostLive.Team, :invites
+      live "/hosts/:handle/join/:invite", HostLive.Join
     end
   end
 

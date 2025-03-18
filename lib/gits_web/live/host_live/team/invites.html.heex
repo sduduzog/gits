@@ -87,6 +87,22 @@
             tabindex="-1"
           >
             <button
+              type="button"
+              phx-click={
+                JS.push("resend_invite")
+                |> JS.hide(to: "#invite-options-#{invite.id} > div[role=menu]")
+              }
+              phx-value-id={invite.id}
+              class="block px-3 py-1 text-sm/6 text-gray-900 active:bg-gray-50 active:outline-none w-full text-left"
+              role="menuitem"
+              tabindex="-1"
+              id={"options-menu-#{invite.id}-item-0"}
+            >
+              Resend
+            </button>
+
+            <button
+              type="button"
               phx-click={
                 JS.push("delete_invite")
                 |> JS.hide(to: "#invite-options-#{invite.id} > div[role=menu]")
@@ -95,7 +111,7 @@
               class="block px-3 py-1 text-sm/6 text-gray-900 active:bg-gray-50 active:outline-none w-full text-left"
               role="menuitem"
               tabindex="-1"
-              id={"options-menu-#{invite.id}-item-0"}
+              id={"options-menu-#{invite.id}-item-1"}
             >
               Delete
             </button>

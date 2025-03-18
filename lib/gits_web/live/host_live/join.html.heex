@@ -1,0 +1,34 @@
+<div class="grid gap-4 max-w-screen-xl mx-auto">
+  <.host_header>
+    <.host_breadcrumb_button text="Team" href="#" />
+    <span class="text-xs font-semibold text-zinc-400">/</span>
+    <.host_breadcrumb_label text="Join the team" />
+  </.host_header>
+
+  <div class="grid gap-8 p-4 lg:p-2">
+    <div class="flex w-full">
+      <h2 class="col-span-full grow text-4xl font-medium">Join {@host.name}</h2>
+    </div>
+  </div>
+
+  <div class="p-4 lg:p-2 space-y-2">
+    <p>
+      You've been invited to join {@host.name} with the role
+      <strong>
+        {to_string(@invite.type)
+        |> String.replace("_", " ")
+        |> String.capitalize()}.
+      </strong>
+    </p>
+
+    <p>
+      {to_string(@invite.type) |> String.replace("_", " ") |> String.capitalize()} <span class="lowercase">{Gits.Accounts.RoleType.description(@invite.type)}</span>.
+    </p>
+  </div>
+
+  <div class="p-4 lg:p-2 space-y-2 font-open-sans">
+    <button class="bg-primary-base text-white text-sm font-semibold px-4 py-3 rounded-lg lg:hover:bg-opacity-90">
+      <span>Join {@host.name}</span>
+    </button>
+  </div>
+</div>

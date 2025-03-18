@@ -1,3 +1,20 @@
+const colors = {
+	"waikawa-gray": {
+		base: "#5D6A96",
+		50: "#F7F8FA",
+		100: "#CED2E0",
+		200: "#A6ADC5",
+		300: "#7D88AB",
+		400: "#58658F",
+		500: "#4D587D",
+		600: "#424B6B",
+		700: "#373F59",
+		800: "#2C3247",
+		900: "#212535",
+		950: "#151823",
+	},
+};
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
 	presets: [require("tailwindcss-preset-email")],
@@ -51,6 +68,7 @@ module.exports = {
 					900: "#82193d",
 					950: "#4f0820",
 				},
+				primary: colors["waikawa-gray"],
 			},
 		},
 	},

@@ -4,15 +4,6 @@ defmodule Gits.Mailer do
   use Oban.Worker
   import Swoosh.Email
 
-  def magic_link(token, to) do
-    new()
-    |> to(to)
-    |> sender("auth")
-    |> subject("Sign in to GiTS")
-    |> render_body(:magic_link, %{token: token})
-    |> deliver()
-  end
-
   def order_completed(to, tickets_summary, total, event_name, order_id) do
     new()
     |> to(to)
@@ -47,12 +38,6 @@ defmodule Gits.Mailer do
     |> IO.chardata_to_string()
   end
 
-  defp sender(email, username) do
-    host = Application.get_env(:gits, :host)
-
-    from(email, {"GiTS", "#{username}@#{host}"})
-  end
-
   def deliver_magic_link(to, token) do
     meta = %{subject: "Sign in to GiTS", to: to, sender: :auth}
 
@@ -61,24 +46,28 @@ defmodule Gits.Mailer do
     |> Oban.insert()
   end
 
-  def deliver_host_invite(to, host_id, host_name, invite_id) do
-    host = Application.get_env(:gits, :host)
+  def deliver_host_invite(to, host_handle, host_name, invite_id) do
+    meta = %{subject: "Invitation to join #{host_name}", to: to, sender: :team}
 
-    %{host_name: host_name, invite_url: url(~p"/hosts/#{host_id}/join/#{invite_id}")}
-    |> queue(%{
-      to: to,
-      sender_name: "GiTS Team",
-      sender_email: "hey@#{host}",
-      subject: "Invitation to join #{host_name}",
-      template: :host_invite
-    })
+    %{
+      template: :host_invite,
+      host_name: host_name,
+      invite_url: url(~p"/hosts/#{host_handle}/join/#{invite_id}")
+    }
+    |> __MODULE__.new(meta: meta)
+    |> Oban.insert()
   end
 
-  defp queue(args, meta) do
-    __MODULE__.new(args, meta: meta) |> Oban.insert()
+  defp deliver_email(to, sender_key, subject, body) do
+    new()
+    |> to(to)
+    |> sender(sender_key)
+    |> subject(subject)
+    |> html_body(body)
+    |> deliver()
   end
 
-  def render_template(:magic_link, url) do
+  def render_template(%{"template" => "magic_link", "url" => url}) do
     render_template(
       :magic_link,
       "Sign in to GiTS",
@@ -87,7 +76,11 @@ defmodule Gits.Mailer do
     )
   end
 
-  def render_template("host_invite", host_name, invite_url) do
+  def render_template(%{
+        "template" => "host_invite",
+        "host_name" => host_name,
+        "invite_url" => invite_url
+      }) do
     render_template(
       :host_invite,
       "Invitation to join #{host_name}",
@@ -105,15 +98,21 @@ defmodule Gits.Mailer do
     )
   end
 
-  @impl Oban.Worker
-  def perform(%Oban.Job{args: %{"template" => "magic_link", "url" => url}, meta: meta}) do
-    with {:ok, body} <- render_template(:magic_link, url) do
-      new()
-      |> to(meta["to"])
-      |> sender(meta["sender"])
-      |> subject(meta["subject"])
-      |> html_body(body)
-      |> deliver()
+  defp sender(email, "auth") do
+    host = Application.get_env(:gits, :host)
+
+    from(email, {"GiTS Auth", "auth@#{host}"})
+  end
+
+  defp sender(email, "team") do
+    host = Application.get_env(:gits, :host)
+
+    from(email, {"GiTS Team", "hey@#{host}"})
+  end
+
+  def perform(%Oban.Job{args: args, meta: meta}) do
+    with {:ok, body} <- render_template(args) do
+      deliver_email(meta["to"], meta["sender"], meta["subject"], body)
     end
   end
 end

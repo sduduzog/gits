@@ -97,7 +97,7 @@ defmodule GitsWeb.AdminLive.Index do
           {:ok, users} ->
             socket
             |> assign(:users, users)
-            |> assign(:emails, [:magic_link])
+            |> assign(:emails, [:magic_link, :host_invite])
             |> noreply()
         end
 
@@ -139,8 +139,15 @@ defmodule GitsWeb.AdminLive.Index do
   end
 
   def handle_event("send_test_email", unsigned_params, socket) do
-    Gits.Mailer.deliver_magic_link("foo@bar.com", Phoenix.Token.sign(socket, "foo", "bar"))
-    |> IO.inspect()
+    email = socket.assigns.current_user.email
+
+    case unsigned_params do
+      %{"name" => "magic_link"} ->
+        Gits.Mailer.deliver_magic_link(email, Phoenix.Token.sign(socket, "foo", "bar"))
+
+      %{"name" => "host_invite"} ->
+        Gits.Mailer.deliver_host_invite(email, "host_handle", "Treehouse Inc", "invite_id")
+    end
 
     socket |> noreply()
   end

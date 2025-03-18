@@ -29,6 +29,10 @@ defmodule Gits.Accounts.HostInvite do
     ignore_attributes [:created_at, :updated_at]
   end
 
+  code_interface do
+    define :resend_email
+  end
+
   actions do
     defaults [:read, :destroy, update: :*]
 
@@ -41,9 +45,30 @@ defmodule Gits.Accounts.HostInvite do
           Ash.load(result, [:host], actor: actor)
           |> case do
             {:ok, invite} ->
-              Gits.Worker.SendEmail.host_invite(
+              Gits.Mailer.deliver_host_invite(
                 invite.email,
-                invite.host.id,
+                invite.host.handle,
+                invite.host.name,
+                invite.id
+              )
+
+              {:ok, result}
+          end
+        end)
+      end
+    end
+
+    update :resend_email do
+      require_atomic? false
+
+      change fn changeset, %{actor: actor} ->
+        Ash.Changeset.after_action(changeset, fn changeset, result ->
+          Ash.load(result, [:host], actor: actor)
+          |> case do
+            {:ok, invite} ->
+              Gits.Mailer.deliver_host_invite(
+                invite.email,
+                invite.host.handle,
                 invite.host.name,
                 invite.id
               )
@@ -79,6 +104,10 @@ defmodule Gits.Accounts.HostInvite do
     end
 
     policy action(:destroy) do
+      authorize_if expr(host.roles.type in [:owner] and host.roles.user.id == ^actor(:id))
+    end
+
+    policy action(:resend_email) do
       authorize_if expr(host.roles.type in [:owner] and host.roles.user.id == ^actor(:id))
     end
   end

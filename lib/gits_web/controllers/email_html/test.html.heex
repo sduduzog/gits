@@ -1,12 +1,19 @@
 <div style="border: 0px solid #cccccc; border-top-width: 1px; padding: 10px;">magic link</div>
 <div>
-  {Gits.Mailer.render_template(:magic_link, "http://localhost/test/link")
+  {Gits.Mailer.render_template(%{
+    "template" => "magic_link",
+    "url" => "http://localhost/test/link"
+  })
   |> (fn {_, template} -> template end).()
   |> raw}
 </div>
 <div style="border: 0px solid #cccccc; border-top-width: 1px; padding: 10px;">host invite</div>
 <div>
-  {Gits.Mailer.render_template("host_invite", "Treehouse Inc", "http://localhost/test/link")
+  {Gits.Mailer.render_template(%{
+    "template" => "host_invite",
+    "host_name" => "Treehouse Inc",
+    "invite_url" => "http://localhost/test/link"
+  })
   |> (fn {_, template} -> template end).()
   |> raw}
 </div>
