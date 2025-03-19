@@ -1,4 +1,4 @@
-defmodule Gits.Accounts.HostInvite do
+defmodule Gits.Accounts.Invite do
   alias Gits.Accounts
   alias Gits.Accounts.{Role, RoleType, Host}
 
@@ -169,5 +169,9 @@ defmodule Gits.Accounts.HostInvite do
 
   calculations do
     calculate :host_name, :string, expr(host.name)
+
+    calculate :type_formatted, :string, fn records, _ ->
+      Enum.map(records, &(to_string(&1.type) |> String.replace("_", " ") |> String.capitalize()))
+    end
   end
 end

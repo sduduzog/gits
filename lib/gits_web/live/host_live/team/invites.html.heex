@@ -38,7 +38,7 @@
         <div class="flex items-start gap-x-3">
           <p class="text-sm/6 font-semibold text-gray-900">{invite.email}</p>
           <p class="mt-0.5 whitespace-nowrap rounded-md bg-gray-50 px-1.5 py-0.5 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
-            {to_string(invite.type) |> String.replace("_", " ") |> String.capitalize()}
+            {invite.type_formatted}
           </p>
         </div>
         <div class="mt-1 flex items-center gap-x-2 text-xs/5 text-gray-500">

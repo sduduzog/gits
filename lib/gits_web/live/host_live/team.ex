@@ -1,31 +1,24 @@
 defmodule GitsWeb.HostLive.Team do
   require Ash.Query
-  alias Gits.Accounts.HostInvite
+  alias Gits.Accounts.Invite
   alias AshPhoenix.Form
-  alias Gits.Accounts.User
   alias Gits.Accounts.Host
   import GitsWeb.HostComponents
   use GitsWeb, :live_view
 
   on_mount {GitsWeb.LiveUserAuth, :live_user_required}
 
-  def mount(%{"handle" => handle}, _, socket) do
+  def mount(params, _, socket) do
     user = socket.assigns.current_user
 
-    Ash.load(
-      user,
-      [
-        hosts: Ash.Query.filter(Host, handle == ^handle) |> Ash.Query.load(roles: :user)
-      ],
-      actor: user
-    )
+    Ash.Query.filter(Host, handle == ^params["handle"])
+    |> Ash.read_one(actor: user)
     |> case do
-      {:ok, %User{hosts: [%Host{} = host]}} ->
+      {:ok, %Host{} = host} ->
         socket
         |> GitsWeb.HostLive.assign_sidebar_items(__MODULE__, host)
         |> assign(:page_title, "Team")
         |> assign(:host, host)
-        |> assign(:roles, host.roles)
         |> ok(:dashboard)
 
       _ ->
@@ -34,13 +27,20 @@ defmodule GitsWeb.HostLive.Team do
   end
 
   def handle_params(_, _, socket) when socket.assigns.live_action == :members do
-    socket
-    |> assign(:send_invite_form, nil)
-    |> noreply()
+    Ash.load(socket.assigns.host, [roles: [:user_name, :user_email]],
+      actor: socket.assigns.current_user
+    )
+    |> case do
+      {:ok, host} ->
+        socket
+        |> assign(:roles, host.roles)
+        |> assign(:send_invite_form, nil)
+        |> noreply()
+    end
   end
 
   def handle_params(_, _, socket) when socket.assigns.live_action == :invites do
-    Ash.load(socket.assigns.host, [:invites], actor: socket.assigns.current_user)
+    Ash.load(socket.assigns.host, [invites: :type_formatted], actor: socket.assigns.current_user)
     |> case do
       {:ok, host} ->
         socket
@@ -65,7 +65,7 @@ defmodule GitsWeb.HostLive.Team do
   def handle_event("submit_send_invite", unsigned_params, socket) do
     Form.submit(socket.assigns.send_invite_form,
       params: unsigned_params["form"],
-      action_opts: [load: [:invites]]
+      action_opts: [load: [invites: :type_formatted]]
     )
     |> case do
       {:ok, host} ->
@@ -83,7 +83,7 @@ defmodule GitsWeb.HostLive.Team do
 
   def handle_event("resend_invite", %{"id" => id}, socket) do
     Enum.find(socket.assigns.invites, &(&1.id == id))
-    |> HostInvite.resend_email(%{}, actor: socket.assigns.current_user)
+    |> Invite.resend_email(actor: socket.assigns.current_user)
 
     socket |> noreply()
   end

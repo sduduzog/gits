@@ -4,7 +4,7 @@ defmodule Gits.Accounts.Host do
   alias Gits.Storefront.{Event, Order}
   alias Gits.PaystackApi
   alias Gits.Accounts
-  alias Gits.Accounts.{Role, RoleType, HostInvite, User}
+  alias Gits.Accounts.{Role, RoleType, Invite, User}
 
   use Ash.Resource,
     domain: Accounts,
@@ -197,7 +197,7 @@ defmodule Gits.Accounts.Host do
   relationships do
     belongs_to :owner, User, allow_nil?: false
 
-    has_many :invites, HostInvite
+    has_many :invites, Invite
 
     has_many :roles, Role, public?: true
 

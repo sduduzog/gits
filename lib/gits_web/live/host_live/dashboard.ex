@@ -7,25 +7,19 @@ defmodule GitsWeb.HostLive.Dashboard do
 
   require Ash.Query
 
-  def mount(%{"handle" => handle}, _, socket) do
+  def mount(params, _, socket) do
     user = socket.assigns.current_user
 
-    Ash.load(
-      user,
-      [
-        hosts:
-          Ash.Query.filter(Host, handle == ^handle)
-          |> Ash.Query.load([
-            :total_events,
-            upcoming_events:
-              Ash.Query.sort(Event, [:starts_at, :ends_at])
-              |> Ash.Query.load([:currently_happening?, poster: [:url]])
-          ])
-      ],
-      actor: user
-    )
+    Ash.Query.filter(Host, handle == ^params["handle"])
+    |> Ash.Query.load([
+      :total_events,
+      upcoming_events:
+        Ash.Query.sort(Event, [:starts_at, :ends_at])
+        |> Ash.Query.load([:currently_happening?, poster: [:url]])
+    ])
+    |> Ash.read_one(actor: user)
     |> case do
-      {:ok, %User{hosts: [%Host{} = host]}} ->
+      {:ok, %Host{} = host} ->
         socket
         |> GitsWeb.HostLive.assign_sidebar_items(__MODULE__, host)
         |> assign(:page_title, "Home")

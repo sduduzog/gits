@@ -44,11 +44,7 @@ defmodule Gits.Accounts.User do
 
   actions do
     default_accept :*
-    defaults update: :*, create: :*
-
-    read :read do
-      primary? true
-    end
+    defaults [:read, update: :*, create: :*]
 
     read :get_by_email do
       description "Looks up a user by their email"

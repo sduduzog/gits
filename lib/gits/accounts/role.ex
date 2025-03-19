@@ -1,6 +1,5 @@
 defmodule Gits.Accounts.Role do
-  alias Gits.Accounts.HostInvite
-  alias Gits.Accounts.{Host, RoleType, User}
+  alias Gits.Accounts.{Host, Invite, RoleType, User}
 
   use Ash.Resource,
     domain: Gits.Accounts,
@@ -48,7 +47,7 @@ defmodule Gits.Accounts.Role do
     end
 
     policy action(:assign) do
-      authorize_if accessing_from(HostInvite, :role)
+      authorize_if accessing_from(Invite, :role)
     end
   end
 
@@ -63,5 +62,14 @@ defmodule Gits.Accounts.Role do
     belongs_to :user, User, public?: true, allow_nil?: false
 
     belongs_to :host, Host, public?: true, allow_nil?: false
+  end
+
+  calculations do
+    calculate :user_name, :string, expr(user.name)
+    calculate :user_email, :string, expr(user.email)
+  end
+
+  identities do
+    identity :host_user_role, [:host_id, :user_id]
   end
 end
