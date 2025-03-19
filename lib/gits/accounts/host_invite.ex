@@ -13,6 +13,11 @@ defmodule Gits.Accounts.HostInvite do
     table "host_invites"
   end
 
+  code_interface do
+    define :resend_email
+    define :accept
+  end
+
   state_machine do
     initial_states [:sent]
     default_initial_state :sent
@@ -27,10 +32,6 @@ defmodule Gits.Accounts.HostInvite do
     change_tracking_mode :changes_only
     store_action_name? true
     ignore_attributes [:created_at, :updated_at]
-  end
-
-  code_interface do
-    define :resend_email
   end
 
   actions do
@@ -80,8 +81,24 @@ defmodule Gits.Accounts.HostInvite do
     end
 
     update :accept do
-      change atomic_update(:accepted_at, expr(fragment("now()")))
-      change transition_state(:accepted)
+      require_atomic? false
+      # change atomic_update(:accepted_at, expr(fragment("now()")))
+      # change transition_state(:accepted)
+
+      change fn changeset, %{actor: actor} ->
+        Ash.Changeset.before_action(changeset, fn changeset ->
+          Ash.load(changeset.data, [:host], actor: actor)
+          |> case do
+            {:ok, invite} ->
+              Ash.Changeset.manage_relationship(
+                changeset,
+                :role,
+                %{host: invite.host, user: actor, type: invite.type},
+                on_no_match: {:create, :assign}
+              )
+          end
+        end)
+      end
     end
 
     update :expire do
@@ -91,24 +108,45 @@ defmodule Gits.Accounts.HostInvite do
   end
 
   policies do
-    policy action(:create) do
-      authorize_if accessing_from(Host, :invites)
+    bypass [accessing_from(Host, :invites), action(:read)] do
+      authorize_if expr(host.roles.type in [:owner] and host.roles.user.id == ^actor(:id))
     end
 
     policy action(:read) do
-      authorize_if accessing_from(Host, :invites)
+      authorize_if expr(email == ^actor(:email))
+    end
+
+    policy_group accessing_from(Host, :invites) do
+      policy action(:create) do
+        authorize_if always()
+      end
+
+      policy action(:destroy) do
+        authorize_if expr(host.roles.type in [:owner] and host.roles.user.id == ^actor(:id))
+      end
+    end
+
+    policy action(:resend_email) do
+      authorize_if expr(host.roles.type in [:owner] and host.roles.user.id == ^actor(:id))
+    end
+
+    policy action(:accept) do
+      authorize_if expr(email == ^actor(:email))
     end
 
     policy action(:destroy) do
       authorize_if expr(state == :sent)
     end
+  end
 
-    policy action(:destroy) do
+  field_policies do
+    field_policy :email do
+      authorize_if expr(email == ^actor(:email))
       authorize_if expr(host.roles.type in [:owner] and host.roles.user.id == ^actor(:id))
     end
 
-    policy action(:resend_email) do
-      authorize_if expr(host.roles.type in [:owner] and host.roles.user.id == ^actor(:id))
+    field_policy :* do
+      authorize_if always()
     end
   end
 
@@ -127,5 +165,9 @@ defmodule Gits.Accounts.HostInvite do
   relationships do
     belongs_to :role, Role
     belongs_to :host, Host, allow_nil?: false
+  end
+
+  calculations do
+    calculate :host_name, :string, expr(host.name)
   end
 end

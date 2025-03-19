@@ -1,4 +1,5 @@
 defmodule Gits.Accounts.Role do
+  alias Gits.Accounts.HostInvite
   alias Gits.Accounts.{Host, RoleType, User}
 
   use Ash.Resource,
@@ -23,6 +24,16 @@ defmodule Gits.Accounts.Role do
       argument :user, :map, allow_nil?: false
       change manage_relationship(:user, type: :append)
     end
+
+    create :assign do
+      accept [:type]
+
+      argument :user, :map, allow_nil?: false
+      argument :host, :map, allow_nil?: false
+
+      change manage_relationship(:user, type: :append)
+      change manage_relationship(:host, type: :append)
+    end
   end
 
   policies do
@@ -34,6 +45,10 @@ defmodule Gits.Accounts.Role do
 
     policy action(:create) do
       authorize_if accessing_from(Host, :roles)
+    end
+
+    policy action(:assign) do
+      authorize_if accessing_from(HostInvite, :role)
     end
   end
 

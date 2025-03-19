@@ -45,7 +45,10 @@ defmodule GitsWeb.HostLive.Team do
       {:ok, host} ->
         socket
         |> assign(:invites, host.invites)
-        |> assign(:send_invite_form, Form.for_update(host, :invite_member))
+        |> assign(
+          :send_invite_form,
+          Form.for_update(host, :invite_member, actor: socket.assigns.current_user)
+        )
         |> noreply()
     end
   end
@@ -92,7 +95,7 @@ defmodule GitsWeb.HostLive.Team do
     |> case do
       :ok ->
         socket
-        |> assign(:invites, Enum.filter(socket.assigns.invites, &(&1.id != id)) |> IO.inspect())
+        |> assign(:invites, Enum.filter(socket.assigns.invites, &(&1.id != id)))
         |> noreply()
 
       _ ->

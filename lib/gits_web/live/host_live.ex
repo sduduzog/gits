@@ -30,7 +30,7 @@ defmodule GitsWeb.HostLive do
     ])
   end
 
-  def assign_guest_sidebar_items(socket, _module, _host) do
+  def assign_guest_sidebar_items(socket) do
     Phoenix.Component.assign(socket, :sidebar_items, [])
   end
 end

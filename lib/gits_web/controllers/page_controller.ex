@@ -67,7 +67,7 @@ defmodule GitsWeb.PageController do
 
   def host(%{assigns: %{current_user: %User{}}} = conn, _) do
     Host
-    |> Ash.Query.filter(owner.id == ^conn.assigns.current_user.id)
+    |> Ash.Query.filter(roles.user.id == ^conn.assigns.current_user.id)
     |> Ash.read()
     |> case do
       {:ok, [%Host{handle: handle}]} ->

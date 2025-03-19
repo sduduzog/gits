@@ -162,7 +162,7 @@ defmodule Gits.Accounts.Host do
     end
 
     policy action(:invite_member) do
-      authorize_if expr(roles.type in [:owner])
+      authorize_if expr(roles.type in [:owner] and roles.user.id == ^actor(:id))
     end
 
     policy action(:invite_member) do
